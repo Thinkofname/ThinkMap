@@ -7,30 +7,36 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import think.webglmap.bukkit.WebglMapPlugin;
 
-public class WebHandler extends Thread {
+public class WebHandler extends Thread
+{
 
     private WebglMapPlugin plugin;
 
-    public WebHandler(WebglMapPlugin plugin) {
+    public WebHandler( WebglMapPlugin plugin )
+    {
         this.plugin = plugin;
     }
 
     @Override
-    public void run() {
+    public void run()
+    {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
-        try {
+        try
+        {
             ServerBootstrap bootstrap = new ServerBootstrap();
-            bootstrap.group(bossGroup, workerGroup).
-                channel(NioServerSocketChannel.class).
-                childHandler(new ServerHandler());
+            bootstrap.group( bossGroup, workerGroup ).
+                    channel( NioServerSocketChannel.class ).
+                    childHandler( new ServerHandler( plugin ) );
 
-            Channel channel = bootstrap.bind(23333).sync().channel();
+            Channel channel = bootstrap.bind( 23333 ).sync().channel();
 
             channel.closeFuture().sync();
-        } catch (InterruptedException e) {
-
-        } finally {
+        } catch ( InterruptedException e )
+        {
+            interrupt();
+        } finally
+        {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
