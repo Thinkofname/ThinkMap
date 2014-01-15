@@ -4,14 +4,9 @@ import gnu.trove.map.hash.TLongObjectHashMap;
 import org.bukkit.ChunkSnapshot;
 import think.webglmap.world.ActiveChunk;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
-public class ChunkManager
-{
+public class ChunkManager {
 
     private final WebglMapPlugin plugin;
     private final TLongObjectHashMap<ActiveChunk> activeChunks = new TLongObjectHashMap<ActiveChunk>();
@@ -20,8 +15,7 @@ public class ChunkManager
     private final ConverterThread converterThread;
     private final IOThread ioThread;
 
-    public ChunkManager( WebglMapPlugin plugin )
-    {
+    public ChunkManager(WebglMapPlugin plugin) {
         this.plugin = plugin;
         converterThread = new ConverterThread();
         converterThread.start();
@@ -29,129 +23,99 @@ public class ChunkManager
         ioThread.start();
     }
 
-    public void addChunk( ChunkSnapshot chunkSnapshot )
-    {
-        toProcess.add( chunkSnapshot );
+    public void addChunk(ChunkSnapshot chunkSnapshot) {
+        toProcess.add(chunkSnapshot);
     }
 
-    private static long chunkKey( int x, int z )
-    {
-        return ( (long) x << 32 ) | z & 0xFFFFFFFL;
+    private static long chunkKey(int x, int z) {
+        return ((long) x << 32) | z & 0xFFFFFFFL;
     }
 
-    public void cleanup()
-    {
+    public void cleanup() {
         converterThread.interrupt();
-        try
-        {
+        try {
             ioThread.stopping = true;
             ioThread.join();
-        } catch ( InterruptedException e )
-        {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    public void removeChunk( int x, int z )
-    {
+    public void removeChunk(int x, int z) {
         boolean hadMapped;
-        long key = chunkKey( x, z );
-        synchronized ( activeChunks )
-        {
-            hadMapped = activeChunks.remove( key ) != null;
+        long key = chunkKey(x, z);
+        synchronized (activeChunks) {
+            hadMapped = activeChunks.remove(key) != null;
         }
-        if ( !hadMapped && beingProcessed.containsKey( key ) )
-        {
-            beingProcessed.remove( key );
+        if (!hadMapped && beingProcessed.containsKey(key)) {
+            beingProcessed.remove(key);
         }
     }
 
-    private class ConverterThread extends Thread
-    {
+    private class ConverterThread extends Thread {
+        @SuppressWarnings("deprecation")
         @Override
-        public void run()
-        {
-            try
-            {
-                while ( true )
-                {
+        public void run() {
+            try {
+                while (true) {
                     ChunkSnapshot chunkSnapshot = toProcess.take();
-                    long key = chunkKey( chunkSnapshot.getX(), chunkSnapshot.getZ() );
-                    if ( !beingProcessed.containsKey( key ) ) continue;
-                    ActiveChunk activeChunk = new ActiveChunk( chunkSnapshot.getX(), chunkSnapshot.getZ() );
-                    for ( int y = 0; y < 256; y++ )
-                    {
-                        if ( chunkSnapshot.isSectionEmpty( y >> 4 ) ) continue;
-                        for ( int x = 0; x < 16; x++ )
-                        {
-                            for ( int z = 0; z < 16; z++ )
-                            {
-                                activeChunk.setBlock( x, y, z, (short) chunkSnapshot.getBlockTypeId( x, y, z ) );
-                                activeChunk.setData( x, y, z, (byte) chunkSnapshot.getBlockData( x, y, z ) );
-                                activeChunk.setBlockLight( x, y, z, (byte) chunkSnapshot.getBlockEmittedLight( x, y, z ) );
-                                activeChunk.setSkyLight( x, y, z, (byte) chunkSnapshot.getBlockSkyLight( x, y, z ) );
+                    long key = chunkKey(chunkSnapshot.getX(), chunkSnapshot.getZ());
+                    if (!beingProcessed.containsKey(key)) continue;
+                    ActiveChunk activeChunk = new ActiveChunk(chunkSnapshot.getX(), chunkSnapshot.getZ());
+                    for (int y = 0; y < 256; y++) {
+                        if (chunkSnapshot.isSectionEmpty(y >> 4)) continue;
+                        for (int x = 0; x < 16; x++) {
+                            for (int z = 0; z < 16; z++) {
+                                activeChunk.setBlock(x, y, z, (short) chunkSnapshot.getBlockTypeId(x, y, z));
+                                activeChunk.setData(x, y, z, (byte) chunkSnapshot.getBlockData(x, y, z));
+                                activeChunk.setBlockLight(x, y, z, (byte) chunkSnapshot.getBlockEmittedLight(x, y, z));
+                                activeChunk.setSkyLight(x, y, z, (byte) chunkSnapshot.getBlockSkyLight(x, y, z));
                             }
                         }
                     }
-                    if ( beingProcessed.containsKey( key ) )
-                    { //Not cancelled
-                        synchronized ( activeChunks )
-                        {
-                            activeChunks.put( key, activeChunk );
+                    if (beingProcessed.containsKey(key)) { //Not cancelled
+                        synchronized (activeChunks) {
+                            activeChunks.put(key, activeChunk);
                         }
-                        beingProcessed.remove( key );
+                        beingProcessed.remove(key);
                     }
                 }
-            } catch ( InterruptedException e )
-            {
+            } catch (InterruptedException e) {
                 interrupt();
             }
         }
     }
 
-    private class IOThread extends Thread
-    {
+    private class IOThread extends Thread {
         public volatile boolean stopping = false;
 
         private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<Runnable>();
 
-        public void saveChunk( ActiveChunk chunk )
-        {
-            tasks.add( new Runnable()
-            {
+        public void saveChunk(ActiveChunk chunk) {
+            tasks.add(new Runnable() {
                 @Override
-                public void run()
-                {
+                public void run() {
                     //TODO: Saving
                 }
-            } );
+            });
         }
 
         @Override
-        public void run()
-        {
-            try
-            {
-                while ( true )
-                {
+        public void run() {
+            try {
+                while (true) {
                     Runnable task;
-                    if ( stopping )
-                    {
+                    if (stopping) {
                         task = tasks.poll();
-                        if ( task == null )
-                        {
+                        if (task == null) {
                             return;
                         }
-                    } else
-                    {
-                        task = tasks.poll( 5, TimeUnit.SECONDS );
-                        if ( task == null )
-                        {
-                            if ( stopping )
-                            {
+                    } else {
+                        task = tasks.poll(5, TimeUnit.SECONDS);
+                        if (task == null) {
+                            if (stopping) {
                                 return;
-                            } else
-                            {
+                            } else {
                                 continue;
                             }
                         }
@@ -159,8 +123,7 @@ public class ChunkManager
                     }
                     task.run();
                 }
-            } catch ( InterruptedException e )
-            {
+            } catch (InterruptedException e) {
                 interrupt();
             }
         }

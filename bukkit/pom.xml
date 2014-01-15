@@ -89,6 +89,10 @@
                                     <pattern>org.apache</pattern>
                                     <shadedPattern>think.webglmap.lib.apache</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>com.jcraft</pattern>
+                                    <shadedPattern>think.webglmap.lib.jcraft</shadedPattern>
+                                </relocation>
                             </relocations>
                             <artifactSet>
                                 <includes>

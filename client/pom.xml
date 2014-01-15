@@ -33,6 +33,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-elemental</artifactId>
+            <version>${gwtVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>think.webglmap</groupId>
             <artifactId>shared</artifactId>
             <version>0.1-SNAPSHOT</version>
