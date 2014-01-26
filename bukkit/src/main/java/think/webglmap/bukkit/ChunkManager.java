@@ -2,10 +2,11 @@ package think.webglmap.bukkit;
 
 import gnu.trove.map.hash.TLongObjectHashMap;
 import org.bukkit.ChunkSnapshot;
-import think.webglmap.world.ActiveChunk;
+import think.webglmap.bukkit.world.ActiveChunk;
 
 import java.util.concurrent.*;
 
+//TODO: Per a world
 public class ChunkManager {
 
     private final WebglMapPlugin plugin;

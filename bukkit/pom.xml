@@ -28,7 +28,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.7.2-R0.1-SNAPSHOT</version>
+            <version>1.7.2-R0.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -40,11 +40,6 @@
             <artifactId>trove4j</artifactId>
             <version>3.0.3</version>
         </dependency>
-        <dependency>
-            <groupId>think.webglmap</groupId>
-            <artifactId>shared</artifactId>
-            <version>0.1-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 
     <properties>
@@ -52,21 +47,7 @@
     </properties>
 
     <build>
-        <finalName>webglmap-${project.version}</finalName>
-        <resources>
-            <resource>
-                <targetPath>www</targetPath>
-                <directory>${basedir}/../client/target/client-${client.version}</directory>
-                <filtering>true</filtering>
-                <excludes>
-                    <exclude>WEB-INF/**</exclude>
-                </excludes>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>false</filtering>
-            </resource>
-        </resources>
+        <finalName>WebGLMap</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -93,11 +74,17 @@
                                     <pattern>com.jcraft</pattern>
                                     <shadedPattern>think.webglmap.lib.jcraft</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>gnu.trove</pattern>
+                                    <shadedPattern>think.webglmap.lib.trove</shadedPattern>
+                                </relocation>
                             </relocations>
                             <artifactSet>
                                 <includes>
                                     <includes>io.netty:*</includes>
                                     <includes>commons-io:*</includes>
+                                    <includes>net.sf.trove4j:*</includes>
+                                    <includes>com.jcraft:*</includes>
                                 </includes>
                             </artifactSet>
                         </configuration>

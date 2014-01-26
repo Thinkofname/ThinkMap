@@ -5,3 +5,5 @@
 dependency-reduced-pom.xml
 
 target
+/client/build
+/client/docs
