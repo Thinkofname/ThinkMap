@@ -17,7 +17,7 @@ class Chunk {
       for (int z = 0; z < 16; z++) {
         int o = random.nextInt(5);
         for (int y = 15; y < 50 + o; y++) {
-          setBlock(x, y, z, random.nextBool() ? Block.STONE : Block.DIRT);
+          setBlock(x, y, z, Block.blockFromLegacyId(random.nextInt(11) + 1));
         }
       }
     }
@@ -119,6 +119,7 @@ class Chunk {
       window.console.timeEnd("Chunk Build");
     }
     if (renderBuffer != null && triangleCount != 0) {
+      gl.uniform2f(offsetLocation, x, z);
       gl.bindBuffer(ARRAY_BUFFER, renderBuffer);
       gl.vertexAttribPointer(positionLocation, 3, UNSIGNED_BYTE, false, 6, 0);
       gl.vertexAttribPointer(colourLocation, 3, UNSIGNED_BYTE, true, 6, 3);

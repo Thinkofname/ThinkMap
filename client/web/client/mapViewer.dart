@@ -20,12 +20,15 @@ World world = new World();
 Program mainProgram;
 UniformLocation pMatrixLocation;
 UniformLocation uMatrixLocation;
+UniformLocation offsetLocation;
 int positionLocation;
 int colourLocation;
 
-Chunk tempChunk = new Chunk(0, 0);
+List<Chunk> tempChunk = new List();
 
 main() {
+  Block._allBlocks; // Get around a dart issue
+
   canvas = document.getElementById("main");
   gl = canvas.getContext3d();
   canvas.width = window.innerWidth;
@@ -44,6 +47,7 @@ main() {
   mainProgram = createProgram(gl, chunkVertexShader, chunkFragmentShader);
   pMatrixLocation = gl.getUniformLocation(mainProgram, "pMatrix");
   uMatrixLocation = gl.getUniformLocation(mainProgram, "uMatrix");
+  offsetLocation = gl.getUniformLocation(mainProgram, "offset");
   positionLocation = gl.getAttribLocation(mainProgram, "position");
   colourLocation = gl.getAttribLocation(mainProgram, "colour");
   gl.enableVertexAttribArray(positionLocation);
@@ -53,6 +57,13 @@ main() {
   gl.enable(CULL_FACE);
   gl.cullFace(BACK);
   gl.frontFace(CCW);
+
+  int viewDist = 10;
+  for (int x = -viewDist; x < viewDist; x++) {
+    for (int z = -viewDist; z < viewDist; z++) {
+      tempChunk.add(new Chunk(x, z));
+    }
+  }
 
   draw(0);
 
@@ -87,14 +98,16 @@ draw(num highResTime) {
 
   uMatrix.scale(1.0, -1.0, 1.0);
   uMatrix.rotateX(0.6);
-  uMatrix.translate(0.0, -85.0 - (posY/30), -50.0);
+  uMatrix.translate(0.0, -85.0 - (posY/3.0), -50.0);
   uMatrix.rotateY(pos/200);
-  uMatrix.translate(-8.0, 0.0, -8.0);
+//  uMatrix.translate(-8.0, 0.0, -8.0);
 //  uMatrix.translate(-8.0, -70.0, -8.0);
   uMatrix.copyIntoArray(uMatrixList);
   gl.uniformMatrix4fv(uMatrixLocation, false, uMatrixList);
 
-  tempChunk.render(gl);
+  for (Chunk chunk in tempChunk) {
+    chunk.render(gl);
+  }
 
   window.requestAnimationFrame(draw);
 }

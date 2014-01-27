@@ -18,18 +18,19 @@ class Block {
 
   static Map<int, Block> _blocksLegacy = new Map();
   static Map<String, Block> _blocks = new Map();
+  static var _allBlocks = [AIR, STONE, GRASS, DIRT, COBBLESTONE, PLANKS, SAPLINGS, BEDROCK, FLOWING_WATER, WATER, FLOWING_LAVA, LAVA, SAND];
 
   static Block blockFromName(String name) {
     return _blocks[name];
   }
 
   ///**Warning:** this will be dropped in future versions of Minecraft
-  static Block blockFromLegacyId(int id) {
+  @deprecated static Block blockFromLegacyId(int id) {
     return _blocksLegacy[id];
   }
 
   ///**Warning:** this will be dropped in future versions of Minecraft
-  int legacyId;
+  @deprecated int legacyId;
   String name;
 
   bool renderable = true;
@@ -57,10 +58,10 @@ class Block {
     int b = colour & 0xFF;
 
     if (y + 1 <= 255 && !chunk.getBlock(x, y + 1, z).solid) {
-      double topRight = 1.0 - (_numBlocksRegion(chunk, x - 1, y + 1, z - 1, x + 1, y + 2, z + 1) / 8);
-      double topLeft = 1.0 - (_numBlocksRegion(chunk, x, y + 1, z - 1, x + 2, y + 2, z + 1) / 8);
-      double bottomLeft = 1.0 - (_numBlocksRegion(chunk, x, y + 1, z, x + 2, y + 2, z + 2) / 8);
-      double bottomRight = 1.0 - (_numBlocksRegion(chunk, x - 1, y + 1, z, x + 1, y + 2, z + 2) / 8);
+      double topRight = 1.0 - (_numBlocksRegion(chunk, x - 1, y + 1, z - 1, x + 1, y + 2, z + 1)/ 4);
+      double topLeft = 1.0 - (_numBlocksRegion(chunk, x, y + 1, z - 1, x + 2, y + 2, z + 1)/ 4);
+      double bottomLeft = 1.0 - (_numBlocksRegion(chunk, x, y + 1, z, x + 2, y + 2, z + 2)/ 4);
+      double bottomRight = 1.0 - (_numBlocksRegion(chunk, x - 1, y + 1, z, x + 1, y + 2, z + 2)/ 4);
 
       builder
         ..position(x, y + 1, z)
@@ -80,10 +81,10 @@ class Block {
     //TODO: Bottom side
 
     if (x + 1 <= 15 && !chunk.getBlock(x + 1, y, z).solid) {
-      double topRight = 1.0 - (_numBlocksRegion(chunk, x + 1, y, z, x + 2, y + 2, z + 2) / 8);
-      double topLeft = 1.0 - (_numBlocksRegion(chunk, x + 1, y, z - 1, x + 2, y + 2, z + 1) / 8);
-      double bottomLeft = 1.0 - (_numBlocksRegion(chunk, x + 1, y - 1, z - 1, x + 2, y + 1, z + 1) / 8);
-      double bottomRight = 1.0 - (_numBlocksRegion(chunk, x + 1, y - 1, z, x + 2, y + 1, z + 2) / 8);
+      double topRight = 1.0 - (_numBlocksRegion(chunk, x + 1, y, z, x + 2, y + 2, z + 2)/ 4);
+      double topLeft = 1.0 - (_numBlocksRegion(chunk, x + 1, y, z - 1, x + 2, y + 2, z + 1)/ 4);
+      double bottomLeft = 1.0 - (_numBlocksRegion(chunk, x + 1, y - 1, z - 1, x + 2, y + 1, z + 1)/ 4);
+      double bottomRight = 1.0 - (_numBlocksRegion(chunk, x + 1, y - 1, z, x + 2, y + 1, z + 2)/ 4);
       builder
         ..position(x + 1, y, z)
         ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
@@ -100,10 +101,10 @@ class Block {
     }
 
     if (x - 1 >= 0 && !chunk.getBlock(x - 1, y, z).solid) {
-      double topRight = 1.0 - (_numBlocksRegion(chunk, x - 2, y, z - 1, x - 1, y + 2, z + 1) / 8);
-      double topLeft = 1.0 - (_numBlocksRegion(chunk, x - 2, y, z, x - 1, y + 2, z + 2) / 8);
-      double bottomLeft = 1.0 - (_numBlocksRegion(chunk, x - 2, y - 1, z, x - 1, y + 1, z + 2) / 8);
-      double bottomRight = 1.0 - (_numBlocksRegion(chunk, x - 2, y - 1, z - 1, x - 1, y + 1, z + 1) / 8);
+      double topRight = 1.0 - (_numBlocksRegion(chunk, x - 1, y, z - 1, x, y + 2, z + 1)/ 4);
+      double topLeft = 1.0 - (_numBlocksRegion(chunk, x - 1, y, z, x, y + 2, z + 2)/ 4);
+      double bottomLeft = 1.0 - (_numBlocksRegion(chunk, x - 1, y - 1, z, x, y + 1, z + 2)/ 4);
+      double bottomRight = 1.0 - (_numBlocksRegion(chunk, x - 1, y - 1, z - 1, x, y + 1, z + 1)/ 4);
       builder
         ..position(x, y, z)
         ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
@@ -120,10 +121,10 @@ class Block {
     }
 
     if (z + 1 <= 15 && !chunk.getBlock(x, y, z + 1).solid) {
-      double topRight = 1.0 - (_numBlocksRegion(chunk, x - 1, y, z + 1, x + 1, y + 2, z + 2) / 8);
-      double topLeft = 1.0 - (_numBlocksRegion(chunk, x, y, z + 1, x + 2, y + 2, z + 2) / 8);
-      double bottomLeft = 1.0 - (_numBlocksRegion(chunk, x, y - 1, z + 1, x + 2, y + 1, z + 2) / 8);
-      double bottomRight = 1.0 - (_numBlocksRegion(chunk, x - 1, y - 1, z + 1, x + 1, y + 1, z + 2) / 8);
+      double topRight = 1.0 - (_numBlocksRegion(chunk, x - 1, y, z + 1, x + 1, y + 2, z + 2)/ 4);
+      double topLeft = 1.0 - (_numBlocksRegion(chunk, x, y, z + 1, x + 2, y + 2, z + 2)/ 4);
+      double bottomLeft = 1.0 - (_numBlocksRegion(chunk, x, y - 1, z + 1, x + 2, y + 1, z + 2)/ 4);
+      double bottomRight = 1.0 - (_numBlocksRegion(chunk, x - 1, y - 1, z + 1, x + 1, y + 1, z + 2)/ 4);
       builder
         ..position(x, y, z + 1)
         ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
@@ -140,10 +141,10 @@ class Block {
     }
 
     if (z - 1 >= 0 && !chunk.getBlock(x, y, z - 1).solid) {
-      double topRight = 1.0 - (_numBlocksRegion(chunk, x, y, z - 1, x + 2, y + 2, z) / 8);
-      double topLeft = 1.0 - (_numBlocksRegion(chunk, x - 1, y, z - 1, x + 1, y + 2, z) / 8);
-      double bottomLeft = 1.0 - (_numBlocksRegion(chunk, x - 1, y - 1, z - 1, x + 1, y + 1, z) / 8);
-      double bottomRight = 1.0 - (_numBlocksRegion(chunk, x, y - 1, z - 1, x + 2, y + 1, z) / 8);
+      double topRight = 1.0 - (_numBlocksRegion(chunk, x, y, z - 1, x + 2, y + 2, z)/ 4);
+      double topLeft = 1.0 - (_numBlocksRegion(chunk, x - 1, y, z - 1, x + 1, y + 2, z)/ 4);
+      double bottomLeft = 1.0 - (_numBlocksRegion(chunk, x - 1, y - 1, z - 1, x + 1, y + 1, z)/ 4);
+      double bottomRight = 1.0 - (_numBlocksRegion(chunk, x, y - 1, z - 1, x + 2, y + 1, z)/ 4);
       builder
         ..position(x, y, z)
         ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
