@@ -5,6 +5,7 @@ import "dart:web_gl";
 import "dart:async";
 import 'dart:typed_data';
 import "dart:math";
+import "dart:collection";
 import "package:vector_math/vector_math.dart";
 
 part "chunk.dart";
@@ -24,104 +25,100 @@ UniformLocation offsetLocation;
 int positionLocation;
 int colourLocation;
 
-List<Chunk> tempChunk = new List();
-
 main() {
-  Block._allBlocks; // Get around a dart issue
+    Block._allBlocks; // Get around a dart issue
 
-  canvas = document.getElementById("main");
-  gl = canvas.getContext3d();
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  window.onResize.listen((e) {
+    canvas = document.getElementById("main");
+    gl = canvas.getContext3d();
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    window.onResize.listen((e) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        pMatrix = makePerspectiveMatrix(75, canvas.width / canvas.height, 0.1, 100000);
+        pMatrix.copyIntoArray(pMatrixList);
+    });
     pMatrix = makePerspectiveMatrix(75, canvas.width / canvas.height, 0.1, 100000);
     pMatrix.copyIntoArray(pMatrixList);
-  });
-  pMatrix = makePerspectiveMatrix(75, canvas.width / canvas.height, 0.1, 100000);
-  pMatrix.copyIntoArray(pMatrixList);
 
-  var chunkVertexShader = createShader(gl, chunkVertexShaderSource, VERTEX_SHADER);
-  var chunkFragmentShader = createShader(gl, chunkFragmentShaderSource, FRAGMENT_SHADER);
-  mainProgram = createProgram(gl, chunkVertexShader, chunkFragmentShader);
-  pMatrixLocation = gl.getUniformLocation(mainProgram, "pMatrix");
-  uMatrixLocation = gl.getUniformLocation(mainProgram, "uMatrix");
-  offsetLocation = gl.getUniformLocation(mainProgram, "offset");
-  positionLocation = gl.getAttribLocation(mainProgram, "position");
-  colourLocation = gl.getAttribLocation(mainProgram, "colour");
-  gl.enableVertexAttribArray(positionLocation);
-  gl.enableVertexAttribArray(colourLocation);
+    var chunkVertexShader = createShader(gl, chunkVertexShaderSource, VERTEX_SHADER);
+    var chunkFragmentShader = createShader(gl, chunkFragmentShaderSource, FRAGMENT_SHADER);
+    mainProgram = createProgram(gl, chunkVertexShader, chunkFragmentShader);
+    pMatrixLocation = gl.getUniformLocation(mainProgram, "pMatrix");
+    uMatrixLocation = gl.getUniformLocation(mainProgram, "uMatrix");
+    offsetLocation = gl.getUniformLocation(mainProgram, "offset");
+    positionLocation = gl.getAttribLocation(mainProgram, "position");
+    colourLocation = gl.getAttribLocation(mainProgram, "colour");
+    gl.enableVertexAttribArray(positionLocation);
+    gl.enableVertexAttribArray(colourLocation);
 
-  gl.enable(DEPTH_TEST);
-  gl.enable(CULL_FACE);
-  gl.cullFace(BACK);
-  gl.frontFace(CCW);
+    gl.enable(DEPTH_TEST);
+    gl.enable(CULL_FACE);
+    gl.cullFace(BACK);
+    gl.frontFace(CCW);
 
-  int viewDist = 10;
-  for (int x = -viewDist; x < viewDist; x++) {
-    for (int z = -viewDist; z < viewDist; z++) {
-      tempChunk.add(new Chunk(x, z));
+    int viewDist = 10;
+    for (int x = -viewDist; x < viewDist; x++) {
+        for (int z = -viewDist; z < viewDist; z++) {
+            world.addChunk(new Chunk(x, z));
+        }
     }
-  }
 
-  draw(0);
+    draw(0);
 
-  window.onMouseMove.listen((e){
-    pos = e.client.x - (window.innerWidth~/2);
-    posY = e.client.y - (window.innerHeight~/2);
-  });
+    window.onMouseMove.listen((e) {
+        pos = e.client.x - (window.innerWidth ~/ 2);
+        posY = e.client.y - (window.innerHeight ~/ 2);
+    });
 }
 
 Matrix4 pMatrix;
+
 Float32List pMatrixList = new Float32List(4 * 4);
 
 Matrix4 uMatrix = new Matrix4.identity();
+
 Float32List uMatrixList = new Float32List(4 * 4);
 
 int pos = 0;
+
 int posY = 0;
 
 draw(num highResTime) {
-  gl.viewport(0, 0, canvas.width, canvas.height);
-  double skyPosition = getScale();
-  gl.clearColor(
-      getScaledNumber(122.0/255.0, 0.0, skyPosition),
-      getScaledNumber(165.0/255.0, 0.0, skyPosition),
-      getScaledNumber(247.0/255.0, 0.0, skyPosition), 1);
-  gl.clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    double skyPosition = getScale();
+    gl.clearColor(getScaledNumber(122.0 / 255.0, 0.0, skyPosition), getScaledNumber(165.0 / 255.0, 0.0, skyPosition), getScaledNumber(247.0 / 255.0, 0.0, skyPosition), 1);
+    gl.clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
 
-  gl.useProgram(mainProgram);
-  gl.uniformMatrix4fv(pMatrixLocation, false, pMatrixList);
+    gl.useProgram(mainProgram);
+    gl.uniformMatrix4fv(pMatrixLocation, false, pMatrixList);
 
-  uMatrix.setIdentity();
+    uMatrix.setIdentity();
 
-  uMatrix.scale(1.0, -1.0, 1.0);
-  uMatrix.rotateX(0.6);
-  uMatrix.translate(0.0, -85.0 - (posY/3.0), -50.0);
-  uMatrix.rotateY(pos/200);
+    uMatrix.scale(1.0, -1.0, 1.0);
+    uMatrix.rotateX(0.6);
+    uMatrix.translate(0.0, -85.0 + (posY / 3.0), -50.0);
+    uMatrix.rotateY(pos / 200);
 //  uMatrix.translate(-8.0, 0.0, -8.0);
 //  uMatrix.translate(-8.0, -70.0, -8.0);
-  uMatrix.copyIntoArray(uMatrixList);
-  gl.uniformMatrix4fv(uMatrixLocation, false, uMatrixList);
+    uMatrix.copyIntoArray(uMatrixList);
+    gl.uniformMatrix4fv(uMatrixLocation, false, uMatrixList);
 
-  for (Chunk chunk in tempChunk) {
-    chunk.render(gl);
-  }
+    world.render(gl);
 
-  window.requestAnimationFrame(draw);
+    window.requestAnimationFrame(draw);
 }
 
 double getScale() {
-  double scale = (world.currentTime - 6000) / 12000;
-  if (scale > 1.0) {
-    scale = 2.0 - scale;
-  } else if (scale < 0) {
-    scale = -scale;
-  }
-  return scale;
+    double scale = (world.currentTime - 6000) / 12000;
+    if (scale > 1.0) {
+        scale = 2.0 - scale;
+    } else if (scale < 0) {
+        scale = -scale;
+    }
+    return scale;
 }
 
 double getScaledNumber(double x, double y, double scale) {
-  return x + (y - x) * scale;
+    return x + (y - x) * scale;
 }
