@@ -17,6 +17,10 @@ packages:
     description: crypto
     source: hosted
     version: "0.9.0"
+  fixnum:
+    description: fixnum
+    source: hosted
+    version: "0.9.0"
   image:
     description: image
     source: hosted

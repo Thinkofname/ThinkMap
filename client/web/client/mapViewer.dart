@@ -14,6 +14,7 @@ part "chunk.dart";
 part "world.dart";
 part "shaders.dart";
 part "blocks.dart";
+part "otherblocks.dart";
 
 RenderingContext gl;
 CanvasElement canvas;
@@ -26,6 +27,7 @@ UniformLocation uMatrixLocation;
 UniformLocation offsetLocation;
 UniformLocation blockTextureLocation;
 UniformLocation frameLocation;
+UniformLocation disAlphaLocation;
 int positionLocation;
 int colourLocation;
 int textureIdLocation;
@@ -57,6 +59,7 @@ Texture loadTexture(RenderingContext gl, ImageElement imageElement) {
     Texture tex = gl.createTexture();
     gl.bindTexture(TEXTURE_2D, tex);
     gl.pixelStorei(UNPACK_FLIP_Y_WEBGL, 0);
+    gl.pixelStorei(UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
     gl.texImage2DImage(TEXTURE_2D, 0, RGBA, RGBA, UNSIGNED_BYTE, imageElement);
     gl.texParameteri(TEXTURE_2D, TEXTURE_MAG_FILTER, NEAREST);
     gl.texParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, NEAREST);
@@ -68,16 +71,16 @@ start() {
     Block._allBlocks; // Get around a dart issue
 
     canvas = document.getElementById("main");
-    gl = canvas.getContext3d();
+    gl = canvas.getContext3d(alpha: false, premultipliedAlpha: false, antialias: false);
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     window.onResize.listen((e) {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        pMatrix = makePerspectiveMatrix(75, canvas.width / canvas.height, 0.1, 100000);
+        pMatrix = makePerspectiveMatrix(75, canvas.width / canvas.height, 0.1, 500);
         pMatrix.copyIntoArray(pMatrixList);
     });
-    pMatrix = makePerspectiveMatrix(75, canvas.width / canvas.height, 0.1, 100000);
+    pMatrix = makePerspectiveMatrix(75, canvas.width / canvas.height, 0.1, 500);
     pMatrix.copyIntoArray(pMatrixList);
 
     for (ImageElement img in blockTexturesRaw) {
@@ -92,6 +95,7 @@ start() {
     offsetLocation = gl.getUniformLocation(mainProgram, "offset");
     frameLocation = gl.getUniformLocation(mainProgram, "frame");
     blockTextureLocation = gl.getUniformLocation(mainProgram, "texture");
+    disAlphaLocation = gl.getUniformLocation(mainProgram, "disAlpha");
     positionLocation = gl.getAttribLocation(mainProgram, "position");
     colourLocation = gl.getAttribLocation(mainProgram, "colour");
     textureIdLocation = gl.getAttribLocation(mainProgram, "textureId");
@@ -105,6 +109,9 @@ start() {
     gl.enable(CULL_FACE);
     gl.cullFace(BACK);
     gl.frontFace(CCW);
+
+    gl.enable(BLEND);
+    gl.blendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
 
     int viewDist = 10;
     for (int x = -viewDist; x < viewDist; x++) {
@@ -140,12 +147,13 @@ Float32List uMatrixList = new Float32List(4 * 4);
 
 bool movingForward = false;
 bool movingBackwards = false;
-Camera camera = new Camera()..y = 75.0;
+Camera camera = new Camera()..y = 60.0;
 
 draw(num highResTime) {
     gl.viewport(0, 0, canvas.width, canvas.height);
     double skyPosition = getScale();
     gl.clearColor(getScaledNumber(122.0 / 255.0, 0.0, skyPosition), getScaledNumber(165.0 / 255.0, 0.0, skyPosition), getScaledNumber(247.0 / 255.0, 0.0, skyPosition), 1);
+    gl.colorMask(true, true, true, false);
     gl.clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
 
     gl.useProgram(mainProgram);
@@ -177,6 +185,10 @@ draw(num highResTime) {
 
     world.render(gl);
 
+    gl.clearColor(1, 1, 1, 1);
+    gl.colorMask(false, false, false, true);
+    gl.clear(COLOR_BUFFER_BIT);
+
     window.requestAnimationFrame(draw);
 }
 
@@ -202,3 +214,6 @@ class Camera {
     double rotX = 0.0;
     double rotY = 0.0;
 }
+
+// Because dart is broken
+int leftShift(int v, int x) => v < 0 ? -((-v)<<x) : v << x;

@@ -50,9 +50,7 @@ class World {
         }
         if (_buildQueue.isNotEmpty && lastSort <= 0) {
             lastSort = _buildQueue.length ~/ 16;
-            window.console.time("Sort");
             _buildQueue.sort(_queueCompare);
-            window.console.timeEnd("Sort");
         }
         lastSort--;
         while (run && stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS && _buildQueue.isNotEmpty) {
@@ -67,25 +65,30 @@ class World {
             }
         }
         stopwatch.stop();
+        gl.uniform1i(disAlphaLocation, 1);
         chunks.forEach((k, v) {
-            v.render(gl);
+            v.render(gl, 0);
+        });
+        gl.uniform1i(disAlphaLocation, 0);
+        chunks.forEach((k, v) {
+            v.render(gl, 1);
         });
     }
 
     int _queueCompare(_BuildJob a, _BuildJob b) {
-        num adx = (a.chunk.x<<4) - camera.x;
-        num ady = (a.i<<4) - camera.y;
-        num adz = (a.chunk.z<<4) - camera.z;
+        num adx = leftShift(a.chunk.x, 4) - camera.x;
+        num ady = leftShift(a.i, 4) - camera.y;
+        num adz = leftShift(a.chunk.z, 4) - camera.z;
         num distA = adx*adx + ady*ady + adz*adz;
-        num bdx = (b.chunk.x<<4) - camera.x;
-        num bdy = (b.i<<4) - camera.y;
-        num bdz = (b.chunk.z<<4) - camera.z;
+        num bdx = leftShift(b.chunk.x, 4) - camera.x;
+        num bdy = leftShift(b.i, 4) - camera.y;
+        num bdz = leftShift(b.chunk.z, 4) - camera.z;
         num distB = bdx*bdx + bdy*bdy + bdz*bdz;
 
-        num aa = atan2(camera.z - (a.chunk.z<<4), camera.x - (a.chunk.x<<4));
+        num aa = atan2(camera.z - leftShift(a.chunk.z, 4), camera.x - leftShift(a.chunk.x, 4));
         num angleA = min((2 * PI) - (camera.rotY - aa).abs(), (camera.rotY - aa).abs());
 
-        num ba = atan2(camera.z - (b.chunk.z<<4), camera.x - (b.chunk.x<<4));
+        num ba = atan2(camera.z - leftShift(b.chunk.z, 4), camera.x - leftShift(b.chunk.x, 4));
         num angleB = min((2 * PI) - (camera.rotY - ba).abs(), (camera.rotY - ba).abs());
         return distB * (PI - ba) - distA * (PI - aa);
     }
@@ -109,7 +112,7 @@ class World {
         cacheZ = cz;
         var chunk = chunks[_chunkKey(cx, cz)];
         if (chunk == null) {
-            return Block.AIR;
+            return Block.BEDROCK;
         }
         cacheChunk = chunk;
         return cacheChunk.getBlock(x & 0xF, y, z & 0xF);

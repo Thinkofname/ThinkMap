@@ -37,6 +37,7 @@ precision mediump float;
 
 uniform sampler2D texture;
 uniform float frame;
+uniform int disAlpha;
 
 varying vec3 vColour;
 varying vec2 vTextureId;
@@ -51,7 +52,7 @@ void main(void) {
     pos.x += floor(mod(id, 32.0)) * 0.03125;
     pos.y += floor(id / 32.0) * 0.03125;
     gl_FragColor = texture2D(texture, pos) * vec4(vColour, 1.0);
-    if (gl_FragColor.a < 0.5) discard;
+    if (disAlpha == 1 && gl_FragColor.a < 0.5) discard;
 }
 """;
 
