@@ -7,3 +7,6 @@ dependency-reduced-pom.xml
 target
 /client/build
 /client/docs
+packages
+/client/mc/blocks
+/client/mc/out

@@ -3,3 +3,5 @@ dependencies:
   browser: any
   vector_math:
     git: https://github.com/johnmccutchan/vector_math.git
+  archive: 1.0.9
+  image: any

@@ -125,13 +125,15 @@ class Chunk {
             gl.bindBuffer(ARRAY_BUFFER, renderBuffer);
             gl.bufferData(ARRAY_BUFFER, chunkData, STATIC_DRAW);
 
-            triangleCount = chunkData.length ~/ 6;
+            triangleCount = chunkData.length ~/ 12;
         }
         if (renderBuffer != null && triangleCount != 0) {
             gl.uniform2f(offsetLocation, x, z);
             gl.bindBuffer(ARRAY_BUFFER, renderBuffer);
-            gl.vertexAttribPointer(positionLocation, 3, UNSIGNED_BYTE, false, 6, 0);
-            gl.vertexAttribPointer(colourLocation, 3, UNSIGNED_BYTE, true, 6, 3);
+            gl.vertexAttribPointer(positionLocation, 3, UNSIGNED_BYTE, false, 12, 0);
+            gl.vertexAttribPointer(colourLocation, 3, UNSIGNED_BYTE, true, 12, 3);
+            gl.vertexAttribPointer(textirePosLocation, 2, UNSIGNED_BYTE, false, 12, 6);
+            gl.vertexAttribPointer(textureIdLocation, 2, UNSIGNED_SHORT, false, 12, 8);
             gl.drawArrays(TRIANGLES, 0, triangleCount);
         }
     }
@@ -204,6 +206,23 @@ class BlockBuilder {
         _buffer.add(r);
         _buffer.add(g);
         _buffer.add(b);
+    }
+
+    static Uint8List transHelper = new Uint8List(8);
+    static Uint16List trans16 = new Uint16List.view(transHelper.buffer);
+
+    texId(int start, int end) {
+        trans16[0] = start;
+        trans16[1] = end;
+        _buffer.add(transHelper[0]);
+        _buffer.add(transHelper[1]);
+        _buffer.add(transHelper[2]);
+        _buffer.add(transHelper[3]);
+    }
+
+    tex(int x, int y) {
+        _buffer.add(x);
+        _buffer.add(y);
     }
 
     Uint8List toTypedList() {

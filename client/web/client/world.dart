@@ -49,7 +49,7 @@ class World {
             }
         }
         if (_buildQueue.isNotEmpty && lastSort <= 0) {
-            lastSort = _buildQueue.length * 2;
+            lastSort = _buildQueue.length ~/ 16;
             window.console.time("Sort");
             _buildQueue.sort(_queueCompare);
             window.console.timeEnd("Sort");
@@ -73,9 +73,21 @@ class World {
     }
 
     int _queueCompare(_BuildJob a, _BuildJob b) {
-        num distA = a.chunk.x * a.chunk.x + a.chunk.z * a.chunk.z + a.i * a.i;
-        num distB = b.chunk.x * b.chunk.x + b.chunk.z * b.chunk.z + b.i * b.i;
-        return distB - distA;
+        num adx = (a.chunk.x<<4) - camera.x;
+        num ady = (a.i<<4) - camera.y;
+        num adz = (a.chunk.z<<4) - camera.z;
+        num distA = adx*adx + ady*ady + adz*adz;
+        num bdx = (b.chunk.x<<4) - camera.x;
+        num bdy = (b.i<<4) - camera.y;
+        num bdz = (b.chunk.z<<4) - camera.z;
+        num distB = bdx*bdx + bdy*bdy + bdz*bdz;
+
+        num aa = atan2(camera.z - (a.chunk.z<<4), camera.x - (a.chunk.x<<4));
+        num angleA = min((2 * PI) - (camera.rotY - aa).abs(), (camera.rotY - aa).abs());
+
+        num ba = atan2(camera.z - (b.chunk.z<<4), camera.x - (b.chunk.x<<4));
+        num angleB = min((2 * PI) - (camera.rotY - ba).abs(), (camera.rotY - ba).abs());
+        return distB * (PI - ba) - distA * (PI - aa);
     }
 
     addChunk(Chunk chunk) {

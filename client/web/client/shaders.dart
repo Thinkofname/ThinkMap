@@ -3,26 +3,55 @@ part of mapViewer;
 var chunkVertexShaderSource = """
 attribute vec3 position;
 attribute vec3 colour;
+attribute vec2 texturePos;
+attribute vec2 textureId;
 
 uniform mat4 pMatrix;
 uniform mat4 uMatrix;
 uniform vec2 offset;
 
 varying vec3 vColour;
+varying vec2 vTextureId;
+varying vec2 vTexturePos;
 
 void main(void) {
-  gl_Position = pMatrix * uMatrix * vec4(position + vec3(offset.x * 16.0, 0.0, offset.y * 16.0), 1.0);
-  vColour = colour;
+    gl_Position = pMatrix * uMatrix * vec4(position + vec3(offset.x * 16.0, 0.0, offset.y * 16.0), 1.0);
+    vColour = colour;
+    vTextureId = textureId;
+    vTexturePos = texturePos;
+    if (vTexturePos.x == 0.0) {
+        vTexturePos.x = 0.01;
+    } else if (vTexturePos.x == 1.0) {
+        vTexturePos.x = 0.99;
+    }
+    if (vTexturePos.y == 0.0) {
+        vTexturePos.y = 0.01;
+    } else if (vTexturePos.y == 1.0) {
+        vTexturePos.y = 0.99;
+    }
 }
 """;
 
 var chunkFragmentShaderSource = """
 precision mediump float;
 
+uniform sampler2D texture;
+uniform float frame;
+
 varying vec3 vColour;
+varying vec2 vTextureId;
+varying vec2 vTexturePos;
 
 void main(void) {
-  gl_FragColor = vec4(vColour, 1.0);
+    float id = floor(vTextureId.x + 0.5);
+    if (floor((vTextureId.y - vTextureId.x) + 0.5) != 0.0) {
+        id = id + floor(mod(frame, vTextureId.y - vTextureId.x) + 0.5);
+    }
+    vec2 pos = vTexturePos * 0.03125;
+    pos.x += floor(mod(id, 32.0)) * 0.03125;
+    pos.y += floor(id / 32.0) * 0.03125;
+    gl_FragColor = texture2D(texture, pos) * vec4(vColour, 1.0);
+    if (gl_FragColor.a < 0.5) discard;
 }
 """;
 
