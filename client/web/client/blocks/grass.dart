@@ -30,10 +30,10 @@ class BlockGrass extends Block {
         int b = colour & 0xFF;
 
         if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x, y + 1, (chunk.z * 16) + z))) {
-            double topRight = 1.0 - (Block._numBlocksRegion(chunk, x - 1, y + 1, z - 1, x + 1, y + 2, z + 1) / 4);
-            double topLeft = 1.0 - (Block._numBlocksRegion(chunk, x, y + 1, z - 1, x + 2, y + 2, z + 1) / 4);
-            double bottomLeft = 1.0 - (Block._numBlocksRegion(chunk, x, y + 1, z, x + 2, y + 2, z + 2) / 4);
-            double bottomRight = 1.0 - (Block._numBlocksRegion(chunk, x - 1, y + 1, z, x + 1, y + 2, z + 2) / 4);
+            double topRight = 1.0 - (Block._numBlocksRegion(chunk, this, x - 1, y + 1, z - 1, x + 1, y + 2, z + 1) / 4);
+            double topLeft = 1.0 - (Block._numBlocksRegion(chunk, this, x, y + 1, z - 1, x + 2, y + 2, z + 1) / 4);
+            double bottomLeft = 1.0 - (Block._numBlocksRegion(chunk, this, x, y + 1, z, x + 2, y + 2, z + 2) / 4);
+            double bottomRight = 1.0 - (Block._numBlocksRegion(chunk, this, x - 1, y + 1, z, x + 1, y + 2, z + 2) / 4);
 
             TextureInfo texture = getTexture(BlockFace.TOP);
 
@@ -71,10 +71,10 @@ class BlockGrass extends Block {
         //TODO: Bottom side
 
         if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x + 1, y, (chunk.z * 16) + z))) {
-            double topRight = 1.0 - (Block._numBlocksRegion(chunk, x + 1, y, z, x + 2, y + 2, z + 2) / 4);
-            double topLeft = 1.0 - (Block._numBlocksRegion(chunk, x + 1, y, z - 1, x + 2, y + 2, z + 1) / 4);
-            double bottomLeft = 1.0 - (Block._numBlocksRegion(chunk, x + 1, y - 1, z - 1, x + 2, y + 1, z + 1) / 4);
-            double bottomRight = 1.0 - (Block._numBlocksRegion(chunk, x + 1, y - 1, z, x + 2, y + 1, z + 2) / 4);
+            double topRight = 1.0 - (Block._numBlocksRegion(chunk, this, x + 1, y, z, x + 2, y + 2, z + 2) / 4);
+            double topLeft = 1.0 - (Block._numBlocksRegion(chunk, this, x + 1, y, z - 1, x + 2, y + 2, z + 1) / 4);
+            double bottomLeft = 1.0 - (Block._numBlocksRegion(chunk, this, x + 1, y - 1, z - 1, x + 2, y + 1, z + 1) / 4);
+            double bottomRight = 1.0 - (Block._numBlocksRegion(chunk, this, x + 1, y - 1, z, x + 2, y + 1, z + 2) / 4);
 
             TextureInfo texture = getTexture(BlockFace.LEFT);
 
@@ -106,10 +106,10 @@ class BlockGrass extends Block {
         }
 
         if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x - 1, y, (chunk.z * 16) + z))) {
-            double topRight = 1.0 - (Block._numBlocksRegion(chunk, x - 1, y, z - 1, x, y + 2, z + 1) / 4);
-            double topLeft = 1.0 - (Block._numBlocksRegion(chunk, x - 1, y, z, x, y + 2, z + 2) / 4);
-            double bottomLeft = 1.0 - (Block._numBlocksRegion(chunk, x - 1, y - 1, z, x, y + 1, z + 2) / 4);
-            double bottomRight = 1.0 - (Block._numBlocksRegion(chunk, x - 1, y - 1, z - 1, x, y + 1, z + 1) / 4);
+            double topRight = 1.0 - (Block._numBlocksRegion(chunk, this, x - 1, y, z - 1, x, y + 2, z + 1) / 4);
+            double topLeft = 1.0 - (Block._numBlocksRegion(chunk, this, x - 1, y, z, x, y + 2, z + 2) / 4);
+            double bottomLeft = 1.0 - (Block._numBlocksRegion(chunk, this, x - 1, y - 1, z, x, y + 1, z + 2) / 4);
+            double bottomRight = 1.0 - (Block._numBlocksRegion(chunk, this, x - 1, y - 1, z - 1, x, y + 1, z + 1) / 4);
 
             TextureInfo texture = getTexture(BlockFace.RIGHT);
 
@@ -141,10 +141,10 @@ class BlockGrass extends Block {
         }
 
         if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x, y, (chunk.z * 16) + z + 1))) {
-            double topRight = 1.0 - (Block._numBlocksRegion(chunk, x - 1, y, z + 1, x + 1, y + 2, z + 2) / 4);
-            double topLeft = 1.0 - (Block._numBlocksRegion(chunk, x, y, z + 1, x + 2, y + 2, z + 2) / 4);
-            double bottomLeft = 1.0 - (Block._numBlocksRegion(chunk, x, y - 1, z + 1, x + 2, y + 1, z + 2) / 4);
-            double bottomRight = 1.0 - (Block._numBlocksRegion(chunk, x - 1, y - 1, z + 1, x + 1, y + 1, z + 2) / 4);
+            double topRight = 1.0 - (Block._numBlocksRegion(chunk, this, x - 1, y, z + 1, x + 1, y + 2, z + 2) / 4);
+            double topLeft = 1.0 - (Block._numBlocksRegion(chunk, this, x, y, z + 1, x + 2, y + 2, z + 2) / 4);
+            double bottomLeft = 1.0 - (Block._numBlocksRegion(chunk, this, x, y - 1, z + 1, x + 2, y + 1, z + 2) / 4);
+            double bottomRight = 1.0 - (Block._numBlocksRegion(chunk, this, x - 1, y - 1, z + 1, x + 1, y + 1, z + 2) / 4);
 
             TextureInfo texture = getTexture(BlockFace.FRONT);
 
@@ -176,10 +176,10 @@ class BlockGrass extends Block {
         }
 
         if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x, y, (chunk.z * 16) + z - 1))) {
-            double topRight = 1.0 - (Block._numBlocksRegion(chunk, x, y, z - 1, x + 2, y + 2, z) / 4);
-            double topLeft = 1.0 - (Block._numBlocksRegion(chunk, x - 1, y, z - 1, x + 1, y + 2, z) / 4);
-            double bottomLeft = 1.0 - (Block._numBlocksRegion(chunk, x - 1, y - 1, z - 1, x + 1, y + 1, z) / 4);
-            double bottomRight = 1.0 - (Block._numBlocksRegion(chunk, x, y - 1, z - 1, x + 2, y + 1, z) / 4);
+            double topRight = 1.0 - (Block._numBlocksRegion(chunk, this, x, y, z - 1, x + 2, y + 2, z) / 4);
+            double topLeft = 1.0 - (Block._numBlocksRegion(chunk, this, x - 1, y, z - 1, x + 1, y + 2, z) / 4);
+            double bottomLeft = 1.0 - (Block._numBlocksRegion(chunk, this, x - 1, y - 1, z - 1, x + 1, y + 1, z) / 4);
+            double bottomRight = 1.0 - (Block._numBlocksRegion(chunk, this, x, y - 1, z - 1, x + 2, y + 1, z) / 4);
 
             TextureInfo texture = getTexture(BlockFace.BACK);
 

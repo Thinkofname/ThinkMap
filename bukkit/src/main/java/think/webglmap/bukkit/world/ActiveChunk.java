@@ -1,5 +1,6 @@
 package think.webglmap.bukkit.world;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -7,9 +8,13 @@ public class ActiveChunk {
 
     private final int x, z;
 
+    @Getter
     private final short[][] blocks = new short[16][];
+    @Getter
     private final byte[][] blockData = new byte[16][];
+    @Getter
     private final byte[][] blockLight = new byte[16][];
+    @Getter
     private final byte[][] skyLight = new byte[16][];
 
     private final int[] counters = new int[16];
@@ -22,7 +27,7 @@ public class ActiveChunk {
             }
             blocks[section] = new short[16 * 16 * 16];
         }
-        int idx = x | (z << 4) | (y << 8);
+        int idx = x | (z << 4) | ((y&0xF) << 8);
         short oldBlock = blocks[section][idx];
         blocks[section][idx] = block;
 
@@ -42,7 +47,7 @@ public class ActiveChunk {
         if (blocks[section] == null) {
             return 0;
         }
-        return blocks[section][x | (z << 4) | (y << 8)];
+        return blocks[section][x | (z << 4) | ((y&0xF) << 8)];
     }
 
 
@@ -55,7 +60,7 @@ public class ActiveChunk {
                 blockData[section] = new byte[16 * 16 * 16 / 2];
             }
         }
-        int idx = (x << 1) | (z << 3) | (y << 7);
+        int idx = (x << 1) | (z << 3) | ((y&0xF) << 7);
         blockData[section][idx] = (byte) (((blockData[section][idx]
                 & (0xF << (((x + 1) & 1) * 4))) >> ((x & 1) * 4))
                 | data << ((x & 1) * 4));
@@ -67,7 +72,7 @@ public class ActiveChunk {
         if (blocks[section] == null) {
             return 0;
         }
-        return (byte) ((blockData[section][(x << 1) | (z << 3) | (y << 7)]
+        return (byte) ((blockData[section][(x << 1) | (z << 3) | ((y&0xF) << 7)]
                 & (0xF << ((x & 1) * 4))) >> (((x + 1) & 1) * 4));
     }
 
@@ -81,7 +86,7 @@ public class ActiveChunk {
                 blockLight[section] = new byte[16 * 16 * 16 / 2];
             }
         }
-        int idx = (x << 1) | (z << 3) | (y << 7);
+        int idx = (x << 1) | (z << 3) | ((y&0xF) << 7);
         blockLight[section][idx] = (byte) (((blockLight[section][idx]
                 & (0xF << (((x + 1) & 1) * 4))) >> ((x & 1) * 4))
                 | data << ((x & 1) * 4));
@@ -93,7 +98,7 @@ public class ActiveChunk {
         if (blockLight[section] == null) {
             return 0;
         }
-        return (byte) ((blockLight[section][(x << 1) | (z << 3) | (y << 7)]
+        return (byte) ((blockLight[section][(x << 1) | (z << 3) | ((y&0xF) << 7)]
                 & (0xF << ((x & 1) * 4))) >> (((x + 1) & 1) * 4));
     }
 
@@ -107,7 +112,7 @@ public class ActiveChunk {
                 skyLight[section] = new byte[16 * 16 * 16 / 2];
             }
         }
-        int idx = (x << 1) | (z << 3) | (y << 7);
+        int idx = (x << 1) | (z << 3) | ((y&0xF) << 7);
         skyLight[section][idx] = (byte) (((skyLight[section][idx]
                 & (0xF << (((x + 1) & 1) * 4))) >> ((x & 1) * 4))
                 | data << ((x & 1) * 4));
@@ -119,7 +124,7 @@ public class ActiveChunk {
         if (skyLight[section] == null) {
             return 0;
         }
-        return (byte) ((skyLight[section][(x << 1) | (z << 3) | (y << 7)]
+        return (byte) ((skyLight[section][(x << 1) | (z << 3) | ((y&0xF) << 7)]
                 & (0xF << ((x & 1) * 4))) >> (((x + 1) & 1) * 4));
     }
 }

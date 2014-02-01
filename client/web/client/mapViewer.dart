@@ -18,6 +18,7 @@ part "rendering.dart";
 part "box.dart";
 part "blocks/grass.dart";
 part "blocks/sapling.dart";
+part "network.dart";
 
 // Entry point
 main() {

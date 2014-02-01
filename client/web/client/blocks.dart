@@ -8,7 +8,7 @@ class Block {
     static final Block DIRT = new Block._internal(3, "minecraft:dirt", 0x715036, texture: "dirt");
     static final Block COBBLESTONE = new Block._internal(4, "minecraft:cobblestone", 0x505050, texture: "cobblestone");
     static final Block PLANKS = new Block._internal(5, "minecraft:planks", 0xB08E5C, texture: "planks_oak");
-    static final Block SAPLINGS = new BlockSapling._internal(6, "minecraft:sapling");
+    static final Block SAPLING = new BlockCross._internal(6, "minecraft:sapling")..collidable = false;
     static final Block BEDROCK = new Block._internal(7, "minecraft:bedrock", 0x303030, texture: "bedrock");
     static final Block FLOWING_WATER = new BlockWater._internal(8, "minecraft:flowing_water", "water_flow");
     static final Block WATER = new BlockWater._internal(9, "minecraft:water", "water_still");
@@ -48,13 +48,16 @@ class Block {
     static final Block GOLDEN_RAIL = new BlockFlat._internal(27, "minecraft:golden_rail", "rail_golden");
     static final Block DETECTOR_RAIL = new BlockFlat._internal(28, "minecraft:detector_rail", "rail_detector");
 
+    static final Block TALL_GRASS = new BlockCross._internal(31, "minecraft:tallgrass", texture: "tallgrass", forceColour: true, colour: 0xA7D389)
+        ..collidable = false;
+
     static Map<int, Block> _blocksLegacy = new Map();
 
     static Map<String, Block> _blocks = new Map();
 
-    static var _allBlocks = [AIR, STONE, GRASS, DIRT, COBBLESTONE, PLANKS, SAPLINGS, BEDROCK, FLOWING_WATER, WATER,
+    static var _allBlocks = [AIR, STONE, GRASS, DIRT, COBBLESTONE, PLANKS, SAPLING, BEDROCK, FLOWING_WATER, WATER,
         FLOWING_LAVA, LAVA, SAND, GRAVEL, GOLD_ORE, COAL_ORE, LOG, LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK,
-        DISPENSER, SANDSTONE, NOTEBLOCK, BED, GOLDEN_RAIL, DETECTOR_RAIL];
+        DISPENSER, SANDSTONE, NOTEBLOCK, BED, GOLDEN_RAIL, DETECTOR_RAIL, TALL_GRASS];
 
     static Block blockFromName(String name) {
         Block ret = _blocks[name];
@@ -80,6 +83,7 @@ class Block {
     bool transparent = false;
 
     bool solid = true;
+    bool collidable = true;
 
     int _colour = 0xFFFFFF;
     bool forceColour;
@@ -102,11 +106,13 @@ class Block {
         Block air = new Block._internal(0, "minecraft:air", 0xFFFFFF);
         air.renderable = false;
         air.solid = false;
+        air.collidable = false;
         return air;
     }
 
-    bool collidesWith(Box box) {
-        return false;
+    bool collidesWith(Box box, int x, int y, int z) {
+        if (!collidable) return false;
+        return box.checkBox(x.toDouble(), y.toDouble(), z.toDouble(), 1.0, 1.0, 1.0);
     }
 
     shouldRenderAgainst(Block block) => !block.solid;
@@ -127,10 +133,10 @@ class Block {
         }
 
         if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x, y + 1, (chunk.z * 16) + z))) {
-            double topRight = 1.0 - (_numBlocksRegion(chunk, x - 1, y + 1, z - 1, x + 1, y + 2, z + 1) / 4);
-            double topLeft = 1.0 - (_numBlocksRegion(chunk, x, y + 1, z - 1, x + 2, y + 2, z + 1) / 4);
-            double bottomLeft = 1.0 - (_numBlocksRegion(chunk, x, y + 1, z, x + 2, y + 2, z + 2) / 4);
-            double bottomRight = 1.0 - (_numBlocksRegion(chunk, x - 1, y + 1, z, x + 1, y + 2, z + 2) / 4);
+            double topRight = 1.0 - (_numBlocksRegion(chunk, this, x - 1, y + 1, z - 1, x + 1, y + 2, z + 1) / 4);
+            double topLeft = 1.0 - (_numBlocksRegion(chunk, this, x, y + 1, z - 1, x + 2, y + 2, z + 1) / 4);
+            double bottomLeft = 1.0 - (_numBlocksRegion(chunk, this, x, y + 1, z, x + 2, y + 2, z + 2) / 4);
+            double bottomRight = 1.0 - (_numBlocksRegion(chunk, this, x - 1, y + 1, z, x + 1, y + 2, z + 2) / 4);
 
             TextureInfo texture = getTexture(BlockFace.TOP);
 
@@ -164,10 +170,10 @@ class Block {
         //TODO: Bottom side
 
         if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x + 1, y, (chunk.z * 16) + z))) {
-            double topRight = 1.0 - (_numBlocksRegion(chunk, x + 1, y, z, x + 2, y + 2, z + 2) / 4);
-            double topLeft = 1.0 - (_numBlocksRegion(chunk, x + 1, y, z - 1, x + 2, y + 2, z + 1) / 4);
-            double bottomLeft = 1.0 - (_numBlocksRegion(chunk, x + 1, y - 1, z - 1, x + 2, y + 1, z + 1) / 4);
-            double bottomRight = 1.0 - (_numBlocksRegion(chunk, x + 1, y - 1, z, x + 2, y + 1, z + 2) / 4);
+            double topRight = 1.0 - (_numBlocksRegion(chunk, this, x + 1, y, z, x + 2, y + 2, z + 2) / 4);
+            double topLeft = 1.0 - (_numBlocksRegion(chunk, this, x + 1, y, z - 1, x + 2, y + 2, z + 1) / 4);
+            double bottomLeft = 1.0 - (_numBlocksRegion(chunk, this, x + 1, y - 1, z - 1, x + 2, y + 1, z + 1) / 4);
+            double bottomRight = 1.0 - (_numBlocksRegion(chunk, this, x + 1, y - 1, z, x + 2, y + 1, z + 2) / 4);
 
             TextureInfo texture = getTexture(BlockFace.LEFT);
 
@@ -199,10 +205,10 @@ class Block {
         }
 
         if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x - 1, y, (chunk.z * 16) + z))) {
-            double topRight = 1.0 - (_numBlocksRegion(chunk, x - 1, y, z - 1, x, y + 2, z + 1) / 4);
-            double topLeft = 1.0 - (_numBlocksRegion(chunk, x - 1, y, z, x, y + 2, z + 2) / 4);
-            double bottomLeft = 1.0 - (_numBlocksRegion(chunk, x - 1, y - 1, z, x, y + 1, z + 2) / 4);
-            double bottomRight = 1.0 - (_numBlocksRegion(chunk, x - 1, y - 1, z - 1, x, y + 1, z + 1) / 4);
+            double topRight = 1.0 - (_numBlocksRegion(chunk, this, x - 1, y, z - 1, x, y + 2, z + 1) / 4);
+            double topLeft = 1.0 - (_numBlocksRegion(chunk, this, x - 1, y, z, x, y + 2, z + 2) / 4);
+            double bottomLeft = 1.0 - (_numBlocksRegion(chunk, this, x - 1, y - 1, z, x, y + 1, z + 2) / 4);
+            double bottomRight = 1.0 - (_numBlocksRegion(chunk, this, x - 1, y - 1, z - 1, x, y + 1, z + 1) / 4);
 
             TextureInfo texture = getTexture(BlockFace.RIGHT);
 
@@ -234,10 +240,10 @@ class Block {
         }
 
         if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x, y, (chunk.z * 16) + z + 1))) {
-            double topRight = 1.0 - (_numBlocksRegion(chunk, x - 1, y, z + 1, x + 1, y + 2, z + 2) / 4);
-            double topLeft = 1.0 - (_numBlocksRegion(chunk, x, y, z + 1, x + 2, y + 2, z + 2) / 4);
-            double bottomLeft = 1.0 - (_numBlocksRegion(chunk, x, y - 1, z + 1, x + 2, y + 1, z + 2) / 4);
-            double bottomRight = 1.0 - (_numBlocksRegion(chunk, x - 1, y - 1, z + 1, x + 1, y + 1, z + 2) / 4);
+            double topRight = 1.0 - (_numBlocksRegion(chunk, this, x - 1, y, z + 1, x + 1, y + 2, z + 2) / 4);
+            double topLeft = 1.0 - (_numBlocksRegion(chunk, this, x, y, z + 1, x + 2, y + 2, z + 2) / 4);
+            double bottomLeft = 1.0 - (_numBlocksRegion(chunk, this, x, y - 1, z + 1, x + 2, y + 1, z + 2) / 4);
+            double bottomRight = 1.0 - (_numBlocksRegion(chunk, this, x - 1, y - 1, z + 1, x + 1, y + 1, z + 2) / 4);
 
             TextureInfo texture = getTexture(BlockFace.FRONT);
 
@@ -269,10 +275,10 @@ class Block {
         }
 
         if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x, y, (chunk.z * 16) + z - 1))) {
-            double topRight = 1.0 - (_numBlocksRegion(chunk, x, y, z - 1, x + 2, y + 2, z) / 4);
-            double topLeft = 1.0 - (_numBlocksRegion(chunk, x - 1, y, z - 1, x + 1, y + 2, z) / 4);
-            double bottomLeft = 1.0 - (_numBlocksRegion(chunk, x - 1, y - 1, z - 1, x + 1, y + 1, z) / 4);
-            double bottomRight = 1.0 - (_numBlocksRegion(chunk, x, y - 1, z - 1, x + 2, y + 1, z) / 4);
+            double topRight = 1.0 - (_numBlocksRegion(chunk, this, x, y, z - 1, x + 2, y + 2, z) / 4);
+            double topLeft = 1.0 - (_numBlocksRegion(chunk, this, x - 1, y, z - 1, x + 1, y + 2, z) / 4);
+            double bottomLeft = 1.0 - (_numBlocksRegion(chunk, this, x - 1, y - 1, z - 1, x + 1, y + 1, z) / 4);
+            double bottomRight = 1.0 - (_numBlocksRegion(chunk, this, x, y - 1, z - 1, x + 2, y + 1, z) / 4);
 
             TextureInfo texture = getTexture(BlockFace.BACK);
 
@@ -304,13 +310,14 @@ class Block {
         }
     }
 
-    static int _numBlocksRegion(Chunk chunk, int x1, int y1, int z1, int x2, int y2, int z2) {
+    static int _numBlocksRegion(Chunk chunk, Block self, int x1, int y1, int z1, int x2, int y2, int z2) {
         int count = 0;
         for (int x = x1; x < x2; x++) {
             for (int y = y1; y < y2; y++) {
                 if (y < 0 || y > 255) continue;
                 for (int z = z1; z < z2; z++) {
-                    if (chunk.world.getBlock((chunk.x * 16) + x, y, (chunk.z * 16) + z).solid) {
+                    Block block = chunk.world.getBlock((chunk.x * 16) + x, y, (chunk.z * 16) + z);
+                    if (block.solid || block == self) {
                         count++;
                     }
                 }

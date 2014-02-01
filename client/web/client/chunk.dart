@@ -33,6 +33,27 @@ class Chunk {
         noUpdates = false;
     }
 
+    Chunk.fromBuffer(this.world, ByteBuffer buffer, [int o = 0]) {
+        ByteData data = new ByteData.view(buffer);
+        x = data.getInt32(o + 0);
+        z = data.getInt32(o + 4);
+        int sMask = data.getUint16(o + 8);
+        int offset = o + 10;
+        for (int i = 0; i < 16; i++) {
+            if (sMask & (1 << i) != 0) {
+                for (int oy = 0; oy < 16; oy++) {
+                    for (int oz = 0; oz < 16; oz++) {
+                        for (int ox = 0; ox < 16; ox++) {
+                            _setBlock(ox, oy + (i << 4), oz, data.getUint16(offset));
+                            offset += 2;
+                        }
+                    }
+                }
+            }
+        }
+        noUpdates = false;
+    }
+
     /**
    * Sets the [block] at the location given by the [x],
    * [y] and [z] coordinates relative to the chunk.
@@ -74,7 +95,7 @@ class Chunk {
             }
         }
         int idx = x | (z << 4) | ((y & 0xF) << 8);
-        var old = section.blocks[x];
+        var old = section.blocks[idx];
         section.blocks[idx] = block;
         if (old == Block.AIR.legacyId && block != Block.AIR.legacyId) {
             section.count++;
@@ -286,11 +307,17 @@ class BuildSnapshot {
 
 class ChunkSection {
 
-    Uint8List blocks = new Uint8List(16 * 16 * 16);
+    Uint16List blocks;
 
     int count = 0;
 
     bool needsBuild = false;
+
+    ChunkSection([this.blocks]) {
+        if (blocks == null) {
+            blocks = new Uint16List(16 * 16 * 16);
+        }
+    }
 }
 
 class BlockBuilder {

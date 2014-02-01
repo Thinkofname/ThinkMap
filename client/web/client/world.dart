@@ -122,6 +122,7 @@ class World {
     Chunk cacheChunk;
 
     Block getBlock(int x, int y, int z) {
+        if (y < 0 || y > 255) return Block.AIR;
         int cx = x >> 4;
         int cz = z >> 4;
         if (cacheChunk != null && cacheX == cx && cacheZ == cz) {

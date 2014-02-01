@@ -39,6 +39,8 @@ Texture loadTexture(RenderingContext gl, ImageElement imageElement) {
     return tex;
 }
 
+Connection connection;
+
 // Called once everything is loaded
 start() {
     // Get around a dart issue where it 'optimizes' out unused variables (all blocks)
@@ -53,10 +55,10 @@ start() {
     window.onResize.listen((e) {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        pMatrix = makePerspectiveMatrix(75, canvas.width / canvas.height, 0.1, 500);
+        pMatrix = makePerspectiveMatrix(radians(75.0), canvas.width / canvas.height, 0.1, 500);
         pMatrix.copyIntoArray(pMatrixList);
     });
-    pMatrix = makePerspectiveMatrix(75, canvas.width / canvas.height, 0.1, 500);
+    pMatrix = makePerspectiveMatrix(radians(75.0), canvas.width / canvas.height, 0.1, 500);
     pMatrix.copyIntoArray(pMatrixList);
 
     // Convert images to textures
@@ -87,36 +89,51 @@ start() {
     gl.enable(DEPTH_TEST);
     gl.enable(CULL_FACE);
     gl.cullFace(BACK);
-    gl.frontFace(CCW);
+    gl.frontFace(CW);
 
     gl.enable(BLEND);
     gl.blendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
 
-    for (int x = -viewDistance; x < viewDistance; x++) {
-        for (int z = -viewDistance; z < viewDistance; z++) {
-            world.addChunk(new Chunk(x, z, world));
-        }
-    }
+//    for (int x = -viewDistance; x < viewDistance; x++) {
+//        for (int z = -viewDistance; z < viewDistance; z++) {
+//            world.addChunk(new Chunk(x, z, world));
+//        }
+//    }
 
     draw(0);
 
     // Temp controls
-    window.onMouseMove.listen((e) {
-        camera.rotY = (e.client.x - (window.innerWidth ~/ 2)) / 200.0;
-        camera.rotX = ((e.client.y - (window.innerHeight ~/ 2)) / 200.0);
+    document.body.onMouseDown.listen((e) {if (document.pointerLockElement != canvas) canvas.requestPointerLock(); });
+    document.body.onMouseMove.listen((e) {
+//        camera.rotY = (e.client.x - (window.innerWidth ~/ 2)) / 200.0;
+//        camera.rotX = ((e.client.y - (window.innerHeight ~/ 2)) / 200.0);
+        if (document.pointerLockElement != canvas) return;
+        camera.rotY += e.movement.x / 300.0;
+        camera.rotX += e.movement.y / 300.0;
     });
-    window.onKeyDown.where((e) => e.keyCode == KeyCode.W).listen((e) {
+    document.body.onKeyDown.where((e) => e.keyCode == KeyCode.W).listen((e) {
         movingForward = true;
         window.onKeyUp.firstWhere((e) => e.keyCode == KeyCode.W).then((e) {
             movingForward = false;
         });
+        if (document.pointerLockElement != canvas) canvas.requestPointerLock();
     });
-    window.onKeyDown.where((e) => e.keyCode == KeyCode.S).listen((e) {
+    document.body.onKeyDown.where((e) => e.keyCode == KeyCode.S).listen((e) {
         movingBackwards = true;
         window.onKeyUp.firstWhere((e) => e.keyCode == KeyCode.S).then((e) {
             movingBackwards = false;
         });
     });
+    document.body.onKeyDown.where((e) => e.keyCode == KeyCode.SPACE).listen((e) {
+        if (onGround || offGroundFor <= 1) vSpeed = 0.1;
+    });
+    document.body.onKeyDown.where((e) => e.keyCode == KeyCode.F).listen((e) {
+        canvas.requestFullscreen();
+    });
+
+    connection = new Connection();
+
+
 }
 
 Matrix4 pMatrix;
@@ -126,7 +143,11 @@ Float32List uMatrixList = new Float32List(4 * 4);
 
 bool movingForward = false;
 bool movingBackwards = false;
-Camera camera = new Camera()..y = 60.0;
+Camera camera = new Camera()..y = 140.0;
+double vSpeed = MIN_VSPEED;
+const double MIN_VSPEED = -0.2;
+bool onGround = false;
+int offGroundFor = 0;
 int cx = 0;
 int cz = 0;
 
@@ -148,21 +169,30 @@ draw(num highResTime) {
     gl.uniform1f(frameLocation, world.currentTime);
 
     // Temp controls
+    double lx = camera.x;
+    double ly = camera.y;
+    double lz = camera.z;
+
+    camera.y += vSpeed;
+    vSpeed = max(MIN_VSPEED, vSpeed - 0.005);
+
     if (movingForward) {
-        camera.x -= 0.75 * sin(camera.rotY) * cos(camera.rotX);
-        camera.z -= 0.75 * cos(camera.rotY) * cos(camera.rotX);
-        camera.y -= 0.75 * sin(camera.rotX);
+        camera.x += 0.1 * sin(camera.rotY);
+        camera.z -= 0.1 * cos(camera.rotY);
     } else if (movingBackwards) {
-        camera.x += 0.75 * sin(camera.rotY) * cos(camera.rotX);
-        camera.z += 0.75 * cos(camera.rotY) * cos(camera.rotX);
-        camera.y += 0.75 * sin(camera.rotX);
+        camera.x -= 0.1 * sin(camera.rotY);
+        camera.z += 0.1 * cos(camera.rotY);
     }
+    checkCollision(lx, ly, lz);
+
+    if (onGround) vSpeed = 0.0;
+
 
     uMatrix.setIdentity();
 
-    uMatrix.scale(1.0, -1.0, 1.0);
-    uMatrix.rotateX(camera.rotX);
-    uMatrix.rotateY(camera.rotY);
+    uMatrix.scale(-1.0, -1.0, 1.0);
+    uMatrix.rotateX(-camera.rotX - PI);
+    uMatrix.rotateY(-camera.rotY - PI);
     uMatrix.translate(-camera.x ,-camera.y, -camera.z);
     uMatrix.copyIntoArray(uMatrixList);
     gl.uniformMatrix4fv(uMatrixLocation, false, uMatrixList);
@@ -176,24 +206,92 @@ draw(num highResTime) {
     window.requestAnimationFrame(draw);
 
     // TODO: temp
-    int nx = camera.x ~/ 16;
-    int nz = camera.z ~/ 16;
-    if (nx != cx || nz != cz) {
-        for (int x = nx-viewDistance; x < nx+viewDistance; x++) {
-            for (int z = nz-viewDistance; z < nz+viewDistance; z++) {
-                if (world.getChunk(x, z) == null)
-                    world.addChunk(new Chunk(x, z, world));
+//    int nx = camera.x ~/ 16;
+//    int nz = camera.z ~/ 16;
+//    if (nx != cx || nz != cz) {
+//        for (int x = nx-viewDistance; x < nx+viewDistance; x++) {
+//            for (int z = nz-viewDistance; z < nz+viewDistance; z++) {
+//                if (world.getChunk(x, z) == null)
+//                    world.addChunk(new Chunk(x, z, world));
+//            }
+//        }
+//        for (int x = cx-viewDistance; x < cx+viewDistance; x++) {
+//            for (int z = cz-viewDistance; z < cz+viewDistance; z++) {
+//                if (x < nx-viewDistance || x >= nx+viewDistance
+//                    || z < nz-viewDistance || z >= nz+viewDistance)
+//                    world.removeChunk(x, z);
+//            }
+//        }
+//        cx = nx;
+//        cz = nz;
+//    }
+}
+
+checkCollision(double lx, double ly, double lz) {
+    Box box = new Box(lx, ly - 1.6, lz, 0.5, 1.75, 0.5);
+
+    int cx = box.x.toInt();
+    int cy = box.y.toInt();
+    int cz = box.z.toInt();
+
+
+    box.x = camera.x;
+    cx = box.x.toInt();
+    l1:
+    for (int x = cx - 2; x < cx + 2; x++) {
+        for (int z = cz - 2; z < cz + 2; z++) {
+            for (int y = cy - 3; y < cy + 3; y++) {
+                if (world.getBlock(x, y, z).collidesWith(box, x, y, z)) {
+                    camera.x = lx;
+                    box.x = lx;
+                    break l1;
+                }
             }
         }
-        for (int x = cx-viewDistance; x < cx+viewDistance; x++) {
-            for (int z = cz-viewDistance; z < cz+viewDistance; z++) {
-                if (x < nx-viewDistance || x >= nx+viewDistance
-                    || z < nz-viewDistance || z >= nz+viewDistance)
-                    world.removeChunk(x, z);
+    }
+
+    box.z = camera.z;
+    cz = box.z.toInt();
+    l2:
+    for (int x = cx - 2; x < cx + 2; x++) {
+        for (int z = cz - 2; z < cz + 2; z++) {
+            for (int y = cy - 3; y < cy + 3; y++) {
+                if (world.getBlock(x, y, z).collidesWith(box, x, y, z)) {
+                    camera.z = lz;
+                    box.z = lz;
+                    break l2;
+                }
             }
         }
-        cx = nx;
-        cz = nz;
+    }
+
+    box.y = camera.y - 1.6;
+    cy = box.y.toInt();
+    onGround = false;
+    bool hit = false;
+    for (int x = cx - 2; x < cx + 2; x++) {
+        for (int z = cz - 2; z < cz + 2; z++) {
+            for (int y = cy - 3; y < cy + 3; y++) {
+                if (world.getBlock(x, y, z).collidesWith(box, x, y, z)) {
+                    hit = true;
+                    if (y <= cy) {
+                        onGround = true;
+                    }
+                }
+            }
+        }
+    }
+
+    if (hit) {
+        camera.y = ly;
+        box.y = ly - 1.6;
+        if (vSpeed > 0.0) vSpeed = 0.0;
+    }
+
+    if (!onGround) {
+        offGroundFor++;
+    } else {
+        offGroundFor = 0;
     }
 }
 

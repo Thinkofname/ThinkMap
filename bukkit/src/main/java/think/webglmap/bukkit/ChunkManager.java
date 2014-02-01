@@ -1,23 +1,25 @@
 package think.webglmap.bukkit;
 
 import gnu.trove.map.hash.TLongObjectHashMap;
+import io.netty.buffer.ByteBuf;
 import org.bukkit.ChunkSnapshot;
 import think.webglmap.bukkit.world.ActiveChunk;
 
 import java.util.concurrent.*;
 
-//TODO: Per a world
 public class ChunkManager {
 
     private final WebglMapPlugin plugin;
+    private final String world;
     private final TLongObjectHashMap<ActiveChunk> activeChunks = new TLongObjectHashMap<ActiveChunk>();
     private final BlockingQueue<ChunkSnapshot> toProcess = new LinkedBlockingQueue<ChunkSnapshot>();
     private final ConcurrentMap<Long, ChunkSnapshot> beingProcessed = new ConcurrentHashMap<Long, ChunkSnapshot>();
     private final ConverterThread converterThread;
     private final IOThread ioThread;
 
-    public ChunkManager(WebglMapPlugin plugin) {
+    public ChunkManager(WebglMapPlugin plugin, String world) {
         this.plugin = plugin;
+        this.world = world;
         converterThread = new ConverterThread();
         converterThread.start();
         ioThread = new IOThread();
@@ -26,6 +28,7 @@ public class ChunkManager {
 
     public void addChunk(ChunkSnapshot chunkSnapshot) {
         toProcess.add(chunkSnapshot);
+        beingProcessed.put(chunkKey(chunkSnapshot.getX(), chunkSnapshot.getZ()), chunkSnapshot);
     }
 
     private static long chunkKey(int x, int z) {
@@ -40,6 +43,41 @@ public class ChunkManager {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean getChunkBytes(int x, int z, ByteBuf out) {
+        synchronized (activeChunks) {
+            System.out.println("Converting " + x + "," +  z);
+            ActiveChunk chunk = activeChunks.get(chunkKey(x, z));
+            if (chunk == null) {
+                System.out.println("failed");
+                return false;
+            }
+            short[][] blocks = chunk.getBlocks();
+            int mask = 0;
+            for (int i = 0; i < 16; i++) {
+                if (blocks[i] != null)
+                    mask |= 1 << i;
+            }
+            out.writeInt(x);
+            out.writeInt(z);
+            out.writeShort(mask);
+            for (int i = 0; i < 16; i++) {
+                if (blocks[i] != null) {
+//                    for (short b : blocks[i]) {
+//                        out.writeShort(b);
+//                    }
+                    for (int oy = 0; oy < 16; oy++) {
+                        for (int oz = 0; oz < 16; oz++) {
+                            for (int ox = 0; ox < 16; ox++) {
+                                out.writeShort(chunk.getBlock(ox, oy + i*16, oz));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     public void removeChunk(int x, int z) {
@@ -60,6 +98,7 @@ public class ChunkManager {
             try {
                 while (true) {
                     ChunkSnapshot chunkSnapshot = toProcess.take();
+                    System.out.println("Processing " + chunkSnapshot.getX() + "," + chunkSnapshot.getZ());
                     long key = chunkKey(chunkSnapshot.getX(), chunkSnapshot.getZ());
                     if (!beingProcessed.containsKey(key)) continue;
                     ActiveChunk activeChunk = new ActiveChunk(chunkSnapshot.getX(), chunkSnapshot.getZ());
@@ -76,6 +115,7 @@ public class ChunkManager {
                     }
                     if (beingProcessed.containsKey(key)) { //Not cancelled
                         synchronized (activeChunks) {
+                            System.out.println("Done");
                             activeChunks.put(key, activeChunk);
                         }
                         beingProcessed.remove(key);
@@ -112,7 +152,7 @@ public class ChunkManager {
                             return;
                         }
                     } else {
-                        task = tasks.poll(5, TimeUnit.SECONDS);
+                        task = tasks.poll(2, TimeUnit.SECONDS);
                         if (task == null) {
                             if (stopping) {
                                 return;

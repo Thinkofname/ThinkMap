@@ -32,6 +32,12 @@ class BlockFlat extends Block {
     renderFloat(BlockBuilder builder, FloatBlockBuilder fBulider, int x, int y, int z, Chunk chunk) {
         addPlane(fBulider, 255, 255, 255, x, y + 1/32, z, 1, 1, blockTextureInfo[texture]);
     }
+
+    @override
+    bool collidesWith(Box box, int x, int y, int z) {
+        if (!collidable) return false;
+        return box.checkBox(x.toDouble(), y.toDouble(), z.toDouble(), 1.0, 1/32, 1.0);
+    }
 }
 
 class BlockBed extends Block {
@@ -57,4 +63,9 @@ class BlockBed extends Block {
         addCube(fBulider, 255, 255, 255, x, y, z, 1, 6 / 16, 1, true, false, true, true, true, true, getTexture);
     }
 
+    @override
+    bool collidesWith(Box box, int x, int y, int z) {
+        if (!collidable) return false;
+        return box.checkBox(x.toDouble(), y.toDouble(), z.toDouble(), 1.0, 6/16, 1.0);
+    }
 }

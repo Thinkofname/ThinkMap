@@ -15,7 +15,8 @@ varying vec2 vTextureId;
 varying vec2 vTexturePos;
 
 void main(void) {
-    gl_Position = pMatrix * uMatrix * vec4(position + vec3(offset.x * 16.0, 0.0, offset.y * 16.0), 1.0);
+    vec3 pos = position;
+    gl_Position = pMatrix * uMatrix * vec4(pos + vec3(offset.x * 16.0, 0.0, offset.y * 16.0), 1.0);
     vColour = colour;
     vTextureId = textureId;
     vTexturePos = texturePos;

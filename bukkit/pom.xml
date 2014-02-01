@@ -48,6 +48,16 @@
 
     <build>
         <finalName>WebGLMap</finalName>
+        <resources>
+            <resource>
+                <directory>./src/main/resources</directory>
+                <targetPath>./</targetPath>
+            </resource>
+            <resource>
+                <directory>../client/build/client</directory>
+                <targetPath>./www</targetPath>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
