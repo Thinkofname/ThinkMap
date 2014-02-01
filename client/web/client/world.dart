@@ -27,7 +27,7 @@ class World {
             return; // Already queued
         }
         _waitingForBuild[key] = true;
-        _buildQueue.add(new _BuildJob(chunk, i)); //TODO
+        _buildQueue.add(new _BuildJob(chunk, i));
     }
 
     static const int BUILD_LIMIT_MS = 8;
@@ -49,7 +49,7 @@ class World {
             }
         }
         if (_buildQueue.isNotEmpty && lastSort <= 0) {
-            lastSort = _buildQueue.length ~/ 16;
+            lastSort = 10;
             _buildQueue.sort(_queueCompare);
         }
         lastSort--;
@@ -69,33 +69,52 @@ class World {
         chunks.forEach((k, v) {
             v.render(gl, 0);
         });
-        gl.uniform1i(disAlphaLocation, 0);
         chunks.forEach((k, v) {
             v.render(gl, 1);
+        });
+        gl.uniform1i(disAlphaLocation, 0);
+        chunks.forEach((k, v) {
+            v.render(gl, 2);
         });
     }
 
     int _queueCompare(_BuildJob a, _BuildJob b) {
-        num adx = leftShift(a.chunk.x, 4) - camera.x;
-        num ady = leftShift(a.i, 4) - camera.y;
-        num adz = leftShift(a.chunk.z, 4) - camera.z;
+        num adx = (a.chunk.x * 16) + 8 - camera.x;
+        num ady = (a.i * 16) + 8 - camera.y;
+        num adz = (a.chunk.z * 16) + 8 - camera.z;
         num distA = adx*adx + ady*ady + adz*adz;
-        num bdx = leftShift(b.chunk.x, 4) - camera.x;
-        num bdy = leftShift(b.i, 4) - camera.y;
-        num bdz = leftShift(b.chunk.z, 4) - camera.z;
+        num bdx = (b.chunk.x * 16) + 8 - camera.x;
+        num bdy = (b.i * 16) + 8 - camera.y;
+        num bdz = (b.chunk.z * 16) + 8 - camera.z;
         num distB = bdx*bdx + bdy*bdy + bdz*bdz;
 
-        num aa = atan2(camera.z - leftShift(a.chunk.z, 4), camera.x - leftShift(a.chunk.x, 4));
-        num angleA = min((2 * PI) - (camera.rotY - aa).abs(), (camera.rotY - aa).abs());
-
-        num ba = atan2(camera.z - leftShift(b.chunk.z, 4), camera.x - leftShift(b.chunk.x, 4));
-        num angleB = min((2 * PI) - (camera.rotY - ba).abs(), (camera.rotY - ba).abs());
-        return distB * (PI - ba) - distA * (PI - aa);
+//        num aa = atan2(camera.z - (a.chunk.z * 16) + 8, camera.x - (a.chunk.x * 16) + 8);
+//        num angleA = min((2 * PI) - (camera.rotY - aa).abs(), (camera.rotY - aa).abs());
+//
+//        num ba = atan2(camera.z - (b.chunk.z * 16) + 8, camera.x - (b.chunk.x * 16) + 8);
+//        num angleB = min((2 * PI) - (camera.rotY - ba).abs(), (camera.rotY - ba).abs());
+        return distB - distA;
     }
 
     addChunk(Chunk chunk) {
-        chunk.world = this;
         chunks[_chunkKey(chunk.x, chunk.z)] = chunk;
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                Chunk c = getChunk(chunk.x + x, chunk.z + z);
+                if (c != null) c.rebuild();
+            }
+        }
+        chunk.needsBuild = true;
+    }
+
+    removeChunk(int x, int z) {
+        Chunk chunk = getChunk(x, z);
+        chunks.remove(_chunkKey(x, z));
+        chunk.unload(gl);
+    }
+
+    Chunk getChunk(int x, int z) {
+        return chunks[_chunkKey(x, z)];
     }
 
     int cacheX;
@@ -110,7 +129,7 @@ class World {
         }
         cacheX = cx;
         cacheZ = cz;
-        var chunk = chunks[_chunkKey(cx, cz)];
+        var chunk = getChunk(cx, cz);
         if (chunk == null) {
             return Block.BEDROCK;
         }
@@ -119,7 +138,7 @@ class World {
     }
 
     int _chunkKey(int x, int z) {
-        return (x & 0xFFFF) | ((z & 0xFFFF)) << 16;
+        return (x & 0xFFFF) | ((z & 0xFFFF) << 16);
     }
 }
 

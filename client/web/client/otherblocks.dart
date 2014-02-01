@@ -24,117 +24,37 @@ class BlockSidedTextures extends Block {
     }
 }
 
-class BlockSapling extends Block {
+class BlockFlat extends Block {
 
-    BlockSapling._internal(id, name) : super._internal(id, name, 0x49CC25, texture: "sapling_oak", solid: false);
+    BlockFlat._internal(id, name, texture) : super._internal(id, name, 0x000000, solid: false, texture: texture);
 
     @override
-    render(BlockBuilder builder, int x, int y, int z, Chunk chunk) {
-
-        TextureInfo texture = getTexture(BlockFace.LEFT);
-
-        builder
-            ..position(x, y, z)
-            ..colour(255, 255, 255)
-            ..tex(0, 1)
-            ..texId(texture.start, texture.end)
-            ..position(x + 1, y, z + 1)
-            ..colour(255, 255, 255)
-            ..tex(1, 1)
-            ..texId(texture.start, texture.end)
-            ..position(x, y + 1, z)
-            ..colour(255, 255, 255)
-            ..tex(0, 0)
-            ..texId(texture.start, texture.end)
-            ..position(x + 1, y + 1, z + 1)
-            ..colour(255, 255, 255)
-            ..tex(1, 0)
-            ..texId(texture.start, texture.end)
-            ..position(x, y + 1, z)
-            ..colour(255, 255, 255)
-            ..tex(0, 0)
-            ..texId(texture.start, texture.end)
-            ..position(x + 1, y, z + 1)
-            ..colour(255, 255, 255)
-            ..tex(1, 1)
-            ..texId(texture.start, texture.end);
-
-        builder
-            ..position(x + 1, y, z)
-            ..colour(255, 255, 255)
-            ..tex(0, 1)
-            ..texId(texture.start, texture.end)
-            ..position(x, y, z + 1)
-            ..colour(255, 255, 255)
-            ..tex(1, 1)
-            ..texId(texture.start, texture.end)
-            ..position(x + 1, y + 1, z)
-            ..colour(255, 255, 255)
-            ..tex(0, 0)
-            ..texId(texture.start, texture.end)
-            ..position(x, y + 1, z + 1)
-            ..colour(255, 255, 255)
-            ..tex(1, 0)
-            ..texId(texture.start, texture.end)
-            ..position(x + 1, y + 1, z)
-            ..colour(255, 255, 255)
-            ..tex(0, 0)
-            ..texId(texture.start, texture.end)
-            ..position(x, y, z + 1)
-            ..colour(255, 255, 255)
-            ..tex(1, 1)
-            ..texId(texture.start, texture.end);
-
-        builder
-            ..position(x, y, z)
-            ..colour(255, 255, 255)
-            ..tex(0, 1)
-            ..texId(texture.start, texture.end)
-            ..position(x, y + 1, z)
-            ..colour(255, 255, 255)
-            ..tex(0, 0)
-            ..texId(texture.start, texture.end)
-            ..position(x + 1, y, z + 1)
-            ..colour(255, 255, 255)
-            ..tex(1, 1)
-            ..texId(texture.start, texture.end)
-            ..position(x, y + 1, z)
-            ..colour(255, 255, 255)
-            ..tex(0, 0)
-            ..texId(texture.start, texture.end)
-            ..position(x + 1, y + 1, z + 1)
-            ..colour(255, 255, 255)
-            ..tex(1, 0)
-            ..texId(texture.start, texture.end)
-            ..position(x + 1, y, z + 1)
-            ..colour(255, 255, 255)
-            ..tex(1, 1)
-            ..texId(texture.start, texture.end);
-
-        builder
-            ..position(x + 1, y, z)
-            ..colour(255, 255, 255)
-            ..tex(0, 1)
-            ..texId(texture.start, texture.end)
-            ..position(x + 1, y + 1, z)
-            ..colour(255, 255, 255)
-            ..tex(0, 0)
-            ..texId(texture.start, texture.end)
-            ..position(x, y, z + 1)
-            ..colour(255, 255, 255)
-            ..tex(1, 1)
-            ..texId(texture.start, texture.end)
-            ..position(x, y + 1, z + 1)
-            ..colour(255, 255, 255)
-            ..tex(1, 0)
-            ..texId(texture.start, texture.end)
-            ..position(x, y, z + 1)
-            ..colour(255, 255, 255)
-            ..tex(1, 1)
-            ..texId(texture.start, texture.end)
-            ..position(x + 1, y + 1, z)
-            ..colour(255, 255, 255)
-            ..tex(0, 0)
-            ..texId(texture.start, texture.end);
+    renderFloat(BlockBuilder builder, FloatBlockBuilder fBulider, int x, int y, int z, Chunk chunk) {
+        addPlane(fBulider, 255, 255, 255, x, y + 1/32, z, 1, 1, blockTextureInfo[texture]);
     }
+}
+
+class BlockBed extends Block {
+
+    BlockBed._internal(id, name) : super._internal(id, name, 0x000000, solid: false);
+
+
+    Map<BlockFace, String> textures = {
+        BlockFace.TOP: "bed_head_top",
+        BlockFace.FRONT: "bed_head_side",
+        BlockFace.LEFT: "bed_head_side",
+        BlockFace.RIGHT: "bed_head_end",
+        BlockFace.BACK: "bed_head_side"
+    };
+
+    @override
+    TextureInfo getTexture(BlockFace face) {
+        return blockTextureInfo[textures[face]];
+    }
+
+    @override
+    renderFloat(BlockBuilder builder, FloatBlockBuilder fBulider, int x, int y, int z, Chunk chunk) {
+        addCube(fBulider, 255, 255, 255, x, y, z, 1, 6 / 16, 1, true, false, true, true, true, true, getTexture);
+    }
+
 }

@@ -12,9 +12,9 @@ class Chunk {
 
     World world;
 
-    Chunk(int x, int z) {
-        this.x = x;
-        this.z = z;
+    bool noUpdates = true;
+
+    Chunk(this.x, this.z, this.world) {
 
         Random random = new Random();
         for (int x = 0; x < 16; x++) {
@@ -22,12 +22,15 @@ class Chunk {
                 int o = (10 * sin((this.x * 16 + x) / 16.0) * cos((this.z * 16 + z) / 16.0)).floor();//random.nextInt(5);
                 for (int y = 0; y < 50 + o; y++) {
                     if (y == 50 + o - 1)
-                        setBlock(x, y, z, Block._allBlocks[random.nextInt(Block._allBlocks.length - 1) + 1]);
+                        setBlock(x, y, z, random.nextInt(5) != 0 ? Block.GRASS : Block._allBlocks[random.nextInt(Block._allBlocks.length - 1) + 1]);
+                    else if (y >= 50 + o - 5)
+                        setBlock(x, y, z, Block.DIRT);
                     else
                         setBlock(x, y, z, Block.STONE);
                 }
             }
         }
+        noUpdates = false;
     }
 
     /**
@@ -55,6 +58,21 @@ class Chunk {
         }
         needsBuild = true;
         section.needsBuild = true;
+        if (!noUpdates) {
+            for (int ox = -1; ox <= 1; ox++) {
+                for (int oz = -1; oz <= 1; oz++) {
+                    for (int oy = -1; oy <= 1; oy++) {
+                        Chunk chunk = world.getChunk((this.x*16 + x + ox) ~/ 16, (this.x*16 + x + ox) ~/ 16);
+                        if (chunk == null) continue;
+                        chunk.needsBuild = true;
+                        int idx = (y + oy)>>4;
+                        if (idx < 0 || idx >= 16) continue;
+                        ChunkSection section = chunk.sections[idx];
+                        if (section != null) section.needsBuild = true;
+                    }
+                }
+            }
+        }
         int idx = x | (z << 4) | ((y & 0xF) << 8);
         var old = section.blocks[x];
         section.blocks[idx] = block;
@@ -92,11 +110,18 @@ class Chunk {
 
     List<Uint8List> builtSections = new List(16);
     Buffer renderBuffer;
+    int bufferSize = 0;
     int triangleCount = 0;
 
     List<Uint8List> builtSectionsTrans = new List(16);
     Buffer renderBufferTrans;
+    int bufferSizeTrans = 0;
     int triangleCountTrans = 0;
+
+    List<Uint8List> builtSectionsFloat = new List(16);
+    Buffer renderBufferFloat;
+    int bufferSizeFloat = 0;
+    int triangleCountFloat = 0;
 
     render(RenderingContext gl, int pass) {
         if (needsBuild) {
@@ -104,29 +129,33 @@ class Chunk {
             for (int i = 0; i < 16; i++) {
                 var section = sections[i];
                 if (section != null && section.needsBuild) {
-                    section.needsBuild = true;
+                    section.needsBuild = false;
                     world.requestBuild(this, i);
                 }
             }
         }
         if (needsUpdate) {
             needsUpdate = false;
-            Uint8List chunkData = new Uint8List(0);
-            Uint8List chunkDataTrans = new Uint8List(0);
+            Uint8List chunkData = new Uint8List(bufferSize);
+            int offset = 0;
+            Uint8List chunkDataTrans = new Uint8List(bufferSizeTrans);
+            int offsetTrans = 0;
+            Uint8List chunkDataFloat = new Uint8List(bufferSizeFloat);
+            int offsetFloat = 0;
             for (int i = 0; i < 16; i++) {
                 var section = sections[i];
                 if (section != null) {
                     if (builtSections[i] != null) {
-                        Uint8List temp = chunkData;
-                        chunkData = new Uint8List(temp.length + builtSections[i].length);
-                        chunkData.setAll(0, temp);
-                        chunkData.setAll(temp.length, builtSections[i]);
+                        chunkData.setAll(offset, builtSections[i]);
+                        offset += builtSections[i].length;
                     }
                     if (builtSectionsTrans[i] != null) {
-                        Uint8List temp = chunkDataTrans;
-                        chunkDataTrans = new Uint8List(temp.length + builtSectionsTrans[i].length);
-                        chunkDataTrans.setAll(0, temp);
-                        chunkDataTrans.setAll(temp.length, builtSectionsTrans[i]);
+                        chunkDataTrans.setAll(offsetTrans, builtSectionsTrans[i]);
+                        offsetTrans += builtSectionsTrans[i].length;
+                    }
+                    if (builtSectionsFloat[i] != null) {
+                        chunkDataFloat.setAll(offsetFloat, builtSectionsFloat[i]);
+                        offsetFloat += builtSectionsFloat[i].length;
                     }
                 }
             }
@@ -142,26 +171,50 @@ class Chunk {
             gl.bindBuffer(ARRAY_BUFFER, renderBufferTrans);
             gl.bufferData(ARRAY_BUFFER, chunkDataTrans, STATIC_DRAW);
 
+            if (renderBufferFloat == null) {
+                renderBufferFloat = gl.createBuffer();
+            }
+            gl.bindBuffer(ARRAY_BUFFER, renderBufferFloat);
+            gl.bufferData(ARRAY_BUFFER, chunkDataFloat, STATIC_DRAW);
+
             triangleCount = chunkData.length ~/ 12;
             triangleCountTrans = chunkDataTrans.length ~/ 12;
+            triangleCountFloat = chunkDataFloat.length ~/ 28;
         }
         if (pass == 0 && renderBuffer != null && triangleCount != 0) {
             gl.uniform2f(offsetLocation, x, z);
             gl.bindBuffer(ARRAY_BUFFER, renderBuffer);
             gl.vertexAttribPointer(positionLocation, 3, UNSIGNED_BYTE, false, 12, 0);
             gl.vertexAttribPointer(colourLocation, 3, UNSIGNED_BYTE, true, 12, 3);
-            gl.vertexAttribPointer(textirePosLocation, 2, UNSIGNED_BYTE, false, 12, 6);
+            gl.vertexAttribPointer(texturePosLocation, 2, UNSIGNED_BYTE, false, 12, 6);
             gl.vertexAttribPointer(textureIdLocation, 2, UNSIGNED_SHORT, false, 12, 8);
             gl.drawArrays(TRIANGLES, 0, triangleCount);
-        }
-        if (pass == 1 && renderBufferTrans != null && triangleCountTrans != 0) {
+        } else if (pass == 1 && renderBufferFloat != null && triangleCountFloat != 0) {
+            gl.uniform2f(offsetLocation, x, z);
+            gl.bindBuffer(ARRAY_BUFFER, renderBufferFloat);
+            gl.vertexAttribPointer(positionLocation, 3, FLOAT, false, 28, 0);
+            gl.vertexAttribPointer(colourLocation, 3, UNSIGNED_BYTE, true, 28, 12);
+            gl.vertexAttribPointer(texturePosLocation, 2, FLOAT, false, 28, 16);
+            gl.vertexAttribPointer(textureIdLocation, 2, UNSIGNED_SHORT, false, 28, 24);
+            gl.drawArrays(TRIANGLES, 0, triangleCountFloat);
+        } else if (pass == 2 && renderBufferTrans != null && triangleCountTrans != 0) {
             gl.uniform2f(offsetLocation, x, z);
             gl.bindBuffer(ARRAY_BUFFER, renderBufferTrans);
             gl.vertexAttribPointer(positionLocation, 3, UNSIGNED_BYTE, false, 12, 0);
             gl.vertexAttribPointer(colourLocation, 3, UNSIGNED_BYTE, true, 12, 3);
-            gl.vertexAttribPointer(textirePosLocation, 2, UNSIGNED_BYTE, false, 12, 6);
+            gl.vertexAttribPointer(texturePosLocation, 2, UNSIGNED_BYTE, false, 12, 6);
             gl.vertexAttribPointer(textureIdLocation, 2, UNSIGNED_SHORT, false, 12, 8);
             gl.drawArrays(TRIANGLES, 0, triangleCountTrans);
+        }
+    }
+
+    rebuild() {
+        needsBuild = true;
+        for (int i = 0; i < 16; i++) {
+            var section = sections[i];
+            if (section != null) {
+                section.needsBuild = true;
+            }
         }
     }
 
@@ -182,7 +235,7 @@ class Chunk {
                 for (int y = sy; y < 16; y++) {
                     Block block = getBlock(x, (i << 4) + y, z);
                     if (block.renderable) {
-                        block.render(block.transparent ? builderTrans : builder, x, (i << 4) + y, z, this);
+                        block.renderFloat(block.transparent ? builderTrans : builder, snapshot.builderFloat, x, (i << 4) + y, z, this);
                     }
                     if (stopwatch.elapsedMilliseconds >= World.BUILD_LIMIT_MS) {
                         snapshot.x = x;
@@ -193,17 +246,42 @@ class Chunk {
                 }
             }
         }
+        // Resize
+        bufferSize -= builtSections[i] != null ? builtSections[i].length : 0;
+        bufferSizeTrans -= builtSectionsTrans[i] != null ? builtSectionsTrans[i].length : 0;
+        bufferSizeFloat -= builtSectionsFloat[i] != null ? builtSectionsFloat[i].length : 0;
+        // Store
         builtSections[i] = builder.toTypedList();
         builtSectionsTrans[i] = builderTrans.toTypedList();
+        builtSectionsFloat[i] = snapshot.builderFloat.toTypedList();
+        // Resize
+        bufferSize += builtSections[i].length;
+        bufferSizeTrans += builtSectionsTrans[i].length;
+        bufferSizeFloat += builtSectionsFloat[i].length;
         needsUpdate = true;
         return null;
+    }
+
+    unload(RenderingContext gl) {
+        if (renderBuffer != null) {
+            gl.deleteBuffer(renderBuffer);
+        }
+        if (renderBufferTrans != null) {
+            gl.deleteBuffer(renderBufferTrans);
+        }
+        if (renderBufferFloat != null) {
+            gl.deleteBuffer(renderBufferFloat);
+        }
     }
 }
 
 class BuildSnapshot {
     BlockBuilder builder = new BlockBuilder();
     BlockBuilder builderTrans = new BlockBuilder();
-    int x = 0, y = 0, z = 0;
+    FloatBlockBuilder builderFloat = new FloatBlockBuilder();
+    int x = 0;
+    int y = 0;
+    int z = 0;
 }
 
 class ChunkSection {
@@ -275,9 +353,9 @@ class FloatBlockBuilder implements BlockBuilder {
     static Float32List transFloat = new Float32List.view(transHelper.buffer);
 
     position(num x, num y, num z) {
-        transFloat[0] = x;
-        transFloat[1] = y;
-        transFloat[2] = z;
+        transFloat[0] = x.toDouble();
+        transFloat[1] = y.toDouble();
+        transFloat[2] = z.toDouble();
         _buffer.addAll(transHelper);
         count++;
     }
@@ -286,6 +364,8 @@ class FloatBlockBuilder implements BlockBuilder {
         _buffer.add(r);
         _buffer.add(g);
         _buffer.add(b);
+
+        _buffer.add(0);
     }
 
     texId(int start, int end) {
@@ -298,8 +378,8 @@ class FloatBlockBuilder implements BlockBuilder {
     }
 
     tex(num x, num y) {
-        transFloat[0] = x;
-        transFloat[1] = y;
+        transFloat[0] = x.toDouble();
+        transFloat[1] = y.toDouble();
         _buffer.add(transHelper[0]);
         _buffer.add(transHelper[1]);
         _buffer.add(transHelper[2]);

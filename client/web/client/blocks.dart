@@ -3,9 +3,8 @@ part of mapViewer;
 class Block {
 
     static final Block AIR = new Block._airBlock();
-
     static final Block STONE = new Block._internal(1, "minecraft:stone", 0x6D6D6D);
-    static final Block GRASS = new Block._internal(2, "minecraft:grass", 0x609252, texture: "dirt"); //TODO:
+    static final Block GRASS = new BlockGrass._internal(2, "minecraft:grass", 0xA7D389);
     static final Block DIRT = new Block._internal(3, "minecraft:dirt", 0x715036, texture: "dirt");
     static final Block COBBLESTONE = new Block._internal(4, "minecraft:cobblestone", 0x505050, texture: "cobblestone");
     static final Block PLANKS = new Block._internal(5, "minecraft:planks", 0xB08E5C, texture: "planks_oak");
@@ -21,12 +20,12 @@ class Block {
     static final Block IRON_ORE = new Block._internal(15, "minecraft:iron_ore", 0x000000, texture: "iron_ore");
     static final Block COAL_ORE = new Block._internal(16, "minecraft:coal_ore", 0x000000, texture: "coal_ore");
     static final Block LOG = new Block._internal(17, "minecraft:log", 0x000000, texture: "log_oak");
-    static final Block LEAVES = new Block._internal(18, "minecraft:leaves", 0x000000, texture: "leaves_oak", solid: false);
+    static final Block LEAVES = new Block._internal(18, "minecraft:leaves", 0xA7D389, texture: "leaves_oak", solid: false, forceColour: true);
     static final Block SPONGE = new Block._internal(19, "minecraft:sponge", 0x000000, texture: "sponge");
     static final Block GLASS = new Block._internal(20, "minecraft:glass", 0x000000, texture: "glass", solid: false);
     static final Block LAPIS_ORE = new Block._internal(21, "minecraft:lapis_ore", 0x000000, texture: "lapis_ore");
     static final Block LAPIS_BLOCK = new Block._internal(22, "minecraft:lapis_block", 0x000000, texture: "lapis_block");
-    static final Block DISPENSER = new BlockSidedTextures._internal(22, "minecraft:dispenser", 0x000000)
+    static final Block DISPENSER = new BlockSidedTextures._internal(23, "minecraft:dispenser", 0x000000)
                         ..textures = {
                             BlockFace.FRONT: "dispenser_front_horizontal",
                             BlockFace.TOP: "furnace_top",
@@ -35,6 +34,19 @@ class Block {
                             BlockFace.LEFT: "furnace_side",
                             BlockFace.RIGHT: "furnace_side"
                         };
+    static final Block SANDSTONE = new BlockSidedTextures._internal(24, "minecraft:sandstone", 0x000000)
+        ..textures = {
+        BlockFace.FRONT: "sandstone_normal",
+        BlockFace.TOP: "sandstone_top",
+        BlockFace.BOTTOM: "sandstone_bottom",
+        BlockFace.BACK: "sandstone_normal",
+        BlockFace.LEFT: "sandstone_normal",
+        BlockFace.RIGHT: "sandstone_normal"
+    };
+    static final Block NOTEBLOCK = new Block._internal(25, "minecraft:noteblock", 0x000000, texture: "noteblock");
+    static final Block BED = new BlockBed._internal(26, "minecraft:bed");
+    static final Block GOLDEN_RAIL = new BlockFlat._internal(27, "minecraft:golden_rail", "rail_golden");
+    static final Block DETECTOR_RAIL = new BlockFlat._internal(28, "minecraft:detector_rail", "rail_detector");
 
     static Map<int, Block> _blocksLegacy = new Map();
 
@@ -42,16 +54,20 @@ class Block {
 
     static var _allBlocks = [AIR, STONE, GRASS, DIRT, COBBLESTONE, PLANKS, SAPLINGS, BEDROCK, FLOWING_WATER, WATER,
         FLOWING_LAVA, LAVA, SAND, GRAVEL, GOLD_ORE, COAL_ORE, LOG, LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK,
-        DISPENSER];
+        DISPENSER, SANDSTONE, NOTEBLOCK, BED, GOLDEN_RAIL, DETECTOR_RAIL];
 
     static Block blockFromName(String name) {
-        return _blocks[name];
+        Block ret = _blocks[name];
+        if (ret == null) ret = Block.STONE;
+        return ret;
     }
 
     ///**Warning:** this will be dropped in future versions of Minecraft
     @deprecated
     static Block blockFromLegacyId(int id) {
-        return _blocksLegacy[id];
+        Block ret = _blocksLegacy[id];
+        if (ret == null) ret = Block.STONE;
+        return ret;
     }
 
     ///**Warning:** this will be dropped in future versions of Minecraft
@@ -66,10 +82,11 @@ class Block {
     bool solid = true;
 
     int _colour = 0xFFFFFF;
+    bool forceColour;
     String texture;
 
     Block._internal(int _legacyId, String _name, int _colour,
-                    {String texture: "stone", bool solid: true, bool transparent : false}) {
+                    {String texture: "stone", bool solid: true, bool transparent : false, bool forceColour : false}) {
         legacyId = _legacyId;
         name = _name;
         colour = _colour;
@@ -78,6 +95,7 @@ class Block {
         _blocksLegacy[legacyId] = this;
         this.solid = solid;
         this.transparent = transparent;
+        this.forceColour = forceColour;
     }
 
     factory Block._airBlock() {
@@ -87,15 +105,28 @@ class Block {
         return air;
     }
 
+    bool collidesWith(Box box) {
+        return false;
+    }
+
     shouldRenderAgainst(Block block) => !block.solid;
+
+    renderFloat(BlockBuilder builder, FloatBlockBuilder fBulider, int x, int y, int z, Chunk chunk) {
+        render(builder, x, y, z, chunk);
+    }
 
     render(BlockBuilder builder, int x, int y, int z, Chunk chunk) {
         //TODO:
         int r = 255; //(colour >> 16) & 0xFF;
         int g = 255; //(colour >> 8) & 0xFF;
         int b = 255; //colour & 0xFF;
+        if (forceColour) {
+            r = (colour >> 16) & 0xFF;
+            g = (colour >> 8) & 0xFF;
+            b = colour & 0xFF;
+        }
 
-        if (shouldRenderAgainst(chunk.world.getBlock(leftShift(chunk.x, 4) + x, y + 1, leftShift(chunk.z, 4) + z))) {
+        if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x, y + 1, (chunk.z * 16) + z))) {
             double topRight = 1.0 - (_numBlocksRegion(chunk, x - 1, y + 1, z - 1, x + 1, y + 2, z + 1) / 4);
             double topLeft = 1.0 - (_numBlocksRegion(chunk, x, y + 1, z - 1, x + 2, y + 2, z + 1) / 4);
             double bottomLeft = 1.0 - (_numBlocksRegion(chunk, x, y + 1, z, x + 2, y + 2, z + 2) / 4);
@@ -132,7 +163,7 @@ class Block {
 
         //TODO: Bottom side
 
-        if (shouldRenderAgainst(chunk.world.getBlock(leftShift(chunk.x, 4) + x + 1, y, leftShift(chunk.z, 4) + z))) {
+        if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x + 1, y, (chunk.z * 16) + z))) {
             double topRight = 1.0 - (_numBlocksRegion(chunk, x + 1, y, z, x + 2, y + 2, z + 2) / 4);
             double topLeft = 1.0 - (_numBlocksRegion(chunk, x + 1, y, z - 1, x + 2, y + 2, z + 1) / 4);
             double bottomLeft = 1.0 - (_numBlocksRegion(chunk, x + 1, y - 1, z - 1, x + 2, y + 1, z + 1) / 4);
@@ -167,7 +198,7 @@ class Block {
                 ..texId(texture.start, texture.end);
         }
 
-        if (shouldRenderAgainst(chunk.world.getBlock(leftShift(chunk.x, 4) + x - 1, y, leftShift(chunk.z, 4) + z))) {
+        if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x - 1, y, (chunk.z * 16) + z))) {
             double topRight = 1.0 - (_numBlocksRegion(chunk, x - 1, y, z - 1, x, y + 2, z + 1) / 4);
             double topLeft = 1.0 - (_numBlocksRegion(chunk, x - 1, y, z, x, y + 2, z + 2) / 4);
             double bottomLeft = 1.0 - (_numBlocksRegion(chunk, x - 1, y - 1, z, x, y + 1, z + 2) / 4);
@@ -202,7 +233,7 @@ class Block {
                 ..texId(texture.start, texture.end);
         }
 
-        if (shouldRenderAgainst(chunk.world.getBlock(leftShift(chunk.x, 4) + x, y, leftShift(chunk.z, 4) + z + 1))) {
+        if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x, y, (chunk.z * 16) + z + 1))) {
             double topRight = 1.0 - (_numBlocksRegion(chunk, x - 1, y, z + 1, x + 1, y + 2, z + 2) / 4);
             double topLeft = 1.0 - (_numBlocksRegion(chunk, x, y, z + 1, x + 2, y + 2, z + 2) / 4);
             double bottomLeft = 1.0 - (_numBlocksRegion(chunk, x, y - 1, z + 1, x + 2, y + 1, z + 2) / 4);
@@ -237,7 +268,7 @@ class Block {
                 ..texId(texture.start, texture.end);
         }
 
-        if (shouldRenderAgainst(chunk.world.getBlock(leftShift(chunk.x, 4) + x, y, leftShift(chunk.z, 4) + z - 1))) {
+        if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x, y, (chunk.z * 16) + z - 1))) {
             double topRight = 1.0 - (_numBlocksRegion(chunk, x, y, z - 1, x + 2, y + 2, z) / 4);
             double topLeft = 1.0 - (_numBlocksRegion(chunk, x - 1, y, z - 1, x + 1, y + 2, z) / 4);
             double bottomLeft = 1.0 - (_numBlocksRegion(chunk, x - 1, y - 1, z - 1, x + 1, y + 1, z) / 4);
@@ -279,7 +310,7 @@ class Block {
             for (int y = y1; y < y2; y++) {
                 if (y < 0 || y > 255) continue;
                 for (int z = z1; z < z2; z++) {
-                    if (chunk.world.getBlock(leftShift(chunk.x, 4) + x, y, leftShift(chunk.z, 4) + z).solid) {
+                    if (chunk.world.getBlock((chunk.x * 16) + x, y, (chunk.z * 16) + z).solid) {
                         count++;
                     }
                 }
@@ -300,6 +331,8 @@ class Block {
         return _colour;
     }
 }
+
+typedef TextureInfo TextureGetter(BlockFace);
 
 class BlockFace {
 
