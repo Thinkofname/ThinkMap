@@ -62,19 +62,13 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
             return;
         }
 
-        logger.info(request.getUri() + ":" + request.getMethod());
         if (request.getMethod() == POST && request.getUri().equals("/chunk")) {
-            System.out.println("Req");
             String []args = request.content().toString(Charsets.UTF_8).split(":");
-            System.out.println(Arrays.toString(args));
             ByteBuf out = Unpooled.buffer();
             if (plugin.getChunkManager(plugin.targetWorld).getChunkBytes(Integer.parseInt(args[0]), Integer.parseInt(args[1]), out)) {
-                System.out.println("sending chunk");
                 FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, out);
                 response.headers().add("Access-Control-Allow-Origin", "*"); //FIXME
                 sendHttpResponse(context, request, response);
-            } else {
-                System.out.println("Failed");
             }
             sendHttpResponse(context, request, new DefaultFullHttpResponse(HTTP_1_1, BAD_REQUEST));
             return;

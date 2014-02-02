@@ -28,9 +28,6 @@ class Connection {
             case 0:
                 readTimeUpdate(new ByteData.view(reader.buffer, 1));
                 break;
-//            case 1: // Chunk Data TODO: Switch to gzip'ed http requests
-//                world.loadChunk(reader.buffer);
-//                break;
         }
     }
 
@@ -39,19 +36,14 @@ class Connection {
     }
 
     writeRequestChunk(int x, int z) {
-//        ByteData data = new ByteData(1 + 4 + 4);
-//        data.setUint8(0, 0);
-//        data.setInt32(1, x);
-//        data.setInt32(5, z);
-//        websocket.sendTypedData(data);
         var req = new HttpRequest();
+        req.open("POST", "http://${window.location.hostname}:23333/chunk", async: true);
         req.responseType = "arraybuffer";
-        req.onLoad.listen((e) {
+        req.onReadyStateChange.listen((e) {
             if (req.readyState == 4 && req.status == 200) {
                 world.loadChunk(req.response);
             }
         });
-        req.open("POST", "http://${window.location.hostname}:23333/chunk", async: true);
         req.send("$x:$z");
     }
 }

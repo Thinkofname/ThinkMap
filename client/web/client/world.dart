@@ -148,6 +148,57 @@ class World {
         return cacheChunk.getBlock(x & 0xF, y, z & 0xF);
     }
 
+    int getData(int x, int y, int z) {
+        if (y < 0 || y > 255) return 0;
+        int cx = x >> 4;
+        int cz = z >> 4;
+        if (cacheChunk != null && cacheX == cx && cacheZ == cz) {
+            return cacheChunk.getData(x & 0xF, y, z & 0xF);
+        }
+        cacheX = cx;
+        cacheZ = cz;
+        var chunk = getChunk(cx, cz);
+        if (chunk == null) {
+            return 0;
+        }
+        cacheChunk = chunk;
+        return cacheChunk.getData(x & 0xF, y, z & 0xF);
+    }
+
+    int getLight(int x, int y, int z) {
+        if (y < 0 || y > 255) return 0;
+        int cx = x >> 4;
+        int cz = z >> 4;
+        if (cacheChunk != null && cacheX == cx && cacheZ == cz) {
+            return cacheChunk.getLight(x & 0xF, y, z & 0xF);
+        }
+        cacheX = cx;
+        cacheZ = cz;
+        var chunk = getChunk(cx, cz);
+        if (chunk == null) {
+            return 0;
+        }
+        cacheChunk = chunk;
+        return cacheChunk.getLight(x & 0xF, y, z & 0xF);
+    }
+
+    int getSky(int x, int y, int z) {
+        if (y < 0 || y > 255) return 15;
+        int cx = x >> 4;
+        int cz = z >> 4;
+        if (cacheChunk != null && cacheX == cx && cacheZ == cz) {
+            return cacheChunk.getSky(x & 0xF, y, z & 0xF);
+        }
+        cacheX = cx;
+        cacheZ = cz;
+        var chunk = getChunk(cx, cz);
+        if (chunk == null) {
+            return 15;
+        }
+        cacheChunk = chunk;
+        return cacheChunk.getSky(x & 0xF, y, z & 0xF);
+    }
+
     int _chunkKey(int x, int z) {
         return (x & 0xFFFF) | ((z & 0xFFFF) << 16);
     }

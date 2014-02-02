@@ -344,16 +344,20 @@ class Block {
         }
     }
 
-    static int _numBlocksRegion(Chunk chunk, Block self, int x1, int y1, int z1, int x2, int y2, int z2) {
-        int count = 0;
+    static double _numBlocksRegion(Chunk chunk, Block self, int x1, int y1, int z1, int x2, int y2, int z2) {
+        double count = 0.0;
         for (int y = y1; y < y2; y++) {
             if (y < 0 || y > 255) continue;
             for (int x = x1; x < x2; x++) {
                 for (int z = z1; z < z2; z++) {
+                    double val = pow(0.9,
+                        max(chunk.world.getSky((chunk.x * 16) + x, y, (chunk.z * 16) + z), chunk.world.getLight((chunk.x * 16) + x, y, (chunk.z * 16) + z)) + 1);
+
                     Block block = chunk.world.getBlock((chunk.x * 16) + x, y, (chunk.z * 16) + z);
                     if (block.solid || block == self) {
-                        count++;
+                        val += (13/17) * (1.0 - val);
                     }
+                    count += min(1.0, val);
                 }
             }
         }

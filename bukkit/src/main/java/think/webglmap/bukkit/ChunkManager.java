@@ -63,6 +63,9 @@ public class ChunkManager {
                     for (int oz = 0; oz < 16; oz++) {
                         for (int ox = 0; ox < 16; ox++) {
                             out.writeShort(chunk.getBlockTypeId(ox, oy + i * 16, oz));
+                            out.writeByte(chunk.getBlockData(ox, oy + i * 16, oz));
+                            out.writeByte(chunk.getBlockEmittedLight(ox, oy + i * 16, oz));
+                            out.writeByte(chunk.getBlockSkyLight(ox, oy + i * 16, oz));
                         }
                     }
                 }
