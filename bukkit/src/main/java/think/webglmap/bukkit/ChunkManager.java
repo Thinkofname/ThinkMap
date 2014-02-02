@@ -10,13 +10,10 @@ public class ChunkManager {
 
     private final WebglMapPlugin plugin;
     private final World world;
-    private final IOThread ioThread;
 
     public ChunkManager(WebglMapPlugin plugin, World world) {
         this.plugin = plugin;
         this.world = world;
-        ioThread = new IOThread();
-        ioThread.start();
     }
 
     private static long chunkKey(int x, int z) {
@@ -24,12 +21,6 @@ public class ChunkManager {
     }
 
     public void cleanup() {
-        try {
-            ioThread.stopping = true;
-            ioThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     public boolean getChunkBytes(final int x, final int z, ByteBuf out) {
@@ -72,48 +63,5 @@ public class ChunkManager {
             }
         }
         return true;
-    }
-
-    private class IOThread extends Thread {
-        public volatile boolean stopping = false;
-
-        private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<Runnable>();
-
-        public void saveChunk(ChunkSnapshot chunk) {
-            tasks.add(new Runnable() {
-                @Override
-                public void run() {
-                    //TODO: Saving
-                }
-            });
-        }
-
-        @Override
-        public void run() {
-            try {
-                while (true) {
-                    Runnable task;
-                    if (stopping) {
-                        task = tasks.poll();
-                        if (task == null) {
-                            return;
-                        }
-                    } else {
-                        task = tasks.poll(2, TimeUnit.SECONDS);
-                        if (task == null) {
-                            if (stopping) {
-                                return;
-                            } else {
-                                continue;
-                            }
-                        }
-
-                    }
-                    task.run();
-                }
-            } catch (InterruptedException e) {
-                interrupt();
-            }
-        }
     }
 }
