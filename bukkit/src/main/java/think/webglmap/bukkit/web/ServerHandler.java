@@ -23,8 +23,8 @@ public class ServerHandler extends ChannelInitializer<SocketChannel> {
         pipeline.addLast("codec-http", new HttpServerCodec());
         pipeline.addLast("aggregator", new HttpObjectAggregator(65536));
         pipeline.addLast("deflater", new HttpContentCompressor());
+        pipeline.addLast("handler", new HTTPHandler(plugin, id));
         pipeline.addLast("websocket", new WebSocketServerProtocolHandler("/server"));
         pipeline.addLast("websocket-handler", new WebSocketHandler(plugin, id));
-        pipeline.addLast("handler", new HTTPHandler(plugin, id));
     }
 }

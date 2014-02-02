@@ -1,5 +1,6 @@
 package think.webglmap.bukkit.web;
 
+import com.google.common.base.Charsets;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
@@ -18,6 +19,7 @@ import think.webglmap.bukkit.WebglMapPlugin;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
@@ -26,6 +28,7 @@ import static io.netty.handler.codec.http.HttpHeaders.Names.HOST;
 import static io.netty.handler.codec.http.HttpHeaders.isKeepAlive;
 import static io.netty.handler.codec.http.HttpHeaders.setContentLength;
 import static io.netty.handler.codec.http.HttpMethod.GET;
+import static io.netty.handler.codec.http.HttpMethod.POST;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
@@ -45,11 +48,34 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext context, FullHttpRequest msg) throws Exception {
-        httpRequest(context, (FullHttpRequest) msg);
+        httpRequest(context, msg);
     }
 
     public void httpRequest(ChannelHandlerContext context, FullHttpRequest request) throws IOException {
         if (!request.getDecoderResult().isSuccess()) {
+            sendHttpResponse(context, request, new DefaultFullHttpResponse(HTTP_1_1, BAD_REQUEST));
+            return;
+        }
+
+        if (request.getUri().equals("/server")) {
+            context.fireChannelRead(request);
+            return;
+        }
+
+        logger.info(request.getUri() + ":" + request.getMethod());
+        if (request.getMethod() == POST && request.getUri().equals("/chunk")) {
+            System.out.println("Req");
+            String []args = request.content().toString(Charsets.UTF_8).split(":");
+            System.out.println(Arrays.toString(args));
+            ByteBuf out = Unpooled.buffer();
+            if (plugin.getChunkManager(plugin.targetWorld).getChunkBytes(Integer.parseInt(args[0]), Integer.parseInt(args[1]), out)) {
+                System.out.println("sending chunk");
+                FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, out);
+                response.headers().add("Access-Control-Allow-Origin", "*"); //FIXME
+                sendHttpResponse(context, request, response);
+            } else {
+                System.out.println("Failed");
+            }
             sendHttpResponse(context, request, new DefaultFullHttpResponse(HTTP_1_1, BAD_REQUEST));
             return;
         }

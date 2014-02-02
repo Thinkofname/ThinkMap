@@ -43,7 +43,7 @@ class World {
         stopwatch.reset();
         stopwatch.start();
         while (stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS && toLoad.isNotEmpty) {
-            world.addChunk(new Chunk.fromBuffer(world, toLoad.removeLast(), 1));
+            world.addChunk(new Chunk.fromBuffer(world, toLoad.removeLast(), 0));
         }
         bool run = stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS;
 
