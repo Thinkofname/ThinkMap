@@ -102,11 +102,8 @@ start() {
 
     draw(0);
 
-    // Temp controls
     document.body.onMouseDown.listen((e) {if (document.pointerLockElement != canvas) canvas.requestPointerLock(); });
     document.body.onMouseMove.listen((e) {
-//        camera.rotY = (e.client.x - (window.innerWidth ~/ 2)) / 200.0;
-//        camera.rotX = ((e.client.y - (window.innerHeight ~/ 2)) / 200.0);
         if (document.pointerLockElement != canvas) return;
         camera.rotY += e.movement.x / 300.0;
         camera.rotX += e.movement.y / 300.0;
@@ -131,7 +128,7 @@ start() {
         canvas.requestFullscreen();
     });
 
-    connection = new Connection();
+    connection = new Connection("ws://${window.location.hostname}:23333/server");
 
 
 }
@@ -151,7 +148,7 @@ int offGroundFor = 0;
 int cx = 0;
 int cz = 0;
 
-const int viewDistance = 10;
+const int viewDistance = 6;
 
 draw(num highResTime) {
     gl.viewport(0, 0, canvas.width, canvas.height);
@@ -173,19 +170,21 @@ draw(num highResTime) {
     double ly = camera.y;
     double lz = camera.z;
 
-    camera.y += vSpeed;
-    vSpeed = max(MIN_VSPEED, vSpeed - 0.005);
+    if (world.getChunk(cx, cz) != null) {
+        camera.y += vSpeed;
+        vSpeed = max(MIN_VSPEED, vSpeed - 0.005);
 
-    if (movingForward) {
-        camera.x += 0.1 * sin(camera.rotY);
-        camera.z -= 0.1 * cos(camera.rotY);
-    } else if (movingBackwards) {
-        camera.x -= 0.1 * sin(camera.rotY);
-        camera.z += 0.1 * cos(camera.rotY);
+        if (movingForward) {
+            camera.x += 0.1 * sin(camera.rotY);
+            camera.z -= 0.1 * cos(camera.rotY);
+        } else if (movingBackwards) {
+            camera.x -= 0.1 * sin(camera.rotY);
+            camera.z += 0.1 * cos(camera.rotY);
+        }
+        checkCollision(lx, ly, lz);
+
+        if (onGround) vSpeed = 0.0;
     }
-    checkCollision(lx, ly, lz);
-
-    if (onGround) vSpeed = 0.0;
 
 
     uMatrix.setIdentity();
@@ -205,26 +204,27 @@ draw(num highResTime) {
 
     window.requestAnimationFrame(draw);
 
-    // TODO: temp
-//    int nx = camera.x ~/ 16;
-//    int nz = camera.z ~/ 16;
-//    if (nx != cx || nz != cz) {
-//        for (int x = nx-viewDistance; x < nx+viewDistance; x++) {
-//            for (int z = nz-viewDistance; z < nz+viewDistance; z++) {
-//                if (world.getChunk(x, z) == null)
-//                    world.addChunk(new Chunk(x, z, world));
-//            }
-//        }
-//        for (int x = cx-viewDistance; x < cx+viewDistance; x++) {
-//            for (int z = cz-viewDistance; z < cz+viewDistance; z++) {
-//                if (x < nx-viewDistance || x >= nx+viewDistance
-//                    || z < nz-viewDistance || z >= nz+viewDistance)
-//                    world.removeChunk(x, z);
-//            }
-//        }
-//        cx = nx;
-//        cz = nz;
-//    }
+    int nx = camera.x ~/ 16;
+    int nz = camera.z ~/ 16;
+    if (nx != cx || nz != cz) {
+        for (int x = nx-viewDistance; x < nx+viewDistance; x++) {
+            for (int z = nz-viewDistance; z < nz+viewDistance; z++) {
+                if (world.getChunk(x, z) == null)
+                    connection.writeRequestChunk(x, z);
+            }
+        }
+
+        for (Chunk chunk in new List.from(world.chunks.values)) {
+            int x = chunk.x;
+            int z = chunk.z;
+            if (x < nx-viewDistance || x >= nx+viewDistance
+                || z < nz-viewDistance || z >= nz+viewDistance) {
+                world.removeChunk(x, z);
+            }
+        }
+        cx = nx;
+        cz = nz;
+    }
 }
 
 checkCollision(double lx, double ly, double lz) {

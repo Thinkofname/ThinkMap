@@ -29,8 +29,7 @@ class Connection {
                 readTimeUpdate(new ByteData.view(reader.buffer, 1));
                 break;
             case 1: // Chunk Data TODO: Switch to gzip'ed http requests
-                Chunk chunk = new Chunk.fromBuffer(world, reader.buffer, 1);
-                world.addChunk(chunk);
+                world.loadChunk(reader.buffer);
                 break;
         }
     }

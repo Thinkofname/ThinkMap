@@ -45,8 +45,7 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<BinaryWebSocke
             case 0: //Chunk request
                 ByteBuf out = Unpooled.buffer();
                 out.writeByte(1);
-                if (plugin.getChunkManager(Bukkit.getWorlds().get(0)).getChunkBytes(data.readInt(), data.readInt(), out)) { // TODO: Major issue
-                    System.out.println(out.capacity());
+                if (plugin.getChunkManager(plugin.targetWorld).getChunkBytes(data.readInt(), data.readInt(), out)) {
                     ctx.writeAndFlush(new BinaryWebSocketFrame(out));
                 }
                 break;

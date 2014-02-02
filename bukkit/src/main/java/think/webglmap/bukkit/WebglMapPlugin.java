@@ -6,6 +6,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import lombok.Getter;
+import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 import think.webglmap.bukkit.web.WebHandler;
@@ -18,23 +19,30 @@ public class WebglMapPlugin extends JavaPlugin implements Runnable {
     /**
      * Returns the plugin's web handler
      *
-     * @returns the web handler
+     * @return the web handler
      */
     @Getter
     private WebHandler webHandler;
 
-    private Map<String, ChunkManager> chunkManagers = new HashMap<String, ChunkManager>();
+    private final Map<String, ChunkManager> chunkManagers = new HashMap<String, ChunkManager>();
 
     public final Map<Integer, SocketChannel> activeConnections = Collections.synchronizedMap(new HashMap<Integer, SocketChannel>());
     public AtomicInteger lastConnectionId = new AtomicInteger();
+
+    public World targetWorld;
 
     @Override
     public void onEnable() {
         webHandler = new WebHandler(this);
         webHandler.start();
 
-        getServer().getPluginManager().registerEvents(new Events(this), this);
+//        getServer().getPluginManager().registerEvents(new Events(this), this);
         getServer().getScheduler().runTaskTimer(this, this, 0l, 20 * 5l);
+
+        for (World world : getServer().getWorlds()) {
+            if (targetWorld == null) targetWorld = world;
+                getChunkManager(world);
+        }
     }
 
     @Override
@@ -44,19 +52,21 @@ public class WebglMapPlugin extends JavaPlugin implements Runnable {
     }
 
     public ChunkManager getChunkManager(World world) {
-        if (chunkManagers.containsKey(world.getName())) {
-            return chunkManagers.get(world.getName());
+        synchronized (chunkManagers) {
+            if (chunkManagers.containsKey(world.getName())) {
+                return chunkManagers.get(world.getName());
+            }
+            ChunkManager chunkManager = new ChunkManager(this, world);
+            chunkManagers.put(world.getName(), chunkManager);
+            return chunkManager;
         }
-        ChunkManager chunkManager = new ChunkManager(this, world.getName());
-        chunkManagers.put(world.getName(), chunkManager);
-        return chunkManager;
     }
 
     @Override
     public void run() {
         ByteBuf timeUpdate = Unpooled.buffer(5);
         timeUpdate.writeByte(0);
-        timeUpdate.writeInt((int) getServer().getWorlds().get(0).getTime()); //FIXME: Temp
+        timeUpdate.writeInt((int) targetWorld.getTime());
         BinaryWebSocketFrame frame = new BinaryWebSocketFrame(timeUpdate);
         synchronized (activeConnections) {
             Iterator<SocketChannel> it = activeConnections.values().iterator();
@@ -66,6 +76,7 @@ public class WebglMapPlugin extends JavaPlugin implements Runnable {
                     it.remove();
                     continue;
                 }
+                frame.retain();
                 channel.writeAndFlush(frame);
             }
         }

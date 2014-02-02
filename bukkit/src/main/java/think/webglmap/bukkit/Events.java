@@ -18,7 +18,7 @@ public class Events implements Listener {
      */
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
-        plugin.getChunkManager(event.getWorld()).addChunk(event.getChunk().getChunkSnapshot());
+//        plugin.getChunkManager(event.getWorld()).addChunk(event.getChunk().getChunkSnapshot());
     }
 
     /**
@@ -28,6 +28,6 @@ public class Events implements Listener {
      */
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {
-        plugin.getChunkManager(event.getWorld()).removeChunk(event.getChunk().getX(), event.getChunk().getZ());
+//        plugin.getChunkManager(event.getWorld()).removeChunk(event.getChunk().getX(), event.getChunk().getZ());
     }
 }

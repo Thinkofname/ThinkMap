@@ -30,14 +30,24 @@ class World {
         _buildQueue.add(new _BuildJob(chunk, i));
     }
 
+    List<ByteBuffer> toLoad = new List();
+
+    loadChunk(ByteBuffer byteBuffer) {
+        toLoad.add(byteBuffer);
+    }
+
     static const int BUILD_LIMIT_MS = 8;
     int lastSort = 0;
 
     render(RenderingContext gl) {
         stopwatch.reset();
         stopwatch.start();
-        bool run = true;
-        if (currentBuild != null) {
+        while (stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS && toLoad.isNotEmpty) {
+            world.addChunk(new Chunk.fromBuffer(world, toLoad.removeLast(), 1));
+        }
+        bool run = stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS;
+
+        if (run && currentBuild != null) {
             var job = currentBuild;
             BuildSnapshot snapshot = job.chunk.buildSection(job.i, currentSnapshot, stopwatch);
             currentBuild = null;
@@ -104,7 +114,7 @@ class World {
                 if (c != null) c.rebuild();
             }
         }
-        chunk.needsBuild = true;
+        chunk.rebuild();
     }
 
     removeChunk(int x, int z) {
