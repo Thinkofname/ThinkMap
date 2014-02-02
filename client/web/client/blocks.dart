@@ -167,7 +167,41 @@ class Block {
                 ..texId(texture.start, texture.end);
         }
 
-        //TODO: Bottom side
+
+        if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x, y - 1, (chunk.z * 16) + z))) {
+            double topRight = 1.0 - (_numBlocksRegion(chunk, this, x - 1, y - 1, z - 1, x + 1, y, z + 1) / 4);
+            double topLeft = 1.0 - (_numBlocksRegion(chunk, this, x, y - 1, z - 1, x + 2, y, z + 1) / 4);
+            double bottomLeft = 1.0 - (_numBlocksRegion(chunk, this, x, y - 1, z, x + 2, y, z + 2) / 4);
+            double bottomRight = 1.0 - (_numBlocksRegion(chunk, this, x - 1, y - 1, z, x + 1, y, z + 2) / 4);
+
+            TextureInfo texture = getTexture(BlockFace.BOTTOM);
+
+            builder
+                ..position(x, y, z)
+                ..colour((r * topRight).floor(), (g * topRight).floor(), (b * topRight).floor())
+                ..tex(1, 0)
+                ..texId(texture.start, texture.end)
+                ..position(x, y, z + 1)
+                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
+                ..tex(1, 1)
+                ..texId(texture.start, texture.end)
+                ..position(x + 1, y, z)
+                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
+                ..tex(0, 0)
+                ..texId(texture.start, texture.end)
+                ..position(x + 1, y, z)
+                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
+                ..tex(0, 0)
+                ..texId(texture.start, texture.end)
+                ..position(x, y, z + 1)
+                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
+                ..tex(1, 1)
+                ..texId(texture.start, texture.end)
+                ..position(x + 1, y, z + 1)
+                ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
+                ..tex(0, 1)
+                ..texId(texture.start, texture.end);
+        }
 
         if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x + 1, y, (chunk.z * 16) + z))) {
             double topRight = 1.0 - (_numBlocksRegion(chunk, this, x + 1, y, z, x + 2, y + 2, z + 2) / 4);
@@ -312,9 +346,9 @@ class Block {
 
     static int _numBlocksRegion(Chunk chunk, Block self, int x1, int y1, int z1, int x2, int y2, int z2) {
         int count = 0;
-        for (int x = x1; x < x2; x++) {
-            for (int y = y1; y < y2; y++) {
-                if (y < 0 || y > 255) continue;
+        for (int y = y1; y < y2; y++) {
+            if (y < 0 || y > 255) continue;
+            for (int x = x1; x < x2; x++) {
                 for (int z = z1; z < z2; z++) {
                     Block block = chunk.world.getBlock((chunk.x * 16) + x, y, (chunk.z * 16) + z);
                     if (block.solid || block == self) {
