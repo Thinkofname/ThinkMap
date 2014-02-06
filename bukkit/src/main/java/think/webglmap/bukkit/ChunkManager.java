@@ -29,6 +29,9 @@ public class ChunkManager {
             chunk = plugin.getServer().getScheduler().callSyncMethod(plugin, new Callable<ChunkSnapshot>() {
                 @Override
                 public ChunkSnapshot call() throws Exception {
+                    if (!world.loadChunk(x, z, false)) {
+                        return null;
+                    }
                     return world.getChunkAt(x, z).getChunkSnapshot(false, true, false);
                 }
             }).get();
