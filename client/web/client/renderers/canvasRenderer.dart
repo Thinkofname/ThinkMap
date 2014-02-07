@@ -51,6 +51,8 @@ class CanvasRenderer extends Renderer {
         });
         document.body.onMouseWheel.listen((e) {
             JsObject jse = new JsObject.fromBrowserObject(e);
+            // TODO: Fix once dart fixes this bug
+            // zoom += e.wheelDeltaY;
             zoom += jse["wheelDeltaY"] / 1000;
         });
     }
