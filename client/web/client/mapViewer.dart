@@ -6,6 +6,7 @@ import "dart:async";
 import 'dart:typed_data';
 import "dart:math";
 import "dart:convert";
+import "dart:js";
 import "package:vector_math/vector_math.dart";
 
 part "renderers/webglRenderer.dart";
@@ -19,7 +20,7 @@ part "utils.dart";
 part "rendering.dart";
 part "box.dart";
 part "blocks/grass.dart";
-part "blocks/sapling.dart";
+part 'blocks/cross.dart';
 part "network.dart";
 
 // Current world

@@ -9,11 +9,13 @@ class CanvasRenderer extends Renderer {
 
     double cameraX = 0.0;
     double cameraZ = 0.0;
+    double zoom = 1.0;
 
     Map<int, ImageData> blockRawData = new Map();
 
     CanvasRenderer(CanvasElement canvas) {
         ctx = canvas.getContext("2d");
+        ctx.imageSmoothingEnabled = false;
 
         var temp = new CanvasElement();
         var ttx = temp.getContext("2d") as CanvasRenderingContext2D;
@@ -40,16 +42,20 @@ class CanvasRenderer extends Renderer {
             });
         });
         document.body.onMouseMove.where((e) => down).listen((e) {
-            double dx = (e.client.x - x) / 8;
-            double dy = (e.client.y - y) / 8;
+            double dx = -(e.client.x - x) / 8 / zoom;
+            double dy = -(e.client.y - y) / 8 / zoom;
             cameraX += dx + dy;
             cameraZ += dx * 0.5 - dy * 0.5;
             x = e.client.x;
             y = e.client.y;
         });
+        document.body.onMouseWheel.listen((e) {
+            JsObject jse = new JsObject.fromBrowserObject(e);
+            zoom += jse["wheelDeltaY"] / 1000;
+        });
     }
 
-    static const int viewDistance = 4;
+    static const int viewDistance = 5;
 
     @override
     connected() {
@@ -64,7 +70,9 @@ class CanvasRenderer extends Renderer {
     draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.save();
-        ctx.translate(-cameraX * 16 - cameraZ * 16, -cameraX * 8 + cameraZ * 8);
+        ctx.scale(zoom, zoom);
+        ctx.translate(((canvas.width / zoom) - canvas.width) / 2, ((canvas.height / zoom) - canvas.height) / 2);
+        ctx.translate((-cameraX * 16 - cameraZ * 16).toInt(), (-cameraX * 8 + cameraZ * 8).toInt());
         (world as CanvasWorld).render(this);
         ctx.restore();
 
@@ -116,7 +124,7 @@ class CanvasWorld extends World {
         _buildQueue.add(new _BuildJob(chunk, i));
     }
 
-    static const int BUILD_LIMIT_MS = 12;
+    static const int BUILD_LIMIT_MS = 8;
     int lastSort = 0;
 
     render(CanvasRenderer renderer) {
@@ -140,7 +148,7 @@ class CanvasWorld extends World {
         }
 
         if (_buildQueue.isNotEmpty && lastSort <= 0) {
-            lastSort = 10;
+            lastSort = 60;
             _buildQueue.sort(_queueCompare);
         }
         lastSort--;
@@ -192,11 +200,11 @@ class CanvasWorld extends World {
         double cameraX = (renderer as CanvasRenderer).cameraX;
         double cameraZ = (renderer as CanvasRenderer).cameraZ;
         num adx = (a.chunk.x * 16) + 8 - cameraX;
-        num ady = (a.i * 16) + 8 - 14 * 16;
+        num ady = (a.i * 16) + 8 - 6 * 16;
         num adz = (a.chunk.z * 16) + 8 - cameraZ;
         num distA = adx*adx + ady*ady + adz*adz;
         num bdx = (b.chunk.x * 16) + 8 - cameraX;
-        num bdy = (b.i * 16) + 8 - 14 * 16;
+        num bdy = (b.i * 16) + 8 - 6 * 16;
         num bdz = (b.chunk.z * 16) + 8 - cameraZ;
         num distB = bdx*bdx + bdy*bdy + bdz*bdz;
         return distB - distA;

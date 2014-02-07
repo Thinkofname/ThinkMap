@@ -288,10 +288,12 @@ abstract class Chunk {
 
 class ChunkSection {
 
+    static final _emptySkySection = new Uint8List(16 * 16 * 16)..fillRange(0, 16 * 16 * 16, 15);
+
     Uint16List blocks = new Uint16List(16 * 16 * 16);
     Uint8List data = new Uint8List(16 * 16 * 16);
     Uint8List light = new Uint8List(16 * 16 * 16);
-    Uint8List sky = new Uint8List(16 * 16 * 16)..fillRange(0, 16 * 16 * 16, 15);
+    Uint8List sky = new Uint8List(16 * 16 * 16)..setAll(0, _emptySkySection);
 
     int count = 0;
 

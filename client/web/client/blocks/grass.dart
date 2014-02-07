@@ -23,6 +23,104 @@ class BlockGrass extends Block {
     }
 
     @override
+    renderCanvas(ImageData data, int x, int y, int z, int ry, CanvasChunk chunk) {
+
+        // Left side
+        int offsetX = x * 16 + z * 16;
+        int offsetY = x * 8 + (15-z) * 8 + ((15-y) * 16 + 8);
+        if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x, ry, (chunk.z * 16) + z - 1))) {
+            TextureInfo texture = getTexture(BlockFace.LEFT);
+            ImageData textureData = (renderer as CanvasRenderer).blockRawData[texture.start];
+
+            double bottomLeft = 1.0 - (Block._numBlocksRegion(chunk, this, x, ry, z - 1, x + 2, ry + 2, z) / 4);
+            double bottomRight = 1.0 - (Block._numBlocksRegion(chunk, this, x - 1, ry, z - 1, x + 1, ry + 2, z) / 4);
+            double topRight = 1.0 - (Block._numBlocksRegion(chunk, this, x - 1, ry - 1, z - 1, x + 1, ry + 1, z) / 4);
+            double topLeft = 1.0 - (Block._numBlocksRegion(chunk, this, x, ry - 1, z - 1, x + 2, ry + 1, z) / 4);
+
+            for (int tx = 0; tx < 16; tx++) {
+                for (int ty = 0; ty < 16; ty++) {
+                    int i = tx + ty * textureData.width;
+                    i *= 4;
+
+                    int r = textureData.data[i];
+                    int g = textureData.data[i + 1];
+                    int b = textureData.data[i + 2];
+                    int a = textureData.data[i + 3];
+
+                    double modi = ((topLeft * (tx/16) + topRight * ((15-tx)/16))*(ty/16))
+                    + ((bottomLeft * (tx/16) + bottomRight * ((15-tx)/16))*((15-ty)/16));
+
+                    putPixel(data, (offsetX + tx).toInt(), (offsetY + ty + tx*0.5).toInt(),
+                    (r * modi).toInt(), (g * modi).toInt(), (b * modi).toInt(), a);
+                }
+            }
+        }
+        //Right side
+        if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x + 1, ry, (chunk.z * 16) + z))) {
+            TextureInfo texture = getTexture(BlockFace.FRONT);
+            ImageData textureData = (renderer as CanvasRenderer).blockRawData[texture.start];
+
+            double bottomLeft = 1.0 - (Block._numBlocksRegion(chunk, this, x + 1, ry, z, x + 2, ry + 2, z + 2) / 4);
+            double bottomRight = 1.0 - (Block._numBlocksRegion(chunk, this, x + 1, ry, z - 1, x + 2, ry + 2, z + 1) / 4);
+            double topRight = 1.0 - (Block._numBlocksRegion(chunk, this, x + 1, ry - 1, z - 1, x + 2, ry + 1, z + 1) / 4);
+            double topLeft = 1.0 - (Block._numBlocksRegion(chunk, this, x + 1, ry - 1, z, x + 2, ry + 1, z + 2) / 4);
+
+            for (int tx = 0; tx < 16; tx++) {
+                for (int ty = 0; ty < 16; ty++) {
+                    int i = tx + ty * textureData.width;
+                    i *= 4;
+
+                    int r = textureData.data[i];
+                    int g = textureData.data[i + 1];
+                    int b = textureData.data[i + 2];
+                    int a = textureData.data[i + 3];
+
+                    double modi = ((topLeft * (tx/16) + topRight * ((15-tx)/16))*(ty/16))
+                    + ((bottomLeft * (tx/16) + bottomRight * ((15-tx)/16))*((15-ty)/16));
+
+                    putPixel(data, (offsetX + 16 + tx).toInt(), (offsetY + ty + 8 - tx*0.5).toInt(),
+                    (r * modi).toInt(), (g * modi).toInt(), (b * modi).toInt(), a);
+                }
+            }
+        }
+        //Top side
+        //Overdraw to fix white lines
+        if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x, ry + 1, (chunk.z * 16) + z))) {
+
+            int gr = (colour >> 16) & 0xFF;
+            int gg = (colour >> 8) & 0xFF;
+            int gb = colour & 0xFF;
+
+            TextureInfo texture = getTexture(BlockFace.TOP);
+            ImageData textureData = (renderer as CanvasRenderer).blockRawData[texture.start];
+
+            double bottomRight = 1.0 - (Block._numBlocksRegion(chunk, this, x - 1, ry + 1, z - 1, x + 1, ry + 2, z + 1) / 4);
+            double bottomLeft = 1.0 - (Block._numBlocksRegion(chunk, this, x, ry + 1, z - 1, x + 2, ry + 2, z + 1) / 4);
+            double topLeft = 1.0 - (Block._numBlocksRegion(chunk, this, x, ry + 1, z, x + 2, ry + 2, z + 2) / 4);
+            double topRight = 1.0 - (Block._numBlocksRegion(chunk, this, x - 1, ry + 1, z, x + 1, ry + 2, z + 2) / 4);
+
+            for (int ttx = -1; ttx < 17; ttx++) {
+                for (int tty = -1; tty < 16; tty++) {
+                    int tx = ttx.clamp(0, 15);
+                    int ty = tty.clamp(0, 15);
+                    int i = tx + ty * textureData.width;
+                    i *= 4;
+                    int r = (textureData.data[i] * (gr/255)).toInt();
+                    int g = (textureData.data[i + 1] * (gg/255)).toInt();
+                    int b = (textureData.data[i + 2] * (gb/255)).toInt();
+                    int a = textureData.data[i + 3];
+
+                    double modi = ((topLeft * (tx/16) + topRight * ((15-tx)/16))*(ty/16))
+                    + ((bottomLeft * (tx/16) + bottomRight * ((15-tx)/16))*((15-ty)/16));
+
+                    putPixel(data, (offsetX + 1.5 + ttx + tty).toInt(), (offsetY + ttx * 0.5 - 0.75 - tty * 0.5).toInt(),
+                    (r * modi).toInt(), (g * modi).toInt(), (b * modi).toInt(), a);
+                }
+            }
+        }
+    }
+
+    @override
     render(BlockBuilder builder, int x, int y, int z, Chunk chunk) {
         //TODO:
         int r = (colour >> 16) & 0xFF;

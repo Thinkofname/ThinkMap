@@ -1,8 +1,7 @@
 part of mapViewer;
 
 putPixel(ImageData data, int x, int y, int r, int g, int b, int a) {
-    int i = x + y * data.width;
-    i *= 4;
+    int i = (x + y * data.width) * 4;
 
     if (a == 0) return;
 
