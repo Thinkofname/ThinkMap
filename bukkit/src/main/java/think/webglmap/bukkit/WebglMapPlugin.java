@@ -36,7 +36,7 @@ public class WebglMapPlugin extends JavaPlugin implements Runnable {
         webHandler = new WebHandler(this);
         webHandler.start();
 
-//        getServer().getPluginManager().registerEvents(new Events(this), this);
+        getServer().getPluginManager().registerEvents(new Events(this), this);
         getServer().getScheduler().runTaskTimer(this, this, 0l, 20 * 5l);
 
         for (World world : getServer().getWorlds()) {

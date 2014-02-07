@@ -15,11 +15,7 @@ class Connection {
 
     start(Event e) {
         print("Connected to server");
-        for (int x = -6; x < 6; x++) {
-            for (int z = -6; z < 6; z++) {
-                writeRequestChunk(x, z);
-            }
-        }
+        renderer.connected();
     }
 
     data(MessageEvent e) {

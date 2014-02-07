@@ -1,9 +1,23 @@
 part of mapViewer;
 
+putPixel(ImageData data, int x, int y, int r, int g, int b, int a) {
+    int i = x + y * data.width;
+    i *= 4;
 
-// Because dart is broken
-//int leftShift(int v, int x) => v < 0 ? -((-v)<<x) : v << x;
+    if (a == 0) return;
 
+    if (data.data[i + 3] == 0) {
+        data.data[i] = r;
+        data.data[i + 1] = g;
+        data.data[i + 2] = b;
+        data.data[i + 3] = 255;
+    } else {
+        data.data[i] = (data.data[i] * ((255-a)/255) + r * (a/255)).toInt();
+        data.data[i + 1] = (data.data[i + 1] * ((255-a)/255) + g * (a/255)).toInt();
+        data.data[i + 2] = (data.data[i + 2] * ((255-a)/255) + b * (a/255)).toInt();
+        data.data[i + 3] = 255;
+    }
+}
 
 addPlane(BlockBuilder builder, int r, int g, int b, num x, num y, num z, num w, num d, TextureInfo texture) {
 

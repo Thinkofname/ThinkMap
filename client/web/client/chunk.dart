@@ -1,6 +1,6 @@
 part of mapViewer;
 
-class Chunk {
+abstract class Chunk {
 
     int x;
     int z;
@@ -273,106 +273,6 @@ class Chunk {
         }
     }
 
-    List<Uint8List> builtSections = new List(16);
-    Buffer renderBuffer;
-    int bufferSize = 0;
-    int triangleCount = 0;
-
-    List<Uint8List> builtSectionsTrans = new List(16);
-    Buffer renderBufferTrans;
-    int bufferSizeTrans = 0;
-    int triangleCountTrans = 0;
-
-    List<Uint8List> builtSectionsFloat = new List(16);
-    Buffer renderBufferFloat;
-    int bufferSizeFloat = 0;
-    int triangleCountFloat = 0;
-
-    render(RenderingContext gl, int pass) {
-        if (needsBuild) {
-            needsBuild = false;
-            for (int i = 0; i < 16; i++) {
-                var section = sections[i];
-                if (section != null && section.needsBuild) {
-                    section.needsBuild = false;
-                    world.requestBuild(this, i);
-                }
-            }
-        }
-        if (needsUpdate) {
-            needsUpdate = false;
-            Uint8List chunkData = new Uint8List(bufferSize);
-            int offset = 0;
-            Uint8List chunkDataTrans = new Uint8List(bufferSizeTrans);
-            int offsetTrans = 0;
-            Uint8List chunkDataFloat = new Uint8List(bufferSizeFloat);
-            int offsetFloat = 0;
-            for (int i = 0; i < 16; i++) {
-                var section = sections[i];
-                if (section != null) {
-                    if (builtSections[i] != null) {
-                        chunkData.setAll(offset, builtSections[i]);
-                        offset += builtSections[i].length;
-                    }
-                    if (builtSectionsTrans[i] != null) {
-                        chunkDataTrans.setAll(offsetTrans, builtSectionsTrans[i]);
-                        offsetTrans += builtSectionsTrans[i].length;
-                    }
-                    if (builtSectionsFloat[i] != null) {
-                        chunkDataFloat.setAll(offsetFloat, builtSectionsFloat[i]);
-                        offsetFloat += builtSectionsFloat[i].length;
-                    }
-                }
-            }
-            if (renderBuffer == null) {
-                renderBuffer = gl.createBuffer();
-            }
-            gl.bindBuffer(ARRAY_BUFFER, renderBuffer);
-            gl.bufferData(ARRAY_BUFFER, chunkData, STATIC_DRAW);
-
-            if (renderBufferTrans == null) {
-                renderBufferTrans = gl.createBuffer();
-            }
-            gl.bindBuffer(ARRAY_BUFFER, renderBufferTrans);
-            gl.bufferData(ARRAY_BUFFER, chunkDataTrans, STATIC_DRAW);
-
-            if (renderBufferFloat == null) {
-                renderBufferFloat = gl.createBuffer();
-            }
-            gl.bindBuffer(ARRAY_BUFFER, renderBufferFloat);
-            gl.bufferData(ARRAY_BUFFER, chunkDataFloat, STATIC_DRAW);
-
-            triangleCount = chunkData.length ~/ 12;
-            triangleCountTrans = chunkDataTrans.length ~/ 12;
-            triangleCountFloat = chunkDataFloat.length ~/ 28;
-        }
-        if (pass == 0 && renderBuffer != null && triangleCount != 0) {
-            gl.uniform2f(offsetLocation, x, z);
-            gl.bindBuffer(ARRAY_BUFFER, renderBuffer);
-            gl.vertexAttribPointer(positionLocation, 3, UNSIGNED_BYTE, false, 12, 0);
-            gl.vertexAttribPointer(colourLocation, 3, UNSIGNED_BYTE, true, 12, 3);
-            gl.vertexAttribPointer(texturePosLocation, 2, UNSIGNED_BYTE, false, 12, 6);
-            gl.vertexAttribPointer(textureIdLocation, 2, UNSIGNED_SHORT, false, 12, 8);
-            gl.drawArrays(TRIANGLES, 0, triangleCount);
-        } else if (pass == 1 && renderBufferFloat != null && triangleCountFloat != 0) {
-            gl.uniform2f(offsetLocation, x, z);
-            gl.bindBuffer(ARRAY_BUFFER, renderBufferFloat);
-            gl.vertexAttribPointer(positionLocation, 3, FLOAT, false, 28, 0);
-            gl.vertexAttribPointer(colourLocation, 3, UNSIGNED_BYTE, true, 28, 12);
-            gl.vertexAttribPointer(texturePosLocation, 2, FLOAT, false, 28, 16);
-            gl.vertexAttribPointer(textureIdLocation, 2, UNSIGNED_SHORT, false, 28, 24);
-            gl.drawArrays(TRIANGLES, 0, triangleCountFloat);
-        } else if (pass == 2 && renderBufferTrans != null && triangleCountTrans != 0) {
-            gl.uniform2f(offsetLocation, x, z);
-            gl.bindBuffer(ARRAY_BUFFER, renderBufferTrans);
-            gl.vertexAttribPointer(positionLocation, 3, UNSIGNED_BYTE, false, 12, 0);
-            gl.vertexAttribPointer(colourLocation, 3, UNSIGNED_BYTE, true, 12, 3);
-            gl.vertexAttribPointer(texturePosLocation, 2, UNSIGNED_BYTE, false, 12, 6);
-            gl.vertexAttribPointer(textureIdLocation, 2, UNSIGNED_SHORT, false, 12, 8);
-            gl.drawArrays(TRIANGLES, 0, triangleCountTrans);
-        }
-    }
-
     rebuild() {
         needsBuild = true;
         for (int i = 0; i < 16; i++) {
@@ -383,70 +283,7 @@ class Chunk {
         }
     }
 
-    BuildSnapshot buildSection(int i, BuildSnapshot snapshot, Stopwatch stopwatch) {
-        if (snapshot == null) {
-            snapshot = new BuildSnapshot();
-        }
-        BlockBuilder builder = snapshot.builder;
-        BlockBuilder builderTrans = snapshot.builderTrans;
-        for (int x = snapshot.x; x < 16; x++) {
-            int sz = x == snapshot.x ? snapshot.z : 0;
-            for (int z = sz; z < 16; z++) {
-                int sy = 0;
-                if (z == snapshot.z){
-                    sy = snapshot.y;
-                    snapshot.z = -1;
-                }
-                for (int y = sy; y < 16; y++) {
-                    Block block = getBlock(x, (i << 4) + y, z);
-                    if (block.renderable) {
-                        block.renderFloat(block.transparent ? builderTrans : builder, snapshot.builderFloat, x, (i << 4) + y, z, this);
-                    }
-                    if (stopwatch.elapsedMilliseconds >= World.BUILD_LIMIT_MS) {
-                        snapshot.x = x;
-                        snapshot.y = y + 1;
-                        snapshot.z = z;
-                        return snapshot;
-                    }
-                }
-            }
-        }
-        // Resize
-        bufferSize -= builtSections[i] != null ? builtSections[i].length : 0;
-        bufferSizeTrans -= builtSectionsTrans[i] != null ? builtSectionsTrans[i].length : 0;
-        bufferSizeFloat -= builtSectionsFloat[i] != null ? builtSectionsFloat[i].length : 0;
-        // Store
-        builtSections[i] = builder.toTypedList();
-        builtSectionsTrans[i] = builderTrans.toTypedList();
-        builtSectionsFloat[i] = snapshot.builderFloat.toTypedList();
-        // Resize
-        bufferSize += builtSections[i].length;
-        bufferSizeTrans += builtSectionsTrans[i].length;
-        bufferSizeFloat += builtSectionsFloat[i].length;
-        needsUpdate = true;
-        return null;
-    }
-
-    unload(RenderingContext gl) {
-        if (renderBuffer != null) {
-            gl.deleteBuffer(renderBuffer);
-        }
-        if (renderBufferTrans != null) {
-            gl.deleteBuffer(renderBufferTrans);
-        }
-        if (renderBufferFloat != null) {
-            gl.deleteBuffer(renderBufferFloat);
-        }
-    }
-}
-
-class BuildSnapshot {
-    BlockBuilder builder = new BlockBuilder();
-    BlockBuilder builderTrans = new BlockBuilder();
-    FloatBlockBuilder builderFloat = new FloatBlockBuilder();
-    int x = 0;
-    int y = 0;
-    int z = 0;
+    unload(Renderer renderer);
 }
 
 class ChunkSection {

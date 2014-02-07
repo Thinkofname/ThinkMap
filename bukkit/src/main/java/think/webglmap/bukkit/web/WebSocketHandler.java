@@ -50,5 +50,6 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<BinaryWebSocke
 //                }
 //                break;
         }
+        data.release();
     }
 }
