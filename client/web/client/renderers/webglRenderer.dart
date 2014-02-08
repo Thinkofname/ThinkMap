@@ -29,13 +29,17 @@ class WebGLRenderer extends Renderer {
     // Controls
     bool movingForward = false;
     bool movingBackwards = false;
-    Camera camera = new Camera()..y = 140.0;
+    Camera camera = new Camera()
+        ..y = 6 * 16
+        ..rotX = PI / 3
+        ..rotY = PI / 4;
     double vSpeed = MIN_VSPEED;
     static const double MIN_VSPEED = -0.2;
     bool onGround = false;
     int offGroundFor = 0;
     int cx = 0;
     int cz = 0;
+    bool firstPerson = false;
 
     WebGLRenderer(CanvasElement canvas) {
         // Flags are set for performance
@@ -45,8 +49,7 @@ class WebGLRenderer extends Renderer {
             throw "WebGL not supported";
         }
 
-        pMatrix = makePerspectiveMatrix(radians(75.0), canvas.width / canvas.height, 0.1, 500);
-        pMatrix.copyIntoArray(pMatrixList);
+        resize(0, 0);
 
         // Convert images to textures
         for (ImageElement img in blockTexturesRaw) {
@@ -82,9 +85,9 @@ class WebGLRenderer extends Renderer {
         gl.blendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
 
         // 3D Controls
-        document.body.onMouseDown.listen((e) {if (document.pointerLockElement != canvas) canvas.requestPointerLock(); });
+        document.body.onMouseDown.listen((e) {if (document.pointerLockElement != canvas && firstPerson) canvas.requestPointerLock(); });
         document.body.onMouseMove.listen((e) {
-            if (document.pointerLockElement != canvas) return;
+            if (document.pointerLockElement != canvas || !firstPerson) return;
             camera.rotY += e.movement.x / 300.0;
             camera.rotX += e.movement.y / 300.0;
         });
@@ -93,7 +96,7 @@ class WebGLRenderer extends Renderer {
             window.onKeyUp.firstWhere((e) => e.keyCode == KeyCode.W).then((e) {
                 movingForward = false;
             });
-            if (document.pointerLockElement != canvas) canvas.requestPointerLock();
+            if (document.pointerLockElement != canvas && firstPerson) canvas.requestPointerLock();
         });
         document.body.onKeyDown.where((e) => e.keyCode == KeyCode.S).listen((e) {
             movingBackwards = true;
@@ -102,10 +105,52 @@ class WebGLRenderer extends Renderer {
             });
         });
         document.body.onKeyDown.where((e) => e.keyCode == KeyCode.SPACE).listen((e) {
-            if (onGround || offGroundFor <= 1) vSpeed = 0.1;
+            if (firstPerson && (onGround || offGroundFor <= 1)) vSpeed = 0.1;
         });
+        // Iso controls
+        bool down = false;
+        int x = 0;
+        int y = 0;
+        document.body.onMouseDown.listen((e) {
+            if (firstPerson) return;
+            down = true;
+            x = e.client.x;
+            y = e.client.y;
+            document.body.onMouseUp.first.then((e) {
+                down = false;
+            });
+        });
+        document.body.onMouseMove.where((e) => down).listen((e) {
+            if (firstPerson) return;
+            double dx = -(e.client.x - x) / 8;
+            double dy = (e.client.y - y) / 8;
+            camera.x += dx + dy;
+            camera.z += dx * 0.5 - dy * 0.5;
+            x = e.client.x;
+            y = e.client.y;
+        });
+        document.body.onMouseWheel.listen((e) {
+            if (firstPerson) return;
+            JsObject jse = new JsObject.fromBrowserObject(e);
+            // TODO: Fix once dart fixes this bug
+            // zoom += e.wheelDeltaY;
+            if (jse["deltaY"] != null) {
+                camera.y -= (jse["deltaY"] as int) < 0 ? -1.0 : 1.0;
+            } else {
+                camera.y -= (jse["wheelDeltaY"] as int) < 0 ? -1.0 : 1.0;
+            }
+            e.preventDefault();
+        });
+        // Misc
         document.body.onKeyDown.where((e) => e.keyCode == KeyCode.F).listen((e) {
             canvas.requestFullscreen();
+        });
+        document.body.onKeyDown.where((e) => e.keyCode == KeyCode.G).listen((e) {
+            firstPerson = !firstPerson;
+            if (!firstPerson) {
+                camera..rotX = PI / 3
+                    ..rotY = PI / 4;
+            }
         });
     }
 
@@ -127,25 +172,26 @@ class WebGLRenderer extends Renderer {
         gl.uniform1i(blockTextureLocation, 0);
         gl.uniform1f(frameLocation, world.currentTime);
 
-        // Temp controls
-        double lx = camera.x;
-        double ly = camera.y;
-        double lz = camera.z;
+        if (firstPerson) {
+            double lx = camera.x;
+            double ly = camera.y;
+            double lz = camera.z;
 
-        if (world.getChunk(cx, cz) != null) {
-            camera.y += vSpeed;
-            vSpeed = max(MIN_VSPEED, vSpeed - 0.005);
+            if (world.getChunk(cx, cz) != null) {
+                camera.y += vSpeed;
+                vSpeed = max(MIN_VSPEED, vSpeed - 0.005);
 
-            if (movingForward) {
-                camera.x += 0.1 * sin(camera.rotY);
-                camera.z -= 0.1 * cos(camera.rotY);
-            } else if (movingBackwards) {
-                camera.x -= 0.1 * sin(camera.rotY);
-                camera.z += 0.1 * cos(camera.rotY);
+                if (movingForward) {
+                    camera.x += 0.1 * sin(camera.rotY);
+                    camera.z -= 0.1 * cos(camera.rotY);
+                } else if (movingBackwards) {
+                    camera.x -= 0.1 * sin(camera.rotY);
+                    camera.z += 0.1 * cos(camera.rotY);
+                }
+                checkCollision(lx, ly, lz);
+
+                if (onGround) vSpeed = 0.0;
             }
-            checkCollision(lx, ly, lz);
-
-            if (onGround) vSpeed = 0.0;
         }
 
 

@@ -54,10 +54,11 @@ class CanvasRenderer extends Renderer {
             // TODO: Fix once dart fixes this bug
             // zoom += e.wheelDeltaY;
             if (jse["deltaY"] != null) {
-                zoom += -(jse["deltaY"] as int) / 400;
+                zoom += -(jse["deltaY"] as int) < 0 ? -0.2 : 0.2;
             } else {
-                zoom += (jse["wheelDeltaY"] as int) / 1000;
+                zoom += (jse["wheelDeltaY"] as int) < 0 ? -0.2 : 0.2;
             }
+            e.preventDefault();
         });
     }
 
