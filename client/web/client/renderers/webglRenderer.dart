@@ -30,7 +30,7 @@ class WebGLRenderer extends Renderer {
     bool movingForward = false;
     bool movingBackwards = false;
     Camera camera = new Camera()
-        ..y = 6 * 16
+        ..y = 6.0 * 16.0
         ..rotX = PI / 3
         ..rotY = PI / 4;
     double vSpeed = MIN_VSPEED;
