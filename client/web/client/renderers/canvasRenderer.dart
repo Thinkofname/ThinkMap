@@ -60,6 +60,11 @@ class CanvasRenderer extends Renderer {
             }
             e.preventDefault();
         });
+        document.body.onKeyDown.where((e) => e.keyCode == KeyCode.K).listen((e) {
+            world.chunks.forEach((k, v) {
+                v.rebuild();
+            });
+        });
     }
 
     static const int viewDistance = 4;
@@ -83,8 +88,8 @@ class CanvasRenderer extends Renderer {
         (world as CanvasWorld).render(this);
         ctx.restore();
 
-        int nx = ((cameraX - 8) >> 16).toSigned(32);
-        int nz = ((cameraZ - 8) >> 16).toSigned(32);
+        int nx = ((cameraX - 8).toInt() >> 4).toSigned(32);
+        int nz = ((cameraZ - 8).toInt() >> 4).toSigned(32);
         if (nx != cx || nz != cz) {
             for (int x = nx-viewDistance; x < nx+viewDistance; x++) {
                 for (int z = nz-viewDistance; z < nz+viewDistance; z++) {
@@ -146,10 +151,9 @@ class CanvasWorld extends World {
     }
 
     @override
-    removeChunk(int x, int z) {
-        var chunk = getChunk(x, z);
+    removeChunk(int x, int z) {;
         super.removeChunk(x, z);
-        orderedChunkList.remove(chunk);
+        orderedChunkList.removeWhere((chunk) => chunk.x == x && chunk.z == z);
     }
 
     int _chunkSort(Chunk a, Chunk b) {

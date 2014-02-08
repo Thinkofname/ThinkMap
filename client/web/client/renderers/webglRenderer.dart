@@ -215,8 +215,8 @@ class WebGLRenderer extends Renderer {
         gl.colorMask(false, false, false, true);
         gl.clear(COLOR_BUFFER_BIT);
 
-        int nx = camera.x ~/ 16;
-        int nz = camera.z ~/ 16;
+        int nx = (camera.x.toInt() >> 4).toSigned(32);
+        int nz = (camera.z.toInt() >> 4).toSigned(32);
         if (nx != cx || nz != cz) {
             for (Chunk chunk in new List.from(world.chunks.values)) {
                 int x = chunk.x;
@@ -430,6 +430,7 @@ class WebGLChunk extends Chunk {
                 if (section != null && section.needsBuild) {
                     section.needsBuild = false;
                     (world as WebGLWorld).requestBuild(this, i);
+//                    buildSection(i, null, new Stopwatch());
                 }
             }
         }
@@ -508,9 +509,9 @@ class WebGLChunk extends Chunk {
     }
 
     @override
-    BuildSnapshot buildSection(int i, BuildSnapshot snapshot, Stopwatch stopwatch) {
+    WebGLSnapshot buildSection(int i, WebGLSnapshot snapshot, Stopwatch stopwatch) {
         if (snapshot == null) {
-            snapshot = new BuildSnapshot();
+            snapshot = new WebGLSnapshot();
         }
         BlockBuilder builder = snapshot.builder;
         BlockBuilder builderTrans = snapshot.builderTrans;
@@ -531,6 +532,8 @@ class WebGLChunk extends Chunk {
                         snapshot.x = x;
                         snapshot.y = y + 1;
                         snapshot.z = z;
+                        snapshot.builder = builder;
+                        snapshot.builderTrans = builderTrans;
                         return snapshot;
                     }
                 }
@@ -578,7 +581,7 @@ class Camera {
     double rotY = 0.0;
 }
 
-class BuildSnapshot {
+class WebGLSnapshot {
     BlockBuilder builder = new BlockBuilder();
     BlockBuilder builderTrans = new BlockBuilder();
     FloatBlockBuilder builderFloat = new FloatBlockBuilder();
