@@ -181,7 +181,6 @@ class Block {
             }
         }
         //Top side
-        //Overdraw to fix white lines
         if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x, ry + 1, (chunk.z * 16) + z))) {
             TextureInfo texture = getTexture(BlockFace.TOP);
             ImageData textureData = (renderer as CanvasRenderer).blockRawData[texture.start];
@@ -191,6 +190,7 @@ class Block {
             double topLeft = 1.0 - (_numBlocksRegion(chunk, this, x, ry + 1, z, x + 2, ry + 2, z + 2) / 4);
             double topRight = 1.0 - (_numBlocksRegion(chunk, this, x - 1, ry + 1, z, x + 1, ry + 2, z + 2) / 4);
 
+            //Overdraw to fix white lines
             for (int ttx = -1; ttx < 17; ttx++) {
                 for (int tty = -1; tty < 16; tty++) {
                     int tx = ttx.clamp(0, 15);
