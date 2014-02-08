@@ -217,10 +217,9 @@ class Block {
     }
 
     render(BlockBuilder builder, int x, int y, int z, Chunk chunk) {
-        //TODO:
-        int r = 255; //(colour >> 16) & 0xFF;
-        int g = 255; //(colour >> 8) & 0xFF;
-        int b = 255; //colour & 0xFF;
+        int r = 255;
+        int g = 255;
+        int b = 255;
         if (forceColour) {
             r = (colour >> 16) & 0xFF;
             g = (colour >> 8) & 0xFF;

@@ -262,7 +262,7 @@ abstract class Chunk {
             for (int ox = -1; ox <= 1; ox++) {
                 for (int oz = -1; oz <= 1; oz++) {
                     for (int oy = -1; oy <= 1; oy++) {
-                        Chunk chunk = world.getChunk((this.x*16 + x + ox) ~/ 16, (this.x*16 + x + ox) ~/ 16);
+                        Chunk chunk = world.getChunk(((this.x*16 + x + ox) >> 4), ((this.x*16 + x + ox) >> 4));
                         if (chunk == null) continue;
                         chunk.needsBuild = true;
                         int idx = (y + oy)>>4;

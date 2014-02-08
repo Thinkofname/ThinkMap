@@ -38,80 +38,64 @@ class World {
         chunk.unload(renderer);
     }
 
-    Chunk getChunk(int x, int z) {
-        return chunks[_chunkKey(x, z)];
-    }
-
     int cacheX;
     int cacheZ;
     Chunk cacheChunk;
+
+    Chunk getChunk(int x, int z) {
+        x = x.toSigned(32);
+        z = z.toSigned(32);
+        if (cacheChunk != null && cacheX == x && cacheZ == z) {
+            return cacheChunk;
+        }
+        cacheX = x;
+        cacheZ = z;
+        cacheChunk = chunks[_chunkKey(x, z)];
+        return cacheChunk;
+    }
 
     Block getBlock(int x, int y, int z) {
         if (y < 0 || y > 255) return Block.AIR;
         int cx = x >> 4;
         int cz = z >> 4;
-        if (cacheChunk != null && cacheX == cx && cacheZ == cz) {
-            return cacheChunk.getBlock(x & 0xF, y, z & 0xF);
-        }
-        cacheX = cx;
-        cacheZ = cz;
         var chunk = getChunk(cx, cz);
         if (chunk == null) {
             return Block.BEDROCK;
         }
-        cacheChunk = chunk;
-        return cacheChunk.getBlock(x & 0xF, y, z & 0xF);
+        return chunk.getBlock(x & 0xF, y, z & 0xF);
     }
 
     int getData(int x, int y, int z) {
         if (y < 0 || y > 255) return 0;
         int cx = x >> 4;
         int cz = z >> 4;
-        if (cacheChunk != null && cacheX == cx && cacheZ == cz) {
-            return cacheChunk.getData(x & 0xF, y, z & 0xF);
-        }
-        cacheX = cx;
-        cacheZ = cz;
         var chunk = getChunk(cx, cz);
         if (chunk == null) {
             return 0;
         }
-        cacheChunk = chunk;
-        return cacheChunk.getData(x & 0xF, y, z & 0xF);
+        return chunk.getData(x & 0xF, y, z & 0xF);
     }
 
     int getLight(int x, int y, int z) {
         if (y < 0 || y > 255) return 0;
         int cx = x >> 4;
         int cz = z >> 4;
-        if (cacheChunk != null && cacheX == cx && cacheZ == cz) {
-            return cacheChunk.getLight(x & 0xF, y, z & 0xF);
-        }
-        cacheX = cx;
-        cacheZ = cz;
         var chunk = getChunk(cx, cz);
         if (chunk == null) {
             return 0;
         }
-        cacheChunk = chunk;
-        return cacheChunk.getLight(x & 0xF, y, z & 0xF);
+        return chunk.getLight(x & 0xF, y, z & 0xF);
     }
 
     int getSky(int x, int y, int z) {
         if (y < 0 || y > 255) return 15;
         int cx = x >> 4;
         int cz = z >> 4;
-        if (cacheChunk != null && cacheX == cx && cacheZ == cz) {
-            return cacheChunk.getSky(x & 0xF, y, z & 0xF);
-        }
-        cacheX = cx;
-        cacheZ = cz;
         var chunk = getChunk(cx, cz);
         if (chunk == null) {
             return 15;
         }
-        cacheChunk = chunk;
-        return cacheChunk.getSky(x & 0xF, y, z & 0xF);
+        return chunk.getSky(x & 0xF, y, z & 0xF);
     }
 
     String _chunkKey(int x, int z) {

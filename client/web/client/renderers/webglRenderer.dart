@@ -371,7 +371,7 @@ class WebGLWorld extends World {
     Stopwatch stopwatch = new Stopwatch();
 
     requestBuild(Chunk chunk, int i) {
-        String key = "${chunk.x}:${chunk.z}@$i";
+        String key = _buildKey(chunk.x, chunk.z, i);
         if (_waitingForBuild.containsKey(key)) {
             return; // Already queued
         }
@@ -385,10 +385,13 @@ class WebGLWorld extends World {
     @override
     removeChunk(int x, int z) {
         super.removeChunk(x, z);
-        String key = "${x}:${z}@";
         for (int i = 0; i < 16; i++) {
-            _waitingForBuild.remove(key + i.toString());
+            _waitingForBuild.remove(_buildKey(x, z, i));
         }
+    }
+
+    String _buildKey(int x, int z, int i) {
+        return "${x.toSigned(32)}:${z.toSigned(32)}@$i";
     }
 
     render(WebGLRenderer renderer) {
@@ -418,7 +421,7 @@ class WebGLWorld extends World {
             lastSort--;
             while (stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS && _buildQueue.isNotEmpty) {
                 var job = _buildQueue.removeLast();
-                String key = "${job.chunk.x}:${job.chunk.z}@${job.i}";
+                String key = _buildKey(job.chunk.x, job.chunk.z, job.i);
                 if (!_waitingForBuild.containsKey(key)) continue;
                 _waitingForBuild.remove(key);
                 BuildSnapshot snapshot = job.chunk.buildSection(job.i, null, stopwatch);
@@ -605,6 +608,7 @@ class WebGLChunk extends Chunk {
         bufferSize += builtSections[i].length;
         bufferSizeTrans += builtSectionsTrans[i].length;
         bufferSizeFloat += builtSectionsFloat[i].length;
+
         needsUpdate = true;
         return null;
     }
