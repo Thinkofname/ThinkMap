@@ -22,7 +22,12 @@ class World {
     }
 
     addChunk(Chunk chunk) {
-        chunks[_chunkKey(chunk.x, chunk.z)] = chunk;
+        String key = _chunkKey(chunk.x, chunk.z);
+        if (chunks[key] != null) {
+            // Chunk is already loaded ignore it
+            return;
+        }
+        chunks[key] = chunk;
         for (int x = -1; x <= 1; x++) {
             for (int z = -1; z <= 1; z++) {
                 Chunk c = getChunk(chunk.x + x, chunk.z + z);
@@ -52,7 +57,8 @@ class World {
     requestBuild(Chunk chunk, int i) {
         String key = _buildKey(chunk.x, chunk.z, i);
         if (_waitingForBuild.containsKey(key)) {
-            return; // Already queued
+            // Already queued
+            return;
         }
         _waitingForBuild[key] = true;
         _buildQueue.add(new _BuildJob(chunk, i));

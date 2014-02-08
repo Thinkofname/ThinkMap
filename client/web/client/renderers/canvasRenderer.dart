@@ -91,19 +91,19 @@ class CanvasRenderer extends Renderer {
         int nx = ((cameraX - 8).toInt() >> 4).toSigned(32);
         int nz = ((cameraZ - 8).toInt() >> 4).toSigned(32);
         if (nx != cx || nz != cz) {
-            for (int x = nx-viewDistance; x < nx+viewDistance; x++) {
-                for (int z = nz-viewDistance; z < nz+viewDistance; z++) {
-                    if (world.getChunk(x, z) == null)
-                        connection.writeRequestChunk(x, z);
-                }
-            }
-
             for (Chunk chunk in new List.from(world.chunks.values)) {
                 int x = chunk.x;
                 int z = chunk.z;
                 if (x < nx-viewDistance || x >= nx+viewDistance
                 || z < nz-viewDistance || z >= nz+viewDistance) {
                     world.removeChunk(x, z);
+                }
+            }
+
+            for (int x = nx-viewDistance; x < nx+viewDistance; x++) {
+                for (int z = nz-viewDistance; z < nz+viewDistance; z++) {
+                    if (world.getChunk(x, z) == null)
+                        connection.writeRequestChunk(x, z);
                 }
             }
             cx = nx;
