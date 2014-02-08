@@ -117,7 +117,7 @@ class Block {
 
     shouldRenderAgainst(Block block) => !block.solid;
 
-    renderCanvas(ImageData data, int x, int y, int z, int ry, CanvasChunk chunk) {
+    renderCanvas(Uint8ClampedList data, int width, int x, int y, int z, int ry, CanvasChunk chunk) {
 
         int gr = (colour >> 16) & 0xFF;
         int gg = (colour >> 8) & 0xFF;
@@ -166,7 +166,7 @@ class Block {
                         double modi = ((topLeft * (tx/16) + topRight * ((15-tx)/16))*(ty/16))
                         + ((bottomLeft * (tx/16) + bottomRight * ((15-tx)/16))*((15-ty)/16));
 
-                        putPixel(data, (offsetX + tx).toInt(), (offsetY + ty + tx*0.5).toInt(),
+                        putPixel(data, width, (offsetX + tx).toInt(), (offsetY + ty + tx*0.5).toInt(),
                         (r * modi).toInt(), (g * modi).toInt(), (b * modi).toInt(), a);
                     }
 
@@ -174,7 +174,7 @@ class Block {
                         double modi = ((topLeftRight * (tx/16) + topRightRight * ((15-tx)/16))*(ty/16))
                         + ((bottomLeftRight * (tx/16) + bottomRightRight * ((15-tx)/16))*((15-ty)/16));
 
-                        putPixel(data, (offsetX + 16 + tx).toInt(), (offsetY + ty + 8 - tx*0.5).toInt(),
+                        putPixel(data, width, (offsetX + 16 + tx).toInt(), (offsetY + ty + 8 - tx*0.5).toInt(),
                         (r * modi).toInt(), (g * modi).toInt(), (b * modi).toInt(), a);
                     }
                 }
@@ -205,7 +205,7 @@ class Block {
                     double modi = ((topLeft * (tx/16) + topRight * ((15-tx)/16))*(ty/16))
                     + ((bottomLeft * (tx/16) + bottomRight * ((15-tx)/16))*((15-ty)/16));
 
-                    putPixel(data, (offsetX + 1.5 + ttx + tty).toInt(), (offsetY + ttx * 0.5 - 0.75 - tty * 0.5).toInt(),
+                    putPixel(data, width, (offsetX + 1.5 + ttx + tty).toInt(), (offsetY + ttx * 0.5 - 0.75 - tty * 0.5).toInt(),
                     (r * modi).toInt(), (g * modi).toInt(), (b * modi).toInt(), a);
                 }
             }

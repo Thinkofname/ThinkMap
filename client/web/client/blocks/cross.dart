@@ -8,7 +8,7 @@ class BlockCross extends Block {
 
 
     @override
-    renderCanvas(ImageData data, int x, int y, int z, int ry, CanvasChunk chunk) {
+    renderCanvas(Uint8ClampedList data, int width, int x, int y, int z, int ry, CanvasChunk chunk) {
 
         int gr = (colour >> 16) & 0xFF;
         int gg = (colour >> 8) & 0xFF;
@@ -40,14 +40,14 @@ class BlockCross extends Block {
                     if (renderLeft) {
                         double modi = 1.0;
 
-                        putPixel(data, (offsetX + tx + 8).toInt(), (offsetY + ty + tx*0.5 - 4).toInt(),
+                        putPixel(data, width, (offsetX + tx + 8).toInt(), (offsetY + ty + tx*0.5 - 4).toInt(),
                         (r * modi).toInt(), (g * modi).toInt(), (b * modi).toInt(), a);
                     }
 
                     if (renderRight) {
                         double modi = 1.0;
 
-                        putPixel(data, (offsetX + 8 + tx).toInt(), (offsetY + ty + 8 - tx*0.5 - 4).toInt(),
+                        putPixel(data, width, (offsetX + 8 + tx).toInt(), (offsetY + ty + 8 - tx*0.5 - 4).toInt(),
                         (r * modi).toInt(), (g * modi).toInt(), (b * modi).toInt(), a);
                     }
                 }

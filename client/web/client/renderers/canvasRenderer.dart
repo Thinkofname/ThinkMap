@@ -236,6 +236,8 @@ class CanvasChunk extends Chunk {
         var ctx = snapshot.ctx;
 
         ImageData data = snapshot.data == null ? ctx.getImageData(0, 0, canvas.width, canvas.height) : snapshot.data;
+        var d = data.data;
+        var w = data.width;
 
         for (int x = snapshot.x; x < 16; x++) {
             int sz = x == snapshot.x ? snapshot.z : 15;
@@ -248,7 +250,7 @@ class CanvasChunk extends Chunk {
                 for (int y = sy; y < 16; y++) {
                     Block block = getBlock(x, (i << 4) + y, z);
                     if (block.renderable)
-                        block.renderCanvas(data, x, y, z, (i << 4) + y, this);
+                        block.renderCanvas(d, w, x, y, z, (i << 4) + y, this);
 
                     if (stopwatch.elapsedMilliseconds >= World.BUILD_LIMIT_MS) {
                         snapshot.x = x;
