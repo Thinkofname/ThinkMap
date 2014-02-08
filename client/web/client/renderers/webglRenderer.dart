@@ -135,7 +135,7 @@ class WebGLRenderer extends Renderer {
             // TODO: Fix once dart fixes this bug
             // zoom += e.wheelDeltaY;
             if (jse["deltaY"] != null) {
-                camera.y -= (jse["deltaY"] as int) < 0 ? -1.0 : 1.0;
+                camera.y -= -(jse["deltaY"] as int) < 0 ? -1.0 : 1.0;
             } else {
                 camera.y -= (jse["wheelDeltaY"] as int) < 0 ? -1.0 : 1.0;
             }
@@ -151,6 +151,11 @@ class WebGLRenderer extends Renderer {
                 camera..rotX = PI / 3
                     ..rotY = PI / 4;
             }
+        });
+        document.body.onKeyDown.where((e) => e.keyCode == KeyCode.K).listen((e) {
+            world.chunks.forEach((k, v) {
+                v.rebuild();
+            });
         });
     }
 
@@ -213,19 +218,19 @@ class WebGLRenderer extends Renderer {
         int nx = camera.x ~/ 16;
         int nz = camera.z ~/ 16;
         if (nx != cx || nz != cz) {
-            for (int x = nx-viewDistance; x < nx+viewDistance; x++) {
-                for (int z = nz-viewDistance; z < nz+viewDistance; z++) {
-                    if (world.getChunk(x, z) == null)
-                        connection.writeRequestChunk(x, z);
-                }
-            }
-
             for (Chunk chunk in new List.from(world.chunks.values)) {
                 int x = chunk.x;
                 int z = chunk.z;
                 if (x < nx-viewDistance || x >= nx+viewDistance
                 || z < nz-viewDistance || z >= nz+viewDistance) {
                     world.removeChunk(x, z);
+                }
+            }
+
+            for (int x = nx-viewDistance; x < nx+viewDistance; x++) {
+                for (int z = nz-viewDistance; z < nz+viewDistance; z++) {
+                    if (world.getChunk(x, z) == null)
+                        connection.writeRequestChunk(x, z);
                 }
             }
             cx = nx;
@@ -344,6 +349,15 @@ class WebGLRenderer extends Renderer {
     double getScaledNumber(double x, double y, double scale) {
         return x + (y - x) * scale;
     }
+
+    @override
+    bool shouldLoad(int x, int z) {
+        if (x < cx-viewDistance || x >= cx+viewDistance
+        || z < cz-viewDistance || z >= cz+viewDistance) {
+            return false;
+        }
+        return true;
+    }
 }
 
 class WebGLWorld extends World {
@@ -357,7 +371,7 @@ class WebGLWorld extends World {
     Stopwatch stopwatch = new Stopwatch();
 
     requestBuild(Chunk chunk, int i) {
-        String key = chunk.x.toString() + ":" + chunk.z.toString() + "@" + i.toString();
+        String key = "${chunk.x}:${chunk.z}@$i";
         if (_waitingForBuild.containsKey(key)) {
             return; // Already queued
         }
@@ -367,6 +381,15 @@ class WebGLWorld extends World {
 
     static const int BUILD_LIMIT_MS = 8;
     int lastSort = 0;
+
+    @override
+    removeChunk(int x, int z) {
+        super.removeChunk(x, z);
+        String key = "${x}:${z}@";
+        for (int i = 0; i < 16; i++) {
+            _waitingForBuild.remove(key + i.toString());
+        }
+    }
 
     render(WebGLRenderer renderer) {
         stopwatch.reset();
@@ -387,23 +410,27 @@ class WebGLWorld extends World {
                 run = false;
             }
         }
-        if (_buildQueue.isNotEmpty && lastSort <= 0) {
-            lastSort = 10;
-            _buildQueue.sort(_queueCompare);
-        }
-        lastSort--;
-        while (run && stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS && _buildQueue.isNotEmpty) {
-            var job = _buildQueue.removeLast();
-            String key = job.chunk.x.toString() + ":" + job.chunk.z.toString() + "@" + job.i.toString();
-            _waitingForBuild.remove(key);
-            BuildSnapshot snapshot = job.chunk.buildSection(job.i, null, stopwatch);
-            if (snapshot != null) {
-                currentBuild = job;
-                currentSnapshot = snapshot;
-                break;
+        if (run) {
+            if (_buildQueue.isNotEmpty && lastSort <= 0) {
+                lastSort = 60;
+                _buildQueue.sort(_queueCompare);
+            }
+            lastSort--;
+            while (stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS && _buildQueue.isNotEmpty) {
+                var job = _buildQueue.removeLast();
+                String key = "${job.chunk.x}:${job.chunk.z}@${job.i}";
+                if (!_waitingForBuild.containsKey(key)) continue;
+                _waitingForBuild.remove(key);
+                BuildSnapshot snapshot = job.chunk.buildSection(job.i, null, stopwatch);
+                if (snapshot != null) {
+                    currentBuild = job;
+                    currentSnapshot = snapshot;
+                    break;
+                }
             }
         }
         stopwatch.stop();
+
         renderer.gl.uniform1i(renderer.disAlphaLocation, 1);
         chunks.forEach((k, v) {
             v.render(renderer, 0);
@@ -427,13 +454,7 @@ class WebGLWorld extends World {
         num bdy = (b.i * 16) + 8 - camera.y;
         num bdz = (b.chunk.z * 16) + 8 - camera.z;
         num distB = bdx*bdx + bdy*bdy + bdz*bdz;
-
-//        num aa = atan2(camera.z - (a.chunk.z * 16) + 8, camera.x - (a.chunk.x * 16) + 8);
-//        num angleA = min((2 * PI) - (camera.rotY - aa).abs(), (camera.rotY - aa).abs());
-//
-//        num ba = atan2(camera.z - (b.chunk.z * 16) + 8, camera.x - (b.chunk.x * 16) + 8);
-//        num angleB = min((2 * PI) - (camera.rotY - ba).abs(), (camera.rotY - ba).abs());
-        return distB - distA;
+        return (distB - distA).toInt();
     }
 }
 

@@ -139,7 +139,7 @@ class Block {
             TextureInfo texture = getTexture(BlockFace.LEFT);
             ImageData textureData = (renderer as CanvasRenderer).blockRawData[texture.start];
 
-            double bottomLeft = renderLeft ? 1.0 - (_numBlocksRegion(chunk, this, x, ry, z - 1, x + 2, ry + 2, z) / 4) : 0;
+            double bottomLeft = renderLeft ? 1.0 - (_numBlocksRegion(chunk, this, x, ry, z - 1, x + 2, ry + 2, z) / 4) : 0.0;
             double bottomRight = renderLeft ? 1.0 - (_numBlocksRegion(chunk, this, x - 1, ry, z - 1, x + 1, ry + 2, z) / 4) : 0.0;
             double topRight = renderLeft ? 1.0 - (_numBlocksRegion(chunk, this, x - 1, ry - 1, z - 1, x + 1, ry + 1, z) / 4) : 0.0;
             double topLeft = renderLeft ? 1.0 - (_numBlocksRegion(chunk, this, x, ry - 1, z - 1, x + 2, ry + 1, z) / 4) : 0.0;

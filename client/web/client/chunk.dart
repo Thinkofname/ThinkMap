@@ -31,6 +31,7 @@ abstract class Chunk {
             }
         }
         noUpdates = false;
+        rebuild();
     }
 
     Chunk.fromBuffer(this.world, ByteBuffer buffer, [int o = 0]) {
@@ -58,6 +59,7 @@ abstract class Chunk {
             }
         }
         noUpdates = false;
+        rebuild();
     }
 
     /**

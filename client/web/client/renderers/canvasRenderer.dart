@@ -110,6 +110,15 @@ class CanvasRenderer extends Renderer {
     resize(int width, int height) {
 
     }
+
+    @override
+    bool shouldLoad(int x, int z) {
+        if (x < cx-viewDistance || x >= cx+viewDistance
+        || z < cz-viewDistance || z >= cz+viewDistance) {
+            return false;
+        }
+        return true;
+    }
 }
 
 class CanvasWorld extends World {
@@ -123,7 +132,7 @@ class CanvasWorld extends World {
     List<Chunk> orderedChunkList = new List();
 
     requestBuild(Chunk chunk, int i) {
-        String key = chunk.x.toString() + ":" + chunk.z.toString() + "@" + i.toString();
+        String key = "${chunk.x}:${chunk.z}@$i";
         if (_waitingForBuild.containsKey(key)) {
             return; // Already queued
         }
@@ -154,20 +163,23 @@ class CanvasWorld extends World {
             }
         }
 
-        if (_buildQueue.isNotEmpty && lastSort <= 0) {
-            lastSort = 60;
-            _buildQueue.sort(_queueCompare);
-        }
-        lastSort--;
-        while (run && stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS && _buildQueue.isNotEmpty) {
-            var job = _buildQueue.removeLast();
-            String key = job.chunk.x.toString() + ":" + job.chunk.z.toString() + "@" + job.i.toString();
-            _waitingForBuild.remove(key);
-            CanvasSnapshot snapshot = job.chunk.buildSection(job.i, null, stopwatch);
-            if (snapshot != null) {
-                currentBuild = job;
-                currentSnapshot = snapshot;
-                break;
+        if (run) {
+            if (_buildQueue.isNotEmpty && lastSort <= 0) {
+                lastSort = 60;
+                _buildQueue.sort(_queueCompare);
+            }
+            lastSort--;
+            while (stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS && _buildQueue.isNotEmpty) {
+                var job = _buildQueue.removeLast();
+                String key = "${job.chunk.x}:${job.chunk.z}@${job.i}";
+                if (!_waitingForBuild.containsKey(key)) continue;
+                _waitingForBuild.remove(key);
+                CanvasSnapshot snapshot = job.chunk.buildSection(job.i, null, stopwatch);
+                if (snapshot != null) {
+                    currentBuild = job;
+                    currentSnapshot = snapshot;
+                    break;
+                }
             }
         }
         stopwatch.stop();
@@ -194,6 +206,10 @@ class CanvasWorld extends World {
         var chunk = getChunk(x, z);
         super.removeChunk(x, z);
         orderedChunkList.remove(chunk);
+        String key = "${x}:${z}@";
+        for (int i = 0; i < 16; i++) {
+            _waitingForBuild.remove(key + i.toString());
+        }
     }
 
     int _chunkSort(Chunk a, Chunk b) {
@@ -214,9 +230,8 @@ class CanvasWorld extends World {
         num bdy = (b.i * 16) + 8 - 6 * 16;
         num bdz = (b.chunk.z * 16) + 8 - cameraZ;
         num distB = bdx*bdx + bdy*bdy + bdz*bdz;
-        return distB - distA;
+        return (distB - distA).toInt();
     }
-
 }
 
 class CanvasChunk extends Chunk {
@@ -258,10 +273,7 @@ class CanvasChunk extends Chunk {
         }
 
         if (canvas != null) {
-            renderer.ctx.save();
-            renderer.ctx.translate(x * 256 + z * 256, x * 128 - z * 128);
-            renderer.ctx.drawImage(canvas, 0, 0);
-            renderer.ctx.restore();
+            renderer.ctx.drawImage(canvas, x * 256 + z * 256, x * 128 - z * 128);
         }
     }
 

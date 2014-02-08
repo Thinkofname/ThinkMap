@@ -37,7 +37,9 @@ class Connection {
         req.responseType = "arraybuffer";
         req.onReadyStateChange.listen((e) {
             if (req.readyState == 4 && req.status == 200) {
-                world.loadChunk(req.response);
+                ByteData data = new ByteData.view(req.response);
+                if (renderer.shouldLoad(data.getInt32(0), data.getInt32(4)))
+                    world.loadChunk(req.response);
             }
         });
         req.send("$x:$z");

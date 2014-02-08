@@ -2,7 +2,7 @@ part of mapViewer;
 
 class World {
 
-    Map<int, Chunk> chunks = new Map();
+    Map<String, Chunk> chunks = new Map();
 
     int currentTime = 6000;
 
@@ -114,7 +114,7 @@ class World {
         return cacheChunk.getSky(x & 0xF, y, z & 0xF);
     }
 
-    int _chunkKey(int x, int z) {
-        return (x & 0xFFFF) | ((z & 0xFFFF) << 16);
+    String _chunkKey(int x, int z) {
+        return "${x}:${z}";
     }
 }
