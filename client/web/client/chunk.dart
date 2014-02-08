@@ -285,6 +285,8 @@ abstract class Chunk {
         }
     }
 
+    Object buildSection(int i, Object snapshot, Stopwatch stopwatch);
+
     unload(Renderer renderer);
 }
 

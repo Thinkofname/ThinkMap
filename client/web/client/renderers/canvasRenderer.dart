@@ -83,8 +83,8 @@ class CanvasRenderer extends Renderer {
         (world as CanvasWorld).render(this);
         ctx.restore();
 
-        int nx = (cameraX - 8) ~/ 16;
-        int nz = (cameraZ - 8) ~/ 16;
+        int nx = ((cameraX - 8) >> 16).toSigned(32);
+        int nz = ((cameraZ - 8) >> 16).toSigned(32);
         if (nx != cx || nz != cz) {
             for (int x = nx-viewDistance; x < nx+viewDistance; x++) {
                 for (int z = nz-viewDistance; z < nz+viewDistance; z++) {
@@ -123,66 +123,10 @@ class CanvasRenderer extends Renderer {
 
 class CanvasWorld extends World {
 
-    Map<String, bool> _waitingForBuild = new Map();
-    List<_BuildJob> _buildQueue = new List();
-    _BuildJob currentBuild;
-    CanvasSnapshot currentSnapshot;
-    Stopwatch stopwatch = new Stopwatch();
-
     List<Chunk> orderedChunkList = new List();
 
-    requestBuild(Chunk chunk, int i) {
-        String key = "${chunk.x}:${chunk.z}@$i";
-        if (_waitingForBuild.containsKey(key)) {
-            return; // Already queued
-        }
-        _waitingForBuild[key] = true;
-        _buildQueue.add(new _BuildJob(chunk, i));
-    }
-
-    static const int BUILD_LIMIT_MS = 8;
-    int lastSort = 0;
-
     render(CanvasRenderer renderer) {
-        stopwatch.reset();
-        stopwatch.start();
-        while (stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS && toLoad.isNotEmpty) {
-            addChunk(new CanvasChunk.fromBuffer(this, toLoad.removeLast(), 0));
-        }
-        bool run = stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS;
-
-        if (run && currentBuild != null) {
-            var job = currentBuild;
-            CanvasSnapshot snapshot = job.chunk.buildSection(job.i, currentSnapshot, stopwatch);
-            currentBuild = null;
-            currentSnapshot = null;
-            if (snapshot != null) {
-                currentBuild = job;
-                currentSnapshot = snapshot;
-                run = false;
-            }
-        }
-
-        if (run) {
-            if (_buildQueue.isNotEmpty && lastSort <= 0) {
-                lastSort = 60;
-                _buildQueue.sort(_queueCompare);
-            }
-            lastSort--;
-            while (stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS && _buildQueue.isNotEmpty) {
-                var job = _buildQueue.removeLast();
-                String key = "${job.chunk.x}:${job.chunk.z}@${job.i}";
-                if (!_waitingForBuild.containsKey(key)) continue;
-                _waitingForBuild.remove(key);
-                CanvasSnapshot snapshot = job.chunk.buildSection(job.i, null, stopwatch);
-                if (snapshot != null) {
-                    currentBuild = job;
-                    currentSnapshot = snapshot;
-                    break;
-                }
-            }
-        }
-        stopwatch.stop();
+        tickBuildQueue();
 
         var ctx = renderer.ctx;
 
@@ -206,10 +150,6 @@ class CanvasWorld extends World {
         var chunk = getChunk(x, z);
         super.removeChunk(x, z);
         orderedChunkList.remove(chunk);
-        String key = "${x}:${z}@";
-        for (int i = 0; i < 16; i++) {
-            _waitingForBuild.remove(key + i.toString());
-        }
     }
 
     int _chunkSort(Chunk a, Chunk b) {
@@ -219,6 +159,12 @@ class CanvasWorld extends World {
         return b.z - a.z;
     }
 
+    @override
+    Chunk fromBuffer(ByteBuffer buffer) {
+        return new CanvasChunk.fromBuffer(this, buffer, 0);
+    }
+
+    @override
     int _queueCompare(_BuildJob a, _BuildJob b) {
         double cameraX = (renderer as CanvasRenderer).cameraX;
         double cameraZ = (renderer as CanvasRenderer).cameraZ;
@@ -277,6 +223,7 @@ class CanvasChunk extends Chunk {
         }
     }
 
+    @override
     CanvasSnapshot buildSection(int i, CanvasSnapshot snapshot, Stopwatch stopwatch) {
         if (snapshot == null) {
             snapshot = new CanvasSnapshot();
@@ -299,7 +246,7 @@ class CanvasChunk extends Chunk {
                     if (block.renderable)
                         block.renderCanvas(data, x, y, z, (i << 4) + y, this);
 
-                    if (stopwatch.elapsedMilliseconds >= CanvasWorld.BUILD_LIMIT_MS) {
+                    if (stopwatch.elapsedMilliseconds >= World.BUILD_LIMIT_MS) {
                         snapshot.x = x;
                         snapshot.y = y + 1;
                         snapshot.z = z;

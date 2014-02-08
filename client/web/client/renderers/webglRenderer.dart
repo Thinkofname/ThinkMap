@@ -364,75 +364,8 @@ class WebGLWorld extends World {
 
     WebGLWorld() : super();
 
-    Map<String, bool> _waitingForBuild = new Map();
-    List<_BuildJob> _buildQueue = new List();
-    _BuildJob currentBuild;
-    BuildSnapshot currentSnapshot;
-    Stopwatch stopwatch = new Stopwatch();
-
-    requestBuild(Chunk chunk, int i) {
-        String key = _buildKey(chunk.x, chunk.z, i);
-        if (_waitingForBuild.containsKey(key)) {
-            return; // Already queued
-        }
-        _waitingForBuild[key] = true;
-        _buildQueue.add(new _BuildJob(chunk, i));
-    }
-
-    static const int BUILD_LIMIT_MS = 8;
-    int lastSort = 0;
-
-    @override
-    removeChunk(int x, int z) {
-        super.removeChunk(x, z);
-        for (int i = 0; i < 16; i++) {
-            _waitingForBuild.remove(_buildKey(x, z, i));
-        }
-    }
-
-    String _buildKey(int x, int z, int i) {
-        return "${x.toSigned(32)}:${z.toSigned(32)}@$i";
-    }
-
     render(WebGLRenderer renderer) {
-        stopwatch.reset();
-        stopwatch.start();
-        while (stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS && toLoad.isNotEmpty) {
-            addChunk(new WebGLChunk.fromBuffer(this, toLoad.removeLast(), 0));
-        }
-        bool run = stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS;
-
-        if (run && currentBuild != null) {
-            var job = currentBuild;
-            BuildSnapshot snapshot = job.chunk.buildSection(job.i, currentSnapshot, stopwatch);
-            currentBuild = null;
-            currentSnapshot = null;
-            if (snapshot != null) {
-                currentBuild = job;
-                currentSnapshot = snapshot;
-                run = false;
-            }
-        }
-        if (run) {
-            if (_buildQueue.isNotEmpty && lastSort <= 0) {
-                lastSort = 60;
-                _buildQueue.sort(_queueCompare);
-            }
-            lastSort--;
-            while (stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS && _buildQueue.isNotEmpty) {
-                var job = _buildQueue.removeLast();
-                String key = _buildKey(job.chunk.x, job.chunk.z, job.i);
-                if (!_waitingForBuild.containsKey(key)) continue;
-                _waitingForBuild.remove(key);
-                BuildSnapshot snapshot = job.chunk.buildSection(job.i, null, stopwatch);
-                if (snapshot != null) {
-                    currentBuild = job;
-                    currentSnapshot = snapshot;
-                    break;
-                }
-            }
-        }
-        stopwatch.stop();
+        tickBuildQueue();
 
         renderer.gl.uniform1i(renderer.disAlphaLocation, 1);
         chunks.forEach((k, v) {
@@ -447,6 +380,12 @@ class WebGLWorld extends World {
         });
     }
 
+    @override
+    Chunk fromBuffer(ByteBuffer buffer) {
+        return new WebGLChunk.fromBuffer(this, buffer, 0);
+    }
+
+    @override
     int _queueCompare(_BuildJob a, _BuildJob b) {
         Camera camera = (renderer as WebGLRenderer).camera;
         num adx = (a.chunk.x * 16) + 8 - camera.x;
@@ -568,6 +507,7 @@ class WebGLChunk extends Chunk {
         }
     }
 
+    @override
     BuildSnapshot buildSection(int i, BuildSnapshot snapshot, Stopwatch stopwatch) {
         if (snapshot == null) {
             snapshot = new BuildSnapshot();
@@ -587,7 +527,7 @@ class WebGLChunk extends Chunk {
                     if (block.renderable) {
                         block.renderFloat(block.transparent ? builderTrans : builder, snapshot.builderFloat, x, (i << 4) + y, z, this);
                     }
-                    if (stopwatch.elapsedMilliseconds >= WebGLWorld.BUILD_LIMIT_MS) {
+                    if (stopwatch.elapsedMilliseconds >= World.BUILD_LIMIT_MS) {
                         snapshot.x = x;
                         snapshot.y = y + 1;
                         snapshot.z = z;

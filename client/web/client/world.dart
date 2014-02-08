@@ -36,7 +36,77 @@ class World {
         Chunk chunk = getChunk(x, z);
         chunks.remove(_chunkKey(x, z));
         chunk.unload(renderer);
+        for (int i = 0; i < 16; i++) {
+            _waitingForBuild.remove(_buildKey(x, z, i));
+        }
     }
+
+    // Build related methods
+
+    Map<String, bool> _waitingForBuild = new Map();
+    List<_BuildJob> _buildQueue = new List();
+    _BuildJob currentBuild;
+    Object currentSnapshot;
+    Stopwatch stopwatch = new Stopwatch();
+
+    requestBuild(Chunk chunk, int i) {
+        String key = _buildKey(chunk.x, chunk.z, i);
+        if (_waitingForBuild.containsKey(key)) {
+            return; // Already queued
+        }
+        _waitingForBuild[key] = true;
+        _buildQueue.add(new _BuildJob(chunk, i));
+    }
+
+    static const int BUILD_LIMIT_MS = 8;
+    int lastSort = 0;
+
+    tickBuildQueue() {
+        stopwatch.reset();
+        stopwatch.start();
+        while (stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS && toLoad.isNotEmpty) {
+            addChunk(fromBuffer(toLoad.removeLast()));
+        }
+        bool run = stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS;
+
+        if (run && currentBuild != null) {
+            var job = currentBuild;
+            Object snapshot = job.chunk.buildSection(job.i, currentSnapshot, stopwatch);
+            currentBuild = null;
+            currentSnapshot = null;
+            if (snapshot != null) {
+                currentBuild = job;
+                currentSnapshot = snapshot;
+                run = false;
+            }
+        }
+        if (run) {
+            if (_buildQueue.isNotEmpty && lastSort <= 0) {
+                lastSort = 60;
+                _buildQueue.sort(_queueCompare);
+            }
+            lastSort--;
+            while (stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS && _buildQueue.isNotEmpty) {
+                var job = _buildQueue.removeLast();
+                String key = _buildKey(job.chunk.x, job.chunk.z, job.i);
+                if (!_waitingForBuild.containsKey(key)) continue;
+                _waitingForBuild.remove(key);
+                Object snapshot = job.chunk.buildSection(job.i, null, stopwatch);
+                if (snapshot != null) {
+                    currentBuild = job;
+                    currentSnapshot = snapshot;
+                    break;
+                }
+            }
+        }
+        stopwatch.stop();
+    }
+
+    Chunk fromBuffer(ByteBuffer buffer);
+
+    int _queueCompare(_BuildJob a, _BuildJob b);
+
+    // General methods
 
     int cacheX;
     int cacheZ;
@@ -100,5 +170,9 @@ class World {
 
     String _chunkKey(int x, int z) {
         return "${x}:${z}";
+    }
+
+    String _buildKey(int x, int z, int i) {
+        return "${x.toSigned(32)}:${z.toSigned(32)}@$i";
     }
 }
