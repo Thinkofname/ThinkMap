@@ -54,14 +54,14 @@ class CanvasRenderer extends Renderer {
             // TODO: Fix once dart fixes this bug
             // zoom += e.wheelDeltaY;
             if (jse["deltaY"] != null) {
-                zoom += -(jse["deltaY"] as int) / 200;
+                zoom += -(jse["deltaY"] as int) / 400;
             } else {
                 zoom += (jse["wheelDeltaY"] as int) / 1000;
             }
         });
     }
 
-    static const int viewDistance = 5;
+    static const int viewDistance = 4;
 
     @override
     connected() {
@@ -82,8 +82,8 @@ class CanvasRenderer extends Renderer {
         (world as CanvasWorld).render(this);
         ctx.restore();
 
-        int nx = cameraX ~/ 16;
-        int nz = cameraZ ~/ 16;
+        int nx = (cameraX - 8) ~/ 16;
+        int nz = (cameraZ - 8) ~/ 16;
         if (nx != cx || nz != cz) {
             for (int x = nx-viewDistance; x < nx+viewDistance; x++) {
                 for (int z = nz-viewDistance; z < nz+viewDistance; z++) {
@@ -228,7 +228,6 @@ class CanvasChunk extends Chunk {
     List<CanvasElement> parts = new List(16);
 
     render(CanvasRenderer renderer) {
-//        if (x != 0 || z != 0 ) return;
         if (needsBuild) {
             needsBuild = false;
             for (int i = 0; i < 16; i++) {
