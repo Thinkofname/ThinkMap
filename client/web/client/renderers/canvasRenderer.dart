@@ -54,7 +54,7 @@ class CanvasRenderer extends Renderer {
             // TODO: Fix once dart fixes this bug
             // zoom += e.wheelDeltaY;
             if (jse["deltaY"] != null) {
-                zoom += -(jse["deltaY"] as int) / 100;
+                zoom += -(jse["deltaY"] as int) / 200;
             } else {
                 zoom += (jse["wheelDeltaY"] as int) / 1000;
             }
@@ -274,23 +274,23 @@ class CanvasChunk extends Chunk {
 
         ImageData data = snapshot.data == null ? ctx.getImageData(0, 0, canvas.width, canvas.height) : snapshot.data;
 
-        for (int y = snapshot.y; y < 16; y++) {
-            int sx = y == snapshot.y ? snapshot.x : 0;
-            for (int x = sx; x < 16; x++) {
-                int sz = 0;
-                if (x == snapshot.x){
-                    sz = snapshot.z;
-                    snapshot.x = -1;
+        for (int x = snapshot.x; x < 16; x++) {
+            int sz = x == snapshot.x ? snapshot.z : 15;
+            for (int z = sz; z >= 0; z--) {
+                int sy = 0;
+                if (z == snapshot.z){
+                    sy = snapshot.y;
+                    snapshot.z = -1;
                 }
-                for (int z = 15; z >= 0; z--) {
+                for (int y = sy; y < 16; y++) {
                     Block block = getBlock(x, (i << 4) + y, z);
                     if (block.renderable)
                         block.renderCanvas(data, x, y, z, (i << 4) + y, this);
 
                     if (stopwatch.elapsedMilliseconds >= CanvasWorld.BUILD_LIMIT_MS) {
                         snapshot.x = x;
-                        snapshot.y = y;
-                        snapshot.z = z - 1;
+                        snapshot.y = y + 1;
+                        snapshot.z = z;
                         snapshot.data = data;
                         return snapshot;
                     }
@@ -317,7 +317,7 @@ class CanvasSnapshot {
 
     int x = 0;
     int y = 0;
-    int z = 0;
+    int z = 15;
 
     CanvasSnapshot() {
         canvas.width = 256 * 2;
