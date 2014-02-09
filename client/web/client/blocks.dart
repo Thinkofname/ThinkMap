@@ -137,7 +137,8 @@ class Block {
         bool renderRight = shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x + 1, ry, (chunk.z * 16) + z));
         if (renderLeft || renderRight) {
             TextureInfo texture = getTexture(BlockFace.LEFT);
-            ImageData textureData = (renderer as CanvasRenderer).blockRawData[texture.start];
+            Uint8ClampedList textureData = (renderer as CanvasRenderer).blockRawData[texture.start].data;
+            int textureDataWidth = (renderer as CanvasRenderer).blockRawData[texture.start].width;
 
             double bottomLeft = renderLeft ? 1.0 - (_numBlocksRegion(chunk, this, x, ry, z - 1, x + 2, ry + 2, z) / 4) : 0.0;
             double bottomRight = renderLeft ? 1.0 - (_numBlocksRegion(chunk, this, x - 1, ry, z - 1, x + 1, ry + 2, z) / 4) : 0.0;
@@ -145,7 +146,7 @@ class Block {
             double topLeft = renderLeft ? 1.0 - (_numBlocksRegion(chunk, this, x, ry - 1, z - 1, x + 2, ry + 1, z) / 4) : 0.0;
 
             TextureInfo textureRight = getTexture(BlockFace.FRONT);
-            ImageData textureDataRight = (renderer as CanvasRenderer).blockRawData[texture.start];
+            Uint8ClampedList textureDataRight = (renderer as CanvasRenderer).blockRawData[textureRight.start].data;
 
             double bottomLeftRight = renderRight ? 1.0 - (_numBlocksRegion(chunk, this, x + 1, ry, z, x + 2, ry + 2, z + 2) / 4) : 0.0;
             double bottomRightRight = renderRight ? 1.0 - (_numBlocksRegion(chunk, this, x + 1, ry, z - 1, x + 2, ry + 2, z + 1) / 4) : 0.0;
@@ -154,13 +155,13 @@ class Block {
 
             for (int tx = 0; tx < 16; tx++) {
                 for (int ty = 0; ty < 16; ty++) {
-                    int i = tx + ty * textureData.width;
+                    int i = tx + ty * textureDataWidth;
                     i *= 4;
 
-                    int r = (textureData.data[i] * (gr/255)).toInt();
-                    int g = (textureData.data[i + 1] * (gg/255)).toInt();
-                    int b = (textureData.data[i + 2] * (gb/255)).toInt();
-                    int a = textureData.data[i + 3];
+                    int r = (textureData[i] * (gr/255)).toInt();
+                    int g = (textureData[i + 1] * (gg/255)).toInt();
+                    int b = (textureData[i + 2] * (gb/255)).toInt();
+                    int a = textureData[i + 3];
 
                     if (renderLeft) {
                         double modi = ((topLeft * (tx/16) + topRight * ((15-tx)/16))*(ty/16))
@@ -169,6 +170,11 @@ class Block {
                         putPixel(data, width, (offsetX + tx).toInt(), (offsetY + ty + tx*0.5).toInt(),
                         (r * modi).toInt(), (g * modi).toInt(), (b * modi).toInt(), a);
                     }
+
+                    r = (textureDataRight[i] * (gr/255)).toInt();
+                    g = (textureDataRight[i + 1] * (gg/255)).toInt();
+                    b = (textureDataRight[i + 2] * (gb/255)).toInt();
+                    a = textureDataRight[i + 3];
 
                     if (renderRight) {
                         double modi = ((topLeftRight * (tx/16) + topRightRight * ((15-tx)/16))*(ty/16))
@@ -183,7 +189,8 @@ class Block {
         //Top side
         if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x, ry + 1, (chunk.z * 16) + z))) {
             TextureInfo texture = getTexture(BlockFace.TOP);
-            ImageData textureData = (renderer as CanvasRenderer).blockRawData[texture.start];
+            Uint8ClampedList textureData = (renderer as CanvasRenderer).blockRawData[texture.start].data;
+            int textureDataWidth = (renderer as CanvasRenderer).blockRawData[texture.start].width;
 
             double bottomRight = 1.0 - (_numBlocksRegion(chunk, this, x - 1, ry + 1, z - 1, x + 1, ry + 2, z + 1) / 4);
             double bottomLeft = 1.0 - (_numBlocksRegion(chunk, this, x, ry + 1, z - 1, x + 2, ry + 2, z + 1) / 4);
@@ -195,12 +202,12 @@ class Block {
                 for (int tty = -1; tty < 16; tty++) {
                     int tx = ttx.clamp(0, 15);
                     int ty = tty.clamp(0, 15);
-                    int i = tx + ty * textureData.width;
+                    int i = tx + ty * textureDataWidth;
                     i *= 4;
-                    int r = (textureData.data[i] * (gr/255)).toInt();
-                    int g = (textureData.data[i + 1] * (gg/255)).toInt();
-                    int b = (textureData.data[i + 2] * (gb/255)).toInt();
-                    int a = textureData.data[i + 3];
+                    int r = (textureData[i] * (gr/255)).toInt();
+                    int g = (textureData[i + 1] * (gg/255)).toInt();
+                    int b = (textureData[i + 2] * (gb/255)).toInt();
+                    int a = textureData[i + 3];
 
                     double modi = ((topLeft * (tx/16) + topRight * ((15-tx)/16))*(ty/16))
                     + ((bottomLeft * (tx/16) + bottomRight * ((15-tx)/16))*((15-ty)/16));

@@ -88,7 +88,7 @@ class World {
         }
         if (run) {
             if (_buildQueue.isNotEmpty && lastSort <= 0) {
-                lastSort = 60;
+                lastSort = 10;
                 _buildQueue.sort(_queueCompare);
             }
             lastSort--;

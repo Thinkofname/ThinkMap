@@ -22,20 +22,22 @@ class BlockCross extends Block {
         bool renderRight = shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x + 1, ry, (chunk.z * 16) + z));
         if (renderLeft || renderRight) {
             TextureInfo texture = getTexture(BlockFace.LEFT);
-            ImageData textureData = (renderer as CanvasRenderer).blockRawData[texture.start];
+            Uint8ClampedList textureData = (renderer as CanvasRenderer).blockRawData[texture.start].data;
+            int textureDataWidth = (renderer as CanvasRenderer).blockRawData[texture.start].width;
 
             TextureInfo textureRight = getTexture(BlockFace.FRONT);
-            ImageData textureDataRight = (renderer as CanvasRenderer).blockRawData[texture.start];
+            Uint8ClampedList textureDataRight = (renderer as CanvasRenderer).blockRawData[textureRight.start].data;
+//            int textureDataWidthRight = (renderer as CanvasRenderer).blockRawData[textureRight.start].width;  // Assume it has same width textures
 
             for (int tx = 0; tx < 16; tx++) {
                 for (int ty = 0; ty < 16; ty++) {
-                    int i = tx + ty * textureData.width;
+                    int i = tx + ty * textureDataWidth;
                     i *= 4;
 
-                    int r = (textureData.data[i] * (gr/255)).toInt();
-                    int g = (textureData.data[i + 1] * (gg/255)).toInt();
-                    int b = (textureData.data[i + 2] * (gb/255)).toInt();
-                    int a = textureData.data[i + 3];
+                    int r = (textureData[i] * (gr/255)).toInt();
+                    int g = (textureData[i + 1] * (gg/255)).toInt();
+                    int b = (textureData[i + 2] * (gb/255)).toInt();
+                    int a = textureData[i + 3];
 
                     if (renderLeft) {
                         double modi = 1.0;
@@ -43,6 +45,11 @@ class BlockCross extends Block {
                         putPixel(data, width, (offsetX + tx + 8).toInt(), (offsetY + ty + tx*0.5 - 4).toInt(),
                         (r * modi).toInt(), (g * modi).toInt(), (b * modi).toInt(), a);
                     }
+
+                    r = (textureDataRight[i] * (gr/255)).toInt();
+                    g = (textureDataRight[i + 1] * (gg/255)).toInt();
+                    b = (textureDataRight[i + 2] * (gb/255)).toInt();
+                    a = textureDataRight[i + 3];
 
                     if (renderRight) {
                         double modi = 1.0;
