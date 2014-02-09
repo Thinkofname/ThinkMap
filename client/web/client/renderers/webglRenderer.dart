@@ -255,7 +255,7 @@ class WebGLRenderer extends Renderer {
 
     @override
     resize(int width, int height) {
-        pMatrix = makePerspectiveMatrix(radians(75.0), canvas.width / canvas.height, 0.1, 500);
+        pMatrix = makePerspectiveMatrix(radians(80.0), canvas.width / canvas.height, 0.1, 500);
         pMatrix.copyIntoArray(pMatrixList);
     }
 

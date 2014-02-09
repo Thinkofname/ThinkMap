@@ -53,10 +53,10 @@ class Block {
 
     static final Block GLOWSTONE = new Block._internal(89, "minecraft:glowstone", 0x000000, texture: "glowstone");
 
-    static final Block VINES = new BlockVines._internal(106, "minecraft:vine", 0x426B27)..collidable = false;
+    static final Block VINES = new BlockVines._internal(106, "minecraft:vine", 0x87BA34)..collidable = false;
 
 
-    //TODO: Remove
+    // Handles cases where a block is missing
     static final Block MISSING_BLOCK = new Block._internal(0xFF, "thinkofdeath:messed_up", 0x000000, texture: "missing_texture");
 
     static Map<int, Block> _blocksLegacy = new Map();
@@ -253,27 +253,27 @@ class Block {
             builder
                 ..position(x, y + 1, z)
                 ..colour((r * topRight).floor(), (g * topRight).floor(), (b * topRight).floor())
-                ..tex(1, 0)
+                ..tex(0, 0)
                 ..texId(texture.start, texture.end)
                 ..position(x + 1, y + 1, z)
                 ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(0, 0)
+                ..tex(1, 0)
                 ..texId(texture.start, texture.end)
                 ..position(x, y + 1, z + 1)
                 ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(1, 1)
+                ..tex(0, 1)
                 ..texId(texture.start, texture.end)
                 ..position(x + 1, y + 1, z)
                 ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(0, 0)
+                ..tex(1, 0)
                 ..texId(texture.start, texture.end)
                 ..position(x + 1, y + 1, z + 1)
                 ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
-                ..tex(0, 1)
+                ..tex(1, 1)
                 ..texId(texture.start, texture.end)
                 ..position(x, y + 1, z + 1)
                 ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(1, 1)
+                ..tex(0, 1)
                 ..texId(texture.start, texture.end);
         }
 
@@ -289,27 +289,27 @@ class Block {
             builder
                 ..position(x, y, z)
                 ..colour((r * topRight).floor(), (g * topRight).floor(), (b * topRight).floor())
+                ..tex(0, 0)
+                ..texId(texture.start, texture.end)
+                ..position(x, y, z + 1)
+                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
+                ..tex(0, 1)
+                ..texId(texture.start, texture.end)
+                ..position(x + 1, y, z)
+                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
+                ..tex(1, 0)
+                ..texId(texture.start, texture.end)
+                ..position(x + 1, y, z)
+                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
                 ..tex(1, 0)
                 ..texId(texture.start, texture.end)
                 ..position(x, y, z + 1)
                 ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(1, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y, z)
-                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(0, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y, z)
-                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(0, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x, y, z + 1)
-                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(1, 1)
+                ..tex(0, 1)
                 ..texId(texture.start, texture.end)
                 ..position(x + 1, y, z + 1)
                 ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
-                ..tex(0, 1)
+                ..tex(1, 1)
                 ..texId(texture.start, texture.end);
         }
 
@@ -359,27 +359,27 @@ class Block {
             builder
                 ..position(x, y, z)
                 ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(1, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x, y + 1, z)
-                ..colour((r * topRight).floor(), (g * topRight).floor(), (b * topRight).floor())
-                ..tex(1, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x, y, z + 1)
-                ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
                 ..tex(0, 1)
                 ..texId(texture.start, texture.end)
                 ..position(x, y + 1, z)
                 ..colour((r * topRight).floor(), (g * topRight).floor(), (b * topRight).floor())
-                ..tex(1, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x, y + 1, z + 1)
-                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
                 ..tex(0, 0)
                 ..texId(texture.start, texture.end)
                 ..position(x, y, z + 1)
                 ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
-                ..tex(0, 1)
+                ..tex(1, 1)
+                ..texId(texture.start, texture.end)
+                ..position(x, y + 1, z)
+                ..colour((r * topRight).floor(), (g * topRight).floor(), (b * topRight).floor())
+                ..tex(0, 0)
+                ..texId(texture.start, texture.end)
+                ..position(x, y + 1, z + 1)
+                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
+                ..tex(1, 0)
+                ..texId(texture.start, texture.end)
+                ..position(x, y, z + 1)
+                ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
+                ..tex(1, 1)
                 ..texId(texture.start, texture.end);
         }
 
