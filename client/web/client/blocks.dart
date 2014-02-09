@@ -92,7 +92,7 @@ class Block {
     int _colour = 0xFFFFFF;
     bool forceColour;
     String texture;
-    bool allowSelf = false;
+    bool allowSelf = true;
 
     Block._internal(int _legacyId, String _name, int _colour,
                     {String texture: "stone", bool solid: true, bool transparent : false, bool forceColour : false}) {
@@ -120,7 +120,7 @@ class Block {
         return box.checkBox(x.toDouble(), y.toDouble(), z.toDouble(), 1.0, 1.0, 1.0);
     }
 
-    shouldRenderAgainst(Block block) => !block.solid && (!allowSelf || block != this);
+    shouldRenderAgainst(Block block) => !block.solid && (allowSelf || block != this);
 
     renderCanvas(Uint8ClampedList data, int width, int x, int y, int z, int ry, CanvasChunk chunk) {
 

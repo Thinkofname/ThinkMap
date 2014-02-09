@@ -21,10 +21,12 @@ class BlockVines extends Block {
 
         int dataValue = chunk.getData(x, y, z);
 
-        double topRight = 1.0;
-        double topLeft = 1.0;
-        double bottomLeft = 1.0;
-        double bottomRight = 1.0;
+        double val = pow(0.9,
+            max(chunk.world.getSky((chunk.x * 16) + x, y, (chunk.z * 16) + z), chunk.world.getLight((chunk.x * 16) + x, y, (chunk.z * 16) + z)) + 1);
+        double topRight = 1.0 - val;
+        double topLeft = topRight;
+        double bottomLeft = topRight;
+        double bottomRight = topRight;
 
         if (dataValue == 0 || !shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x, y + 1, (chunk.z * 16) + z))) {
 
