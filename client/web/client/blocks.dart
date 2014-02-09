@@ -55,17 +55,21 @@ class Block {
 
     static final Block VINES = new BlockVines._internal(106, "minecraft:vine", 0x426B27)..collidable = false;
 
+
+    //TODO: Remove
+    static final Block MISSING_BLOCK = new Block._internal(0xFF, "thinkofdeath:messed_up", 0x000000, texture: "missing_texture");
+
     static Map<int, Block> _blocksLegacy = new Map();
 
     static Map<String, Block> _blocks = new Map();
 
     static var _allBlocks = [AIR, STONE, GRASS, DIRT, COBBLESTONE, PLANKS, SAPLING, BEDROCK, FLOWING_WATER, WATER,
         FLOWING_LAVA, LAVA, SAND, GRAVEL, GOLD_ORE, COAL_ORE, LOG, LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK,
-        DISPENSER, SANDSTONE, NOTEBLOCK, BED, GOLDEN_RAIL, DETECTOR_RAIL, TALL_GRASS, GLOWSTONE, VINES];
+        DISPENSER, SANDSTONE, NOTEBLOCK, BED, GOLDEN_RAIL, DETECTOR_RAIL, TALL_GRASS, GLOWSTONE, VINES, MISSING_BLOCK];
 
     static Block blockFromName(String name) {
         Block ret = _blocks[name];
-        if (ret == null) ret = Block.STONE;
+        if (ret == null) ret = Block.MISSING_BLOCK;
         return ret;
     }
 
@@ -73,7 +77,7 @@ class Block {
     @deprecated
     static Block blockFromLegacyId(int id) {
         Block ret = _blocksLegacy[id];
-        if (ret == null) ret = Block.STONE;
+        if (ret == null) ret = Block.MISSING_BLOCK;
         return ret;
     }
 
