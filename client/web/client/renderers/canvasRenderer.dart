@@ -124,6 +124,12 @@ class CanvasRenderer extends Renderer {
         }
         return true;
     }
+
+    @override
+    moveTo(int x, int y, int z) {
+        cameraX = x.toDouble();
+        cameraZ = z.toDouble();
+    }
 }
 
 class CanvasWorld extends World {

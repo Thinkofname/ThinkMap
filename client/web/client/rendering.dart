@@ -7,6 +7,8 @@ abstract class Renderer {
     connected();
 
     bool shouldLoad(int x, int z);
+
+    moveTo(int x, int y, int z);
 }
 
 class _BuildJob {

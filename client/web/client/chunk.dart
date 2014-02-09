@@ -45,7 +45,7 @@ abstract class Chunk {
                 for (int oy = 0; oy < 16; oy++) {
                     for (int oz = 0; oz < 16; oz++) {
                         for (int ox = 0; ox < 16; ox++) {
-                            _setBlock(ox, oy + (i << 4), oz, data.getUint16(offset));
+                            _setBlock(ox, oy + (i << 4), oz, data.getUint16(offset, Endianness.BIG_ENDIAN));
                             offset += 2;
                             setData(ox, oy + (i << 4), oz, data.getUint8(offset));
                             offset++;

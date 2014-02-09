@@ -51,13 +51,15 @@ class Block {
     static final Block TALL_GRASS = new BlockCross._internal(31, "minecraft:tallgrass", texture: "tallgrass", forceColour: true, colour: 0xA7D389)
         ..collidable = false;
 
+    static final Block VINES = new BlockVines._internal(106, "minecraft:vine", 0x426B27)..collidable = false;
+
     static Map<int, Block> _blocksLegacy = new Map();
 
     static Map<String, Block> _blocks = new Map();
 
     static var _allBlocks = [AIR, STONE, GRASS, DIRT, COBBLESTONE, PLANKS, SAPLING, BEDROCK, FLOWING_WATER, WATER,
         FLOWING_LAVA, LAVA, SAND, GRAVEL, GOLD_ORE, COAL_ORE, LOG, LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK,
-        DISPENSER, SANDSTONE, NOTEBLOCK, BED, GOLDEN_RAIL, DETECTOR_RAIL, TALL_GRASS];
+        DISPENSER, SANDSTONE, NOTEBLOCK, BED, GOLDEN_RAIL, DETECTOR_RAIL, TALL_GRASS, VINES];
 
     static Block blockFromName(String name) {
         Block ret = _blocks[name];
@@ -115,7 +117,7 @@ class Block {
         return box.checkBox(x.toDouble(), y.toDouble(), z.toDouble(), 1.0, 1.0, 1.0);
     }
 
-    shouldRenderAgainst(Block block) => !block.solid;
+    shouldRenderAgainst(Block block) => !block.solid && block != this;
 
     renderCanvas(Uint8ClampedList data, int width, int x, int y, int z, int ry, CanvasChunk chunk) {
 

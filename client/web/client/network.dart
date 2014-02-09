@@ -15,6 +15,7 @@ class Connection {
 
     start(Event e) {
         print("Connected to server");
+        websocket.sendByteBuffer(new Uint8List(1).buffer);
         renderer.connected();
     }
 
@@ -24,11 +25,18 @@ class Connection {
             case 0:
                 readTimeUpdate(new ByteData.view(reader.buffer, 1));
                 break;
+            case 1:
+                readSpawnPosition(new ByteData.view(reader.buffer, 1));
+                break;
         }
     }
 
     readTimeUpdate(ByteData data) {
         world.currentTime = data.getInt32(0, Endianness.BIG_ENDIAN);
+    }
+
+    readSpawnPosition(ByteData data) {
+        renderer.moveTo(data.getInt32(0, Endianness.BIG_ENDIAN), data.getUint8(4), data.getInt32(5, Endianness.BIG_ENDIAN));
     }
 
     Map<String, bool> sentFor = new Map<String, bool>();

@@ -21,6 +21,7 @@ part "rendering.dart";
 part "box.dart";
 part "blocks/grass.dart";
 part 'blocks/cross.dart';
+part "blocks/vines.dart";
 part "network.dart";
 
 // Current world

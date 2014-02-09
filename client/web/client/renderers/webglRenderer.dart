@@ -358,6 +358,13 @@ class WebGLRenderer extends Renderer {
         }
         return true;
     }
+
+    @override
+    moveTo(int x, int y, int z) {
+        camera.x = x.toDouble();
+        camera.y = y.toDouble() + 50;
+        camera.z = z.toDouble();
+    }
 }
 
 class WebGLWorld extends World {
