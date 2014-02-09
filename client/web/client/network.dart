@@ -31,7 +31,11 @@ class Connection {
         world.currentTime = data.getInt32(0, Endianness.BIG_ENDIAN);
     }
 
+    Map<String, bool> sentFor = new Map<String, bool>();
+
     writeRequestChunk(int x, int z) {
+        String key = "$x:$z";
+        if (sentFor.containsKey(key)) return;
         var req = new HttpRequest();
         req.open("POST", "http://${window.location.hostname}:23333/chunk", async: true);
         req.responseType = "arraybuffer";
@@ -41,7 +45,9 @@ class Connection {
                 if (renderer.shouldLoad(data.getInt32(0), data.getInt32(4)))
                     world.loadChunk(req.response);
             }
+            if (req.readyState == 4) sentFor.remove(key);
         });
-        req.send("$x:$z");
+        sentFor[key] = true;
+        req.send(key);
     }
 }
