@@ -20,7 +20,7 @@ class Block {
     static final Block IRON_ORE = new Block._internal(15, "minecraft:iron_ore", 0x000000, texture: "iron_ore");
     static final Block COAL_ORE = new Block._internal(16, "minecraft:coal_ore", 0x000000, texture: "coal_ore");
     static final Block LOG = new Block._internal(17, "minecraft:log", 0x000000, texture: "log_oak");
-    static final Block LEAVES = new Block._internal(18, "minecraft:leaves", 0xA7D389, texture: "leaves_oak", solid: false, forceColour: true);
+    static final Block LEAVES = new Block._internal(18, "minecraft:leaves", 0xA7D389, texture: "leaves_oak", solid: false, forceColour: true)..allowSelf = true;
     static final Block SPONGE = new Block._internal(19, "minecraft:sponge", 0x000000, texture: "sponge");
     static final Block GLASS = new Block._internal(20, "minecraft:glass", 0x000000, texture: "glass", solid: false);
     static final Block LAPIS_ORE = new Block._internal(21, "minecraft:lapis_ore", 0x000000, texture: "lapis_ore");
@@ -51,6 +51,8 @@ class Block {
     static final Block TALL_GRASS = new BlockCross._internal(31, "minecraft:tallgrass", texture: "tallgrass", forceColour: true, colour: 0xA7D389)
         ..collidable = false;
 
+    static final Block GLOWSTONE = new Block._internal(89, "minecraft:glowstone", 0x000000, texture: "glowstone");
+
     static final Block VINES = new BlockVines._internal(106, "minecraft:vine", 0x426B27)..collidable = false;
 
     static Map<int, Block> _blocksLegacy = new Map();
@@ -59,7 +61,7 @@ class Block {
 
     static var _allBlocks = [AIR, STONE, GRASS, DIRT, COBBLESTONE, PLANKS, SAPLING, BEDROCK, FLOWING_WATER, WATER,
         FLOWING_LAVA, LAVA, SAND, GRAVEL, GOLD_ORE, COAL_ORE, LOG, LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK,
-        DISPENSER, SANDSTONE, NOTEBLOCK, BED, GOLDEN_RAIL, DETECTOR_RAIL, TALL_GRASS, VINES];
+        DISPENSER, SANDSTONE, NOTEBLOCK, BED, GOLDEN_RAIL, DETECTOR_RAIL, TALL_GRASS, GLOWSTONE, VINES];
 
     static Block blockFromName(String name) {
         Block ret = _blocks[name];
@@ -90,6 +92,7 @@ class Block {
     int _colour = 0xFFFFFF;
     bool forceColour;
     String texture;
+    bool allowSelf = false;
 
     Block._internal(int _legacyId, String _name, int _colour,
                     {String texture: "stone", bool solid: true, bool transparent : false, bool forceColour : false}) {
@@ -117,7 +120,7 @@ class Block {
         return box.checkBox(x.toDouble(), y.toDouble(), z.toDouble(), 1.0, 1.0, 1.0);
     }
 
-    shouldRenderAgainst(Block block) => !block.solid && block != this;
+    shouldRenderAgainst(Block block) => !block.solid && (!allowSelf || block != this);
 
     renderCanvas(Uint8ClampedList data, int width, int x, int y, int z, int ry, CanvasChunk chunk) {
 
