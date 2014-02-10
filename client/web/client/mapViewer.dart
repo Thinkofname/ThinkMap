@@ -22,7 +22,9 @@ part "box.dart";
 part "blocks/grass.dart";
 part 'blocks/cross.dart';
 part "blocks/vines.dart";
+part "blockBuilders.dart";
 part "network.dart";
+part "pool.dart";
 
 // Current world
 World world;

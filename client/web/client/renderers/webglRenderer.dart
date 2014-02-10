@@ -437,7 +437,6 @@ class WebGLChunk extends Chunk {
                 if (section != null && section.needsBuild) {
                     section.needsBuild = false;
                     (world as WebGLWorld).requestBuild(this, i);
-//                    buildSection(i, null, new Stopwatch());
                 }
             }
         }
@@ -589,10 +588,16 @@ class Camera {
 }
 
 class WebGLSnapshot {
-    BlockBuilder builder = new BlockBuilder();
-    BlockBuilder builderTrans = new BlockBuilder();
-    FloatBlockBuilder builderFloat = new FloatBlockBuilder();
+    BlockBuilder builder;
+    BlockBuilder builderTrans;
+    FloatBlockBuilder builderFloat;
     int x = 0;
     int y = 0;
     int z = 0;
+
+    WebGLSnapshot() {
+        builder = new BlockBuilder();
+        builderTrans = new BlockBuilder();
+        builderFloat = new FloatBlockBuilder();
+    }
 }

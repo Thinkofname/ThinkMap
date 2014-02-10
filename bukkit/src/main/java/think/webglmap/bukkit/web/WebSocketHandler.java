@@ -15,6 +15,7 @@ import io.netty.util.CharsetUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import think.webglmap.bukkit.WebglMapPlugin;
 
 import java.io.IOException;
@@ -39,17 +40,23 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<BinaryWebSocke
     private final int id;
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, BinaryWebSocketFrame msg) throws Exception {
+    protected void channelRead0(final ChannelHandlerContext ctx, BinaryWebSocketFrame msg) throws Exception {
         ByteBuf data = msg.content();
         switch (data.readUnsignedByte()) {
-//            case 0: //Chunk request
-//                ByteBuf out = Unpooled.buffer();
-//                out.writeByte(1);
-//                if (plugin.getChunkManager(plugin.targetWorld).getChunkBytes(data.readInt(), data.readInt(), out)) {
-//                    ctx.writeAndFlush(new BinaryWebSocketFrame(out));
-//                }
-//                break;
+            case 0: // Start
+                plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+                    @Override
+                    public void run() {
+                        ByteBuf buf = Unpooled.buffer();
+                        buf.writeByte(1);
+                        Location spawn = plugin.targetWorld.getSpawnLocation();
+                        buf.writeInt(spawn.getBlockX());
+                        buf.writeByte(spawn.getBlockY());
+                        buf.writeInt(spawn.getBlockZ());
+                        ctx.writeAndFlush(new BinaryWebSocketFrame(buf));
+                    }
+                });
+                break;
         }
-        data.release();
     }
 }
