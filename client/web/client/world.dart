@@ -131,25 +131,14 @@ class World {
     }
 
     Block getBlock(int x, int y, int z) {
-        if (y < 0 || y > 255) return Block.AIR;
+        if (y < 0 || y > 255) return Blocks.AIR;
         int cx = x >> 4;
         int cz = z >> 4;
         var chunk = getChunk(cx, cz);
         if (chunk == null) {
-            return Block.BEDROCK;
+            return Blocks.BEDROCK;
         }
         return chunk.getBlock(x & 0xF, y, z & 0xF);
-    }
-
-    int getData(int x, int y, int z) {
-        if (y < 0 || y > 255) return 0;
-        int cx = x >> 4;
-        int cz = z >> 4;
-        var chunk = getChunk(cx, cz);
-        if (chunk == null) {
-            return 0;
-        }
-        return chunk.getData(x & 0xF, y, z & 0xF);
     }
 
     int getLight(int x, int y, int z) {

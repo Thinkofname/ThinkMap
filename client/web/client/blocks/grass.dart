@@ -2,11 +2,6 @@ part of mapViewer;
 
 class BlockGrass extends Block {
 
-    BlockGrass._internal(int _legacyId, String _name, int _colour,
-                         {String texture: "stone", bool solid: true, bool transparent : false}):
-    super._internal(_legacyId, _name, _colour, texture: texture, solid: solid, transparent: transparent);
-
-
     Map<BlockFace, String> textures =
     {
         BlockFace.FRONT: "grass_side",
@@ -131,7 +126,6 @@ class BlockGrass extends Block {
 
     @override
     render(BlockBuilder builder, int x, int y, int z, Chunk chunk) {
-        //TODO:
         int r = (colour >> 16) & 0xFF;
         int g = (colour >> 8) & 0xFF;
         int b = colour & 0xFF;
@@ -171,9 +165,9 @@ class BlockGrass extends Block {
                 ..texId(texture.start, texture.end);
         }
 
-        r = 255; //(colour >> 16) & 0xFF;
-        g = 255; //(colour >> 8) & 0xFF;
-        b = 255; //colour & 0xFF;
+        r = 255;
+        g = 255;
+        b = 255;
 
         if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x, y - 1, (chunk.z * 16) + z))) {
             double topRight = 1.0 - (Block._numBlocksRegion(chunk, this, x - 1, y - 1, z - 1, x + 1, y, z + 1) / 4);

@@ -2,11 +2,6 @@ part of mapViewer;
 
 class BlockCross extends Block {
 
-    BlockCross._internal(id, name, {texture: "sapling_oak", forceColour : false, colour: 0x49CC25}) :
-        super._internal(id, name, colour, texture: texture, solid: false, forceColour: forceColour);
-
-
-
     @override
     renderCanvas(Uint8ClampedList data, int width, int x, int y, int z, int ry, CanvasChunk chunk) {
 

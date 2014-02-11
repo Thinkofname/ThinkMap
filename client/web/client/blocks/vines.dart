@@ -2,8 +2,23 @@ part of mapViewer;
 
 class BlockVines extends Block {
 
-    BlockVines._internal(int _legacyId, String _name, int _colour):
-    super._internal(_legacyId, _name, _colour, texture: "vine", solid: false, transparent: true, forceColour: true);
+    int dataValue;
+
+    BlockVines(this.dataValue);
+
+    static register() {
+        for (int i = 0; i < 16; i++) {
+            BlockRegistry.registerBlock("vine_$i", new BlockVines(i)
+                ..solid = false
+                ..collidable = false
+                ..forceColour = true
+                ..colour = 0x87BA34
+                ..texture = "vine")
+                ..legacyId(106)
+                ..dataValue(i)
+                ..build();
+        }
+    }
 
     @override
     shouldRenderAgainst(Block block) => !block.solid;
@@ -18,8 +33,6 @@ class BlockVines extends Block {
             g = (colour >> 8) & 0xFF;
             b = colour & 0xFF;
         }
-
-        int dataValue = chunk.getData(x, y, z);
 
         double val = pow(0.9,
             max(chunk.world.getSky((chunk.x * 16) + x, y, (chunk.z * 16) + z), chunk.world.getLight((chunk.x * 16) + x, y, (chunk.z * 16) + z)) + 1);

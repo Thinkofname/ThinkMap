@@ -25,6 +25,7 @@ part "blocks/vines.dart";
 part "blockBuilders.dart";
 part "network.dart";
 part "pool.dart";
+part "registry.dart";
 
 // Current world
 World world;
@@ -56,9 +57,7 @@ main() {
 
 // Called once everything is loaded
 start() {
-    // Get around a dart issue where it 'optimizes' out unused variables (all blocks)
-    // which causes them to never be added to the maps so they can't be rendered
-    Block._allBlocks;
+    BlockRegistry.init();
 
     canvas = document.getElementById("main");
 

@@ -192,8 +192,6 @@ class CanvasWorld extends World {
 
 class CanvasChunk extends Chunk {
 
-    CanvasChunk(int x, int z, World world) : super(x, z, world);
-
     CanvasChunk.fromBuffer(World world, ByteBuffer buffer, [int o = 0]) : super.fromBuffer(world, buffer, o);
 
     CanvasElement canvas;

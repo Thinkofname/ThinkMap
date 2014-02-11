@@ -14,26 +14,6 @@ abstract class Chunk {
 
     bool noUpdates = true;
 
-    Chunk(this.x, this.z, this.world) {
-
-        Random random = new Random();
-        for (int x = 0; x < 16; x++) {
-            for (int z = 0; z < 16; z++) {
-                int o = (10 * sin((this.x * 16 + x) / 16.0) * cos((this.z * 16 + z) / 16.0)).floor();//random.nextInt(5);
-                for (int y = 0; y < 50 + o; y++) {
-                    if (y == 50 + o - 1)
-                        setBlock(x, y, z, random.nextInt(5) != 0 ? Block.GRASS : Block._allBlocks[random.nextInt(Block._allBlocks.length - 1) + 1]);
-                    else if (y >= 50 + o - 5)
-                        setBlock(x, y, z, Block.DIRT);
-                    else
-                        setBlock(x, y, z, Block.STONE);
-                }
-            }
-        }
-        noUpdates = false;
-        rebuild();
-    }
-
     Chunk.fromBuffer(this.world, ByteBuffer buffer, [int o = 0]) {
         ByteData data = new ByteData.view(buffer);
         x = data.getInt32(o + 0);
@@ -45,10 +25,11 @@ abstract class Chunk {
                 for (int oy = 0; oy < 16; oy++) {
                     for (int oz = 0; oz < 16; oz++) {
                         for (int ox = 0; ox < 16; ox++) {
-                            _setBlock(ox, oy + (i << 4), oz, data.getUint16(offset, Endianness.BIG_ENDIAN));
+                            int id = data.getUint16(offset, Endianness.BIG_ENDIAN);
                             offset += 2;
-                            setData(ox, oy + (i << 4), oz, data.getUint8(offset));
+                            int dataVal = data.getUint8(offset);
                             offset++;
+                            setBlock(ox, oy + (i << 4), oz, BlockRegistry.getByLegacy(id, dataVal));
                             setLight(ox, oy + (i << 4), oz, data.getUint8(offset));
                             offset++;
                             setSky(ox, oy + (i << 4), oz, data.getUint8(offset));
@@ -62,6 +43,10 @@ abstract class Chunk {
         rebuild();
     }
 
+    Map<int, Block> _idMap = {0 : Blocks.AIR};
+    Map<Block, int> _blockMap = {Blocks.AIR: 0};
+    int _nextId = 1;
+
     /**
    * Sets the [block] at the location given by the [x],
    * [y] and [z] coordinates relative to the chunk.
@@ -70,30 +55,29 @@ abstract class Chunk {
    * 15 and [y] must be between 0 and 255.
    */
     setBlock(int x, int y, int z, Block block) {
-        _setBlock(x, y, z, block.legacyId);
-    }
-
-    //Internal method for working with legacy ids until this
-    //is changed in Minecraft
-    _setBlock(int x, int y, int z, int block) {
         var section = sections[y >> 4];
         if (section == null) {
-            if (block != Block.AIR) {
+            if (block != Blocks.AIR) {
                 section = new ChunkSection();
                 sections[y >> 4] = section;
             } else {
                 return;
             }
         }
+        if (!_blockMap.containsKey(block)) {
+            _idMap[_nextId] = block;
+            _blockMap[block] = _nextId;
+            _nextId = (_nextId + 1) & 0xFFFF;
+        }
         needsBuild = true;
         section.needsBuild = true;
         update(x, y, z);
         int idx = x | (z << 4) | ((y & 0xF) << 8);
-        var old = section.blocks[idx];
-        section.blocks[idx] = block;
-        if (old == Block.AIR.legacyId && block != Block.AIR.legacyId) {
+        var old = _idMap[section.blocks[idx]];
+        section.blocks[idx] = _blockMap[block];
+        if (old == Blocks.AIR && block != Blocks.AIR) {
             section.count++;
-        } else if (old != Block.AIR.legacyId && block == Block.AIR.legacyId) {
+        } else if (old != Blocks.AIR && block == Blocks.AIR) {
             section.count--;
         }
 
@@ -110,52 +94,11 @@ abstract class Chunk {
    * 15 and [y] must be between 0 and 255.
    */
     Block getBlock(int x, int y, int z) {
-        return Block.blockFromLegacyId(_getBlock(x, y, z));
-    }
-
-    //Internal method for working with legacy ids until this
-    //is changed in Minecraft
-    int _getBlock(int x, int y, int z) {
         var section = sections[y >> 4];
         if (section == null) {
-            return Block.AIR.legacyId;
+            return Blocks.AIR;
         }
-        return section.blocks[x | (z << 4) | ((y & 0xF) << 8)];
-    }
-
-    /**
-     * Sets the [data] at the location given by the [x],
-     * [y] and [z] coordinates relative to the chunk.
-     *
-     * The [x] and [z] coordinates must be between 0 and
-     * 15 and [y] must be between 0 and 255.
-     */
-    setData(int x, int y, int z, int data) {
-        var section = sections[y >> 4];
-        if (section == null) {
-            return;
-        }
-        needsBuild = true;
-        section.needsBuild = true;
-        update(x, y, z);
-
-        int idx = x | (z << 4) | ((y & 0xF) << 8);
-        section.data[idx] = data;
-    }
-
-    /**
-     * Gets the data at the location given by the [x],
-     * [y] and [z] coordinates relative to the chunk.
-     *
-     * The [x] and [z] coordinates must be between 0 and
-     * 15 and [y] must be between 0 and 255.
-     */
-    int getData(int x, int y, int z) {
-        var section = sections[y >> 4];
-        if (section == null) {
-            return 0;
-        }
-        return section.data[x | (z << 4) | ((y & 0xF) << 8)];
+        return _idMap[section.blocks[x | (z << 4) | ((y & 0xF) << 8)]];
     }
 
     /**
@@ -295,7 +238,6 @@ class ChunkSection {
     static final _emptySkySection = new Uint8List(16 * 16 * 16)..fillRange(0, 16 * 16 * 16, 15);
 
     Uint16List blocks = new Uint16List(16 * 16 * 16);
-    Uint8List data = new Uint8List(16 * 16 * 16);
     Uint8List light = new Uint8List(16 * 16 * 16);
     Uint8List sky = new Uint8List(16 * 16 * 16)..setAll(0, _emptySkySection);
 

@@ -2,90 +2,7 @@ part of mapViewer;
 
 class Block {
 
-    static final Block AIR = new Block._airBlock();
-    static final Block STONE = new Block._internal(1, "minecraft:stone", 0x6D6D6D);
-    static final Block GRASS = new BlockGrass._internal(2, "minecraft:grass", 0xA7D389);
-    static final Block DIRT = new Block._internal(3, "minecraft:dirt", 0x715036, texture: "dirt");
-    static final Block COBBLESTONE = new Block._internal(4, "minecraft:cobblestone", 0x505050, texture: "cobblestone");
-    static final Block PLANKS = new Block._internal(5, "minecraft:planks", 0xB08E5C, texture: "planks_oak");
-    static final Block SAPLING = new BlockCross._internal(6, "minecraft:sapling")..collidable = false;
-    static final Block BEDROCK = new Block._internal(7, "minecraft:bedrock", 0x303030, texture: "bedrock");
-    static final Block FLOWING_WATER = new BlockWater._internal(8, "minecraft:flowing_water", "water_flow");
-    static final Block WATER = new BlockWater._internal(9, "minecraft:water", "water_still");
-    static final Block FLOWING_LAVA = new Block._internal(10, "minecraft:flowing_lava", 0xC34509, texture: "lava_flow");
-    static final Block LAVA = new Block._internal(11, "minecraft:lava", 0xC34509, texture: "lava_still");
-    static final Block SAND = new Block._internal(12, "minecraft:sand", 0xCAC391, texture: "sand");
-    static final Block GRAVEL = new Block._internal(13, "minecraft:gravel", 0x000000, texture: "gravel");
-    static final Block GOLD_ORE = new Block._internal(14, "minecraft:gold_ore", 0x000000, texture: "gold_ore");
-    static final Block IRON_ORE = new Block._internal(15, "minecraft:iron_ore", 0x000000, texture: "iron_ore");
-    static final Block COAL_ORE = new Block._internal(16, "minecraft:coal_ore", 0x000000, texture: "coal_ore");
-    static final Block LOG = new Block._internal(17, "minecraft:log", 0x000000, texture: "log_oak");
-    static final Block LEAVES = new Block._internal(18, "minecraft:leaves", 0xA7D389, texture: "leaves_oak", solid: false, forceColour: true)..allowSelf = true;
-    static final Block SPONGE = new Block._internal(19, "minecraft:sponge", 0x000000, texture: "sponge");
-    static final Block GLASS = new Block._internal(20, "minecraft:glass", 0x000000, texture: "glass", solid: false);
-    static final Block LAPIS_ORE = new Block._internal(21, "minecraft:lapis_ore", 0x000000, texture: "lapis_ore");
-    static final Block LAPIS_BLOCK = new Block._internal(22, "minecraft:lapis_block", 0x000000, texture: "lapis_block");
-    static final Block DISPENSER = new BlockSidedTextures._internal(23, "minecraft:dispenser", 0x000000)
-                        ..textures = {
-                            BlockFace.FRONT: "dispenser_front_horizontal",
-                            BlockFace.TOP: "furnace_top",
-                            BlockFace.BOTTOM: "furnace_top",
-                            BlockFace.BACK: "furnace_side",
-                            BlockFace.LEFT: "furnace_side",
-                            BlockFace.RIGHT: "furnace_side"
-                        };
-    static final Block SANDSTONE = new BlockSidedTextures._internal(24, "minecraft:sandstone", 0x000000)
-        ..textures = {
-        BlockFace.FRONT: "sandstone_normal",
-        BlockFace.TOP: "sandstone_top",
-        BlockFace.BOTTOM: "sandstone_bottom",
-        BlockFace.BACK: "sandstone_normal",
-        BlockFace.LEFT: "sandstone_normal",
-        BlockFace.RIGHT: "sandstone_normal"
-    };
-    static final Block NOTEBLOCK = new Block._internal(25, "minecraft:noteblock", 0x000000, texture: "noteblock");
-    static final Block BED = new BlockBed._internal(26, "minecraft:bed");
-    static final Block GOLDEN_RAIL = new BlockFlat._internal(27, "minecraft:golden_rail", "rail_golden");
-    static final Block DETECTOR_RAIL = new BlockFlat._internal(28, "minecraft:detector_rail", "rail_detector");
-
-    static final Block TALL_GRASS = new BlockCross._internal(31, "minecraft:tallgrass", texture: "tallgrass", forceColour: true, colour: 0xA7D389)
-        ..collidable = false;
-
-    static final Block GLOWSTONE = new Block._internal(89, "minecraft:glowstone", 0x000000, texture: "glowstone");
-
-    static final Block VINES = new BlockVines._internal(106, "minecraft:vine", 0x87BA34)..collidable = false;
-
-
-    // Handles cases where a block is missing
-    static final Block MISSING_BLOCK = new Block._internal(0xFF, "thinkofdeath:messed_up", 0x000000, texture: "missing_texture");
-
-    static Map<int, Block> _blocksLegacy = new Map();
-
-    static Map<String, Block> _blocks = new Map();
-
-    static var _allBlocks = [AIR, STONE, GRASS, DIRT, COBBLESTONE, PLANKS, SAPLING, BEDROCK, FLOWING_WATER, WATER,
-        FLOWING_LAVA, LAVA, SAND, GRAVEL, GOLD_ORE, COAL_ORE, LOG, LEAVES, SPONGE, GLASS, LAPIS_ORE, LAPIS_BLOCK,
-        DISPENSER, SANDSTONE, NOTEBLOCK, BED, GOLDEN_RAIL, DETECTOR_RAIL, TALL_GRASS, GLOWSTONE, VINES, MISSING_BLOCK];
-
-    static Block blockFromName(String name) {
-        Block ret = _blocks[name];
-        if (ret == null) ret = Block.MISSING_BLOCK;
-        return ret;
-    }
-
-    ///**Warning:** this will be dropped in future versions of Minecraft
-    @deprecated
-    static Block blockFromLegacyId(int id) {
-        Block ret = _blocksLegacy[id];
-        if (ret == null) ret = Block.MISSING_BLOCK;
-        return ret;
-    }
-
-    ///**Warning:** this will be dropped in future versions of Minecraft
-    @deprecated
-    int legacyId;
-
-    String name;
+    BlockRegistrationEntry _regBlock;
 
     bool renderable = true;
     bool transparent = false;
@@ -93,38 +10,17 @@ class Block {
     bool solid = true;
     bool collidable = true;
 
-    int _colour = 0xFFFFFF;
-    bool forceColour;
+    int colour = 0xFFFFFF;
+    bool forceColour = false;
     String texture;
-    bool allowSelf = true;
-
-    Block._internal(int _legacyId, String _name, int _colour,
-                    {String texture: "stone", bool solid: true, bool transparent : false, bool forceColour : false}) {
-        legacyId = _legacyId;
-        name = _name;
-        colour = _colour;
-        this.texture = texture;
-        _blocks[name] = this;
-        _blocksLegacy[legacyId] = this;
-        this.solid = solid;
-        this.transparent = transparent;
-        this.forceColour = forceColour;
-    }
-
-    factory Block._airBlock() {
-        Block air = new Block._internal(0, "minecraft:air", 0xFFFFFF);
-        air.renderable = false;
-        air.solid = false;
-        air.collidable = false;
-        return air;
-    }
+    bool allowSelf = false;
 
     bool collidesWith(Box box, int x, int y, int z) {
         if (!collidable) return false;
         return box.checkBox(x.toDouble(), y.toDouble(), z.toDouble(), 1.0, 1.0, 1.0);
     }
 
-    shouldRenderAgainst(Block block) => !block.solid && (allowSelf || block != this);
+    shouldRenderAgainst(Block block) => !block.solid && (!allowSelf || block != this);
 
     renderCanvas(Uint8ClampedList data, int width, int x, int y, int z, int ry, CanvasChunk chunk) {
 
@@ -476,14 +372,6 @@ class Block {
 
     TextureInfo getTexture(BlockFace face) {
         return blockTextureInfo[texture];
-    }
-
-    set colour(int c) {
-        _colour = c;
-    }
-
-    int get colour {
-        return _colour;
     }
 }
 

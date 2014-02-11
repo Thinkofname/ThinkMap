@@ -81,7 +81,6 @@ class WebGLRenderer extends Renderer {
         gl.cullFace(BACK);
         gl.frontFace(CW);
 
-        gl.enable(BLEND);
         gl.blendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
 
         // 3D Controls
@@ -381,10 +380,12 @@ class WebGLWorld extends World {
         chunks.forEach((k, v) {
             v.render(renderer, 1);
         });
+        renderer.gl.enable(BLEND);
         renderer.gl.uniform1i(renderer.disAlphaLocation, 0);
         chunks.forEach((k, v) {
             v.render(renderer, 2);
         });
+        renderer.gl.disable(BLEND);
     }
 
     @override
@@ -408,8 +409,6 @@ class WebGLWorld extends World {
 }
 
 class WebGLChunk extends Chunk {
-
-    WebGLChunk(int x, int z, World world) : super(x, z, world);
 
     WebGLChunk.fromBuffer(World world, ByteBuffer buffer, [int o = 0]) : super.fromBuffer(world, buffer, o);
 
