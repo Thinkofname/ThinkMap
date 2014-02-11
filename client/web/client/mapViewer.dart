@@ -10,7 +10,6 @@ import "dart:js";
 import "package:vector_math/vector_math.dart";
 
 part "renderers/webglRenderer.dart";
-part "renderers/canvasRenderer.dart";
 part "chunk.dart";
 part "world.dart";
 part "shaders.dart";
