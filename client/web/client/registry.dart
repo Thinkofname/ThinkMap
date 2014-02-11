@@ -197,11 +197,23 @@ class BlockRegistry {
             ..legacyId(11)
             ..build();
 
+        registerBlock("sand", new Block()
+            ..texture = "sand")
+            ..legacyId(12)
+            ..dataValue(0)
+            ..build();
+        registerBlock("sand_red", new Block()
+            ..texture = "red_sand")
+            ..legacyId(12)
+            ..dataValue(1)
+            ..build();
+
         registerBlock("glowstone", new Block()
             ..texture = "glowstone")
             ..legacyId(89)
             ..build();
 
+        BlockWallSign.register();
         BlockVines.register();
 
         // Custom Blocks

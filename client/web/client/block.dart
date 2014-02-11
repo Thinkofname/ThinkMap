@@ -44,31 +44,9 @@ class Block {
 
             TextureInfo texture = getTexture(BlockFace.TOP);
 
-            builder
-                ..position(x, y + 1, z)
-                ..colour((r * topRight).floor(), (g * topRight).floor(), (b * topRight).floor())
-                ..tex(0, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y + 1, z)
-                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(1, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x, y + 1, z + 1)
-                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(0, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y + 1, z)
-                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(1, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y + 1, z + 1)
-                ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
-                ..tex(1, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x, y + 1, z + 1)
-                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(0, 1)
-                ..texId(texture.start, texture.end);
+            addFaceTop(builder, x, y + 1, z, 1, 1,
+                    r, g, b, topLeft, topRight, bottomLeft, bottomRight,
+                    texture);
         }
 
 
@@ -80,31 +58,9 @@ class Block {
 
             TextureInfo texture = getTexture(BlockFace.BOTTOM);
 
-            builder
-                ..position(x, y, z)
-                ..colour((r * topRight).floor(), (g * topRight).floor(), (b * topRight).floor())
-                ..tex(0, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x, y, z + 1)
-                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(0, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y, z)
-                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(1, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y, z)
-                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(1, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x, y, z + 1)
-                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(0, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y, z + 1)
-                ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
-                ..tex(1, 1)
-                ..texId(texture.start, texture.end);
+            addFaceBottom(builder, x, y, z, 1, 1,
+                    r, g, b, topLeft, topRight, bottomLeft, bottomRight,
+                    texture);
         }
 
         if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x + 1, y, (chunk.z * 16) + z))) {
@@ -115,31 +71,9 @@ class Block {
 
             TextureInfo texture = getTexture(BlockFace.LEFT);
 
-            builder
-                ..position(x + 1, y, z)
-                ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
-                ..tex(0, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y, z + 1)
-                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(1, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y + 1, z)
-                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(0, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y + 1, z + 1)
-                ..colour((r * topRight).floor(), (g * topRight).floor(), (b * topRight).floor())
-                ..tex(1, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y + 1, z)
-                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(0, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y, z + 1)
-                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(1, 1)
-                ..texId(texture.start, texture.end);
+            addFaceLeft(builder, x + 1, y, z, 1, 1,
+                    r, g, b, topLeft, topRight, bottomLeft, bottomRight,
+                    texture);
         }
 
         if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x - 1, y, (chunk.z * 16) + z))) {
@@ -150,31 +84,9 @@ class Block {
 
             TextureInfo texture = getTexture(BlockFace.RIGHT);
 
-            builder
-                ..position(x, y, z)
-                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(0, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x, y + 1, z)
-                ..colour((r * topRight).floor(), (g * topRight).floor(), (b * topRight).floor())
-                ..tex(0, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x, y, z + 1)
-                ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
-                ..tex(1, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x, y + 1, z)
-                ..colour((r * topRight).floor(), (g * topRight).floor(), (b * topRight).floor())
-                ..tex(0, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x, y + 1, z + 1)
-                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(1, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x, y, z + 1)
-                ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
-                ..tex(1, 1)
-                ..texId(texture.start, texture.end);
+            addFaceRight(builder, x, y, z, 1, 1,
+                r, g, b, topLeft, topRight, bottomLeft, bottomRight,
+                    texture);
         }
 
         if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x, y, (chunk.z * 16) + z + 1))) {
@@ -185,31 +97,9 @@ class Block {
 
             TextureInfo texture = getTexture(BlockFace.FRONT);
 
-            builder
-                ..position(x, y, z + 1)
-                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(0, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x, y + 1, z + 1)
-                ..colour((r * topRight).floor(), (g * topRight).floor(), (b * topRight).floor())
-                ..tex(0, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y, z + 1)
-                ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
-                ..tex(1, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x, y + 1, z + 1)
-                ..colour((r * topRight).floor(), (g * topRight).floor(), (b * topRight).floor())
-                ..tex(0, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y + 1, z + 1)
-                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(1, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y, z + 1)
-                ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
-                ..tex(1, 1)
-                ..texId(texture.start, texture.end);
+            addFaceFront(builder, x, y, z + 1, 1, 1,
+                    r, g, b, topLeft, topRight, bottomLeft, bottomRight,
+                    texture);
         }
 
         if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x, y, (chunk.z * 16) + z - 1))) {
@@ -220,31 +110,9 @@ class Block {
 
             TextureInfo texture = getTexture(BlockFace.BACK);
 
-            builder
-                ..position(x, y, z)
-                ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
-                ..tex(0, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y, z)
-                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(1, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x, y + 1, z)
-                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(0, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y + 1, z)
-                ..colour((r * topRight).floor(), (g * topRight).floor(), (b * topRight).floor())
-                ..tex(1, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x, y + 1, z)
-                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(0, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y, z)
-                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(1, 1)
-                ..texId(texture.start, texture.end);
+            addFaceBack(builder, x, y, z, 1, 1,
+                    r, g, b, topLeft, topRight, bottomLeft, bottomRight,
+                    texture);
         }
     }
 
