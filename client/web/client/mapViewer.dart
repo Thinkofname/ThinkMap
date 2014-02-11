@@ -14,7 +14,7 @@ part "renderers/canvasRenderer.dart";
 part "chunk.dart";
 part "world.dart";
 part "shaders.dart";
-part "blocks.dart";
+part 'block.dart';
 part "otherblocks.dart";
 part "utils.dart";
 part "rendering.dart";
