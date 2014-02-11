@@ -2,7 +2,6 @@ part of mapViewer;
 
 class BlockBuilder {
 
-//    List<int> _buffer = new List();
     DynamicUint8List _buffer;
 
     BlockBuilder() {
@@ -10,9 +9,9 @@ class BlockBuilder {
     }
 
     position(num x, num y, num z) {
-        _buffer.add(x);
-        _buffer.add(y);
-        _buffer.add(z);
+        _buffer.add(x.toInt());
+        _buffer.add(y.toInt());
+        _buffer.add(z.toInt());
     }
 
     colour(int r, int g, int b) {
@@ -22,13 +21,13 @@ class BlockBuilder {
     }
 
     texId(int start, int end) {
-        _buffer.addShort(start);
-        _buffer.addShort(end);
+        _buffer.addUnsignedShort(start);
+        _buffer.addUnsignedShort(end);
     }
 
     tex(num x, num y) {
-        _buffer.add(x);
-        _buffer.add(y);
+        _buffer.add(x.toInt());
+        _buffer.add(y.toInt());
     }
 
     Uint8List toTypedList() {
@@ -47,9 +46,9 @@ class FloatBlockBuilder implements BlockBuilder {
     }
 
     position(num x, num y, num z) {
-        _buffer.addFloat(x);
-        _buffer.addFloat(y);
-        _buffer.addFloat(z);
+        _buffer.addFloat(x.toDouble());
+        _buffer.addFloat(y.toDouble());
+        _buffer.addFloat(z.toDouble());
     }
 
     colour(int r, int g, int b) {
@@ -61,13 +60,13 @@ class FloatBlockBuilder implements BlockBuilder {
     }
 
     texId(int start, int end) {
-        _buffer.addShort(start);
-        _buffer.addShort(end);
+        _buffer.addUnsignedShort(start);
+        _buffer.addUnsignedShort(end);
     }
 
     tex(num x, num y) {
-        _buffer.addFloat(x);
-        _buffer.addFloat(y);
+        _buffer.addFloat(x.toDouble());
+        _buffer.addFloat(y.toDouble());
     }
 
     Uint8List toTypedList() {
