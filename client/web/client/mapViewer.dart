@@ -70,16 +70,18 @@ start() {
     });
 
     if (window.location.search.contains("force2d")) {
-        world = new CanvasWorld(); // TODO:
-        renderer = new CanvasRenderer(canvas);
+        // Removed for now
+//        world = new CanvasWorld(); // TODO:
+//        renderer = new CanvasRenderer(canvas);
     } else {
         try {
             world = new WebGLWorld();
             renderer = new WebGLRenderer(canvas);
         } catch (e) {
-            print(e);
-            world = new CanvasWorld(); // TODO:
-            renderer = new CanvasRenderer(canvas);
+            throw e;
+            // Removed for now
+//            world = new CanvasWorld(); // TODO:
+//            renderer = new CanvasRenderer(canvas);
         }
     }
 

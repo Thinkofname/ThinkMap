@@ -1,6 +1,6 @@
 part of mapViewer;
 
-class World {
+abstract class World {
 
     Map<String, Chunk> chunks = new Map();
 
