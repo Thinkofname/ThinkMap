@@ -61,7 +61,10 @@ class Uint8ListPool {
     static List<Uint8List> freeLists = new List();
 
     static Uint8List getList(int size) {
-        var ret = freeLists.firstWhere((e) => e.length >= size, orElse: () => new Uint8List(size));
+        var ret = freeLists.firstWhere((e) => e.length >= size, orElse: () {
+            print("Alloc $size");
+            return new Uint8List(size);
+        });
         freeLists.remove(ret);
         return ret;
     }
