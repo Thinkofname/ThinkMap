@@ -103,66 +103,23 @@ class BlockRegistry {
             ..legacyId(4)
             ..build();
 
-        registerBlock("planks_oak", new Block()
-            ..texture = "planks_oak")
-            ..legacyId(5)
-            ..dataValue(0)
-            ..build();
-        registerBlock("planks_spruce", new Block()
-            ..texture = "planks_spruce")
-            ..legacyId(5)
-            ..dataValue(1)
-            ..build();
-        registerBlock("planks_birch", new Block()
-            ..texture = "planks_birch")
-            ..legacyId(5)
-            ..dataValue(2)
-            ..build();
-        registerBlock("planks_jungle", new Block()
-            ..texture = "planks_jungle")
-            ..legacyId(5)
-            ..dataValue(3)
-            ..build();
-        registerBlock("planks_acacia", new Block()
-            ..texture = "planks_acacia")
-            ..legacyId(5)
-            ..dataValue(4)
-            ..build();
+        ({"oak":0, "spruce":1, "birch":2, "jungle":3, "acacia":4}).forEach((k, v) {
+            registerBlock("planks_$k", new Block()
+                ..texture = "planks_$k")
+                ..legacyId(5)
+                ..dataValue(v)
+                ..build();
+            registerBlock("sapling_$k", new BlockCross()
+                ..texture = "sapling_$k"
+                ..collidable = false)
+                ..legacyId(6)
+                ..dataValue(v)
+                ..build();
+        });
         registerBlock("planks_big_oak", new Block()
             ..texture = "planks_big_oak")
             ..legacyId(5)
             ..dataValue(5)
-            ..build();
-
-        registerBlock("sapling_oak", new BlockCross()
-            ..texture = "sapling_oak"
-            ..collidable = false)
-            ..legacyId(6)
-            ..dataValue(0)
-            ..build();
-        registerBlock("sapling_spruce", new BlockCross()
-            ..texture = "sapling_spruce"
-            ..collidable = false)
-            ..legacyId(6)
-            ..dataValue(1)
-            ..build();
-        registerBlock("sapling_birch", new BlockCross()
-            ..texture = "sapling_birch"
-            ..collidable = false)
-            ..legacyId(6)
-            ..dataValue(2)
-            ..build();
-        registerBlock("sapling_jungle", new BlockCross()
-            ..texture = "sapling_jungle"
-            ..collidable = false)
-            ..legacyId(6)
-            ..dataValue(3)
-            ..build();
-        registerBlock("sapling_acacia", new BlockCross()
-            ..texture = "sapling_acacia"
-            ..collidable = false)
-            ..legacyId(6)
-            ..dataValue(4)
             ..build();
         registerBlock("sapling_roofed_oak", new BlockCross()
             ..texture = "sapling_roofed_oak"
@@ -207,6 +164,75 @@ class BlockRegistry {
             ..legacyId(12)
             ..dataValue(1)
             ..build();
+
+        registerBlock("gravel", new Block()
+            ..texture = "gravel")
+            ..legacyId(13)
+            ..build();
+        registerBlock("gold_ore", new Block()
+            ..texture = "gold_ore")
+            ..legacyId(14)
+            ..build();
+        registerBlock("iron_ore", new Block()
+            ..texture = "iron_ore")
+            ..legacyId(15)
+            ..build();
+        registerBlock("coal_ore", new Block()
+            ..texture = "coal_ore")
+            ..legacyId(16)
+            ..build();
+
+        // Logs
+        ({"oak":0, "spruce":1, "birch":2, "jungle":3}).forEach((k, v) {
+            registerBlock("log_${k}_up", new BlockSidedTextures()
+                ..textures = {
+                BlockFace.TOP: "log_${k}_top",
+                BlockFace.BOTTOM: "log_${k}_top",
+                BlockFace.FRONT: "log_$k",
+                BlockFace.BACK: "log_$k",
+                BlockFace.LEFT: "log_$k",
+                BlockFace.RIGHT: "log_$k"
+            })
+                ..legacyId(17)
+                ..dataValue(v)
+                ..build();
+            registerBlock("log_${k}_east", new BlockSidedTextures()
+                ..textures = {
+                BlockFace.TOP: "log_$k",
+                BlockFace.BOTTOM: "log_$k",
+                BlockFace.FRONT: "log_$k",
+                BlockFace.BACK: "log_$k",
+                BlockFace.LEFT: "log_${k}_top",
+                BlockFace.RIGHT: "log_${k}_top"
+            })
+                ..legacyId(17)
+                ..dataValue(4 + v)
+                ..build();
+            registerBlock("log_${k}_north", new BlockSidedTextures()
+                ..textures = {
+                BlockFace.TOP: "log_$k",
+                BlockFace.BOTTOM: "log_$k",
+                BlockFace.FRONT: "log_${k}_top",
+                BlockFace.BACK: "log_${k}_top",
+                BlockFace.LEFT: "log_$k",
+                BlockFace.RIGHT: "log_$k"
+            })
+                ..legacyId(17)
+                ..dataValue(8 + v)
+                ..build();
+            registerBlock("log_${k}_all", new BlockSidedTextures()
+                ..textures = {
+                BlockFace.TOP: "log_$k",
+                BlockFace.BOTTOM: "log_$k",
+                BlockFace.FRONT: "log_$k",
+                BlockFace.BACK: "log_$k",
+                BlockFace.LEFT: "log_$k",
+                BlockFace.RIGHT: "log_$k"
+            })
+                ..legacyId(17)
+                ..dataValue(12 + v)
+                ..build();
+        });
 
         registerBlock("glowstone", new Block()
             ..texture = "glowstone")

@@ -45,155 +45,40 @@ class BlockVines extends Block {
 
             TextureInfo texture = getTexture(BlockFace.BOTTOM);
 
-            fBulider
-                ..position(x, y + 0.95, z)
-                ..colour((r * topRight).floor(), (g * topRight).floor(), (b * topRight).floor())
-                ..tex(1, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x, y + 0.95, z + 1)
-                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(1, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y + 0.95, z)
-                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(0, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y + 0.95, z)
-                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(0, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x, y + 0.95, z + 1)
-                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(1, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y + 0.95, z + 1)
-                ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
-                ..tex(0, 1)
-                ..texId(texture.start, texture.end);
+            addFaceBottom(fBulider, x, y + 0.95, z, 1, 1,
+                r, g, b, topLeft, topRight, bottomLeft, bottomRight, texture);
         }
 
         if (dataValue & 2 == 2) {
 
             TextureInfo texture = getTexture(BlockFace.LEFT);
 
-            fBulider
-                ..position(x + 0.05, y, z)
-                ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
-                ..tex(0, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x + 0.05, y, z + 1)
-                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(1, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x + 0.05, y + 1, z)
-                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(0, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 0.05, y + 1, z + 1)
-                ..colour((r * topRight).floor(), (g * topRight).floor(), (b * topRight).floor())
-                ..tex(1, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 0.05, y + 1, z)
-                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(0, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 0.05, y, z + 1)
-                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(1, 1)
-                ..texId(texture.start, texture.end);
+            addFaceLeft(fBulider, x + 0.05, y, z, 1, 1,
+                r, g, b, topLeft, topRight, bottomLeft, bottomRight, texture);
         }
 
         if (dataValue & 8 == 8) {
 
             TextureInfo texture = getTexture(BlockFace.RIGHT);
 
-            fBulider
-                ..position(x + 0.95, y, z)
-                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(1, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x + 0.95, y + 1, z)
-                ..colour((r * topRight).floor(), (g * topRight).floor(), (b * topRight).floor())
-                ..tex(1, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 0.95, y, z + 1)
-                ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
-                ..tex(0, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x + 0.95, y + 1, z)
-                ..colour((r * topRight).floor(), (g * topRight).floor(), (b * topRight).floor())
-                ..tex(1, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 0.95, y + 1, z + 1)
-                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(0, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 0.95, y, z + 1)
-                ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
-                ..tex(0, 1)
-                ..texId(texture.start, texture.end);
+            addFaceRight(fBulider, x + 0.95, y, z, 1, 1,
+                r, g, b, topLeft, topRight, bottomLeft, bottomRight, texture);
         }
 
         if (dataValue & 4 == 4) {
 
             TextureInfo texture = getTexture(BlockFace.FRONT);
 
-            fBulider
-                ..position(x, y, z + 0.05)
-                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(0, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x, y + 1, z + 0.05)
-                ..colour((r * topRight).floor(), (g * topRight).floor(), (b * topRight).floor())
-                ..tex(0, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y, z + 0.05)
-                ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
-                ..tex(1, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x, y + 1, z + 0.05)
-                ..colour((r * topRight).floor(), (g * topRight).floor(), (b * topRight).floor())
-                ..tex(0, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y + 1, z + 0.05)
-                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(1, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y, z + 0.05)
-                ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
-                ..tex(1, 1)
-                ..texId(texture.start, texture.end);
+            addFaceFront(fBulider, x, y, z + 0.05, 1, 1,
+                r, g, b, topLeft, topRight, bottomLeft, bottomRight, texture);
         }
 
         if (dataValue & 1 == 1) {
 
             TextureInfo texture = getTexture(BlockFace.BACK);
 
-            fBulider
-                ..position(x, y, z + 0.95)
-                ..colour((r * bottomLeft).floor(), (g * bottomLeft).floor(), (b * bottomLeft).floor())
-                ..tex(0, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y, z + 0.95)
-                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(1, 1)
-                ..texId(texture.start, texture.end)
-                ..position(x, y + 1, z + 0.95)
-                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(0, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y + 1, z + 0.95)
-                ..colour((r * topRight).floor(), (g * topRight).floor(), (b * topRight).floor())
-                ..tex(1, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x, y + 1, z + 0.95)
-                ..colour((r * topLeft).floor(), (g * topLeft).floor(), (b * topLeft).floor())
-                ..tex(0, 0)
-                ..texId(texture.start, texture.end)
-                ..position(x + 1, y, z + 0.95)
-                ..colour((r * bottomRight).floor(), (g * bottomRight).floor(), (b * bottomRight).floor())
-                ..tex(1, 1)
-                ..texId(texture.start, texture.end);
+            addFaceBack(fBulider, x, y, z + 0.95, 1, 1,
+                r, g, b, topLeft, topRight, bottomLeft, bottomRight, texture);
         }
     }
 }
