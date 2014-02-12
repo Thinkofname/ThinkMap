@@ -236,9 +236,6 @@ class _LoadJob implements _BuildJob {
         offset = 10;
     }
 
-    bool paused = false;
-    int count = 0;
-
     Object exec(Object snapshot, Stopwatch stopwatch) {
         for (; i < 16; i++) {
             if (sMask & (1 << i) != 0) {
@@ -258,12 +255,10 @@ class _LoadJob implements _BuildJob {
                             chunk.setSky(ox, oy + (i << 4), oz, data.getUint8(offset));
                             offset++;
 
-                            if (stopwatch.elapsedMilliseconds >= World.BUILD_LIMIT_MS) {
+                            if (!(stopwatch.elapsedMilliseconds < World.LOAD_LIMIT_MS)) {
                                 x = ox + 1;
                                 y = oy;
                                 z = oz;
-                                paused = true;
-                                count++;
                                 return this;
                             }
                         }
