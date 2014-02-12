@@ -220,6 +220,7 @@ class ChunkSection {
 class _LoadJob implements _BuildJob {
     Chunk chunk;
     ByteData data;
+    Uint8List byteData;
     int sMask;
     int offset;
 
@@ -230,6 +231,7 @@ class _LoadJob implements _BuildJob {
 
     _LoadJob(this.chunk, ByteBuffer buffer) {
         data = new ByteData.view(buffer);
+        byteData = new Uint8List.view(buffer);
         chunk.x = data.getInt32(0);
         chunk.z = data.getInt32(4);
         sMask = data.getUint16(8);
@@ -247,12 +249,12 @@ class _LoadJob implements _BuildJob {
                             x = 0;
                             int id = data.getUint16(offset, Endianness.BIG_ENDIAN);
                             offset += 2;
-                            int dataVal = data.getUint8(offset);
+                            int dataVal = byteData[offset];
                             offset++;
                             chunk.setBlock(ox, oy + (i << 4), oz, BlockRegistry.getByLegacy(id, dataVal));
-                            chunk.setLight(ox, oy + (i << 4), oz, data.getUint8(offset));
+                            chunk.setLight(ox, oy + (i << 4), oz, byteData[offset]);
                             offset++;
-                            chunk.setSky(ox, oy + (i << 4), oz, data.getUint8(offset));
+                            chunk.setSky(ox, oy + (i << 4), oz, byteData[offset]);
                             offset++;
 
                             if (!(stopwatch.elapsedMilliseconds < World.LOAD_LIMIT_MS)) {
