@@ -115,6 +115,15 @@ class BlockRegistry {
                 ..legacyId(6)
                 ..dataValue(v)
                 ..build();
+            registerBlock("leaves_$k", new Block()
+                ..texture = "leaves_$k"
+                ..solid = false
+                ..allowSelf = true
+                ..colour = 0xA7D389
+                ..forceColour = true)
+                ..legacyId(18)
+                ..dataValue(v)
+                ..build();
         });
         registerBlock("planks_big_oak", new Block()
             ..texture = "planks_big_oak")
@@ -125,6 +134,15 @@ class BlockRegistry {
             ..texture = "sapling_roofed_oak"
             ..collidable = false)
             ..legacyId(6)
+            ..dataValue(5)
+            ..build();
+        registerBlock("leaves_big_oak", new Block()
+            ..texture = "leaves_big_oak"
+            ..solid = false
+            ..allowSelf = true
+            ..colour = 0xA7D389
+            ..forceColour = true)
+            ..legacyId(18)
             ..dataValue(5)
             ..build();
 
