@@ -129,6 +129,7 @@ class WebGLRenderer extends Renderer {
             y = e.client.y;
         });
         document.body.onMouseWheel.listen((e) {
+            e.preventDefault();
             if (firstPerson) return;
             JsObject jse = new JsObject.fromBrowserObject(e);
             // TODO: Fix once dart fixes this bug
@@ -138,7 +139,6 @@ class WebGLRenderer extends Renderer {
             } else {
                 camera.y -= (jse["wheelDeltaY"] as int) < 0 ? -1.0 : 1.0;
             }
-            e.preventDefault();
         });
         // Misc
         document.body.onKeyDown.where((e) => e.keyCode == KeyCode.F).listen((e) {
@@ -389,12 +389,14 @@ class WebGLWorld extends World {
     }
 
     @override
-    Chunk fromBuffer(ByteBuffer buffer) {
-        return new WebGLChunk.fromBuffer(this, buffer, 0);
+    Chunk newChunk() {
+        return new WebGLChunk();
     }
 
     @override
     int _queueCompare(_BuildJob a, _BuildJob b) {
+        if (a is _LoadJob && !(b is _LoadJob)) return 1;
+        if (b is _LoadJob && !(a is _LoadJob)) return -1;
         Camera camera = (renderer as WebGLRenderer).camera;
         num adx = (a.chunk.x * 16) + 8 - camera.x;
         num ady = (a.i * 16) + 8 - camera.y;
@@ -409,8 +411,6 @@ class WebGLWorld extends World {
 }
 
 class WebGLChunk extends Chunk {
-
-    WebGLChunk.fromBuffer(World world, ByteBuffer buffer, [int o = 0]) : super.fromBuffer(world, buffer, o);
 
     List<Uint8List> builtSections = new List(16);
     Buffer renderBuffer;
@@ -521,14 +521,11 @@ class WebGLChunk extends Chunk {
         BlockBuilder builder = snapshot.builder;
         BlockBuilder builderTrans = snapshot.builderTrans;
         for (int x = snapshot.x; x < 16; x++) {
-            int sz = x == snapshot.x ? snapshot.z : 0;
-            for (int z = sz; z < 16; z++) {
-                int sy = 0;
-                if (z == snapshot.z){
-                    sy = snapshot.y;
-                    snapshot.z = -1;
-                }
-                for (int y = sy; y < 16; y++) {
+            snapshot.x = 0;
+            for (int z = snapshot.z; z < 16; z++) {
+                snapshot.z = 0;
+                for (int y = snapshot.y; y < 16; y++) {
+                    snapshot.y = 0;
                     Block block = getBlock(x, (i << 4) + y, z);
                     if (block.renderable) {
                         block.renderFloat(block.transparent ? builderTrans : builder, snapshot.builderFloat, x, (i << 4) + y, z, this);
@@ -542,7 +539,9 @@ class WebGLChunk extends Chunk {
                         return snapshot;
                     }
                 }
+                snapshot.x = snapshot.y = snapshot.z = 0;
             }
+            snapshot.x = snapshot.y = snapshot.z = 0;
         }
         // Resize
         bufferSize -= builtSections[i] != null ? builtSections[i].length : 0;

@@ -3,6 +3,7 @@ part of mapViewer;
 abstract class World {
 
     Map<String, Chunk> chunks = new Map();
+    Map<String, bool> chunksLoading = new Map();
 
     int currentTime = 6000;
 
@@ -18,12 +19,19 @@ abstract class World {
     List<ByteBuffer> toLoad = new List();
 
     loadChunk(ByteBuffer byteBuffer) {
-        toLoad.add(byteBuffer);
+        var job = new _LoadJob(newChunk(), byteBuffer);
+        String key = _chunkKey(job.chunk.x, job.chunk.z);
+        job.chunk.world = this;
+        if (!chunksLoading.containsKey(key) && chunks[key] == null) {
+            chunksLoading[key] = true;
+            _buildQueue.add(job);
+        }
     }
 
     addChunk(Chunk chunk) {
         String key = _chunkKey(chunk.x, chunk.z);
         if (chunks[key] != null) {
+            print("Dropped chunk after load");
             // Chunk is already loaded ignore it
             return;
         }
@@ -64,20 +72,17 @@ abstract class World {
         _buildQueue.add(new _BuildJob(chunk, i));
     }
 
-    static const int BUILD_LIMIT_MS = 8;
+    static const int BUILD_LIMIT_MS = 10;
     int lastSort = 0;
 
     tickBuildQueue() {
         stopwatch.reset();
         stopwatch.start();
-        while (stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS && toLoad.isNotEmpty) {
-            addChunk(fromBuffer(toLoad.removeLast()));
-        }
-        bool run = stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS;
+        bool run = true;
 
-        if (run && currentBuild != null) {
+        if (currentBuild != null) {
             var job = currentBuild;
-            Object snapshot = job.chunk.buildSection(job.i, currentSnapshot, stopwatch);
+            Object snapshot = job.exec(currentSnapshot, stopwatch);
             currentBuild = null;
             currentSnapshot = null;
             if (snapshot != null) {
@@ -94,10 +99,12 @@ abstract class World {
             lastSort--;
             while (stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS && _buildQueue.isNotEmpty) {
                 var job = _buildQueue.removeLast();
-                String key = _buildKey(job.chunk.x, job.chunk.z, job.i);
-                if (!_waitingForBuild.containsKey(key)) continue;
-                _waitingForBuild.remove(key);
-                Object snapshot = job.chunk.buildSection(job.i, null, stopwatch);
+                if (!(job is _LoadJob)) {
+                    String key = _buildKey(job.chunk.x, job.chunk.z, job.i);
+                    if (!_waitingForBuild.containsKey(key)) continue;
+                    _waitingForBuild.remove(key);
+                }
+                Object snapshot = job.exec(currentSnapshot, stopwatch);
                 if (snapshot != null) {
                     currentBuild = job;
                     currentSnapshot = snapshot;
@@ -108,7 +115,7 @@ abstract class World {
         stopwatch.stop();
     }
 
-    Chunk fromBuffer(ByteBuffer buffer);
+    Chunk newChunk();
 
     int _queueCompare(_BuildJob a, _BuildJob b);
 

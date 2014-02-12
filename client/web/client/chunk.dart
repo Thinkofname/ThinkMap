@@ -14,35 +14,6 @@ abstract class Chunk {
 
     bool noUpdates = true;
 
-    Chunk.fromBuffer(this.world, ByteBuffer buffer, [int o = 0]) {
-        ByteData data = new ByteData.view(buffer);
-        x = data.getInt32(o + 0);
-        z = data.getInt32(o + 4);
-        int sMask = data.getUint16(o + 8);
-        int offset = o + 10;
-        for (int i = 0; i < 16; i++) {
-            if (sMask & (1 << i) != 0) {
-                for (int oy = 0; oy < 16; oy++) {
-                    for (int oz = 0; oz < 16; oz++) {
-                        for (int ox = 0; ox < 16; ox++) {
-                            int id = data.getUint16(offset, Endianness.BIG_ENDIAN);
-                            offset += 2;
-                            int dataVal = data.getUint8(offset);
-                            offset++;
-                            setBlock(ox, oy + (i << 4), oz, BlockRegistry.getByLegacy(id, dataVal));
-                            setLight(ox, oy + (i << 4), oz, data.getUint8(offset));
-                            offset++;
-                            setSky(ox, oy + (i << 4), oz, data.getUint8(offset));
-                            offset++;
-                        }
-                    }
-                }
-            }
-        }
-        noUpdates = false;
-        rebuild();
-    }
-
     Map<int, Block> _idMap = {0 : Blocks.AIR};
     Map<Block, int> _blockMap = {Blocks.AIR: 0};
     int _nextId = 1;
@@ -244,4 +215,71 @@ class ChunkSection {
     int count = 0;
 
     bool needsBuild = false;
+}
+
+class _LoadJob implements _BuildJob {
+    Chunk chunk;
+    ByteData data;
+    int sMask;
+    int offset;
+
+    int i = 0;
+    int x = 0;
+    int y = 0;
+    int z = 0;
+
+    _LoadJob(this.chunk, ByteBuffer buffer) {
+        data = new ByteData.view(buffer);
+        chunk.x = data.getInt32(0);
+        chunk.z = data.getInt32(4);
+        sMask = data.getUint16(8);
+        offset = 10;
+    }
+
+    bool paused = false;
+    int count = 0;
+
+    Object exec(Object snapshot, Stopwatch stopwatch) {
+        for (; i < 16; i++) {
+            if (sMask & (1 << i) != 0) {
+                for (int oy = y; oy < 16; oy++) {
+                    y = 0;
+                    for (int oz = z; oz < 16; oz++) {
+                        z = 0;
+                        for (int ox = x; ox < 16; ox++) {
+                            x = 0;
+                            int id = data.getUint16(offset, Endianness.BIG_ENDIAN);
+                            offset += 2;
+                            int dataVal = data.getUint8(offset);
+                            offset++;
+                            chunk.setBlock(ox, oy + (i << 4), oz, BlockRegistry.getByLegacy(id, dataVal));
+                            chunk.setLight(ox, oy + (i << 4), oz, data.getUint8(offset));
+                            offset++;
+                            chunk.setSky(ox, oy + (i << 4), oz, data.getUint8(offset));
+                            offset++;
+
+                            if (stopwatch.elapsedMilliseconds >= World.BUILD_LIMIT_MS) {
+                                x = ox + 1;
+                                y = oy;
+                                z = oz;
+                                paused = true;
+                                count++;
+                                return this;
+                            }
+                        }
+                        x = y = z = 0;
+                    }
+                    x = y = z = 0;
+                }
+                x = y = z = 0;
+            }
+            x = y = z = 0;
+        }
+        chunk.noUpdates = false;
+        chunk.rebuild();
+        String key = world._chunkKey(chunk.x, chunk.z);
+        world.chunksLoading.remove(key);
+        world.addChunk(chunk);
+        return null;
+    }
 }

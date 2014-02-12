@@ -15,4 +15,8 @@ class _BuildJob {
     Chunk chunk;
     int i;
     _BuildJob(this.chunk, this.i);
+
+    Object exec(Object snapshot, Stopwatch stopwatch) {
+        return chunk.buildSection(i, snapshot, stopwatch);
+    }
 }
