@@ -273,7 +273,7 @@ class _LoadJob implements _BuildJob {
                             if (light != 0) section.count++;
                             if (sky != 15) section.count++;
 
-                            if (!(stopwatch.elapsedMilliseconds < World.LOAD_LIMIT_MS)) {
+                            if (stopwatch.elapsedMicroseconds >= World.LOAD_LIMIT_MS) {
                                 x = ox + 1;
                                 y = oy;
                                 z = oz;

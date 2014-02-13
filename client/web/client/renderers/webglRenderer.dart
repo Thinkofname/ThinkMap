@@ -41,6 +41,8 @@ class WebGLRenderer extends Renderer {
     int cz = 0;
     bool firstPerson = false;
 
+    Stopwatch frameTimer = new Stopwatch()..start();
+
     WebGLRenderer(CanvasElement canvas) {
         // Flags are set for performance
         gl = canvas.getContext3d(alpha: false, premultipliedAlpha: false, antialias: false);
@@ -162,6 +164,11 @@ class WebGLRenderer extends Renderer {
 
     @override
     draw() {
+        frameTimer.stop();
+        double delta = frameTimer.elapsedMicroseconds / (1000000.0 / 60.0);
+        frameTimer.reset();
+        frameTimer.start();
+
         gl.viewport(0, 0, canvas.width, canvas.height);
         double skyPosition = getScale();
         gl.clearColor(getScaledNumber(122.0 / 255.0, 0.0, skyPosition), getScaledNumber(165.0 / 255.0, 0.0, skyPosition), getScaledNumber(247.0 / 255.0, 0.0, skyPosition), 1);
@@ -181,21 +188,19 @@ class WebGLRenderer extends Renderer {
             double ly = camera.y;
             double lz = camera.z;
 
-            if (world.getChunk(cx, cz) != null) {
-                camera.y += vSpeed;
-                vSpeed = max(MIN_VSPEED, vSpeed - 0.005);
+            camera.y += vSpeed * delta;
+            vSpeed = max(MIN_VSPEED, vSpeed - 0.005 * delta);
 
-                if (movingForward) {
-                    camera.x += 0.1 * sin(camera.rotY);
-                    camera.z -= 0.1 * cos(camera.rotY);
-                } else if (movingBackwards) {
-                    camera.x -= 0.1 * sin(camera.rotY);
-                    camera.z += 0.1 * cos(camera.rotY);
-                }
-                checkCollision(lx, ly, lz);
-
-                if (onGround) vSpeed = 0.0;
+            if (movingForward) {
+                camera.x += 0.1 * sin(camera.rotY) * delta;
+                camera.z -= 0.1 * cos(camera.rotY) * delta;
+            } else if (movingBackwards) {
+                camera.x -= 0.1 * sin(camera.rotY) * delta;
+                camera.z += 0.1 * cos(camera.rotY) * delta;
             }
+            checkCollision(lx, ly, lz);
+
+            if (onGround) vSpeed = 0.0;
         }
 
 
@@ -370,8 +375,11 @@ class WebGLWorld extends World {
 
     WebGLWorld() : super();
 
+    Stopwatch renderTimer = new Stopwatch();
+
     render(WebGLRenderer renderer) {
-        tickBuildQueue();
+        renderTimer.reset();
+        renderTimer.start();
 
         renderer.gl.uniform1i(renderer.disAlphaLocation, 1);
         chunks.forEach((k, v) {
@@ -386,6 +394,19 @@ class WebGLWorld extends World {
             v.render(renderer, 2);
         });
         renderer.gl.disable(BLEND);
+
+        renderTimer.stop();
+
+        World.BUILD_LIMIT_MS = 13000 - renderTimer.elapsedMicroseconds;
+        if (World.BUILD_LIMIT_MS < 5000) {
+            World.BUILD_LIMIT_MS = 5000;
+        }
+        World.LOAD_LIMIT_MS = World.BUILD_LIMIT_MS - 3000;
+
+        renderTimer.reset();
+        renderTimer.start();
+        tickBuildQueue(renderTimer);
+        renderTimer.stop();
     }
 
     @override
@@ -395,8 +416,6 @@ class WebGLWorld extends World {
 
     @override
     int _queueCompare(_BuildJob a, _BuildJob b) {
-        if (a is _LoadJob && !(b is _LoadJob)) return 1;
-        if (b is _LoadJob && !(a is _LoadJob)) return -1;
         Camera camera = (renderer as WebGLRenderer).camera;
         num adx = (a.chunk.x * 16) + 8 - camera.x;
         num ady = (a.i * 16) + 8 - camera.y;
@@ -530,7 +549,7 @@ class WebGLChunk extends Chunk {
                     if (block.renderable) {
                         block.renderFloat(block.transparent ? builderTrans : builder, snapshot.builderFloat, x, (i << 4) + y, z, this);
                     }
-                    if (!(stopwatch.elapsedMilliseconds < World.BUILD_LIMIT_MS)) {
+                    if (stopwatch.elapsedMicroseconds >= World.BUILD_LIMIT_MS) {
                         snapshot.x = x;
                         snapshot.y = y + 1;
                         snapshot.z = z;

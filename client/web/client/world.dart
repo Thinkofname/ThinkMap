@@ -63,7 +63,6 @@ abstract class World {
     Object currentSnapshot;
     _BuildJob currentBuildLow;
     Object currentSnapshotLow;
-    Stopwatch stopwatch = new Stopwatch();
 
     requestBuild(Chunk chunk, int i) {
         String key = _buildKey(chunk.x, chunk.z, i);
@@ -75,16 +74,13 @@ abstract class World {
         _buildQueue.add(new _BuildJob(chunk, i));
     }
 
-    static const int BUILD_LIMIT_MS = 8;
+    static int BUILD_LIMIT_MS = 8000;
     // Lower time to allow for some rendering to occur
-    static const int LOAD_LIMIT_MS = 6;
+    static int LOAD_LIMIT_MS = 68000;
     int lastSort = 0;
 
-    tickBuildQueue() {
-        stopwatch.reset();
-        stopwatch.start();
-        bool run = true;
-
+    tickBuildQueue(Stopwatch stopwatch) {
+        lastSort--;
         if (currentBuild != null) {
             var job = currentBuild;
             Object snapshot = job.exec(currentSnapshot, stopwatch);
@@ -93,11 +89,15 @@ abstract class World {
             if (snapshot != null) {
                 currentBuild = job;
                 currentSnapshot = snapshot;
-                run = false;
+                return;
             }
         }
 
-        if (run && currentBuildLow != null) {
+        if (stopwatch.elapsedMicroseconds > World.BUILD_LIMIT_MS) {
+            return;
+        }
+
+        if (currentBuildLow != null) {
             var job = currentBuildLow;
             Object snapshot = job.exec(currentSnapshotLow, stopwatch);
             currentBuildLow = null;
@@ -108,48 +108,48 @@ abstract class World {
             }
         }
 
-        if (run) {
-            if ((_buildQueue.isNotEmpty || _buildQueueLow.isNotEmpty) && lastSort <= 0) {
-                lastSort = 60;
-                _buildQueue.sort(_queueCompare);
-                _buildQueueLow.sort(_queueCompare);
+        if (stopwatch.elapsedMicroseconds > World.BUILD_LIMIT_MS) {
+            return;
+        }
+
+        if ((_buildQueue.isNotEmpty || _buildQueueLow.isNotEmpty) && lastSort <= 0) {
+            lastSort = 60;
+            _buildQueue.sort(_queueCompare);
+            _buildQueueLow.sort(_queueCompare);
+        }
+        while (stopwatch.elapsedMicroseconds < BUILD_LIMIT_MS && (_buildQueue.isNotEmpty || _buildQueueLow.isNotEmpty)) {
+            bool low = (_buildQueueLow.isNotEmpty && (stopwatch.elapsedMicroseconds < LOAD_LIMIT_MS || _buildQueue.isEmpty));
+            if (!low && _buildQueue.isEmpty) break;
+
+            if (low) {
+                if (currentBuildLow != null) {
+                    break;
+                }
+            } else {
+                if (currentBuild != null) {
+                    break;
+                }
             }
-            lastSort--;
-            while (stopwatch.elapsedMilliseconds < BUILD_LIMIT_MS && (_buildQueue.isNotEmpty || _buildQueueLow.isNotEmpty)) {
-                bool low = (_buildQueueLow.isNotEmpty && (stopwatch.elapsedMilliseconds < LOAD_LIMIT_MS || _buildQueue.isEmpty));
-                if (!low && _buildQueue.isEmpty) break;
-
+            var job = low
+                ? _buildQueueLow.removeLast() : _buildQueue.removeLast();
+            if (!(job is _LoadJob)) {
+                String key = _buildKey(job.chunk.x, job.chunk.z, job.i);
+                if (!_waitingForBuild.containsKey(key)) continue;
+                _waitingForBuild.remove(key);
+                if (world.getChunk(job.chunk.x, job.chunk.z) == null) continue;
+            }
+            Object snapshot = job.exec(null, stopwatch);
+            if (snapshot != null) {
                 if (low) {
-                    if (currentBuildLow != null) {
-                        break;
-                    }
+                    if (currentBuildLow != null) throw "Low error";
+                    currentBuildLow = job;
+                    currentSnapshotLow = snapshot;
                 } else {
-                    if (currentBuild != null) {
-                        break;
-                    }
-                }
-
-                var job = low
-                    ? _buildQueueLow.removeLast() : _buildQueue.removeLast();
-                if (!(job is _LoadJob)) {
-                    String key = _buildKey(job.chunk.x, job.chunk.z, job.i);
-                    if (!_waitingForBuild.containsKey(key)) continue;
-                    _waitingForBuild.remove(key);
-                }
-                Object snapshot = job.exec(null, stopwatch);
-                if (snapshot != null) {
-                    if (low) {
-                        if (currentBuildLow != null) throw "Low error";
-                        currentBuildLow = job;
-                        currentSnapshotLow = snapshot;
-                    } else {
-                        currentBuild = job;
-                        currentSnapshot = snapshot;
-                    }
+                    currentBuild = job;
+                    currentSnapshot = snapshot;
                 }
             }
         }
-        stopwatch.stop();
     }
 
     Chunk newChunk();
@@ -191,7 +191,7 @@ abstract class World {
         int cz = z >> 4;
         var chunk = getChunk(cx, cz);
         if (chunk == null) {
-            return 0;
+            return 7;
         }
         return chunk.getLight(x & 0xF, y, z & 0xF);
     }
@@ -202,7 +202,7 @@ abstract class World {
         int cz = z >> 4;
         var chunk = getChunk(cx, cz);
         if (chunk == null) {
-            return 15;
+            return 7;
         }
         return chunk.getSky(x & 0xF, y, z & 0xF);
     }

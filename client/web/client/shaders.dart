@@ -1,6 +1,6 @@
 part of mapViewer;
 
-var chunkVertexShaderSource = """
+const chunkVertexShaderSource = """
 attribute vec3 position;
 attribute vec3 colour;
 attribute vec2 texturePos;
@@ -33,7 +33,7 @@ void main(void) {
 }
 """;
 
-var chunkFragmentShaderSource = """
+const chunkFragmentShaderSource = """
 precision mediump float;
 
 uniform sampler2D texture;
