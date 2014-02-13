@@ -76,7 +76,8 @@ abstract class World {
     }
 
     static const int BUILD_LIMIT_MS = 8;
-    static const int LOAD_LIMIT_MS = 4;
+    // Lower time to allow for some rendering to occur
+    static const int LOAD_LIMIT_MS = 7;
     int lastSort = 0;
 
     tickBuildQueue() {

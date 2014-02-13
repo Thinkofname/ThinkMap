@@ -12,6 +12,19 @@ class Blocks {
     static final Block NULL_BLOCK = BlockRegistry.getByName("webglmap:null");
 }
 
+class _BlockEntry {
+    BlockRegistrationEntry block;
+    _BlockEntry(this.block);
+
+    BlockRegistrationEntry getBlock(int data) => block;
+}
+
+class _MultiBlockEntry implements _BlockEntry {
+    List<BlockRegistrationEntry> byData = new List(16);
+
+    BlockRegistrationEntry getBlock(int data) => byData[data];
+}
+
 class BlockRegistry {
 
     static bool _hasInit = false;
@@ -30,17 +43,14 @@ class BlockRegistry {
     }
 
     @Deprecated("Will be removed once minecraft drops it")
-    static Map<int, Object> _legacyMap = new Map();
+    static Map<int, _BlockEntry> _legacyMap = new Map();
     @Deprecated("Will be removed once minecraft drops it")
     static Block getByLegacy(int id, int data) {
         var val = _legacyMap[id];
         if (val == null) return Blocks.MISSING_BLOCK;
-        if (val is BlockRegistrationEntry) {
-            return val.block;
-        }
-        val = (val as Map)[data];
-        if (val == null) return Blocks.MISSING_BLOCK;
-        return val.block;
+        var reg = val.getBlock(data);
+        if (reg == null) return Blocks.MISSING_BLOCK;
+        return reg.block;
     }
 
     static BlockRegistrationEntry registerBlock(String name, Block block, {String plugin : "minecraft"}) {
@@ -318,12 +328,12 @@ class BlockRegistrationEntry {
         // TODO: Remove once minecraft drops it
         if (_legacyId == -1) return; // Doesn't exist in the old system
         if (_allDataValues) {
-            BlockRegistry._legacyMap[_legacyId] = this;
+            BlockRegistry._legacyMap[_legacyId] = new _BlockEntry(this);
         } else {
             if (!BlockRegistry._legacyMap.containsKey(_legacyId)) {
-                BlockRegistry._legacyMap[_legacyId] = new Map();
+                BlockRegistry._legacyMap[_legacyId] = new _MultiBlockEntry();
             }
-            (BlockRegistry._legacyMap[_legacyId] as Map)[_dataValue] = this;
+            (BlockRegistry._legacyMap[_legacyId] as _MultiBlockEntry).byData[_dataValue] = this;
         }
     }
 

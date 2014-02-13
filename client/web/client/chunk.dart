@@ -251,10 +251,11 @@ class _LoadJob implements _BuildJob {
                             offset += 2;
                             int dataVal = byteData[offset];
                             offset++;
-                            chunk.setBlock(ox, oy + (i << 4), oz, BlockRegistry.getByLegacy(id, dataVal));
-                            chunk.setLight(ox, oy + (i << 4), oz, byteData[offset]);
+                            int ry = oy + (i << 4);
+                            chunk.setBlock(ox, ry, oz, BlockRegistry.getByLegacy(id, dataVal));
+                            chunk.setLight(ox, ry, oz, byteData[offset]);
                             offset++;
-                            chunk.setSky(ox, oy + (i << 4), oz, byteData[offset]);
+                            chunk.setSky(ox, ry, oz, byteData[offset]);
                             offset++;
 
                             if (!(stopwatch.elapsedMilliseconds < World.LOAD_LIMIT_MS)) {
