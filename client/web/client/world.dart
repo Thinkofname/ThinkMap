@@ -179,7 +179,7 @@ abstract class World {
         int cz = z >> 4;
         var chunk = getChunk(cx, cz);
         if (chunk == null) {
-            return Blocks.BEDROCK;
+            return Blocks.NULL_BLOCK;
         }
         return chunk.getBlock(x & 0xF, y, z & 0xF);
     }

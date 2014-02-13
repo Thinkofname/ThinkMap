@@ -9,6 +9,7 @@ class Block {
 
     bool solid = true;
     bool collidable = true;
+    bool shade = true;
 
     int colour = 0xFFFFFF;
     bool forceColour = false;
@@ -126,7 +127,7 @@ class Block {
                         max(chunk.world.getSky((chunk.x * 16) + x, y, (chunk.z * 16) + z), chunk.world.getLight((chunk.x * 16) + x, y, (chunk.z * 16) + z)) + 1);
 
                     Block block = chunk.world.getBlock((chunk.x * 16) + x, y, (chunk.z * 16) + z);
-                    if (block.solid || block == self) {
+                    if (block.shade && (block.solid || block == self)) {
                         val += (13/17) * (1.0 - val);
                     }
                     count += min(1.0, val);
