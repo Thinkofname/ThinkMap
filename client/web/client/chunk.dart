@@ -241,6 +241,8 @@ class _LoadJob implements _BuildJob {
     Object exec(Object snapshot, Stopwatch stopwatch) {
         for (; i < 16; i++) {
             if (sMask & (1 << i) != 0) {
+                if (chunk.sections[i] == null) chunk.sections[i] = new ChunkSection();
+                ChunkSection section = chunk.sections[i];
                 for (int oy = y; oy < 16; oy++) {
                     y = 0;
                     for (int oz = z; oz < 16; oz++) {
@@ -251,12 +253,25 @@ class _LoadJob implements _BuildJob {
                             offset += 2;
                             int dataVal = byteData[offset];
                             offset++;
-                            int ry = oy + (i << 4);
-                            chunk.setBlock(ox, ry, oz, BlockRegistry.getByLegacy(id, dataVal));
-                            chunk.setLight(ox, ry, oz, byteData[offset]);
+                            int light = byteData[offset];
                             offset++;
-                            chunk.setSky(ox, ry, oz, byteData[offset]);
+                            int sky = byteData[offset];
                             offset++;
+                            Block block = BlockRegistry.getByLegacy(id, dataVal);
+                            if (!chunk._blockMap.containsKey(block)) {
+                                chunk._idMap[chunk._nextId] = block;
+                                chunk._blockMap[block] = chunk._nextId;
+                                chunk._nextId = (chunk._nextId + 1) & 0xFFFF;
+                            }
+
+                            int idx = ox | (oz << 4) | (oy << 8);
+                            section.blocks[idx] = chunk._blockMap[block];
+                            section.light[idx] = light;
+                            section.sky[idx] = sky;
+
+                            if (block != Blocks.AIR) section.count++;
+                            if (light != 0) section.count++;
+                            if (sky != 15) section.count++;
 
                             if (!(stopwatch.elapsedMilliseconds < World.LOAD_LIMIT_MS)) {
                                 x = ox + 1;

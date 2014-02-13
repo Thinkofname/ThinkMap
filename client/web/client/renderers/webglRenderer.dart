@@ -361,7 +361,7 @@ class WebGLRenderer extends Renderer {
     @override
     moveTo(int x, int y, int z) {
         camera.x = x.toDouble();
-        camera.y = y.toDouble() + 50;
+        camera.y = y.toDouble() + 75;
         camera.z = z.toDouble();
     }
 }
