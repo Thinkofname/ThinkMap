@@ -8,7 +8,7 @@ class Blocks {
     static final Block WATER = BlockRegistry.getByName("water");
     static final Block FLOWING_WATER = BlockRegistry.getByName("flowing_water");
 
-    static final Block MISSING_BLOCK = BlockRegistry.getByName("thinkofdeath:messed_up");
+    static final Block MISSING_BLOCK = BlockRegistry.getByName("webglmap:missing_block");
     static final Block NULL_BLOCK = BlockRegistry.getByName("webglmap:null");
 }
 
@@ -262,9 +262,9 @@ class BlockRegistry {
         BlockVines.register();
 
         // Custom Blocks
-        registerBlock("messed_up", new Block()
+        registerBlock("missing_block", new Block()
             ..texture = "missing_texture",
-            plugin: "thinkofdeath")
+            plugin: "webglmap")
             ..build();
         registerBlock("null", new Block()
             ..renderable = false
