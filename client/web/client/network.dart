@@ -47,10 +47,13 @@ class Connection {
         var req = new HttpRequest();
         req.open("POST", "http://${window.location.hostname}:23333/chunk", async: true);
         req.responseType = "arraybuffer";
-        req.onLoad.listen((e) {
-            ByteData data = new ByteData.view(req.response);
-            if (renderer.shouldLoad(data.getInt32(0), data.getInt32(4)))
-                world.loadChunk(req.response);
+        req.onReadyStateChange.listen((e) {
+            if (req.readyState == 4 && req.status == 200) {
+                ByteData data = new ByteData.view(req.response);
+                if (renderer.shouldLoad(data.getInt32(0), data.getInt32(4)))
+                    world.loadChunk(req.response);
+            }
+            if (req.readyState == 4) sentFor.remove(key);
         });
         sentFor[key] = true;
         req.send(key);

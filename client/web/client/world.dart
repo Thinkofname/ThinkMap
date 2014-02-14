@@ -141,7 +141,6 @@ abstract class World {
             Object snapshot = job.exec(null, stopwatch);
             if (snapshot != null) {
                 if (low) {
-                    if (currentBuildLow != null) throw "Low error";
                     currentBuildLow = job;
                     currentSnapshotLow = snapshot;
                 } else {

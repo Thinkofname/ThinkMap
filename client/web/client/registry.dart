@@ -43,9 +43,10 @@ class BlockRegistry {
     }
 
     @Deprecated("Will be removed once minecraft drops it")
-    static Map<int, _BlockEntry> _legacyMap = new Map();
+    static List<_BlockEntry> _legacyMap = new List(0xFF);
     @Deprecated("Will be removed once minecraft drops it")
     static Block getByLegacy(int id, int data) {
+        if (id == 0) return Blocks.AIR;
         var val = _legacyMap[id];
         if (val == null) return Blocks.MISSING_BLOCK;
         var reg = val.getBlock(data);
@@ -330,7 +331,7 @@ class BlockRegistrationEntry {
         if (_allDataValues) {
             BlockRegistry._legacyMap[_legacyId] = new _BlockEntry(this);
         } else {
-            if (!BlockRegistry._legacyMap.containsKey(_legacyId)) {
+            if (BlockRegistry._legacyMap[_legacyId] == null) {
                 BlockRegistry._legacyMap[_legacyId] = new _MultiBlockEntry();
             }
             (BlockRegistry._legacyMap[_legacyId] as _MultiBlockEntry).byData[_dataValue] = this;
