@@ -40,22 +40,23 @@ class BlockWallSign extends Block {
 
     @override
     renderFloat(BlockBuilder builder, FloatBlockBuilder fBulider, int x, int y, int z, Chunk chunk) {
+        LightInfo light = LightInfo.getLight(chunk.getLight(x, y, z), chunk.getSky(x, y, z));
         switch (direction) {
             case SignDirection.NORTH:
                 addCube(fBulider, x, y + (4.0/16.0), z + (15.0/16.0), 1, 8.0/16.0, 1.0/16.0,
-                    255, 255, 255, getTexture, true);
+                    255, 255, 255, light, getTexture, true);
                 break;
             case SignDirection.SOUTH:
                 addCube(fBulider, x, y + (4.0/16.0), z, 1, 8.0/16.0, 1.0/16.0,
-                255, 255, 255, getTexture, true);
+                    255, 255, 255, light, getTexture, true);
                 break;
             case SignDirection.EAST:
                 addCube(fBulider, x, y + (4.0/16.0), z, 1.0/16.0, 8.0/16.0, 1,
-                    255, 255, 255, getTexture, true);
+                    255, 255, 255, light, getTexture, true);
                 break;
             case SignDirection.WEST:
                 addCube(fBulider, x + (15.0/16.0), y + (4.0/16.0), z, 1.0/16.0, 8.0/16.0, 1,
-                    255, 255, 255, getTexture, true);
+                    255, 255, 255, light, getTexture, true);
                 break;
         }
     }

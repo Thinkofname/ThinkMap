@@ -30,6 +30,11 @@ class BlockBuilder {
         _buffer.add(y.toInt());
     }
 
+    lighting(int light, int sky) {
+        _buffer.add(light);
+        _buffer.add(sky);
+    }
+
     Uint8List toTypedList() {
         var ret = _buffer.getList();
         _buffer.free();
@@ -67,6 +72,14 @@ class FloatBlockBuilder implements BlockBuilder {
     tex(num x, num y) {
         _buffer.addFloat(x.toDouble());
         _buffer.addFloat(y.toDouble());
+    }
+
+    lighting(int light, int sky) {
+        _buffer.add(light);
+        _buffer.add(sky);
+        //Padding
+        _buffer.add(0);
+        _buffer.add(0);
     }
 
     Uint8List toTypedList() {

@@ -206,6 +206,13 @@ abstract class World {
         return chunk.getSky(x & 0xF, y, z & 0xF);
     }
 
+    bool isLoaded(int x, int y, int z) {
+        if (y < 0 || y > 255) return false;
+        int cx = x >> 4;
+        int cz = z >> 4;
+        return getChunk(cx, cz) != null;
+    }
+
     String _chunkKey(int x, int z) {
         return "${x}:${z}";
     }

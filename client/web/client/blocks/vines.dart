@@ -34,19 +34,14 @@ class BlockVines extends Block {
             b = colour & 0xFF;
         }
 
-        double val = pow(0.9,
-            max(chunk.world.getSky((chunk.x * 16) + x, y, (chunk.z * 16) + z), chunk.world.getLight((chunk.x * 16) + x, y, (chunk.z * 16) + z)) + 1);
-        double topRight = 1.0 - val;
-        double topLeft = topRight;
-        double bottomLeft = topRight;
-        double bottomRight = topRight;
+        LightInfo light = LightInfo.getLight(chunk.getLight(x, y, z), chunk.getSky(x, y, z));
 
         if (dataValue == 0 || !shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x, y + 1, (chunk.z * 16) + z))) {
 
             TextureInfo texture = getTexture(BlockFace.BOTTOM);
 
             addFaceBottom(fBulider, x, y + 0.95, z, 1, 1,
-                r, g, b, topLeft, topRight, bottomLeft, bottomRight, texture);
+                r, g, b, light, light, light, light, texture);
         }
 
         if (dataValue & 2 == 2) {
@@ -54,7 +49,7 @@ class BlockVines extends Block {
             TextureInfo texture = getTexture(BlockFace.LEFT);
 
             addFaceLeft(fBulider, x + 0.05, y, z, 1, 1,
-                r, g, b, topLeft, topRight, bottomLeft, bottomRight, texture);
+                r, g, b, light, light, light, light, texture);
         }
 
         if (dataValue & 8 == 8) {
@@ -62,7 +57,7 @@ class BlockVines extends Block {
             TextureInfo texture = getTexture(BlockFace.RIGHT);
 
             addFaceRight(fBulider, x + 0.95, y, z, 1, 1,
-                r, g, b, topLeft, topRight, bottomLeft, bottomRight, texture);
+                r, g, b, light, light, light, light, texture);
         }
 
         if (dataValue & 4 == 4) {
@@ -70,7 +65,7 @@ class BlockVines extends Block {
             TextureInfo texture = getTexture(BlockFace.FRONT);
 
             addFaceFront(fBulider, x, y, z + 0.05, 1, 1,
-                r, g, b, topLeft, topRight, bottomLeft, bottomRight, texture);
+                r, g, b, light, light, light, light, texture);
         }
 
         if (dataValue & 1 == 1) {
@@ -78,7 +73,7 @@ class BlockVines extends Block {
             TextureInfo texture = getTexture(BlockFace.BACK);
 
             addFaceBack(fBulider, x, y, z + 0.95, 1, 1,
-                r, g, b, topLeft, topRight, bottomLeft, bottomRight, texture);
+                r, g, b, light, light, light, light, texture);
         }
     }
 }

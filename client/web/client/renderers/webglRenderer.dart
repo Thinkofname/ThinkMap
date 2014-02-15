@@ -17,6 +17,7 @@ class WebGLRenderer extends Renderer {
     int colourLocation;
     int textureIdLocation;
     int texturePosLocation;
+    int lightingLocation;
 
     // Matrices
     Matrix4 pMatrix;
@@ -73,10 +74,12 @@ class WebGLRenderer extends Renderer {
         colourLocation = gl.getAttribLocation(mainProgram, "colour");
         textureIdLocation = gl.getAttribLocation(mainProgram, "textureId");
         texturePosLocation = gl.getAttribLocation(mainProgram, "texturePos");
+        lightingLocation = gl.getAttribLocation(mainProgram, "lighting");
         gl.enableVertexAttribArray(positionLocation);
         gl.enableVertexAttribArray(colourLocation);
         gl.enableVertexAttribArray(textureIdLocation);
         gl.enableVertexAttribArray(texturePosLocation);
+        gl.enableVertexAttribArray(lightingLocation);
 
         gl.enable(DEPTH_TEST);
         gl.enable(CULL_FACE);
@@ -385,13 +388,10 @@ class WebGLWorld extends World {
         chunks.forEach((k, v) {
             v.render(renderer, 0);
         });
-        chunks.forEach((k, v) {
-            v.render(renderer, 1);
-        });
         renderer.gl.enable(BLEND);
         renderer.gl.uniform1i(renderer.disAlphaLocation, 0);
         chunks.forEach((k, v) {
-            v.render(renderer, 2);
+            v.render(renderer, 1);
         });
         renderer.gl.disable(BLEND);
 
@@ -501,33 +501,39 @@ class WebGLChunk extends Chunk {
             gl.bindBuffer(ARRAY_BUFFER, renderBufferFloat);
             gl.bufferData(ARRAY_BUFFER, chunkDataFloat, STATIC_DRAW);
 
-            triangleCount = chunkData.length ~/ 12;
-            triangleCountTrans = chunkDataTrans.length ~/ 12;
-            triangleCountFloat = chunkDataFloat.length ~/ 28;
+            triangleCount = chunkData.length ~/ 14;
+            triangleCountTrans = chunkDataTrans.length ~/ 14;
+            triangleCountFloat = chunkDataFloat.length ~/ 32;
         }
-        if (pass == 0 && renderBuffer != null && triangleCount != 0) {
-            gl.uniform2f(renderer.offsetLocation, x, z);
-            gl.bindBuffer(ARRAY_BUFFER, renderBuffer);
-            gl.vertexAttribPointer(renderer.positionLocation, 3, UNSIGNED_BYTE, false, 12, 0);
-            gl.vertexAttribPointer(renderer.colourLocation, 3, UNSIGNED_BYTE, true, 12, 3);
-            gl.vertexAttribPointer(renderer.texturePosLocation, 2, UNSIGNED_BYTE, false, 12, 6);
-            gl.vertexAttribPointer(renderer.textureIdLocation, 2, UNSIGNED_SHORT, false, 12, 8);
-            gl.drawArrays(TRIANGLES, 0, triangleCount);
-        } else if (pass == 1 && renderBufferFloat != null && triangleCountFloat != 0) {
-            gl.uniform2f(renderer.offsetLocation, x, z);
-            gl.bindBuffer(ARRAY_BUFFER, renderBufferFloat);
-            gl.vertexAttribPointer(renderer.positionLocation, 3, FLOAT, false, 28, 0);
-            gl.vertexAttribPointer(renderer.colourLocation, 3, UNSIGNED_BYTE, true, 28, 12);
-            gl.vertexAttribPointer(renderer.texturePosLocation, 2, FLOAT, false, 28, 16);
-            gl.vertexAttribPointer(renderer.textureIdLocation, 2, UNSIGNED_SHORT, false, 28, 24);
-            gl.drawArrays(TRIANGLES, 0, triangleCountFloat);
-        } else if (pass == 2 && renderBufferTrans != null && triangleCountTrans != 0) {
+        if (pass == 0) {
+            if (renderBuffer != null && triangleCount != 0) {
+                gl.uniform2f(renderer.offsetLocation, x, z);
+                gl.bindBuffer(ARRAY_BUFFER, renderBuffer);
+                gl.vertexAttribPointer(renderer.positionLocation, 3, UNSIGNED_BYTE, false, 14, 0);
+                gl.vertexAttribPointer(renderer.colourLocation, 3, UNSIGNED_BYTE, true, 14, 3);
+                gl.vertexAttribPointer(renderer.texturePosLocation, 2, UNSIGNED_BYTE, false, 14, 6);
+                gl.vertexAttribPointer(renderer.textureIdLocation, 2, UNSIGNED_SHORT, false, 14, 8);
+                gl.vertexAttribPointer(renderer.lightingLocation, 2, UNSIGNED_BYTE, false, 14, 12);
+                gl.drawArrays(TRIANGLES, 0, triangleCount);
+            }
+            if (renderBufferFloat != null && triangleCountFloat != 0) {
+                gl.uniform2f(renderer.offsetLocation, x, z);
+                gl.bindBuffer(ARRAY_BUFFER, renderBufferFloat);
+                gl.vertexAttribPointer(renderer.positionLocation, 3, FLOAT, false, 32, 0);
+                gl.vertexAttribPointer(renderer.colourLocation, 3, UNSIGNED_BYTE, true, 32, 12);
+                gl.vertexAttribPointer(renderer.texturePosLocation, 2, FLOAT, false, 32, 16);
+                gl.vertexAttribPointer(renderer.textureIdLocation, 2, UNSIGNED_SHORT, false, 32, 24);
+                gl.vertexAttribPointer(renderer.lightingLocation, 2, UNSIGNED_BYTE, false, 32, 28);
+                gl.drawArrays(TRIANGLES, 0, triangleCountFloat);
+            }
+        }else if (pass == 1 && renderBufferTrans != null && triangleCountTrans != 0) {
             gl.uniform2f(renderer.offsetLocation, x, z);
             gl.bindBuffer(ARRAY_BUFFER, renderBufferTrans);
-            gl.vertexAttribPointer(renderer.positionLocation, 3, UNSIGNED_BYTE, false, 12, 0);
-            gl.vertexAttribPointer(renderer.colourLocation, 3, UNSIGNED_BYTE, true, 12, 3);
-            gl.vertexAttribPointer(renderer.texturePosLocation, 2, UNSIGNED_BYTE, false, 12, 6);
-            gl.vertexAttribPointer(renderer.textureIdLocation, 2, UNSIGNED_SHORT, false, 12, 8);
+            gl.vertexAttribPointer(renderer.positionLocation, 3, UNSIGNED_BYTE, false, 14, 0);
+            gl.vertexAttribPointer(renderer.colourLocation, 3, UNSIGNED_BYTE, true, 14, 3);
+            gl.vertexAttribPointer(renderer.texturePosLocation, 2, UNSIGNED_BYTE, false, 14, 6);
+            gl.vertexAttribPointer(renderer.textureIdLocation, 2, UNSIGNED_SHORT, false, 14, 8);
+            gl.vertexAttribPointer(renderer.lightingLocation, 2, UNSIGNED_BYTE, false, 14, 12);
             gl.drawArrays(TRIANGLES, 0, triangleCountTrans);
         }
     }
