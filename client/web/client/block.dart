@@ -154,11 +154,11 @@ LightInfo _blockLightingRegion(Chunk chunk, Block self, int x1, int y1, int z1, 
 
                 Block block = chunk.world.getBlock(px, y, pz);
                 if (block.shade && (block.solid || block == self)) {
-                    val -= 15;
-                    valSky -= 15;
+                    val = 0;
+                    valSky = 0;
                 }
-                light += val.clamp(0, 15);
-                sky += valSky.clamp(0, 15);
+                light += val;
+                sky += valSky;
             }
         }
     }

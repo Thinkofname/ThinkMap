@@ -213,7 +213,6 @@ class ChunkSection {
     Uint8List sky = new Uint8List(16 * 16 * 16)..setAll(0, _emptySkySection);
 
     int count = 0;
-
     bool needsBuild = false;
 }
 
