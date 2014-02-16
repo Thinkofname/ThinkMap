@@ -89,18 +89,18 @@ class WebGLRenderer extends Renderer {
         gl.blendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
 
         // 3D Controls
-        document.body.onMouseDown.listen((e) {if (document.pointerLockElement != canvas && firstPerson) canvas.requestPointerLock(); });
+        document.body.onMouseDown.listen((e) {if (document.pointerLockElement != canvas && firstPerson) requestPointerLock(canvas); });
         document.body.onMouseMove.listen((e) {
-            if (document.pointerLockElement != canvas || !firstPerson) return;
-            camera.rotY += e.movement.x / 300.0;
-            camera.rotX += e.movement.y / 300.0;
+            if (pointerLockElement() != canvas || !firstPerson) return;
+            camera.rotY += movementX(e) / 300.0;
+            camera.rotX += movementY(e) / 300.0;
         });
         document.body.onKeyDown.where((e) => e.keyCode == KeyCode.W).listen((e) {
             movingForward = true;
             window.onKeyUp.firstWhere((e) => e.keyCode == KeyCode.W).then((e) {
                 movingForward = false;
             });
-            if (document.pointerLockElement != canvas && firstPerson) canvas.requestPointerLock();
+            if (pointerLockElement() != canvas && firstPerson) requestPointerLock(canvas);
         });
         document.body.onKeyDown.where((e) => e.keyCode == KeyCode.S).listen((e) {
             movingBackwards = true;
@@ -147,7 +147,7 @@ class WebGLRenderer extends Renderer {
         });
         // Misc
         document.body.onKeyDown.where((e) => e.keyCode == KeyCode.F).listen((e) {
-            canvas.requestFullscreen();
+            requestFullScreen(canvas);
         });
         document.body.onKeyDown.where((e) => e.keyCode == KeyCode.G).listen((e) {
             firstPerson = !firstPerson;

@@ -26,6 +26,7 @@ part "blockBuilders.dart";
 part "network.dart";
 part "pool.dart";
 part "registry.dart";
+part "support.dart";
 
 // Current world
 World world;
