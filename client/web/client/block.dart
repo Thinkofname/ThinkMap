@@ -154,8 +154,8 @@ LightInfo _blockLightingRegion(Chunk chunk, Block self, int x1, int y1, int z1, 
 
                 Block block = chunk.world.getBlock(px, y, pz);
                 if (block.shade && (block.solid || block == self)) {
-                    val = 0;
-                    valSky = 0;
+                    val = -5;
+                    valSky = -5;
                 }
                 light += val;
                 sky += valSky;
@@ -172,14 +172,14 @@ class LightInfo {
 
     LightInfo(this.light, this.sky);
 
-    static final List<LightInfo> values = new List.generate(16 * 16, genInfo);
-
-    static LightInfo genInfo(int i) {
-        return new LightInfo(i & 0xF, i >> 4);
-    }
+//    static final List<LightInfo> values = new List.generate(16 * 16, genInfo);
+//
+//    static LightInfo genInfo(int i) {
+//        return new LightInfo(i & 0xF, i >> 4);
+//    }
 
     static LightInfo getLight(int light, int sky) {
-        return values[light | sky << 4];
+        return new LightInfo(light, sky); //values[light | sky << 4];
     }
 
 }

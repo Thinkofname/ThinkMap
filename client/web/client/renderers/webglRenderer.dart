@@ -163,7 +163,7 @@ class WebGLRenderer extends Renderer {
         });
     }
 
-    static const int viewDistance = 6;
+    static const int viewDistance = 4;
 
     @override
     draw() {
@@ -513,7 +513,7 @@ class WebGLChunk extends Chunk {
                 gl.vertexAttribPointer(renderer.colourLocation, 3, UNSIGNED_BYTE, true, 14, 3);
                 gl.vertexAttribPointer(renderer.texturePosLocation, 2, UNSIGNED_BYTE, false, 14, 6);
                 gl.vertexAttribPointer(renderer.textureIdLocation, 2, UNSIGNED_SHORT, false, 14, 8);
-                gl.vertexAttribPointer(renderer.lightingLocation, 2, UNSIGNED_BYTE, false, 14, 12);
+                gl.vertexAttribPointer(renderer.lightingLocation, 2, BYTE, false, 14, 12);
                 gl.drawArrays(TRIANGLES, 0, triangleCount);
             }
             if (renderBufferFloat != null && triangleCountFloat != 0) {
@@ -523,7 +523,7 @@ class WebGLChunk extends Chunk {
                 gl.vertexAttribPointer(renderer.colourLocation, 3, UNSIGNED_BYTE, true, 32, 12);
                 gl.vertexAttribPointer(renderer.texturePosLocation, 2, FLOAT, false, 32, 16);
                 gl.vertexAttribPointer(renderer.textureIdLocation, 2, UNSIGNED_SHORT, false, 32, 24);
-                gl.vertexAttribPointer(renderer.lightingLocation, 2, UNSIGNED_BYTE, false, 32, 28);
+                gl.vertexAttribPointer(renderer.lightingLocation, 2, BYTE, false, 32, 28);
                 gl.drawArrays(TRIANGLES, 0, triangleCountFloat);
             }
         }else if (pass == 1 && renderBufferTrans != null && triangleCountTrans != 0) {
@@ -533,7 +533,7 @@ class WebGLChunk extends Chunk {
             gl.vertexAttribPointer(renderer.colourLocation, 3, UNSIGNED_BYTE, true, 14, 3);
             gl.vertexAttribPointer(renderer.texturePosLocation, 2, UNSIGNED_BYTE, false, 14, 6);
             gl.vertexAttribPointer(renderer.textureIdLocation, 2, UNSIGNED_SHORT, false, 14, 8);
-            gl.vertexAttribPointer(renderer.lightingLocation, 2, UNSIGNED_BYTE, false, 14, 12);
+            gl.vertexAttribPointer(renderer.lightingLocation, 2, BYTE, false, 14, 12);
             gl.drawArrays(TRIANGLES, 0, triangleCountTrans);
         }
     }

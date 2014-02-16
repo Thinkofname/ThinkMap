@@ -31,8 +31,8 @@ class BlockBuilder {
     }
 
     lighting(int light, int sky) {
-        _buffer.add(light);
-        _buffer.add(sky);
+        _buffer.add(light & 0xFF);
+        _buffer.add(sky & 0xFF);
     }
 
     Uint8List toTypedList() {
@@ -75,8 +75,8 @@ class FloatBlockBuilder implements BlockBuilder {
     }
 
     lighting(int light, int sky) {
-        _buffer.add(light);
-        _buffer.add(sky);
+        _buffer.add(light & 0xFF);
+        _buffer.add(sky & 0xFF);
         //Padding
         _buffer.add(0);
         _buffer.add(0);
