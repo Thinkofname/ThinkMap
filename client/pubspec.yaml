@@ -5,3 +5,8 @@ dependencies:
     git: https://github.com/johnmccutchan/vector_math.git
   archive: 1.0.9
   image: any
+  barback: any
+  image_pack:
+    path: image_pack/
+transformers:
+- image_pack

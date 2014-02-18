@@ -51,9 +51,9 @@ main() {
         start();
     });
 
-    req.open("GET", "imgs/blocks.json", async: true);
+    req.open("GET", "block_images/blocks.json", async: true);
     req.send();
-    img.src = "imgs/blocks_0.png";
+    img.src = "block_images/blocks_0.png";
 }
 
 // Called once everything is loaded
