@@ -1,0 +1,30 @@
+library map_viewer;
+
+import "dart:html";
+import "dart:web_gl";
+import "dart:async";
+import 'dart:typed_data';
+import "dart:math";
+import "dart:convert";
+import "dart:js";
+import "package:vector_math/vector_math.dart";
+
+part "src/main.dart";
+part "src/renderers/webglRenderer.dart";
+part "src/chunk.dart";
+part "src/world.dart";
+part "src/shaders.dart";
+part 'src/block.dart';
+part "src/otherblocks.dart";
+part "src/utils.dart";
+part "src/rendering.dart";
+part "src/box.dart";
+part "src/blocks/grass.dart";
+part 'src/blocks/cross.dart';
+part "src/blocks/vines.dart";
+part "src/blocks/sign.dart";
+part "src/blockBuilders.dart";
+part "src/network.dart";
+part "src/pool.dart";
+part "src/registry.dart";
+part "src/support.dart";

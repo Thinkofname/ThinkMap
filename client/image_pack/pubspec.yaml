@@ -1,0 +1,5 @@
+name: image_pack
+dependencies:
+  archive: 1.0.9
+  image: any
+  barback: any

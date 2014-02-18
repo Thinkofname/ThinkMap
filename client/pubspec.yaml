@@ -1,4 +1,4 @@
-name: client
+name: map_viewer
 dependencies:
   browser: any
   vector_math:
