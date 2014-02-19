@@ -1,35 +1,62 @@
 part of map_viewer;
 
+/**
+ * A block. Cube thingy (most of the time)
+ */
 class Block {
 
+  /// The registration entry for this block
   BlockRegistrationEntry _regBlock;
 
+  /// Whether the block can actually be rendered
   bool renderable = true;
+  /// Whether the block needs to be rendered with other transparent objects
   bool transparent = false;
 
+  /// Whether the block is solid
   bool solid = true;
+  /// Whether the block has collisions
   bool collidable = true;
+  /// Whether the block gives a shadow (AO)
   bool shade = true;
 
+  /// The colour (tint) of the block
   int colour = 0xFFFFFF;
+  /// Whether to force tinting for the block
   bool forceColour = false;
+  /// The name of the texture for this block
   String texture;
+  /// Whether the block can render against itself
   bool allowSelf = false;
 
+  /**
+   * Returns whether the block at the coordinates [x], [y] and [z]
+   * collides with the [box]
+   */
   bool collidesWith(Box box, int x, int y, int z) {
     if (!collidable) return false;
     return box.checkBox(x.toDouble(), y.toDouble(), z.toDouble(), 1.0, 1.0, 1.0
         );
   }
 
+  /**
+   * Returns whether this should render its side against the [block]
+   */
   shouldRenderAgainst(Block block) => !block.solid && (!allowSelf || block !=
       this);
 
+  /**
+   * render for blocks that need floating point precision
+   */
   renderFloat(BlockBuilder builder, FloatBlockBuilder fBulider, int x, int
       y, int z, Chunk chunk) {
     render(builder, x, y, z, chunk);
   }
 
+  /**
+   * Renders the block at the coordinates [x], [y] and [z] relative to the
+   * [chunk]
+   */
   render(BlockBuilder builder, int x, int y, int z, Chunk chunk) {
     int r = 255;
     int g = 255;
@@ -44,11 +71,15 @@ class Block {
         (chunk.z * 16) + z))) {
       TextureInfo texture = getTexture(BlockFace.TOP);
 
-      addFaceTop(builder, x, y + 1, z, 1, 1, r, g, b, _blockLightingRegion(
-          chunk, this, x, y + 1, z - 1, x + 2, y + 2, z + 1), _blockLightingRegion(chunk,
-          this, x - 1, y + 1, z - 1, x + 1, y + 2, z + 1), _blockLightingRegion(chunk,
-          this, x, y + 1, z, x + 2, y + 2, z + 2), _blockLightingRegion(chunk, this, x -
-          1, y + 1, z, x + 1, y + 2, z + 2), texture);
+      int light = chunk.world.getLight((chunk.x * 16) + x, y + 1, (chunk.z * 16) + z);
+      int sky = chunk.world.getSky((chunk.x * 16) + x, y + 1, (chunk.z * 16) + z);
+
+      addFaceTop(builder, x, y + 1, z, 1, 1, r, g, b,
+        _blockLightingRegion(chunk, this, x, y + 1, z - 1, x + 2, y + 2, z + 1, light, sky),
+        _blockLightingRegion(chunk, this, x - 1, y + 1, z - 1, x + 1, y + 2, z + 1, light, sky),
+        _blockLightingRegion(chunk, this, x, y + 1, z, x + 2, y + 2, z + 2, light, sky),
+        _blockLightingRegion(chunk, this, x - 1, y + 1, z, x + 1, y + 2, z + 2, light, sky),
+        texture);
     }
 
 
@@ -56,92 +87,97 @@ class Block {
         (chunk.z * 16) + z))) {
       TextureInfo texture = getTexture(BlockFace.BOTTOM);
 
-      addFaceBottom(builder, x, y, z, 1, 1, r, g, b, _blockLightingRegion(chunk,
-          this, x, y - 1, z - 1, x + 2, y, z + 1), _blockLightingRegion(chunk, this, x -
-          1, y - 1, z - 1, x + 1, y, z + 1), _blockLightingRegion(chunk, this, x, y - 1,
-          z, x + 2, y, z + 2), _blockLightingRegion(chunk, this, x - 1, y - 1, z, x + 1,
-          y, z + 2), texture);
+      int light = chunk.world.getLight((chunk.x * 16) + x, y - 1, (chunk.z * 16) + z);
+      int sky = chunk.world.getSky((chunk.x * 16) + x, y - 1, (chunk.z * 16) + z);
+
+      addFaceBottom(builder, x, y, z, 1, 1, r, g, b,
+        _blockLightingRegion(chunk, this, x, y - 1, z - 1, x + 2, y, z + 1, light, sky),
+        _blockLightingRegion(chunk, this, x - 1, y - 1, z - 1, x + 1, y, z + 1, light, sky),
+        _blockLightingRegion(chunk, this, x, y - 1, z, x + 2, y, z + 2, light, sky),
+        _blockLightingRegion(chunk, this, x - 1, y - 1, z, x + 1, y, z + 2, light, sky),
+        texture);
     }
 
     if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x + 1, y,
         (chunk.z * 16) + z))) {
       TextureInfo texture = getTexture(BlockFace.LEFT);
 
-      addFaceLeft(builder, x + 1, y, z, 1, 1, r, g, b, _blockLightingRegion(
-          chunk, this, x + 1, y, z - 1, x + 2, y + 2, z + 1), _blockLightingRegion(chunk,
-          this, x + 1, y, z, x + 2, y + 2, z + 2), _blockLightingRegion(chunk, this, x +
-          1, y - 1, z - 1, x + 2, y + 1, z + 1), _blockLightingRegion(chunk, this, x + 1,
-          y - 1, z, x + 2, y + 1, z + 2), texture);
+      int light = chunk.world.getLight((chunk.x * 16) + x + 1, y, (chunk.z * 16) + z);
+      int sky = chunk.world.getSky((chunk.x * 16) + x + 1, y, (chunk.z * 16) + z);
+
+      addFaceLeft(builder, x + 1, y, z, 1, 1, r, g, b,
+        _blockLightingRegion(chunk, this, x + 1, y, z - 1, x + 2, y + 2, z + 1, light, sky),
+        _blockLightingRegion(chunk, this, x + 1, y, z, x + 2, y + 2, z + 2, light, sky),
+        _blockLightingRegion(chunk, this, x + 1, y - 1, z - 1, x + 2, y + 1, z + 1, light, sky),
+        _blockLightingRegion(chunk, this, x + 1, y - 1, z, x + 2, y + 1, z + 2, light, sky),
+        texture);
     }
 
     if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x - 1, y,
         (chunk.z * 16) + z))) {
       TextureInfo texture = getTexture(BlockFace.RIGHT);
 
-      addFaceRight(builder, x, y, z, 1, 1, r, g, b, _blockLightingRegion(chunk,
-          this, x - 1, y, z, x, y + 2, z + 2), _blockLightingRegion(chunk, this, x - 1, y,
-          z - 1, x, y + 2, z + 1), _blockLightingRegion(chunk, this, x - 1, y - 1, z, x, y
-          + 1, z + 2), _blockLightingRegion(chunk, this, x - 1, y - 1, z - 1, x, y + 1, z
-          + 1), texture);
+      int light = chunk.world.getLight((chunk.x * 16) + x - 1, y, (chunk.z * 16) + z);
+      int sky = chunk.world.getSky((chunk.x * 16) + x - 1, y, (chunk.z * 16) + z);
+
+      addFaceRight(builder, x, y, z, 1, 1, r, g, b,
+        _blockLightingRegion(chunk, this, x - 1, y, z, x, y + 2, z + 2, light, sky),
+        _blockLightingRegion(chunk, this, x - 1, y, z - 1, x, y + 2, z + 1, light, sky),
+        _blockLightingRegion(chunk, this, x - 1, y - 1, z, x, y + 1, z + 2, light, sky),
+        _blockLightingRegion(chunk, this, x - 1, y - 1, z - 1, x, y + 1, z + 1, light, sky),
+        texture);
     }
 
     if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x, y, (chunk.z
         * 16) + z + 1))) {
       TextureInfo texture = getTexture(BlockFace.FRONT);
 
-      addFaceFront(builder, x, y, z + 1, 1, 1, r, g, b, _blockLightingRegion(
-          chunk, this, x, y, z + 1, x + 2, y + 2, z + 2), _blockLightingRegion(chunk,
-          this, x - 1, y, z + 1, x + 1, y + 2, z + 2), _blockLightingRegion(chunk, this,
-          x, y - 1, z + 1, x + 2, y + 1, z + 2), _blockLightingRegion(chunk, this, x - 1,
-          y - 1, z + 1, x + 1, y + 1, z + 2), texture);
+      int light = chunk.world.getLight((chunk.x * 16) + x, y, (chunk.z * 16) + z + 1);
+      int sky = chunk.world.getSky((chunk.x * 16) + x, y, (chunk.z * 16) + z + 1);
+
+      addFaceFront(builder, x, y, z + 1, 1, 1, r, g, b,
+        _blockLightingRegion(chunk, this, x, y, z + 1, x + 2, y + 2, z + 2, light, sky),
+        _blockLightingRegion(chunk, this, x - 1, y, z + 1, x + 1, y + 2, z + 2, light, sky),
+        _blockLightingRegion(chunk, this, x, y - 1, z + 1, x + 2, y + 1, z + 2, light, sky),
+        _blockLightingRegion(chunk, this, x - 1, y - 1, z + 1, x + 1, y + 1, z + 2, light, sky),
+        texture);
     }
 
     if (shouldRenderAgainst(chunk.world.getBlock((chunk.x * 16) + x, y, (chunk.z
         * 16) + z - 1))) {
       TextureInfo texture = getTexture(BlockFace.BACK);
 
-      addFaceBack(builder, x, y, z, 1, 1, r, g, b, _blockLightingRegion(chunk,
-          this, x - 1, y, z - 1, x + 1, y + 2, z), _blockLightingRegion(chunk, this, x, y,
-          z - 1, x + 2, y + 2, z), _blockLightingRegion(chunk, this, x - 1, y - 1, z - 1,
-          x + 1, y + 1, z), _blockLightingRegion(chunk, this, x, y - 1, z - 1, x + 2, y +
-          1, z), texture);
+      int light = chunk.world.getLight((chunk.x * 16) + x, y, (chunk.z * 16) + z - 1);
+      int sky = chunk.world.getSky((chunk.x * 16) + x, y, (chunk.z * 16) + z - 1);
+
+      addFaceBack(builder, x, y, z, 1, 1, r, g, b,
+        _blockLightingRegion(chunk, this, x - 1, y, z - 1, x + 1, y + 2, z, light, sky),
+        _blockLightingRegion(chunk, this, x, y, z - 1, x + 2, y + 2, z, light, sky),
+        _blockLightingRegion(chunk, this, x - 1, y - 1, z - 1, x + 1, y + 1, z, light, sky),
+        _blockLightingRegion(chunk, this, x, y - 1, z - 1, x + 2, y + 1, z, light, sky),
+        texture);
     }
   }
 
-  @deprecated
-  static double _numBlocksRegion(Chunk chunk, Block self, int x1, int y1, int
-      z1, int x2, int y2, int z2) {
-    double count = 0.0;
-    for (int y = y1; y < y2; y++) {
-      if (y < 0 || y > 255) continue;
-      for (int x = x1; x < x2; x++) {
-        for (int z = z1; z < z2; z++) {
-          double val = pow(0.9, max(chunk.world.getSky((chunk.x * 16) + x, y,
-              (chunk.z * 16) + z), chunk.world.getLight((chunk.x * 16) + x, y, (chunk.z * 16)
-              + z)) + 1);
-
-          Block block = chunk.world.getBlock((chunk.x * 16) + x, y, (chunk.z *
-              16) + z);
-          if (block.shade && (block.solid || block == self)) {
-            val += (13 / 17) * (1.0 - val);
-          }
-          count += min(1.0, val);
-        }
-      }
-    }
-    return count;
-  }
-
+  /**
+   * Returns the texture for the [face]
+   */
   TextureInfo getTexture(BlockFace face) {
     return blockTextureInfo[texture];
   }
 }
 
-LightInfo _blockLightingRegion(Chunk chunk, Block self, int x1, int y1, int
-    z1, int x2, int y2, int z2) {
+/**
+ * Calculate the average lighting in the region defined by the
+ * two sets of coordinates
+ */
+LightInfo _blockLightingRegion(Chunk chunk, Block self, int x1, int y1,
+    int z1, int x2, int y2, int z2, [int faceLight = 0, int faceSkyLight = 0]) {
   int light = 0;
   int sky = 0;
   int count = 0;
+  int valSolid = (15 * pow(0.85, faceLight + 1)).toInt();
+  int valSkySolid = (15 * pow(0.85, faceSkyLight + 1)).toInt();
   for (int y = y1; y < y2; y++) {
     if (y < 0 || y > 255) continue;
     for (int x = x1; x < x2; x++) {
@@ -150,13 +186,16 @@ LightInfo _blockLightingRegion(Chunk chunk, Block self, int x1, int y1, int
         int pz = (chunk.z * 16) + z;
         if (!chunk.world.isLoaded(px, y, pz)) continue;
         count++;
-        int valSky = chunk.world.getSky(px, y, pz);
-        int val = chunk.world.getLight(px, y, pz);
+        int valSky = 6;
+        int val = 6;
 
         Block block = chunk.world.getBlock(px, y, pz);
         if (block.shade && (block.solid || block == self)) {
-          val = -5;
-          valSky = -5;
+          val -= valSolid;
+          valSky -= valSkySolid;
+        } else {
+          valSky = chunk.world.getSky(px, y, pz);
+          val = chunk.world.getLight(px, y, pz);
         }
         light += val;
         sky += valSky;
@@ -167,26 +206,29 @@ LightInfo _blockLightingRegion(Chunk chunk, Block self, int x1, int y1, int
   return LightInfo.getLight(light ~/ count, sky ~/ count);
 }
 
+/**
+ * Used to store light information
+ */
 class LightInfo {
+  /// Block emitted light level
   final int light;
+  /// Sky light level
   final int sky;
 
+  /// Creates a new LightInfo
   LightInfo(this.light, this.sky);
 
-  //    static final List<LightInfo> values = new List.generate(16 * 16, genInfo);
-  //
-  //    static LightInfo genInfo(int i) {
-  //        return new LightInfo(i & 0xF, i >> 4);
-  //    }
-
+  //TODO: Remove - Left over from old cache method
   static LightInfo getLight(int light, int sky) {
-    return new LightInfo(light, sky); //values[light | sky << 4];
+    return new LightInfo(light, sky);
   }
 
 }
 
+/**
+ * A enum of block faces
+ */
 class BlockFace {
-
   static const TOP = const BlockFace(0);
   static const BOTTOM = const BlockFace(1);
   static const RIGHT = const BlockFace(2);
@@ -194,12 +236,19 @@ class BlockFace {
   static const BACK = const BlockFace(4);
   static const FRONT = const BlockFace(5);
 
+  /// Integer version of the face
   final int id;
   const BlockFace(this.id);
 }
 
+/**
+ * Stores the start and end index of a texture in the
+ * texture map
+ */
 class TextureInfo {
+  /// Start index
   int start;
+  /// End index
   int end;
 
   TextureInfo(this.start, this.end);

@@ -102,7 +102,6 @@ class WebGLRenderer extends Renderer {
       camera.rotX += movementY(e) / 300.0;
     });
     document.body.onKeyDown.where((e) => e.keyCode == KeyCode.W).listen((e) {
-      print(e);
       movingForward = true;
       window.onKeyUp.firstWhere((e) => e.keyCode == KeyCode.W).then((e) {
         movingForward = false;
@@ -178,7 +177,7 @@ class WebGLRenderer extends Renderer {
   @override
   draw() {
     frameTimer.stop();
-    double delta = frameTimer.elapsedMicroseconds / (1000000.0 / 60.0);
+    double delta = min(frameTimer.elapsedMicroseconds / (1000000.0 / 60.0), 2.0);
     frameTimer.reset();
     frameTimer.start();
 

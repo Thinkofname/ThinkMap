@@ -5,20 +5,22 @@ part of map_viewer;
  */
 class Blocks {
 
-  // Air - Pretty much what you would expect it to be
+  /// Air - Pretty much what you would expect it to be
   static final Block AIR = BlockRegistry.getByName("air");
-  // Bedrock - Unbreakable block (unless Mojang messes up... again)
+  /// Bedrock - Unbreakable block (unless Mojang messes up... again)
   static final Block BEDROCK = BlockRegistry.getByName("bedrock");
-  // Water - Blue swimmable stuff, strangely not drinkable
+  /// Water - Blue swimmable stuff, strangely not drinkable
   static final Block WATER = BlockRegistry.getByName("water");
-  // Flowing Water - Blue swimmable stuff that is flowing in a direction
+  /// Flowing Water - Blue swimmable stuff that is flowing in a direction
   static final Block FLOWING_WATER = BlockRegistry.getByName("flowing_water");
 
-  // Missing Block - If you see this block I messed up somewhere (or you have some sort of
-  // mod on the server)
+  /**
+   * Missing Block - If you see this block I messed up somewhere (or you have some sort of
+   * mod on the server)
+   */
   static final Block MISSING_BLOCK = BlockRegistry.getByName(
       "webglmap:missing_block");
-  // Null Block - Solid air
+  /// Null Block - Solid air
   static final Block NULL_BLOCK = BlockRegistry.getByName("webglmap:null");
 }
 
@@ -27,9 +29,9 @@ class Blocks {
  */
 class BlockRegistry {
 
-  // Whether the blocks have been registered yet
+  /// Whether the blocks have been registered yet
   static bool _hasInit = false;
-  // A map of plugin to blocks names to blocks
+  /// A map of plugin to blocks names to blocks
   static Map<String, Map<String, BlockRegistrationEntry>> _blocks = new Map();
 
   /**
@@ -315,7 +317,7 @@ class BlockRegistrationEntry {
   /// The name of the block
   String name;
 
-  // The block this entry is form
+  /// The block this entry is form
   Block block;
 
   @Deprecated("Will be removed once minecraft drops it")
@@ -325,8 +327,7 @@ class BlockRegistrationEntry {
   @Deprecated("Will be removed once minecraft drops it")
   int _dataValue;
 
-  // Create a new block registry entry
-
+  /// Create a new block registry entry
   BlockRegistrationEntry(this.plugin, this.name, this.block);
 
   @override
@@ -335,14 +336,13 @@ class BlockRegistrationEntry {
   }
 
 
-  // Prevent Changing the values after build
+  //. Prevent Changing the values after build
   bool _hasBuild = false;
 
   /**
      * Should be called once all properties are set to their
      * desired values
      */
-
   build() {
     _hasBuild = true;
 
@@ -351,7 +351,8 @@ class BlockRegistrationEntry {
     // TODO: Remove once minecraft drops it
     if (_legacyId == -1) return; // Doesn't exist in the old system
     if (_allDataValues) {
-      BlockRegistry._legacyMap[_legacyId] = new _BlockEntry(this);
+      // Data values don't matter for this block
+      BlockRegistry._legacyMap[_legacyId] = new _SingleBlockEntry(this);
     } else {
       if (BlockRegistry._legacyMap[_legacyId] == null) {
         BlockRegistry._legacyMap[_legacyId] = new _MultiBlockEntry();
@@ -361,18 +362,33 @@ class BlockRegistrationEntry {
     }
   }
 
+  /**
+    * Called by builder methods to prevent changing properties after
+   * building
+    */
   _checkBuild() {
     if (_hasBuild) {
       throw "Cannot change properties of a RegBlock after build";
     }
   }
 
+  /**
+   * Sets the legacy id of the block entry.
+   *
+   * This will be used when loading Minecraft maps
+   */
   @Deprecated("Will be removed once minecraft drops it")
   legacyId(int id) {
     _checkBuild();
     _legacyId = id;
   }
 
+  /**
+   * Sets the data value of the block entry
+   *
+   * This will be used when loading Minecraft maps. This ties
+   * the block to the specific data value (for its legacy id).
+   */
   @Deprecated("Will be removed once minecraft drops it")
   dataValue(int val) {
     _checkBuild();
@@ -381,15 +397,41 @@ class BlockRegistrationEntry {
   }
 }
 
-class _BlockEntry {
-  BlockRegistrationEntry block;
-  _BlockEntry(this.block);
+/**
+ * A entry for a block that can convert a Minecraft data value
+ * into a registered block
+ */
+@Deprecated("Will be removed once minecraft drops it")
+abstract class _BlockEntry {
 
-  BlockRegistrationEntry getBlock(int data) => block;
+  /**
+   * Returns a registered block based on [data]
+   */
+  BlockRegistrationEntry getBlock(int data);
 }
 
+/**
+ * A BlockEntry that always returns the same block
+ */
+@Deprecated("Will be removed once minecraft drops it")
+class _SingleBlockEntry implements _BlockEntry {
+
+  BlockRegistrationEntry _block;
+
+  _SingleBlockEntry(this._block);
+
+  @override
+  BlockRegistrationEntry getBlock(int data) => _block;
+}
+
+/**
+ * A BlockEntry that will return one of 16 blocks based on
+ * the passed data value
+ */
+@Deprecated("Will be removed once minecraft drops it")
 class _MultiBlockEntry implements _BlockEntry {
   List<BlockRegistrationEntry> byData = new List(16);
 
+  @override
   BlockRegistrationEntry getBlock(int data) => byData[data];
 }

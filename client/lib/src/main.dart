@@ -9,7 +9,7 @@ Renderer renderer;
 List<ImageElement> blockTexturesRaw = new List();
 Map<String, TextureInfo> blockTextureInfo = new Map();
 
-// Entry point
+/// Entry point
 main() {
   var img = new ImageElement();
   blockTexturesRaw.add(img);
@@ -29,7 +29,7 @@ main() {
   img.src = "block_images/blocks_0.png";
 }
 
-// Called once everything is loaded
+/// Called once everything is loaded
 start() {
   BlockRegistry.init();
 
@@ -47,7 +47,7 @@ start() {
   renderer = new WebGLRenderer(canvas);
   window.requestAnimationFrame(draw);
 
-  connection = new Connection("ws://${window.location.hostname}:23333/server");
+  connection = new Connection("${window.location.hostname}:23333");
 
 }
 
