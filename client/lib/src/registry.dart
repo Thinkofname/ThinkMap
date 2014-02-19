@@ -1,39 +1,49 @@
 part of map_viewer;
 
+/**
+ * Contains static references to blocks needed by the map viewer
+ */
 class Blocks {
 
+    // Air - Pretty much what you would expect it to be
     static final Block AIR = BlockRegistry.getByName("air");
+    // Bedrock - Unbreakable block (unless Mojang messes up... again)
     static final Block BEDROCK = BlockRegistry.getByName("bedrock");
-
+    // Water - Blue swimmable stuff, strangely not drinkable
     static final Block WATER = BlockRegistry.getByName("water");
+    // Flowing Water - Blue swimmable stuff that is flowing in a direction
     static final Block FLOWING_WATER = BlockRegistry.getByName("flowing_water");
 
+    // Missing Block - If you see this block I messed up somewhere (or you have some sort of
+    // mod on the server)
     static final Block MISSING_BLOCK = BlockRegistry.getByName("webglmap:missing_block");
+    // Null Block - Solid air
     static final Block NULL_BLOCK = BlockRegistry.getByName("webglmap:null");
 }
 
-class _BlockEntry {
-    BlockRegistrationEntry block;
-    _BlockEntry(this.block);
-
-    BlockRegistrationEntry getBlock(int data) => block;
-}
-
-class _MultiBlockEntry implements _BlockEntry {
-    List<BlockRegistrationEntry> byData = new List(16);
-
-    BlockRegistrationEntry getBlock(int data) => byData[data];
-}
-
+/**
+ * Access to every block that the map viewer knows about
+ */
 class BlockRegistry {
 
+    // Whether the blocks have been registered yet
     static bool _hasInit = false;
+    // A map of plugin to blocks names to blocks
     static Map<String, Map<String, BlockRegistrationEntry>> _blocks = new Map();
 
+    /**
+     * Returns a block by its [name].
+     *
+     * The format of the name is 'plugin:block'. If the format
+     * 'block' is used then the plugin is assumed to be 'minecraft'.
+     *
+     * If the block doesn't exist then the block 'webglmap:missing_block'
+     * is returned
+     */
     static Block getByName(String name) {
         if (!_hasInit) init();
         String plugin = "minecraft";
-        if (name.contains(":")) {
+        if (name.contains(":")) { // Check for plugin name
             plugin = name.substring(0, name.indexOf(":"));
             name = name.substring(name.indexOf(":") + 1);
         }
@@ -42,8 +52,17 @@ class BlockRegistry {
         return ret;
     }
 
+    // A map (list) of legacy block ids to new blocks
     @Deprecated("Will be removed once minecraft drops it")
     static List<_BlockEntry> _legacyMap = new List(0xFF);
+
+    /**
+     * Using [id] and [data] from legacy block id system
+     * this will look up the block and return the new system
+     * version of the block.
+     *
+     * If the block doesn't exist then the block 'webglmap:missing_block'
+     */
     @Deprecated("Will be removed once minecraft drops it")
     static Block getByLegacy(int id, int data) {
         if (id == 0) return Blocks.AIR;
@@ -54,8 +73,16 @@ class BlockRegistry {
         return reg.block;
     }
 
+    /**
+     * Registers the block using the [name] and [plugin] (which defaults
+     * to 'minecraft').
+     *
+     * This returns a builder BlockRegistrationEntry which can be used to
+     * set properties before committing to the registry with 'build'
+     */
     static BlockRegistrationEntry registerBlock(String name, Block block, {String plugin : "minecraft"}) {
         if (!_blocks.containsKey(plugin)) {
+            // New plugin set up the map
             _blocks[plugin] = new Map();
         }
         if (_blocks[plugin].containsKey(name)) {
@@ -64,11 +91,16 @@ class BlockRegistry {
         var reg = new BlockRegistrationEntry(plugin, name, block);
         block._regBlock = reg;
         _blocks[plugin][name] = reg;
-        print("Registed block: $reg");
+        print("Registed block: $reg"); // TODO: Remove logging
         return reg;
     }
 
+    //TODO: Tidy up
+    /**
+     * Register all blocks
+     */
     static init() {
+        if (_hasInit) return; // Prevent double init
         _hasInit = true;
 
         // Vanilla blocks
@@ -285,12 +317,15 @@ class BlockRegistry {
     }
 }
 
+/**
+ * A builder used to set up a block registration
+ */
 class BlockRegistrationEntry {
 
-    // The plugin that owns this block
+    /// The plugin that owns this block
     String plugin;
 
-    // The name of the block
+    /// The name of the block
     String name;
 
     // The block this entry is form
@@ -356,4 +391,17 @@ class BlockRegistrationEntry {
         _allDataValues = false;
         _dataValue = val;
     }
+}
+
+class _BlockEntry {
+    BlockRegistrationEntry block;
+    _BlockEntry(this.block);
+
+    BlockRegistrationEntry getBlock(int data) => block;
+}
+
+class _MultiBlockEntry implements _BlockEntry {
+    List<BlockRegistrationEntry> byData = new List(16);
+
+    BlockRegistrationEntry getBlock(int data) => byData[data];
 }

@@ -42,22 +42,8 @@ start() {
         renderer.resize(canvas.width, canvas.height);
     });
 
-    if (window.location.search.contains("force2d")) {
-        // Removed for now
-//        world = new CanvasWorld(); // TODO:
-//        renderer = new CanvasRenderer(canvas);
-    } else {
-        try {
-            world = new WebGLWorld();
-            renderer = new WebGLRenderer(canvas);
-        } catch (e) {
-            throw e;
-            // Removed for now
-//            world = new CanvasWorld(); // TODO:
-//            renderer = new CanvasRenderer(canvas);
-        }
-    }
-
+    world = new WebGLWorld();
+    renderer = new WebGLRenderer(canvas);
     window.requestAnimationFrame(draw);
 
     connection = new Connection("ws://${window.location.hostname}:23333/server");

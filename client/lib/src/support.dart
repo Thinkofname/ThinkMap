@@ -1,5 +1,8 @@
 part of map_viewer;
 
+// This contains functions that give access to prefixed
+// javascript which dart fails to prefix itself
+
 /*
     Pointer Lock
  */
@@ -56,32 +59,34 @@ Element pointerLockElement() {
  */
 
 @Deprecated("Remove once this is fixed in dart")
-String _fullscreenPrefix = null;
+String _fullscreenFunction = null;
 
 @Deprecated("Remove once this is fixed in dart")
 _getFullscreenPrefix() {
-    if (_fullscreenPrefix != null) return;
+    if (_fullscreenFunction != null) return;
     var js = new JsObject.fromBrowserObject(document.body);
-    if (js.hasProperty("requestFullScreen")) {
-        _fullscreenPrefix = "";
-    } else if (js.hasProperty("webkitRequestFullScreen")) {
-        _fullscreenPrefix = "webkit";
+    if (js.hasProperty("requestFullscreen")) {
+        _fullscreenFunction = "";
+    } else if (js.hasProperty("webkitRequestFullscreen")) {
+        _fullscreenFunction = "webkitRequestFullscreen";
     } else if (js.hasProperty("mozRequestFullScreen")) {
-        _fullscreenPrefix = "moz";
+        _fullscreenFunction = "mozRequestFullScreen";
     }
 }
 
 @Deprecated("Remove once this is fixed in dart")
 String _setFullscreenPrefix(String prop) {
     _getFullscreenPrefix();
-    if (_pointerPrefix == "") {
+    if (_fullscreenFunction == "") {
         return prop;
     }
-    return _pointerPrefix + prop[0].toUpperCase() + prop.substring(1);
+    return _fullscreenFunction;
 }
 
 @Deprecated("Remove once this is fixed in dart")
 requestFullScreen(Element target) {
+    print("Requesting fullscreen");
     var js = new JsObject.fromBrowserObject(target);
-    js.callMethod(_setPointerPrefix("requestFullScreen"));
+    print("for $js");
+    js.callMethod(_setFullscreenPrefix("requestFullscreen"));
 }
