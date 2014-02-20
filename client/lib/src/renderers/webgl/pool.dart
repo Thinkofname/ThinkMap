@@ -89,13 +89,15 @@ class Uint8ListPool {
 
   static List<Uint8List> _freeLists = new List();
 
+  static final Logger logger = new Logger("Uint8ListPool");
+
   /**
      * Gets or creates a Uint8List that is at least
      * [size] bytes
      */
   static Uint8List getList(int size) {
     var ret = _freeLists.firstWhere((e) => e.length >= size, orElse: () {
-      print("Alloc $size");
+      logger.debug("Alloc $size");
       return new Uint8List(size);
     });
     _freeLists.remove(ret);

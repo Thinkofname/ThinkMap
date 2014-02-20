@@ -34,6 +34,8 @@ class BlockRegistry {
   /// A map of plugin to blocks names to blocks
   static Map<String, Map<String, BlockRegistrationEntry>> _blocks = new Map();
 
+  static final Logger logger = new Logger("BlockRegistry");
+
   /**
      * Returns a block by its [name].
      *
@@ -90,12 +92,13 @@ class BlockRegistry {
       _blocks[plugin] = new Map();
     }
     if (_blocks[plugin].containsKey(name)) {
-      throw "Tried to double register block $name";
+      logger.error("Tried to double register block $name");
+      return;
     }
     var reg = new BlockRegistrationEntry(plugin, name, block);
     block._regBlock = reg;
     _blocks[plugin][name] = reg;
-    print("Registed block: $reg"); // TODO: Remove logging
+    logger.info("Registed block: $reg");
     return reg;
   }
 
@@ -351,9 +354,11 @@ class BlockRegistrationEntry {
     // TODO: Remove once minecraft drops it
     if (_legacyId == -1) return; // Doesn't exist in the old system
     if (_allDataValues) {
+      BlockRegistry.logger.warn("$this is using legacy block ids ($_legacyId)");
       // Data values don't matter for this block
       BlockRegistry._legacyMap[_legacyId] = new _SingleBlockEntry(this);
     } else {
+      BlockRegistry.logger.warn("$this is using legacy block ids ($_legacyId:$_dataValue)");
       if (BlockRegistry._legacyMap[_legacyId] == null) {
         BlockRegistry._legacyMap[_legacyId] = new _MultiBlockEntry();
       }

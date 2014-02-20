@@ -33,3 +33,4 @@ part "src/blocks/sign.dart";
 part "src/network.dart";
 // Other
 part "src/support.dart";
+part "src/logging.dart";

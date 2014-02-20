@@ -148,9 +148,9 @@ class WebGLRenderer extends Renderer {
       // TODO: Fix once dart fixes this bug
       // zoom += e.wheelDeltaY;
       if (jse["deltaY"] != null) {
-        camera.y -= -(jse["deltaY"] as double) < 0.0 ? -1.0 : 1.0;
+        camera.y -= -(jse["deltaY"] as num) < 0.0 ? -1.0 : 1.0;
       } else {
-        camera.y -= (jse["wheelDeltaY"] as double) < 0.0 ? -1.0 : 1.0;
+        camera.y -= (jse["wheelDeltaY"] as num) < 0.0 ? -1.0 : 1.0;
       }
     });
     // Misc

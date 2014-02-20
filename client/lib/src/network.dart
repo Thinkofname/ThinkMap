@@ -11,6 +11,8 @@ class Connection {
   /// Address of the server that this is connected to
   final String address;
 
+  static final Logger logger = new Logger("Connection");
+
   /**
    * Creates a new connection targeted at the [address]
    *
@@ -26,7 +28,7 @@ class Connection {
 
   /// Called once the connection is open
   _start(Event e) {
-    print("Connected to server");
+    logger.info("Connected to server");
     _websocket.sendByteBuffer(new Uint8List(1).buffer);
     renderer.connected();
   }
