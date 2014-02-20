@@ -93,7 +93,7 @@ class BlockRegistry {
     }
     if (_blocks[plugin].containsKey(name)) {
       logger.error("Tried to double register block $name");
-      return;
+      throw "";
     }
     var reg = new BlockRegistrationEntry(plugin, name, block);
     block._regBlock = reg;
