@@ -21,7 +21,7 @@ class BlockVines extends Block {
   }
 
   @override
-  void shouldRenderAgainst(Block block) => !block.solid;
+  bool shouldRenderAgainst(Block block) => !block.solid;
 
   @override
   void renderFloat(BlockBuilder builder, FloatBlockBuilder fBulider, int x, int

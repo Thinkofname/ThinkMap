@@ -3,7 +3,7 @@ part of map_viewer;
 class BlockWater extends Block {
 
   @override
-  void shouldRenderAgainst(Block block) => !block.solid && block != Blocks.WATER &&
+  bool shouldRenderAgainst(Block block) => !block.solid && block != Blocks.WATER &&
       block != Blocks.FLOWING_WATER;
 
 }
