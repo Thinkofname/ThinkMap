@@ -109,6 +109,8 @@ class BlockRegistry {
     if (_hasInit) return; // Prevent double init
     _hasInit = true;
 
+    Stopwatch initTimer = new Stopwatch()..start();
+
     // Vanilla blocks
     registerBlock("air", new Block()
         ..renderable = false
@@ -305,6 +307,9 @@ class BlockRegistry {
     registerBlock("null", new Block()
         ..renderable = false
         ..shade = false, plugin: "webglmap")..build();
+
+    initTimer.stop();
+    logger.info("Registered blocks in ${initTimer.elapsedMilliseconds}ms");
   }
 }
 
@@ -353,11 +358,11 @@ class BlockRegistrationEntry {
     // TODO: Remove once minecraft drops it
     if (_legacyId == -1) return; // Doesn't exist in the old system
     if (_allDataValues) {
-      BlockRegistry.logger.warn("$this is using legacy block ids ($_legacyId)");
+      if (plugin != "minecraft") BlockRegistry.logger.warn("$this is using legacy block ids ($_legacyId)");
       // Data values don't matter for this block
       BlockRegistry._legacyMap[_legacyId] = new _SingleBlockEntry(this);
     } else {
-      BlockRegistry.logger.warn("$this is using legacy block ids ($_legacyId:$_dataValue)");
+      if (plugin != "minecraft") BlockRegistry.logger.warn("$this is using legacy block ids ($_legacyId:$_dataValue)");
       if (BlockRegistry._legacyMap[_legacyId] == null) {
         BlockRegistry._legacyMap[_legacyId] = new _MultiBlockEntry();
       }
