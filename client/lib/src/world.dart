@@ -11,14 +11,14 @@ abstract class World {
     new Timer.periodic(new Duration(milliseconds: 1000 ~/ 20), tick);
   }
 
-  tick(Timer timer) {
+  void tick(Timer timer) {
     currentTime += 1;
     currentTime %= 24000;
   }
 
   List<ByteBuffer> toLoad = new List();
 
-  loadChunk(ByteBuffer byteBuffer) {
+  void loadChunk(ByteBuffer byteBuffer) {
     var job = new _LoadJob(newChunk(), byteBuffer);
     String key = _chunkKey(job.chunk.x, job.chunk.z);
     job.chunk.world = this;
@@ -29,7 +29,7 @@ abstract class World {
     }
   }
 
-  addChunk(Chunk chunk) {
+  void addChunk(Chunk chunk) {
     String key = _chunkKey(chunk.x, chunk.z);
     if (chunks[key] != null) {
       print("Dropped chunk after load");
@@ -46,7 +46,7 @@ abstract class World {
     chunk.rebuild();
   }
 
-  removeChunk(int x, int z) {
+  void removeChunk(int x, int z) {
     Chunk chunk = getChunk(x, z);
     chunks.remove(_chunkKey(x, z));
     chunk.unload(renderer);
@@ -65,7 +65,7 @@ abstract class World {
   _BuildJob currentBuildLow;
   Object currentSnapshotLow;
 
-  requestBuild(Chunk chunk, int i) {
+  void requestBuild(Chunk chunk, int i) {
     String key = _buildKey(chunk.x, chunk.z, i);
     if (_waitingForBuild.containsKey(key)) {
       // Already queued
@@ -80,7 +80,7 @@ abstract class World {
   static int LOAD_LIMIT_MS = 68000;
   int lastSort = 0;
 
-  tickBuildQueue(Stopwatch stopwatch) {
+  void tickBuildQueue(Stopwatch stopwatch) {
     lastSort--;
     if (currentBuild != null) {
       var job = currentBuild;

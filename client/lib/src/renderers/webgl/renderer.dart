@@ -282,7 +282,7 @@ class WebGLRenderer extends Renderer {
   }
 
   @override
-  connected() {
+  void connected() {
     for (int x = -viewDistance; x < viewDistance; x++) {
       for (int z = -viewDistance; z < viewDistance; z++) {
         connection.writeRequestChunk(x, z);

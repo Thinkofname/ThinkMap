@@ -8,29 +8,29 @@ class BlockBuilder {
     _buffer = new DynamicUint8List(80000);
   }
 
-  position(num x, num y, num z) {
+  void position(num x, num y, num z) {
     _buffer.add(x.toInt());
     _buffer.add(y.toInt());
     _buffer.add(z.toInt());
   }
 
-  colour(int r, int g, int b) {
+  void colour(int r, int g, int b) {
     _buffer.add(r);
     _buffer.add(g);
     _buffer.add(b);
   }
 
-  texId(int start, int end) {
+  void texId(int start, int end) {
     _buffer.addUnsignedShort(start);
     _buffer.addUnsignedShort(end);
   }
 
-  tex(num x, num y) {
+  void tex(num x, num y) {
     _buffer.add(x.toInt());
     _buffer.add(y.toInt());
   }
 
-  lighting(int light, int sky) {
+  void lighting(int light, int sky) {
     _buffer.add(light & 0xFF);
     _buffer.add(sky & 0xFF);
   }
@@ -50,13 +50,15 @@ class FloatBlockBuilder implements BlockBuilder {
 
   }
 
-  position(num x, num y, num z) {
+  @override
+  void position(num x, num y, num z) {
     _buffer.addFloat(x.toDouble());
     _buffer.addFloat(y.toDouble());
     _buffer.addFloat(z.toDouble());
   }
 
-  colour(int r, int g, int b) {
+  @override
+  void colour(int r, int g, int b) {
     _buffer.add(r);
     _buffer.add(g);
     _buffer.add(b);
@@ -64,17 +66,20 @@ class FloatBlockBuilder implements BlockBuilder {
     _buffer.add(0);
   }
 
-  texId(int start, int end) {
+  @override
+  void texId(int start, int end) {
     _buffer.addUnsignedShort(start);
     _buffer.addUnsignedShort(end);
   }
 
-  tex(num x, num y) {
+  @override
+  void tex(num x, num y) {
     _buffer.addFloat(x.toDouble());
     _buffer.addFloat(y.toDouble());
   }
 
-  lighting(int light, int sky) {
+  @override
+  void lighting(int light, int sky) {
     _buffer.add(light & 0xFF);
     _buffer.add(sky & 0xFF);
     //Padding

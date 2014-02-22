@@ -42,13 +42,13 @@ class Block {
   /**
    * Returns whether this should render its side against the [block]
    */
-  shouldRenderAgainst(Block block) => !block.solid && (!allowSelf || block !=
+  bool shouldRenderAgainst(Block block) => !block.solid && (!allowSelf || block !=
       this);
 
   /**
    * render for blocks that need floating point precision
    */
-  renderFloat(BlockBuilder builder, FloatBlockBuilder fBulider, int x, int
+  void renderFloat(BlockBuilder builder, FloatBlockBuilder fBulider, int x, int
       y, int z, Chunk chunk) {
     render(builder, x, y, z, chunk);
   }
@@ -57,7 +57,7 @@ class Block {
    * Renders the block at the coordinates [x], [y] and [z] relative to the
    * [chunk]
    */
-  render(BlockBuilder builder, int x, int y, int z, Chunk chunk) {
+  void render(BlockBuilder builder, int x, int y, int z, Chunk chunk) {
     int r = 255;
     int g = 255;
     int b = 255;

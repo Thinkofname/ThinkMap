@@ -3,7 +3,7 @@ part of map_viewer;
 class BlockCross extends Block {
 
   @override
-  render(BlockBuilder builder, int x, int y, int z, Chunk chunk) {
+  void render(BlockBuilder builder, int x, int y, int z, Chunk chunk) {
     int r = 255; //(colour >> 16) & 0xFF;
     int g = 255; //(colour >> 8) & 0xFF;
     int b = 255; //colour & 0xFF;

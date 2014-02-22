@@ -6,7 +6,7 @@ class BlockVines extends Block {
 
   BlockVines(this.dataValue);
 
-  static register() {
+  static void register() {
     for (int i = 0; i < 16; i++) {
       BlockRegistry.registerBlock("vine_$i", new BlockVines(i)
           ..solid = false
@@ -21,10 +21,10 @@ class BlockVines extends Block {
   }
 
   @override
-  shouldRenderAgainst(Block block) => !block.solid;
+  void shouldRenderAgainst(Block block) => !block.solid;
 
   @override
-  renderFloat(BlockBuilder builder, FloatBlockBuilder fBulider, int x, int
+  void renderFloat(BlockBuilder builder, FloatBlockBuilder fBulider, int x, int
       y, int z, Chunk chunk) {
     int r = 255;
     int g = 255;

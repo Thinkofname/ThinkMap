@@ -27,14 +27,14 @@ class Connection {
   }
 
   /// Called once the connection is open
-  _start(Event e) {
+  void _start(Event e) {
     logger.info("Connected to server");
     _websocket.sendByteBuffer(new Uint8List(1).buffer);
     renderer.connected();
   }
 
   /// Called when a message is received from the server
-  _data(MessageEvent e) {
+  void _data(MessageEvent e) {
     ByteData reader = new ByteData.view(e.data);
     switch (reader.getUint8(0)) {
       case 0:
@@ -47,12 +47,12 @@ class Connection {
   }
 
   /// Read and act on a time update packet
-  _readTimeUpdate(ByteData data) {
+  void _readTimeUpdate(ByteData data) {
     world.currentTime = data.getInt32(0, Endianness.BIG_ENDIAN);
   }
 
   /// Read and act on a spawn position packet
-  _readSpawnPosition(ByteData data) {
+  void _readSpawnPosition(ByteData data) {
     renderer.moveTo(data.getInt32(0, Endianness.BIG_ENDIAN), data.getUint8(4),
         data.getInt32(5, Endianness.BIG_ENDIAN));
   }
@@ -63,7 +63,7 @@ class Connection {
   /**
    * Request a chunk from the server
    */
-  writeRequestChunk(int x, int z) {
+  void writeRequestChunk(int x, int z) {
     String key = "$x:$z";
     if (_sentFor.containsKey(key)) return;
     var req = new HttpRequest();

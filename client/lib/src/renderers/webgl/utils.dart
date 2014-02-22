@@ -3,7 +3,7 @@ part of map_viewer;
 
 //NOTE: the top* and bottom* params may be incorrect for some of these
 
-addFaceTop(BlockBuilder builder, num x, num y, num z, num w, num h, int r, int
+void addFaceTop(BlockBuilder builder, num x, num y, num z, num w, num h, int r, int
     g, int b, LightInfo topLeft, LightInfo topRight, LightInfo bottomLeft, LightInfo
     bottomRight, TextureInfo texture, [bool scaleTextures = false]) {
 
@@ -57,7 +57,7 @@ addFaceTop(BlockBuilder builder, num x, num y, num z, num w, num h, int r, int
       ..lighting(bottomRight.light, bottomRight.sky);
 }
 
-addFaceBottom(BlockBuilder builder, num x, num y, num z, num w, num h, int
+void addFaceBottom(BlockBuilder builder, num x, num y, num z, num w, num h, int
     r, int g, int b, LightInfo topLeft, LightInfo topRight, LightInfo
     bottomLeft, LightInfo bottomRight, TextureInfo texture, [bool scaleTextures =
     false]) {
@@ -112,7 +112,7 @@ addFaceBottom(BlockBuilder builder, num x, num y, num z, num w, num h, int
 
 }
 
-addFaceLeft(BlockBuilder builder, num x, num y, num z, num w, num h, int r, int
+void addFaceLeft(BlockBuilder builder, num x, num y, num z, num w, num h, int r, int
     g, int b, LightInfo topLeft, LightInfo topRight, LightInfo bottomLeft, LightInfo
     bottomRight, TextureInfo texture, [bool scaleTextures = false]) {
 
@@ -165,7 +165,7 @@ addFaceLeft(BlockBuilder builder, num x, num y, num z, num w, num h, int r, int
       ..lighting(bottomRight.light, bottomRight.sky);
 }
 
-addFaceRight(BlockBuilder builder, num x, num y, num z, num w, num h, int r, int
+void addFaceRight(BlockBuilder builder, num x, num y, num z, num w, num h, int r, int
     g, int b, LightInfo topLeft, LightInfo topRight, LightInfo bottomLeft, LightInfo
     bottomRight, TextureInfo texture, [bool scaleTextures = false]) {
 
@@ -218,7 +218,7 @@ addFaceRight(BlockBuilder builder, num x, num y, num z, num w, num h, int r, int
       ..lighting(bottomLeft.light, bottomLeft.sky);
 }
 
-addFaceFront(BlockBuilder builder, num x, num y, num z, num w, num h, int r, int
+void addFaceFront(BlockBuilder builder, num x, num y, num z, num w, num h, int r, int
     g, int b, LightInfo topLeft, LightInfo topRight, LightInfo bottomLeft, LightInfo
     bottomRight, TextureInfo texture, [bool scaleTextures = false]) {
 
@@ -271,7 +271,7 @@ addFaceFront(BlockBuilder builder, num x, num y, num z, num w, num h, int r, int
       ..lighting(bottomLeft.light, bottomLeft.sky);
 }
 
-addFaceBack(BlockBuilder builder, num x, num y, num z, num w, num h, int r, int
+void addFaceBack(BlockBuilder builder, num x, num y, num z, num w, num h, int r, int
     g, int b, LightInfo topLeft, LightInfo topRight, LightInfo bottomLeft, LightInfo
     bottomRight, TextureInfo texture, [bool scaleTextures = false]) {
 
@@ -326,7 +326,7 @@ addFaceBack(BlockBuilder builder, num x, num y, num z, num w, num h, int r, int
 
 final LightInfo fullBright = LightInfo.getLight(15, 15);
 
-addCube(BlockBuilder builder, num x, num y, num z, num w, num h, num d, int
+void addCube(BlockBuilder builder, num x, num y, num z, num w, num h, num d, int
     r, int g, int b, LightInfo light, TextureInfo getTexture(BlockFace), [bool
     scaleTextures = false]) {
 

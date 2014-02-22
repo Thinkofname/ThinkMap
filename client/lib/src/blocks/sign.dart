@@ -7,7 +7,7 @@ class BlockWallSign extends Block {
   BlockWallSign(this.direction);
 
 
-  static register() {
+  static void register() {
     BlockRegistry.registerBlock("wall_sign_north", new BlockWallSign(
         SignDirection.NORTH)
         ..collidable = false
@@ -43,7 +43,7 @@ class BlockWallSign extends Block {
   }
 
   @override
-  renderFloat(BlockBuilder builder, FloatBlockBuilder fBulider, int x, int
+  void renderFloat(BlockBuilder builder, FloatBlockBuilder fBulider, int x, int
       y, int z, Chunk chunk) {
     LightInfo light = LightInfo.getLight(chunk.getLight(x, y, z), chunk.getSky(
         x, y, z));

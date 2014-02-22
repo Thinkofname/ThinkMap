@@ -105,7 +105,7 @@ class BlockRegistry {
   /**
      * Register all blocks
      */
-  static init() {
+  static void init() {
     if (_hasInit) return; // Prevent double init
     _hasInit = true;
 
@@ -345,7 +345,7 @@ class BlockRegistrationEntry {
      * Should be called once all properties are set to their
      * desired values
      */
-  build() {
+  void build() {
     _hasBuild = true;
 
 
@@ -370,7 +370,7 @@ class BlockRegistrationEntry {
     * Called by builder methods to prevent changing properties after
    * building
     */
-  _checkBuild() {
+  void _checkBuild() {
     if (_hasBuild) {
       throw "Cannot change properties of a RegBlock after build";
     }
@@ -382,7 +382,7 @@ class BlockRegistrationEntry {
    * This will be used when loading Minecraft maps
    */
   @Deprecated("Will be removed once minecraft drops it")
-  legacyId(int id) {
+  void legacyId(int id) {
     _checkBuild();
     _legacyId = id;
   }
@@ -394,7 +394,7 @@ class BlockRegistrationEntry {
    * the block to the specific data value (for its legacy id).
    */
   @Deprecated("Will be removed once minecraft drops it")
-  dataValue(int val) {
+  void dataValue(int val) {
     _checkBuild();
     _allDataValues = false;
     _dataValue = val;

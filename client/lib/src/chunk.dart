@@ -32,7 +32,7 @@ abstract class Chunk {
    * The [x] and [z] coordinates must be between 0 and
    * 15 and [y] must be between 0 and 255.
    */
-  setBlock(int x, int y, int z, Block block) {
+  void setBlock(int x, int y, int z, Block block) {
     var section = sections[y >> 4];
     if (section == null) {
       if (block != Blocks.AIR) {
@@ -86,7 +86,7 @@ abstract class Chunk {
      * The [x] and [z] coordinates must be between 0 and
      * 15 and [y] must be between 0 and 255.
      */
-  setLight(int x, int y, int z, int light) {
+  void setLight(int x, int y, int z, int light) {
     var section = sections[y >> 4];
     if (section == null) {
       if (light == 0) return;
@@ -134,7 +134,7 @@ abstract class Chunk {
      * The [x] and [z] coordinates must be between 0 and
      * 15 and [y] must be between 0 and 255.
      */
-  setSky(int x, int y, int z, int sky) {
+  void setSky(int x, int y, int z, int sky) {
     var section = sections[y >> 4];
     if (section == null) {
       if (sky == 15) return;
@@ -176,7 +176,7 @@ abstract class Chunk {
   }
 
 
-  update(int x, int y, int z) {
+  void update(int x, int y, int z) {
     if (!noUpdates) {
       for (int ox = -1; ox <= 1; ox++) {
         for (int oz = -1; oz <= 1; oz++) {
@@ -195,7 +195,7 @@ abstract class Chunk {
     }
   }
 
-  rebuild() {
+  void rebuild() {
     needsBuild = true;
     for (int i = 0; i < 16; i++) {
       var section = sections[i];
@@ -207,12 +207,12 @@ abstract class Chunk {
 
   Object buildSection(int i, Object snapshot, Stopwatch stopwatch);
 
-  unload(Renderer renderer);
+  void unload(Renderer renderer);
 }
 
 class ChunkSection {
 
-  static final _emptySkySection = new Uint8List(16 * 16 * 16)..fillRange(0, 16 *
+  static final Uint8List _emptySkySection = new Uint8List(16 * 16 * 16)..fillRange(0, 16 *
       16 * 16, 15);
 
   Uint16List blocks = new Uint16List(16 * 16 * 16);

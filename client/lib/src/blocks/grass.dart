@@ -17,7 +17,7 @@ class BlockGrass extends Block {
   }
 
   @override
-  render(BlockBuilder builder, int x, int y, int z, Chunk chunk) {
+  void render(BlockBuilder builder, int x, int y, int z, Chunk chunk) {
     int r = (colour >> 16) & 0xFF;
     int g = (colour >> 8) & 0xFF;
     int b = colour & 0xFF;

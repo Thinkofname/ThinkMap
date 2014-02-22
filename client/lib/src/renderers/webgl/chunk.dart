@@ -144,8 +144,7 @@ class WebGLChunk extends Chunk {
   }
 
   @override
-  WebGLSnapshot buildSection(int i, WebGLSnapshot snapshot, Stopwatch stopwatch)
-  {
+  WebGLSnapshot buildSection(int i, WebGLSnapshot snapshot, Stopwatch stopwatch) {
     if (snapshot == null) {
       snapshot = new WebGLSnapshot();
     }

@@ -10,7 +10,7 @@ List<ImageElement> blockTexturesRaw = new List();
 Map<String, TextureInfo> blockTextureInfo = new Map();
 
 /// Entry point
-main() {
+void main() {
   var img = new ImageElement();
   blockTexturesRaw.add(img);
   HttpRequest req = new HttpRequest();
@@ -30,7 +30,7 @@ main() {
 }
 
 /// Called once everything is loaded
-start() {
+void start() {
   BlockRegistry.init();
 
   canvas = document.getElementById("main");
@@ -51,7 +51,7 @@ start() {
 
 }
 
-draw(num unused) {
+void draw(num unused) {
   renderer.draw();
   window.requestAnimationFrame(draw);
 }

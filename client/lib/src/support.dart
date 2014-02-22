@@ -11,7 +11,7 @@ part of map_viewer;
 String _pointerPrefix = null;
 
 @Deprecated("Remove once this is fixed in dart")
-_getPointerPrefix() {
+void _getPointerPrefix() {
   if (_pointerPrefix != null) return;
   var js = new JsObject.fromBrowserObject(document);
   if (js.hasProperty("pointerLockElement")) {
@@ -33,7 +33,7 @@ String _setPointerPrefix(String prop) {
 }
 
 @Deprecated("Remove once this is fixed in dart")
-requestPointerLock(Element target) {
+void requestPointerLock(Element target) {
   var js = new JsObject.fromBrowserObject(target);
   js.callMethod(_setPointerPrefix("requestPointerLock"));
 }
@@ -62,7 +62,7 @@ Element pointerLockElement() {
 String _fullscreenFunction = null;
 
 @Deprecated("Remove once this is fixed in dart")
-_getFullscreenPrefix() {
+void _getFullscreenPrefix() {
   if (_fullscreenFunction != null) return;
   var js = new JsObject.fromBrowserObject(document.body);
   if (js.hasProperty("requestFullscreen")) {
@@ -84,7 +84,7 @@ String _setFullscreenPrefix(String prop) {
 }
 
 @Deprecated("Remove once this is fixed in dart")
-requestFullScreen(Element target) {
+void requestFullScreen(Element target) {
   print("Requesting fullscreen");
   var js = new JsObject.fromBrowserObject(target);
   print("for $js");

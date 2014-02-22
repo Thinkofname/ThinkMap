@@ -2,13 +2,13 @@ part of map_viewer;
 
 abstract class Renderer {
 
-  draw();
-  resize(int width, int height);
-  connected();
+  void draw();
+  void resize(int width, int height);
+  void connected();
 
   bool shouldLoad(int x, int z);
 
-  moveTo(int x, int y, int z);
+  void moveTo(int x, int y, int z);
 }
 
 class _BuildJob {

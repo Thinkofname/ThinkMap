@@ -25,7 +25,7 @@ class DynamicUint8List {
   /**
      * Append one unsigned byte to the list
      */
-  add(int val) {
+  void add(int val) {
     if (_offset >= _buf.length) {
       _resize();
     }
@@ -35,7 +35,7 @@ class DynamicUint8List {
   /**
      * Append one unsigned short to the list
      */
-  addUnsignedShort(int val) {
+  void addUnsignedShort(int val) {
     if (_offset + 1 >= _buf.length) {
       _resize();
     }
@@ -46,7 +46,7 @@ class DynamicUint8List {
   /**
      * Append one 32 bit float to the list
      */
-  addFloat(double val) {
+  void addFloat(double val) {
     if (_offset + 3 >= _buf.length) {
       _resize();
     }
@@ -54,7 +54,7 @@ class DynamicUint8List {
     _offset += 4;
   }
 
-  _resize() {
+  void _resize() {
     var newList = Uint8ListPool.getList(_buf.length * 2);
     newList.setAll(0, _buf);
     Uint8ListPool.freeList(_buf);
@@ -65,7 +65,7 @@ class DynamicUint8List {
   /**
      * Release the internal buffer used by this list
      */
-  free() {
+  void free() {
     Uint8ListPool.freeList(_buf);
     _buf = null;
     _data = null;
@@ -107,7 +107,7 @@ class Uint8ListPool {
   /**
      * Returns the [list] too the pool
      */
-  static freeList(Uint8List list) {
+  static void freeList(Uint8List list) {
     _freeLists.add(list);
   }
 }

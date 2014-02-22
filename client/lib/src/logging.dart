@@ -9,23 +9,23 @@ class Logger {
 
   Logger(this.name);
 
-  info(String txt) {
+  void info(String txt) {
     if (DEBUG_MODE) {
       jsConsole.callMethod("log", ["%c[$name]: $txt", "color:#00FFFF; background: black;"]);
     }
   }
 
-  debug(String txt) {
+  void debug(String txt) {
     if (DEBUG_MODE) {
       jsConsole.callMethod("log", ["%c[$name]: $txt", "color:yellow; background: black;"]);
     }
   }
 
-  warn(String txt) {
+  void warn(String txt) {
     jsConsole.callMethod("log", ["%c[$name]: $txt", "color:#F27900; background: black; font-weight: bold;"]);
   }
 
-  error(String txt) {
+  void error(String txt) {
     jsConsole.callMethod("log", ["%c[$name]: $txt", "color:black; background: red; font-weight: bold;"]);
   }
 }
