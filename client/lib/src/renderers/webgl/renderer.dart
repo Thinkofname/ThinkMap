@@ -396,18 +396,3 @@ class Camera {
   double rotX = 0.0;
   double rotY = 0.0;
 }
-
-class WebGLSnapshot {
-  BlockBuilder builder;
-  BlockBuilder builderTrans;
-  FloatBlockBuilder builderFloat;
-  int x = 0;
-  int y = 0;
-  int z = 0;
-
-  WebGLSnapshot() {
-    builder = new BlockBuilder();
-    builderTrans = new BlockBuilder();
-    builderFloat = new FloatBlockBuilder();
-  }
-}

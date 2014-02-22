@@ -46,14 +46,6 @@ class Block {
       this);
 
   /**
-   * render for blocks that need floating point precision
-   */
-  void renderFloat(BlockBuilder builder, FloatBlockBuilder fBulider, int x, int
-      y, int z, Chunk chunk) {
-    render(builder, x, y, z, chunk);
-  }
-
-  /**
    * Renders the block at the coordinates [x], [y] and [z] relative to the
    * [chunk]
    */

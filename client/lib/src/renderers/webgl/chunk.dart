@@ -10,10 +10,6 @@ class WebGLChunk extends Chunk {
   List<Buffer> transBuffers = new List(16);
   List<int> transTriangleCount = new List(16);
 
-  List<Uint8List> builtSectionsFloat = new List(16);
-  List<Buffer> floatBuffers = new List(16);
-  List<int> floatTriangleCount = new List(16);
-
   List<Aabb3> sectionAABBs;
 
   WebGLChunk();
@@ -47,67 +43,30 @@ class WebGLChunk extends Chunk {
       _updateChunkBuffers(gl);
     }
 
-    // TODO: Simplify (#23)
-    if (pass == 0) {
-      for (int i = 0; i < 16; i++) {
-        var section = sections[i];
-        if (section == null) continue;
+    for (int i = 0; i < 16; i++) {
+      var section = sections[i];
+      if (section == null) continue;
 
-        if (!renderer.viewFrustum.intersectsWithAabb3(sectionAABBs[i])) continue;
+      if (!renderer.viewFrustum.intersectsWithAabb3(sectionAABBs[i])) continue;
 
-        if (normalBuffers[i] != null && normalTriangleCount[i] != 0) {
-          gl.uniform2f(renderer.offsetLocation, x, z);
-          gl.bindBuffer(ARRAY_BUFFER, normalBuffers[i]);
-          gl.vertexAttribPointer(renderer.positionLocation, 3, UNSIGNED_BYTE,
-          false, 14, 0);
-          gl.vertexAttribPointer(renderer.colourLocation, 3, UNSIGNED_BYTE, true,
-          14, 3);
-          gl.vertexAttribPointer(renderer.texturePosLocation, 2, UNSIGNED_BYTE,
-          false, 14, 6);
-          gl.vertexAttribPointer(renderer.textureIdLocation, 2, UNSIGNED_SHORT,
-          false, 14, 8);
-          gl.vertexAttribPointer(renderer.lightingLocation, 2, BYTE, false, 14, 12
-          );
-          gl.drawArrays(TRIANGLES, 0, normalTriangleCount[i]);
-        }
-        if (floatBuffers[i] != null && floatTriangleCount[i] != 0) {
-          gl.uniform2f(renderer.offsetLocation, x, z);
-          gl.bindBuffer(ARRAY_BUFFER, floatBuffers[i]);
-          gl.vertexAttribPointer(renderer.positionLocation, 3, FLOAT, false, 32, 0
-          );
-          gl.vertexAttribPointer(renderer.colourLocation, 3, UNSIGNED_BYTE, true,
-          32, 12);
-          gl.vertexAttribPointer(renderer.texturePosLocation, 2, FLOAT, false, 32,
-          16);
-          gl.vertexAttribPointer(renderer.textureIdLocation, 2, UNSIGNED_SHORT,
-          false, 32, 24);
-          gl.vertexAttribPointer(renderer.lightingLocation, 2, BYTE, false, 32, 28
-          );
-          gl.drawArrays(TRIANGLES, 0, floatTriangleCount[i]);
-        }
+      if (pass == 0) {
+        _render(renderer, gl, normalBuffers[i], normalTriangleCount[i]);
+      } else {
+        _render(renderer, gl, transBuffers[i], transTriangleCount[i]);
       }
-    } else if (pass == 1) {
-      for (int i = 0; i < 16; i++) {
-        var section = sections[i];
-        if (section == null) continue;
+    }
+  }
 
-        if (!renderer.viewFrustum.intersectsWithAabb3(sectionAABBs[i])) continue;
-
-        if (transBuffers[i] != null && transTriangleCount[i] != 0) {
-          gl.uniform2f(renderer.offsetLocation, x, z);
-          gl.bindBuffer(ARRAY_BUFFER, transBuffers[i]);
-          gl.vertexAttribPointer(renderer.positionLocation, 3, UNSIGNED_BYTE, false,
-          14, 0);
-          gl.vertexAttribPointer(renderer.colourLocation, 3, UNSIGNED_BYTE, true,
-          14, 3);
-          gl.vertexAttribPointer(renderer.texturePosLocation, 2, UNSIGNED_BYTE,
-          false, 14, 6);
-          gl.vertexAttribPointer(renderer.textureIdLocation, 2, UNSIGNED_SHORT,
-          false, 14, 8);
-          gl.vertexAttribPointer(renderer.lightingLocation, 2, BYTE, false, 14, 12);
-          gl.drawArrays(TRIANGLES, 0, transTriangleCount[i]);
-        }
-      }
+  void _render(WebGLRenderer renderer, RenderingContext gl, Buffer buffer, int triangleCount) {
+    if (buffer != null && triangleCount != 0) {
+      gl.uniform2f(renderer.offsetLocation, x, z);
+      gl.bindBuffer(ARRAY_BUFFER, buffer);
+      gl.vertexAttribPointer(renderer.positionLocation, 3, UNSIGNED_SHORT, false, 20, 0);
+      gl.vertexAttribPointer(renderer.colourLocation, 3, UNSIGNED_BYTE, true, 20, 6);
+      gl.vertexAttribPointer(renderer.texturePosLocation, 2, UNSIGNED_SHORT, false, 20, 10);
+      gl.vertexAttribPointer(renderer.textureIdLocation, 2, UNSIGNED_SHORT, false, 20, 14);
+      gl.vertexAttribPointer(renderer.lightingLocation, 2, BYTE, false, 20, 18);
+      gl.drawArrays(TRIANGLES, 0, triangleCount);
     }
   }
 
@@ -130,15 +89,8 @@ class WebGLChunk extends Chunk {
         gl.bindBuffer(ARRAY_BUFFER, transBuffers[i]);
         gl.bufferData(ARRAY_BUFFER, builtSectionsTrans[i], STATIC_DRAW);
 
-        if (floatBuffers[i] == null) {
-          floatBuffers[i] = gl.createBuffer();
-        }
-        gl.bindBuffer(ARRAY_BUFFER, floatBuffers[i]);
-        gl.bufferData(ARRAY_BUFFER, builtSectionsFloat[i], STATIC_DRAW);
-
-        normalTriangleCount[i] = builtSections[i].length ~/ 14;
-        transTriangleCount[i] = builtSectionsTrans[i].length ~/ 14;
-        floatTriangleCount[i] = builtSectionsFloat[i].length ~/ 32;
+        normalTriangleCount[i] = builtSections[i].length ~/ 20;
+        transTriangleCount[i] = builtSectionsTrans[i].length ~/ 20;
       }
     }
   }
@@ -158,8 +110,7 @@ class WebGLChunk extends Chunk {
           snapshot.y = 0;
           Block block = getBlock(x, (i << 4) + y, z);
           if (block.renderable) {
-            block.renderFloat(block.transparent ? builderTrans : builder,
-            snapshot.builderFloat, x, (i << 4) + y, z, this);
+            block.render(block.transparent ? builderTrans : builder, x, (i << 4) + y, z, this);
           }
           if (stopwatch.elapsedMicroseconds >= World.BUILD_LIMIT_MS) {
             snapshot.x = x;
@@ -177,7 +128,6 @@ class WebGLChunk extends Chunk {
     // Store
     builtSections[i] = builder.toTypedList();
     builtSectionsTrans[i] = builderTrans.toTypedList();
-    builtSectionsFloat[i] = snapshot.builderFloat.toTypedList();
 
     sections[i].needsUpdate = true;
     needsUpdate = true;
@@ -193,8 +143,18 @@ class WebGLChunk extends Chunk {
     for (Buffer buffer in transBuffers) {
       gl.deleteBuffer(buffer);
     }
-    for (Buffer buffer in floatBuffers) {
-      gl.deleteBuffer(buffer);
-    }
+  }
+}
+
+class WebGLSnapshot {
+  BlockBuilder builder;
+  BlockBuilder builderTrans;
+  int x = 0;
+  int y = 0;
+  int z = 0;
+
+  WebGLSnapshot() {
+    builder = new BlockBuilder();
+    builderTrans = new BlockBuilder();
   }
 }
