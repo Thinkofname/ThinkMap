@@ -22,6 +22,9 @@ abstract class Chunk {
   };
   int _nextId = 1;
 
+  // Called once the basic chunk information is loaded
+  void init();
+
   /**
    * Sets the [block] at the location given by the [x],
    * [y] and [z] coordinates relative to the chunk.
@@ -218,6 +221,7 @@ class ChunkSection {
 
   int count = 0;
   bool needsBuild = false;
+  bool needsUpdate = false;
 }
 
 class _LoadJob implements _BuildJob {

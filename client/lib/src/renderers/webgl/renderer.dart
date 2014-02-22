@@ -177,7 +177,7 @@ class WebGLRenderer extends Renderer {
   final Frustum viewFrustum = new Frustum();
 
   @override
-  draw() {
+  void draw() {
     frameTimer.stop();
     double delta = min(frameTimer.elapsedMicroseconds / (1000000.0 / 60.0), 2.0);
     frameTimer.reset();
@@ -275,7 +275,7 @@ class WebGLRenderer extends Renderer {
   }
 
   @override
-  resize(int width, int height) {
+  void resize(int width, int height) {
     pMatrix = makePerspectiveMatrix(radians(80.0), canvas.width / canvas.height,
         0.1, 500);
     pMatrix.copyIntoArray(pMatrixList);
@@ -290,7 +290,7 @@ class WebGLRenderer extends Renderer {
     }
   }
 
-  checkCollision(double lx, double ly, double lz) {
+  void checkCollision(double lx, double ly, double lz) {
     Box box = new Box(lx, ly - 1.6, lz, 0.5, 1.75, 0.5);
 
     int cx = box.x.toInt();
@@ -380,271 +380,10 @@ class WebGLRenderer extends Renderer {
   }
 
   @override
-  moveTo(int x, int y, int z) {
+  void moveTo(int x, int y, int z) {
     camera.x = x.toDouble();
     camera.y = y.toDouble() + 75;
     camera.z = z.toDouble();
-  }
-}
-
-class WebGLWorld extends World {
-
-  WebGLWorld(): super();
-
-  Stopwatch renderTimer = new Stopwatch();
-
-  render(WebGLRenderer renderer) {
-    renderTimer.reset();
-    renderTimer.start();
-
-    renderer.gl.uniform1i(renderer.disAlphaLocation, 1);
-    chunks.forEach((k, v) {
-      v.render(renderer, 0);
-    });
-    renderer.gl.enable(BLEND);
-    renderer.gl.uniform1i(renderer.disAlphaLocation, 0);
-    chunks.forEach((k, v) {
-      v.render(renderer, 1);
-    });
-    renderer.gl.disable(BLEND);
-
-    renderTimer.stop();
-
-    World.BUILD_LIMIT_MS = 13000 - renderTimer.elapsedMicroseconds;
-    if (World.BUILD_LIMIT_MS < 5000) {
-      World.BUILD_LIMIT_MS = 5000;
-    }
-    World.LOAD_LIMIT_MS = World.BUILD_LIMIT_MS - 3000;
-
-    renderTimer.reset();
-    renderTimer.start();
-    tickBuildQueue(renderTimer);
-    renderTimer.stop();
-  }
-
-  @override
-  Chunk newChunk() {
-    return new WebGLChunk();
-  }
-
-  @override
-  int _queueCompare(_BuildJob a, _BuildJob b) {
-    Camera camera = (renderer as WebGLRenderer).camera;
-    Frustum frustum = (renderer as WebGLRenderer).viewFrustum;
-    if (!(a is _LoadJob) && !(b is _LoadJob)) {
-      bool aIn = frustum.intersectsWithAabb3((a.chunk as WebGLChunk).sectionAABBs[a.i]);
-      bool bIn = frustum.intersectsWithAabb3((b.chunk as WebGLChunk).sectionAABBs[b.i]);
-      if (aIn && !bIn) return 1;
-      if (bIn && !aIn) return -1;
-    }
-    num adx = (a.chunk.x * 16) + 8 - camera.x;
-    num ady = (a.i * 16) + 8 - camera.y;
-    num adz = (a.chunk.z * 16) + 8 - camera.z;
-    num distA = adx * adx + ady * ady + adz * adz;
-    num bdx = (b.chunk.x * 16) + 8 - camera.x;
-    num bdy = (b.i * 16) + 8 - camera.y;
-    num bdz = (b.chunk.z * 16) + 8 - camera.z;
-    num distB = bdx * bdx + bdy * bdy + bdz * bdz;
-    return (distB - distA).toInt();
-  }
-}
-
-class WebGLChunk extends Chunk {
-
-  List<Uint8List> builtSections = new List(16);
-  List<Buffer> normalBuffers = new List(16);
-  List<int> normalTriangleCount = new List(16);
-
-  List<Uint8List> builtSectionsTrans = new List(16);
-  List<Buffer> transBuffers = new List(16);
-  List<int> transTriangleCount = new List(16);
-
-  List<Uint8List> builtSectionsFloat = new List(16);
-  List<Buffer> floatBuffers = new List(16);
-  List<int> floatTriangleCount = new List(16);
-
-  List<Aabb3> sectionAABBs;
-
-  render(WebGLRenderer renderer, int pass) {
-    RenderingContext gl = renderer.gl;
-
-    if (sectionAABBs == null) {
-      sectionAABBs = new List(16);
-      for (int i = 0; i < 16; i++) {
-        var aabb = new Aabb3();
-        aabb.min.setValues(x * 16.0, i * 16.0, z * 16.0);
-        aabb.max.setValues(x * 16.0 + 16.0, i * 16.0 + 16.0, z * 16.0 + 16.0);
-        sectionAABBs[i] = aabb;
-      }
-    }
-
-    if (needsBuild) {
-      needsBuild = false;
-      for (int i = 0; i < 16; i++) {
-        var section = sections[i];
-        if (section != null && section.needsBuild) {
-          section.needsBuild = false;
-          (world as WebGLWorld).requestBuild(this, i);
-        }
-      }
-    }
-    if (needsUpdate) {
-      needsUpdate = false;
-      for (int i = 0; i < 16; i++) {
-        var section = sections[i];
-        if (section != null) {
-          if (builtSections[i] == null) continue; // Not built yet
-
-          if (normalBuffers[i] == null) {
-            normalBuffers[i] = gl.createBuffer();
-          }
-          gl.bindBuffer(ARRAY_BUFFER, normalBuffers[i]);
-          gl.bufferData(ARRAY_BUFFER, builtSections[i], STATIC_DRAW);
-
-          if (transBuffers[i] == null) {
-            transBuffers[i] = gl.createBuffer();
-          }
-          gl.bindBuffer(ARRAY_BUFFER, transBuffers[i]);
-          gl.bufferData(ARRAY_BUFFER, builtSectionsTrans[i], STATIC_DRAW);
-
-          if (floatBuffers[i] == null) {
-            floatBuffers[i] = gl.createBuffer();
-          }
-          gl.bindBuffer(ARRAY_BUFFER, floatBuffers[i]);
-          gl.bufferData(ARRAY_BUFFER, builtSectionsFloat[i], STATIC_DRAW);
-
-          normalTriangleCount[i] = builtSections[i].length ~/ 14;
-          transTriangleCount[i] = builtSectionsTrans[i].length ~/ 14;
-          floatTriangleCount[i] = builtSectionsFloat[i].length ~/ 32;
-        }
-      }
-    }
-    if (pass == 0) {
-      for (int i = 0; i < 16; i++) {
-        var section = sections[i];
-        if (section == null) continue;
-
-        if (!renderer.viewFrustum.intersectsWithAabb3(sectionAABBs[i])) continue;
-
-        if (normalBuffers[i] != null && normalTriangleCount[i] != 0) {
-          gl.uniform2f(renderer.offsetLocation, x, z);
-          gl.bindBuffer(ARRAY_BUFFER, normalBuffers[i]);
-          gl.vertexAttribPointer(renderer.positionLocation, 3, UNSIGNED_BYTE,
-              false, 14, 0);
-          gl.vertexAttribPointer(renderer.colourLocation, 3, UNSIGNED_BYTE, true,
-              14, 3);
-          gl.vertexAttribPointer(renderer.texturePosLocation, 2, UNSIGNED_BYTE,
-              false, 14, 6);
-          gl.vertexAttribPointer(renderer.textureIdLocation, 2, UNSIGNED_SHORT,
-              false, 14, 8);
-          gl.vertexAttribPointer(renderer.lightingLocation, 2, BYTE, false, 14, 12
-              );
-          gl.drawArrays(TRIANGLES, 0, normalTriangleCount[i]);
-        }
-        if (floatBuffers[i] != null && floatTriangleCount[i] != 0) {
-          gl.uniform2f(renderer.offsetLocation, x, z);
-          gl.bindBuffer(ARRAY_BUFFER, floatBuffers[i]);
-          gl.vertexAttribPointer(renderer.positionLocation, 3, FLOAT, false, 32, 0
-              );
-          gl.vertexAttribPointer(renderer.colourLocation, 3, UNSIGNED_BYTE, true,
-              32, 12);
-          gl.vertexAttribPointer(renderer.texturePosLocation, 2, FLOAT, false, 32,
-              16);
-          gl.vertexAttribPointer(renderer.textureIdLocation, 2, UNSIGNED_SHORT,
-              false, 32, 24);
-          gl.vertexAttribPointer(renderer.lightingLocation, 2, BYTE, false, 32, 28
-              );
-          gl.drawArrays(TRIANGLES, 0, floatTriangleCount[i]);
-        }
-      }
-    } else if (pass == 1) {
-        for (int i = 0; i < 16; i++) {
-          var section = sections[i];
-          if (section == null) continue;
-
-          if (!renderer.viewFrustum.intersectsWithAabb3(sectionAABBs[i])) continue;
-
-          if (transBuffers[i] != null && transTriangleCount[i] != 0) {
-            gl.uniform2f(renderer.offsetLocation, x, z);
-            gl.bindBuffer(ARRAY_BUFFER, transBuffers[i]);
-            gl.vertexAttribPointer(renderer.positionLocation, 3, UNSIGNED_BYTE, false,
-                14, 0);
-            gl.vertexAttribPointer(renderer.colourLocation, 3, UNSIGNED_BYTE, true,
-                14, 3);
-            gl.vertexAttribPointer(renderer.texturePosLocation, 2, UNSIGNED_BYTE,
-                false, 14, 6);
-            gl.vertexAttribPointer(renderer.textureIdLocation, 2, UNSIGNED_SHORT,
-                false, 14, 8);
-            gl.vertexAttribPointer(renderer.lightingLocation, 2, BYTE, false, 14, 12);
-            gl.drawArrays(TRIANGLES, 0, transTriangleCount[i]);
-          }
-      }
-    }
-  }
-
-  @override
-  WebGLSnapshot buildSection(int i, WebGLSnapshot snapshot, Stopwatch stopwatch)
-      {
-    if (snapshot == null) {
-      snapshot = new WebGLSnapshot();
-    }
-    BlockBuilder builder = snapshot.builder;
-    BlockBuilder builderTrans = snapshot.builderTrans;
-    for (int x = snapshot.x; x < 16; x++) {
-      snapshot.x = 0;
-      for (int z = snapshot.z; z < 16; z++) {
-        snapshot.z = 0;
-        for (int y = snapshot.y; y < 16; y++) {
-          snapshot.y = 0;
-          Block block = getBlock(x, (i << 4) + y, z);
-          if (block.renderable) {
-            block.renderFloat(block.transparent ? builderTrans : builder,
-                snapshot.builderFloat, x, (i << 4) + y, z, this);
-          }
-          if (stopwatch.elapsedMicroseconds >= World.BUILD_LIMIT_MS) {
-            snapshot.x = x;
-            snapshot.y = y + 1;
-            snapshot.z = z;
-            snapshot.builder = builder;
-            snapshot.builderTrans = builderTrans;
-            return snapshot;
-          }
-        }
-        snapshot.x = snapshot.y = snapshot.z = 0;
-      }
-      snapshot.x = snapshot.y = snapshot.z = 0;
-    }
-    // Resize
-//    bufferSize -= builtSections[i] != null ? builtSections[i].length : 0;
-//    bufferSizeTrans -= builtSectionsTrans[i] != null ?
-//        builtSectionsTrans[i].length : 0;
-//    bufferSizeFloat -= builtSectionsFloat[i] != null ?
-//        builtSectionsFloat[i].length : 0;
-    // Store
-    builtSections[i] = builder.toTypedList();
-    builtSectionsTrans[i] = builderTrans.toTypedList();
-    builtSectionsFloat[i] = snapshot.builderFloat.toTypedList();
-    // Resize
-//    bufferSize += builtSections[i].length;
-//    bufferSizeTrans += builtSectionsTrans[i].length;
-//    bufferSizeFloat += builtSectionsFloat[i].length;
-
-    needsUpdate = true;
-    return null;
-  }
-
-  @override
-  unload(Renderer renderer) {
-    RenderingContext gl = (renderer as WebGLRenderer).gl;
-//    if (renderBuffer != null) {
-//      gl.deleteBuffer(renderBuffer);
-//    }
-//    if (renderBufferTrans != null) {
-//      gl.deleteBuffer(renderBufferTrans);
-//    }
-//    if (renderBufferFloat != null) {
-//      gl.deleteBuffer(renderBufferFloat);
-//    }
   }
 }
 

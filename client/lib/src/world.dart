@@ -25,6 +25,7 @@ abstract class World {
     if (!chunksLoading.containsKey(key) && !chunks.containsKey(key)) {
       chunksLoading[key] = true;
       _buildQueueLow.add(job);
+      job.chunk.init();
     }
   }
 
