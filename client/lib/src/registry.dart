@@ -102,7 +102,6 @@ class BlockRegistry {
     return reg;
   }
 
-  //TODO: Tidy up
   /**
      * Register all blocks
      */
