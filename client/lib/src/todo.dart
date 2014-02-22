@@ -7,9 +7,9 @@ part of map_viewer;
   (#1)  TODO: Refactor WebGL renderer into multiple files
   (#2)  TODO: Fix the whole world being backward and just being flipped back with shaders/CW cullface
   (#3)  TODO: Model format for special blocks (Blocked on #2)
-  (#4)  -THINK: Load separately or merge at compile time
+  (#4)   -THINK: Load separately or merge at compile time
   (#5)  TODO: Clean up block registry
-  (#6)  -THINK: Maybe load from a json file and have an editor for it
+  (#6)   -THINK: Maybe load from a json file and have an editor for it
   (#7)  TODO: Finish implementing all blocks
   (#8)  THINK: Maybe use the unlimited blocks that the registry provides to work out block shape at placement time
   (#9)   -THINK: May have too big of a performance on chunk load plus the hit from updating surrounding chunks
@@ -28,4 +28,5 @@ part of map_viewer;
   (#22) TODO_LOW: Tidy up browser prefixing
   (#23) TODO_LOW: Re-add canvas isometric renderer
   (#24)  -THINK: May not be worth it if WebGL support is good enough
+  (#25) THINK: Move chunk conversion to server side to ease load on the client (Might not be worth the server perf hit)
 */
