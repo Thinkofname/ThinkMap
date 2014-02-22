@@ -24,14 +24,14 @@ void main(void) {
     vTextureId = textureId;
     vTexturePos = texturePos;
     if (vTexturePos.x == 0.0) {
-        vTexturePos.x = 0.01;
+        vTexturePos.x = 0.0001;
     } else if (vTexturePos.x == 1.0) {
-        vTexturePos.x = 0.99;
+        vTexturePos.x = 0.9999;
     }
     if (vTexturePos.y == 0.0) {
-        vTexturePos.y = 0.01;
+        vTexturePos.y = 0.0001;
     } else if (vTexturePos.y == 1.0) {
-        vTexturePos.y = 0.99;
+        vTexturePos.y = 0.9999;
     }
     vLighting = lighting;
 }
