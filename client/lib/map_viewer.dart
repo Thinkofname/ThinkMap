@@ -31,7 +31,7 @@ part "src/blocks/otherblocks.dart";
 part "src/blocks/grass.dart";
 part "src/blocks/cross.dart";
 part "src/blocks/vines.dart";
-//part "src/blocks/sign.dart";
+part "src/blocks/sign.dart";
 // Network
 part "src/network.dart";
 // Other

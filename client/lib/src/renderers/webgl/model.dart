@@ -65,11 +65,10 @@ class Model {
   ];
 
   Model rotate(int deg) {
-    if (deg ~/ 90 != deg / 90) throw "Can only rotate by 90 degrees increments";
     Model out = new Model();
     Quaternion quat = new Quaternion.axisAngle(new Vector3(0.0, 1.0, 0.0), radians(deg));
     for (ModelFace face in faces) {
-      ModelFace newFace = new ModelFace.zero(_rotateFaces[(_rotateFaces.indexOf(face.face) + 1) % 4]);
+      ModelFace newFace = new ModelFace.zero(_rotateFaces[(_rotateFaces.indexOf(face.face) + deg~/90) % 4]);
       newFace.texture = face.texture;
       newFace.r = face.r;
       newFace.g = face.g;
@@ -77,7 +76,7 @@ class Model {
       out.faces.add(newFace);
       for (ModelVertex vert in face.vertices) {
         ModelVertex newVert = vert.clone();
-        Vector3 vec = new Vector3(newVert.x.toDouble() - 0.5, newVert.y - 0.5, newVert.z - 0.5);
+        Vector3 vec = new Vector3(newVert.x - 0.5, newVert.y - 0.5, newVert.z - 0.5);
         quat.rotate(vec);
         newVert
           ..x = vec.x + 0.5

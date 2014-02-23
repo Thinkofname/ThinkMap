@@ -167,6 +167,13 @@ class BlockRegistry {
           ..legacyId(6)
           ..dataValue(v)
           ..build();
+      registerBlock("sapling_${k}_ticked", new BlockCross()
+        ..texture = "sapling_$k"
+        ..collidable = false
+        ..solid = false)
+        ..legacyId(6)
+        ..dataValue(v | 8)
+        ..build();
       registerBlock("leaves_$k", new Block()
           ..texture = "leaves_$k"
           ..solid = false
@@ -188,6 +195,13 @@ class BlockRegistry {
         ..legacyId(6)
         ..dataValue(5)
         ..build();
+    registerBlock("sapling_roofed_oak_ticked", new BlockCross()
+      ..texture = "sapling_roofed_oak"
+      ..collidable = false
+      ..solid = false)
+      ..legacyId(6)
+      ..dataValue(5 | 8)
+      ..build();
     registerBlock("leaves_big_oak", new Block()
         ..texture = "leaves_big_oak"
         ..solid = false
@@ -310,7 +324,7 @@ class BlockRegistry {
       }
     }
 
-//    BlockWallSign.register();
+    BlockWallSign.register();
     BlockVines.register();
 
     // Custom Blocks
@@ -319,11 +333,6 @@ class BlockRegistry {
     registerBlock("null", new Block()
         ..renderable = false
         ..shade = false, plugin: "webglmap")..build();
-
-    registerBlock("model_tester", new Block()..model = testModel
-      ..solid = false,
-      plugin: "webglmap")
-      ..legacyId(57)..build();
 
     initTimer.stop();
     logger.info("Registered blocks in ${initTimer.elapsedMilliseconds}ms");
