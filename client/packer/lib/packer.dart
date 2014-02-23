@@ -1,4 +1,4 @@
-library map_viewer.image_pack;
+library packer;
 
 import "dart:io";
 import "dart:convert";
@@ -106,6 +106,49 @@ class ImagePacker extends Transformer {
       transform.addOutput(new Asset.fromBytes(outputId, writePng(current)));
       transform.addOutput(new Asset.fromString(outputJson, new JsonEncoder(null
           ).convert(info)));
+      hasRun = false;
+    });
+  }
+}
+
+class ModelPacker extends Transformer {
+  BarbackSettings settings;
+
+  String host;
+
+  ModelPacker(): settings = null;
+
+  ModelPacker.asPlugin(this.settings) {
+
+  }
+
+  @override
+  Future<bool> isPrimary(Asset input) {
+    return new Future.value(input.id.path.contains("block_models") &&
+      input.id.path.endsWith(".json"));
+  }
+
+  bool hasRun = false;
+
+  @override
+  Future apply(Transform transform) {
+    if (hasRun) return new Future.value(false);
+    hasRun = true;
+
+    String path = transform.primaryInput.id.path;
+    path = path.substring(0, path.lastIndexOf("/"));
+    var outputJson = new AssetId(transform.primaryInput.id.package, path +
+      "/models.json");
+    Map info = new Map();
+
+    var inDir = new Directory(path);
+
+    return inDir.list().where((e) => e.path.endsWith(".json")).listen((e) {
+      var name = e.path.substring(e.path.lastIndexOf("\\") + 1).replaceAll(".json", "");
+      info[name] = JSON.decode(new File(e.path).readAsStringSync());
+    }).asFuture().then((v) {
+      transform.addOutput(new Asset.fromString(outputJson, JSON.encode(info)));
+      hasRun = false;
     });
   }
 }

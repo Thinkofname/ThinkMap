@@ -6,7 +6,7 @@ dependencies:
   archive: 1.0.9
   image: any
   barback: any
-  image_pack:
-    path: image_pack/
+  packer:
+    path: packer/
 transformers:
-- image_pack
+- packer

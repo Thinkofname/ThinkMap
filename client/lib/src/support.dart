@@ -85,8 +85,6 @@ String _setFullscreenPrefix(String prop) {
 
 @Deprecated("Remove once this is fixed in dart")
 void requestFullScreen(Element target) {
-  print("Requesting fullscreen");
   var js = new JsObject.fromBrowserObject(target);
-  print("for $js");
   js.callMethod(_setFullscreenPrefix("requestFullscreen"));
 }

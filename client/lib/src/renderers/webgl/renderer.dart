@@ -91,6 +91,82 @@ class WebGLRenderer extends Renderer {
 
     gl.blendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
 
+    // Model Editor TODO: Remove
+    document.body.onKeyDown.listen((e) {
+      switch(e.keyCode) {
+        // Move
+        case KeyCode.P: // Up (+Y)
+          testModel.faces.last.moveY(1/16, e.shiftKey);
+          break;
+        case KeyCode.O: // Down (-Y)
+          testModel.faces.last.moveY(-1/16, e.shiftKey);
+          break;
+        case KeyCode.OPEN_SQUARE_BRACKET: // Left (+x)
+          testModel.faces.last.moveX(1/16, e.shiftKey);
+          break;
+        case KeyCode.CLOSE_SQUARE_BRACKET: // Right (-x)
+          testModel.faces.last.moveX(-1/16, e.shiftKey);
+          break;
+        case KeyCode.APOSTROPHE: // Front (+z)
+          testModel.faces.last.moveZ(1/16, e.shiftKey);
+          break;
+        case KeyCode.SINGLE_QUOTE: // Back (-z)
+          testModel.faces.last.moveZ(-1/16, e.shiftKey);
+          break;
+        // Size
+        case KeyCode.U:
+          testModel.faces.last.sizeY(1/16, e.shiftKey);
+          break;
+        case KeyCode.I:
+          testModel.faces.last.sizeY(-1/16, e.shiftKey);
+          break;
+        case KeyCode.J:
+          testModel.faces.last.sizeX(1/16, e.shiftKey);
+          break;
+        case KeyCode.K:
+          testModel.faces.last.sizeX(-1/16, e.shiftKey);
+          break;
+        case KeyCode.L:
+          testModel.faces.last.sizeZ(1/16, e.shiftKey);
+          break;
+        case KeyCode.SEMICOLON:
+          testModel.faces.last.sizeZ(-1/16, e.shiftKey);
+          break;
+        // Adding
+        case KeyCode.ONE:
+          testModel.faces.add(new ModelFace(BlockFace.TOP)
+            ..texture=new JsObject.fromBrowserObject(window).callMethod("prompt"));
+          break;
+        case KeyCode.TWO:
+          testModel.faces.add(new ModelFace(BlockFace.BOTTOM)
+            ..texture=new JsObject.fromBrowserObject(window).callMethod("prompt"));
+          break;
+        case KeyCode.THREE:
+          testModel.faces.add(new ModelFace(BlockFace.LEFT)
+            ..texture=new JsObject.fromBrowserObject(window).callMethod("prompt"));
+          break;
+        case KeyCode.FOUR:
+          testModel.faces.add(new ModelFace(BlockFace.RIGHT)
+            ..texture=new JsObject.fromBrowserObject(window).callMethod("prompt"));
+          break;
+        case KeyCode.FIVE:
+          testModel.faces.add(new ModelFace(BlockFace.FRONT)
+            ..texture=new JsObject.fromBrowserObject(window).callMethod("prompt"));
+          break;
+        case KeyCode.SIX:
+          testModel.faces.add(new ModelFace(BlockFace.BACK)
+            ..texture=new JsObject.fromBrowserObject(window).callMethod("prompt"));
+          break;
+        case KeyCode.Z:
+          print(JSON.encode(testModel));
+          return;
+        default:
+          return;
+      }
+      print("Rebuild");
+      world.getChunk(cx, cz).rebuild();
+    });
+
     // 3D Controls
     document.body.onMouseDown.listen((e) {
       if (document.pointerLockElement != document.body && firstPerson)
@@ -165,7 +241,7 @@ class WebGLRenderer extends Renderer {
             ..rotY = PI / 4;
       }
     });
-    document.body.onKeyDown.where((e) => e.keyCode == KeyCode.K).listen((e) {
+    document.body.onKeyDown.where((e) => e.keyCode == KeyCode.Q).listen((e) {
       world.chunks.forEach((k, v) {
         v.rebuild();
       });

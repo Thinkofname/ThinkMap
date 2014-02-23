@@ -19,6 +19,7 @@ part "src/renderers/webgl/block_builders.dart";
 part "src/renderers/webgl/utils.dart";
 part "src/renderers/webgl/chunk.dart";
 part "src/renderers/webgl/world.dart";
+part "src/renderers/webgl/model.dart";
 // World
 part "src/world.dart";
 part "src/chunk.dart";

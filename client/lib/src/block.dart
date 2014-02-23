@@ -28,6 +28,8 @@ class Block {
   String texture;
   /// Whether the block can render against itself
   bool allowSelf = false;
+  /// The model the block should use if any
+  Model model;
 
   /**
    * Returns whether the block at the coordinates [x], [y] and [z]
@@ -50,6 +52,10 @@ class Block {
    * [chunk]
    */
   void render(BlockBuilder builder, int x, int y, int z, Chunk chunk) {
+    if (model != null) {
+      model.render(builder, x, y, z, chunk);
+      return;
+    }
     int r = 255;
     int g = 255;
     int b = 255;
@@ -221,16 +227,29 @@ class LightInfo {
  * A enum of block faces
  */
 class BlockFace {
-  static const TOP = const BlockFace(0);
-  static const BOTTOM = const BlockFace(1);
-  static const RIGHT = const BlockFace(2);
-  static const LEFT = const BlockFace(3);
-  static const BACK = const BlockFace(4);
-  static const FRONT = const BlockFace(5);
+  static const TOP = const BlockFace(0, 'top');
+  static const BOTTOM = const BlockFace(1, 'bottom');
+  static const RIGHT = const BlockFace(2, 'right');
+  static const LEFT = const BlockFace(3, 'left');
+  static const BACK = const BlockFace(4, 'back');
+  static const FRONT = const BlockFace(5, 'front');
 
   /// Integer version of the face
   final int id;
-  const BlockFace(this.id);
+  final String name;
+  static final Map<String, BlockFace> _nameMap = {
+    TOP.name: TOP,
+    BOTTOM.name: BOTTOM,
+    RIGHT.name: RIGHT,
+    LEFT.name: LEFT,
+    BACK.name: BACK,
+    FRONT.name: FRONT
+  };
+  const BlockFace(this.id, this.name);
+
+  factory BlockFace.fromName(String name) {
+    return _nameMap[name];
+  }
 }
 
 /**

@@ -14,18 +14,25 @@ void main() {
   var img = new ImageElement();
   blockTexturesRaw.add(img);
   HttpRequest req = new HttpRequest();
+  HttpRequest req2 = new HttpRequest();
 
-  Future.wait([req.onLoad.first, img.onLoad.first]).then((e) {
+  Future.wait([req.onLoad.first, img.onLoad.first, req2.onLoad.first]).then((e) {
     Map<String, Map<String, int>> js = new JsonDecoder(null).convert(
         req.responseText);
     js.forEach((k, v) {
       blockTextureInfo[k] = new TextureInfo(v["start"], v["end"]);
+    });
+    Map mJs = JSON.decode(req2.responseText);
+    mJs.forEach((k, v) {
+      models[k] = new Model.fromMap(v);
     });
     start();
   });
 
   req.open("GET", "block_images/blocks.json", async: true);
   req.send();
+  req2.open("GET", "block_models/models.json", async: true);
+  req2.send();
   img.src = "block_images/blocks_0.png";
 }
 
