@@ -235,6 +235,7 @@ class _LoadJob implements _BuildJob {
   int x = 0;
   int y = 0;
   int z = 0;
+  int idx = 0;
 
   _LoadJob(this.chunk, ByteBuffer buffer) {
     data = new ByteData.view(buffer);
@@ -248,52 +249,45 @@ class _LoadJob implements _BuildJob {
   Object exec(Object snapshot, Stopwatch stopwatch) {
     for ( ; i < 16; i++) {
       if (sMask & (1 << i) != 0) {
-        if (chunk.sections[i] == null) chunk.sections[i] = new ChunkSection();
         ChunkSection section = chunk.sections[i];
+        if (section == null) section = chunk.sections[i] = new ChunkSection();
         for (int oy = y; oy < 16; oy++) {
           y = 0;
           for (int oz = z; oz < 16; oz++) {
             z = 0;
-            for (int ox = x; ox < 16; ox++) {
-              x = 0;
-              int id = data.getUint16(offset, Endianness.BIG_ENDIAN);
-              offset += 2;
-              int dataVal = byteData[offset];
-              offset++;
-              int light = byteData[offset];
-              offset++;
-              int sky = byteData[offset];
-              offset++;
+            for (int ox = 0; ox < 16; ox++) {
+              int id = (byteData[offset]<<8) + byteData[offset + 1];
+              int dataVal = byteData[offset + 2];
+              int light = byteData[offset + 3];
+              int sky = byteData[offset + 4];
+              offset += 5;
               Block block = BlockRegistry.getByLegacy(id, dataVal);
-              if (!chunk._blockMap.containsKey(block)) {
+              int rid = chunk._blockMap[block];
+              if (rid == null) {
                 chunk._idMap[chunk._nextId] = block;
-                chunk._blockMap[block] = chunk._nextId;
+                rid = chunk._blockMap[block] = chunk._nextId;
                 chunk._nextId = (chunk._nextId + 1) & 0xFFFF;
               }
 
-              int idx = ox | (oz << 4) | (oy << 8);
-              section.blocks[idx] = chunk._blockMap[block];
+              section.blocks[idx] = rid;
               section.light[idx] = light;
               section.sky[idx] = sky;
+              idx++;
 
               if (block != Blocks.AIR) section.count++;
               if (light != 0) section.count++;
               if (sky != 15) section.count++;
-
-              if (stopwatch.elapsedMicroseconds >= World.LOAD_LIMIT_MS) {
-                x = ox + 1;
-                y = oy;
-                z = oz;
-                return this;
-              }
             }
-            x = y = z = 0;
+            if (stopwatch.elapsedMicroseconds >= World.LOAD_LIMIT_MS) {
+              y = oy;
+              z = oz + 1;
+              return this;
+            }
           }
-          x = y = z = 0;
+          z = 0;
         }
-        x = y = z = 0;
+        idx = y = 0;
       }
-      x = y = z = 0;
     }
     chunk.noUpdates = false;
     chunk.rebuild();

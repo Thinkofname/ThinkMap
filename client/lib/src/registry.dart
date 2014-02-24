@@ -310,6 +310,26 @@ class BlockRegistry {
           ..build();
     });
 
+    registerBlock("mossy_cobblestone", new Block()..texture = "cobblestone_mossy")
+      ..legacyId(48)..build();
+
+    registerBlock("stonebrick", new Block()..texture = "stonebrick")
+      ..legacyId(98)
+      ..dataValue(0)
+      ..build();
+    registerBlock("stonebrick_mossy", new Block()..texture = "stonebrick_mossy")
+      ..legacyId(98)
+      ..dataValue(1)
+      ..build();
+    registerBlock("stonebrick_cracked", new Block()..texture = "stonebrick_cracked")
+      ..legacyId(98)
+      ..dataValue(2)
+      ..build();
+    registerBlock("stonebrick_carved", new Block()..texture = "stonebrick_carved")
+      ..legacyId(98)
+      ..dataValue(3)
+      ..build();
+
     registerBlock("glowstone", new Block()..texture = "glowstone")
         ..legacyId(89)
         ..build();

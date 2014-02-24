@@ -66,7 +66,7 @@ class Model {
 
   Model rotate(int deg) {
     Model out = new Model();
-    Quaternion quat = new Quaternion.axisAngle(new Vector3(0.0, 1.0, 0.0), radians(deg));
+    Quaternion quat = new Quaternion.axisAngle(new Vector3(0.0, 1.0, 0.0), radians(deg.toDouble()));
     for (ModelFace face in faces) {
       ModelFace newFace = new ModelFace.zero(_rotateFaces[(_rotateFaces.indexOf(face.face) + deg~/90) % 4]);
       newFace.texture = face.texture;

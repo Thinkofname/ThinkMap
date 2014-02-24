@@ -92,6 +92,7 @@ class WebGLRenderer extends Renderer {
     gl.blendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
 
     // Model Editor TODO: Remove
+    /*
     document.body.onKeyDown.listen((e) {
       switch(e.keyCode) {
         // Move
@@ -166,6 +167,7 @@ class WebGLRenderer extends Renderer {
       print("Rebuild");
       world.getChunk(cx, cz).rebuild();
     });
+    */
 
     // 3D Controls
     document.body.onMouseDown.listen((e) {

@@ -78,10 +78,9 @@ abstract class World {
   static int BUILD_LIMIT_MS = 8000;
   // Lower time to allow for some rendering to occur
   static int LOAD_LIMIT_MS = 68000;
-  int lastSort = 0;
+  int lastSort = 60;
 
   void tickBuildQueue(Stopwatch stopwatch) {
-    lastSort--;
     if (currentBuild != null) {
       var job = currentBuild;
       Object snapshot = job.exec(currentSnapshot, stopwatch);
@@ -113,6 +112,7 @@ abstract class World {
       return;
     }
 
+    lastSort--;
     if ((_buildQueue.isNotEmpty || _buildQueueLow.isNotEmpty) && lastSort <= 0)
         {
       lastSort = 60;
