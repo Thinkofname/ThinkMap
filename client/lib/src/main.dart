@@ -10,7 +10,7 @@ List<ImageElement> blockTexturesRaw = new List();
 Map<String, TextureInfo> blockTextureInfo = new Map();
 
 /// Entry point
-void main() {
+void startMapViewer() {
   var img = new ImageElement();
   blockTexturesRaw.add(img);
   HttpRequest req = new HttpRequest();

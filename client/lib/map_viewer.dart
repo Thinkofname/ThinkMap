@@ -7,6 +7,7 @@ import "dart:typed_data";
 import "dart:math";
 import "dart:convert";
 import "dart:js";
+import "dart:isolate";
 import "package:vector_math/vector_math.dart";
 
 part "src/main.dart";

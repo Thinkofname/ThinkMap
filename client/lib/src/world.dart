@@ -1,14 +1,67 @@
 part of map_viewer;
 
+class LoaderIsolate {
+
+  SendPort isolateOut;
+  World world;
+  bool usable = false;
+
+  LoaderIsolate(this.world) {
+    ReceivePort rec = new ReceivePort();
+    Isolate.spawnUri(Uri.parse("isolate.dart"), new List.from(models.keys), rec.sendPort).catchError((e) {
+      print("$e");
+    });
+    rec.listen((msg) {
+      if (isolateOut == null) {
+        isolateOut = msg;
+        usable = true;
+        return;
+      }
+      var chunk = world.newChunk()..fromMap(msg)
+        ..world = world
+        ..init();
+      world.chunksLoading.remove(world._chunkKey(chunk.x, chunk.z));
+      world.addChunk(chunk);
+      usable = true;
+    });
+  }
+
+  send(dynamic data) {
+    usable = false;
+    isolateOut.send(data);
+  }
+
+  static void isolate(List args, SendPort port) {
+    for (String model in args) {
+      models[model] = new Model();
+    }
+    ReceivePort rec = new ReceivePort();
+    Logger.canLog = false;
+    port.send(rec.sendPort);
+    rec.listen((Uint8List msg) {
+      if (!(msg is Uint8List)) {
+        msg = new Uint8List.fromList(msg);
+      }
+      port.send(Chunk.processData(msg, new ByteData.view(msg.buffer)));
+    });
+  }
+}
+
 abstract class World {
 
   Map<String, Chunk> chunks = new Map();
   Map<String, bool> chunksLoading = new Map();
 
   int currentTime = 6000;
+  List<LoaderIsolate> workers = new List(5);
+
+  List<Uint8List> _needLoad = new List();
 
   World() {
     new Timer.periodic(new Duration(milliseconds: 1000 ~/ 20), tick);
+    for (int i = 0; i < workers.length; i++) {
+      workers[i] = new LoaderIsolate(this);
+    }
   }
 
   void tick(Timer timer) {
@@ -16,16 +69,14 @@ abstract class World {
     currentTime %= 24000;
   }
 
-  List<ByteBuffer> toLoad = new List();
-
   void loadChunk(ByteBuffer byteBuffer) {
-    var job = new _LoadJob(newChunk(), byteBuffer);
-    String key = _chunkKey(job.chunk.x, job.chunk.z);
-    job.chunk.world = this;
+    ByteData data = new ByteData.view(byteBuffer);
+    var x = data.getInt32(0);
+    var z = data.getInt32(4);
+    String key = _chunkKey(x, z);
     if (!chunksLoading.containsKey(key) && !chunks.containsKey(key)) {
       chunksLoading[key] = true;
-      _buildQueueLow.add(job);
-      job.chunk.init();
+      _needLoad.add(new Uint8List.view(byteBuffer));
     }
   }
 
@@ -59,11 +110,8 @@ abstract class World {
 
   Map<String, bool> _waitingForBuild = new Map();
   List<_BuildJob> _buildQueue = new List();
-  List<_BuildJob> _buildQueueLow = new List();
   _BuildJob currentBuild;
   Object currentSnapshot;
-  _BuildJob currentBuildLow;
-  Object currentSnapshotLow;
 
   void requestBuild(Chunk chunk, int i) {
     String key = _buildKey(chunk.x, chunk.z, i);
@@ -77,10 +125,19 @@ abstract class World {
 
   static int BUILD_LIMIT_MS = 8000;
   // Lower time to allow for some rendering to occur
-  static int LOAD_LIMIT_MS = 68000;
+  static int LOAD_LIMIT_MS = 6800;
   int lastSort = 60;
 
   void tickBuildQueue(Stopwatch stopwatch) {
+    for (LoaderIsolate iso in workers) {
+      if (stopwatch.elapsedMicroseconds > World.BUILD_LIMIT_MS) {
+        return;
+      }
+      if (iso.usable && _needLoad.isNotEmpty) {
+        iso.send(_needLoad.removeLast());
+      }
+    }
+
     if (currentBuild != null) {
       var job = currentBuild;
       Object snapshot = job.exec(currentSnapshot, stopwatch);
@@ -97,59 +154,25 @@ abstract class World {
       return;
     }
 
-    if (currentBuildLow != null) {
-      var job = currentBuildLow;
-      Object snapshot = job.exec(currentSnapshotLow, stopwatch);
-      currentBuildLow = null;
-      currentSnapshotLow = null;
-      if (snapshot != null) {
-        currentBuildLow = job;
-        currentSnapshotLow = snapshot;
-      }
-    }
-
     if (stopwatch.elapsedMicroseconds > World.BUILD_LIMIT_MS) {
       return;
     }
 
     lastSort--;
-    if ((_buildQueue.isNotEmpty || _buildQueueLow.isNotEmpty) && lastSort <= 0)
-        {
+    if (_buildQueue.isNotEmpty && lastSort <= 0) {
       lastSort = 60;
       _buildQueue.sort(_queueCompare);
-      _buildQueueLow.sort(_queueCompare);
     }
-    while (stopwatch.elapsedMicroseconds < BUILD_LIMIT_MS &&
-        (_buildQueue.isNotEmpty || _buildQueueLow.isNotEmpty)) {
-      bool low = (_buildQueueLow.isNotEmpty && (stopwatch.elapsedMicroseconds <
-          LOAD_LIMIT_MS || _buildQueue.isEmpty));
-      if (!low && _buildQueue.isEmpty) break;
-
-      if (low) {
-        if (currentBuildLow != null) {
-          break;
-        }
-      } else {
-        if (currentBuild != null) {
-          break;
-        }
-      }
-      var job = low ? _buildQueueLow.removeLast() : _buildQueue.removeLast();
-      if (!(job is _LoadJob)) {
-        String key = _buildKey(job.chunk.x, job.chunk.z, job.i);
-        if (!_waitingForBuild.containsKey(key)) continue;
-        _waitingForBuild.remove(key);
-        if (world.getChunk(job.chunk.x, job.chunk.z) == null) continue;
-      }
+    while (stopwatch.elapsedMicroseconds < BUILD_LIMIT_MS && _buildQueue.isNotEmpty) {
+      var job = _buildQueue.removeLast();
+      String key = _buildKey(job.chunk.x, job.chunk.z, job.i);
+      if (!_waitingForBuild.containsKey(key)) continue;
+      _waitingForBuild.remove(key);
+      if (world.getChunk(job.chunk.x, job.chunk.z) == null) continue;
       Object snapshot = job.exec(null, stopwatch);
       if (snapshot != null) {
-        if (low) {
-          currentBuildLow = job;
-          currentSnapshotLow = snapshot;
-        } else {
-          currentBuild = job;
-          currentSnapshot = snapshot;
-        }
+        currentBuild = job;
+        currentSnapshot = snapshot;
       }
     }
   }

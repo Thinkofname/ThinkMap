@@ -208,6 +208,94 @@ abstract class Chunk {
   Object buildSection(int i, Object snapshot, Stopwatch stopwatch);
 
   void unload(Renderer renderer);
+
+  void fromMap(Map data) {
+    x = data['x'];
+    z = data['z'];
+
+    List<Map> dSections = data['sections'];
+    for (int i = 0; i < 16; i++) {
+      var dSection = dSections[i];
+      if (dSection != null) {
+        ChunkSection section = sections[i] = new ChunkSection();
+        section.count = dSection['count'];
+        section.blocks = new Uint16List.fromList(dSection['blocks']);
+        section.light = new Uint8List.fromList(dSection['light']);
+        section.sky = new Uint8List.fromList(dSection['sky']);
+      }
+    }
+    _nextId = data['nextId'];
+    (data['idMap'] as Map<int, String>).forEach((k, v) {
+      _idMap[k] = BlockRegistry.getByName(v);
+    });
+    (data['blockMap'] as Map<String, int>).forEach((k, v) {
+      _blockMap[BlockRegistry.getByName(k)] = v;
+    });
+  }
+
+  static Map processData(Uint8List byteData, ByteData data) {
+    Map out = new Map();
+    int sMask = data.getUint16(8);
+    List<Map> sections = new List(16);
+    out['sections'] = sections;
+    out['x'] = data.getInt32(0);
+    out['z'] = data.getInt32(4);
+    int offset = 10;
+
+    Map<int, String> _idMap = {
+      0: Blocks.AIR._regBlock.toString()
+    };
+    Map<String, int> _blockMap = {
+      Blocks.AIR._regBlock.toString(): 0
+    };
+    int _nextId = 1;
+    for (int i = 0 ; i < 16; i++) {
+      if (sMask & (1 << i) != 0) {
+        int idx = 0;
+        Map section = sections[i];
+        if (section == null) section = sections[i] = new Map();
+        List<int> blocks = new List(16 * 16 * 16);
+        List<int> lights = new List(16 * 16 * 16);
+        List<int> skys = new List(16 * 16 * 16);
+        int count = 0;
+        for (int oy = 0; oy < 16; oy++) {
+          for (int oz = 0; oz < 16; oz++) {
+            for (int ox = 0; ox < 16; ox++) {
+              int id = (byteData[offset]<<8) + byteData[offset + 1];
+              int dataVal = byteData[offset + 2];
+              int light = byteData[offset + 3];
+              int sky = byteData[offset + 4];
+              offset += 5;
+              Block block = BlockRegistry.getByLegacy(id, dataVal);
+              int rid = _blockMap[block._regBlock.toString()];
+              if (rid == null) {
+                _idMap[_nextId] = block._regBlock.toString();
+                rid = _blockMap[block._regBlock.toString()] = _nextId;
+                _nextId = (_nextId + 1) & 0xFFFF;
+              }
+
+              blocks[idx] = rid;
+              lights[idx] = light;
+              skys[idx] = sky;
+              idx++;
+
+              if (block != Blocks.AIR) count++;
+              if (light != 0) count++;
+              if (sky != 15) count++;
+            }
+          }
+        }
+        section['blocks'] = blocks;
+        section['light'] = lights;
+        section['sky'] = skys;
+        section['count'] = count;
+      }
+    }
+    out['idMap'] = _idMap;
+    out['blockMap'] = _blockMap;
+    out['nextId'] = _nextId;
+    return out;
+  }
 }
 
 class ChunkSection {
@@ -222,78 +310,4 @@ class ChunkSection {
   int count = 0;
   bool needsBuild = false;
   bool needsUpdate = false;
-}
-
-class _LoadJob implements _BuildJob {
-  Chunk chunk;
-  ByteData data;
-  Uint8List byteData;
-  int sMask;
-  int offset;
-
-  int i = 0;
-  int x = 0;
-  int y = 0;
-  int z = 0;
-  int idx = 0;
-
-  _LoadJob(this.chunk, ByteBuffer buffer) {
-    data = new ByteData.view(buffer);
-    byteData = new Uint8List.view(buffer);
-    chunk.x = data.getInt32(0);
-    chunk.z = data.getInt32(4);
-    sMask = data.getUint16(8);
-    offset = 10;
-  }
-
-  Object exec(Object snapshot, Stopwatch stopwatch) {
-    for ( ; i < 16; i++) {
-      if (sMask & (1 << i) != 0) {
-        ChunkSection section = chunk.sections[i];
-        if (section == null) section = chunk.sections[i] = new ChunkSection();
-        for (int oy = y; oy < 16; oy++) {
-          y = 0;
-          for (int oz = z; oz < 16; oz++) {
-            z = 0;
-            for (int ox = 0; ox < 16; ox++) {
-              int id = (byteData[offset]<<8) + byteData[offset + 1];
-              int dataVal = byteData[offset + 2];
-              int light = byteData[offset + 3];
-              int sky = byteData[offset + 4];
-              offset += 5;
-              Block block = BlockRegistry.getByLegacy(id, dataVal);
-              int rid = chunk._blockMap[block];
-              if (rid == null) {
-                chunk._idMap[chunk._nextId] = block;
-                rid = chunk._blockMap[block] = chunk._nextId;
-                chunk._nextId = (chunk._nextId + 1) & 0xFFFF;
-              }
-
-              section.blocks[idx] = rid;
-              section.light[idx] = light;
-              section.sky[idx] = sky;
-              idx++;
-
-              if (block != Blocks.AIR) section.count++;
-              if (light != 0) section.count++;
-              if (sky != 15) section.count++;
-            }
-            if (stopwatch.elapsedMicroseconds >= World.LOAD_LIMIT_MS) {
-              y = oy;
-              z = oz + 1;
-              return this;
-            }
-          }
-          z = 0;
-        }
-        idx = y = 0;
-      }
-    }
-    chunk.noUpdates = false;
-    chunk.rebuild();
-    String key = world._chunkKey(chunk.x, chunk.z);
-    world.chunksLoading.remove(key);
-    world.addChunk(chunk);
-    return null;
-  }
 }

@@ -45,12 +45,10 @@ class WebGLWorld extends World {
   int _queueCompare(_BuildJob a, _BuildJob b) {
     Camera camera = (renderer as WebGLRenderer).camera;
     Frustum frustum = (renderer as WebGLRenderer).viewFrustum;
-    if (!(a is _LoadJob) && !(b is _LoadJob)) {
-      bool aIn = frustum.intersectsWithAabb3((a.chunk as WebGLChunk).sectionAABBs[a.i]);
-      bool bIn = frustum.intersectsWithAabb3((b.chunk as WebGLChunk).sectionAABBs[b.i]);
-      if (aIn && !bIn) return 1;
-      if (bIn && !aIn) return -1;
-    }
+    bool aIn = frustum.intersectsWithAabb3((a.chunk as WebGLChunk).sectionAABBs[a.i]);
+    bool bIn = frustum.intersectsWithAabb3((b.chunk as WebGLChunk).sectionAABBs[b.i]);
+    if (aIn && !bIn) return 1;
+    if (bIn && !aIn) return -1;
     num adx = (a.chunk.x * 16) + 8 - camera.x;
     num ady = (a.i * 16) + 8 - camera.y;
     num adz = (a.chunk.z * 16) + 8 - camera.z;
