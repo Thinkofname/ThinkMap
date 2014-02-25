@@ -219,21 +219,23 @@ abstract class Chunk {
       if (dSection != null) {
         ChunkSection section = sections[i] = new ChunkSection();
         section.count = dSection['count'];
-        section.blocks = new Uint16List.fromList(dSection['blocks']);
-        section.light = new Uint8List.fromList(dSection['light']);
-        section.sky = new Uint8List.fromList(dSection['sky']);
+        section.blocks = new Uint16List.view(new Uint8List.fromList(CryptoUtils.base64StringToBytes(dSection['blocks'])).buffer);
+        section.light = new Uint8List.fromList(CryptoUtils.base64StringToBytes(dSection['light']));
+        section.sky = new Uint8List.fromList(CryptoUtils.base64StringToBytes(dSection['sky']));
       }
     }
-    _nextId = data['nextId'];
-    (data['idMap'] as Map<int, String>).forEach((k, v) {
-      _idMap[k] = BlockRegistry.getByName(v);
-    });
-    (data['blockMap'] as Map<String, int>).forEach((k, v) {
-      _blockMap[BlockRegistry.getByName(k)] = v;
-    });
+    if (data['done']) {
+      _nextId = data['nextId'];
+      (data['idMap'] as Map<int, String>).forEach((k, v) {
+        _idMap[k] = BlockRegistry.getByName(v);
+      });
+      (data['blockMap'] as Map<String, int>).forEach((k, v) {
+        _blockMap[BlockRegistry.getByName(k)] = v;
+      });
+    }
   }
 
-  static Map processData(Uint8List byteData, ByteData data) {
+  static Map processData(Uint8List byteData, ByteData data, SendPort port) {
     Map out = new Map();
     int sMask = data.getUint16(8);
     List<Map> sections = new List(16);
@@ -249,12 +251,24 @@ abstract class Chunk {
       Blocks.AIR._regBlock.toString(): 0
     };
     int _nextId = 1;
-    for (int i = 0 ; i < 16; i++) {
+    out['done'] = false;
+    int i = -1;
+    new Timer.periodic(new Duration(milliseconds:16), (Timer timer) {
+      i++;
+      if (i >= 16) {
+        out['idMap'] = _idMap;
+        out['blockMap'] = _blockMap;
+        out['nextId'] = _nextId;
+        out['done'] = true;
+        port.send(out);
+        timer.cancel();
+        return;
+      }
       if (sMask & (1 << i) != 0) {
         int idx = 0;
         Map section = sections[i];
         if (section == null) section = sections[i] = new Map();
-        List<int> blocks = new List(16 * 16 * 16);
+        Uint16List blocks = new Uint16List(16 * 16 * 16);
         List<int> lights = new List(16 * 16 * 16);
         List<int> skys = new List(16 * 16 * 16);
         int count = 0;
@@ -285,16 +299,14 @@ abstract class Chunk {
             }
           }
         }
-        section['blocks'] = blocks;
-        section['light'] = lights;
-        section['sky'] = skys;
+        section['blocks'] = CryptoUtils.bytesToBase64(new Uint8List.view(blocks.buffer));
+        section['light'] = CryptoUtils.bytesToBase64(lights);
+        section['sky'] = CryptoUtils.bytesToBase64(skys);
         section['count'] = count;
+        port.send(out);
+        sections[i] = null;
       }
-    }
-    out['idMap'] = _idMap;
-    out['blockMap'] = _blockMap;
-    out['nextId'] = _nextId;
-    return out;
+    });
   }
 }
 

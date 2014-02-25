@@ -50,11 +50,11 @@ void start() {
     renderer.resize(canvas.width, canvas.height);
   });
 
+  connection = new Connection("${window.location.hostname}:23333");
+
   world = new WebGLWorld();
   renderer = new WebGLRenderer(canvas);
   window.requestAnimationFrame(draw);
-
-  connection = new Connection("${window.location.hostname}:23333");
 
 }
 

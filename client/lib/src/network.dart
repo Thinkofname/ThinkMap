@@ -60,25 +60,25 @@ class Connection {
   /// Used to prevent double chunk requests
   Map<String, bool> _sentFor = new Map<String, bool>();
 
-  /**
-   * Request a chunk from the server
-   */
-  void writeRequestChunk(int x, int z) {
-    String key = "$x:$z";
-    if (_sentFor.containsKey(key)) return;
-    var req = new HttpRequest();
-    req.open("POST", "http://$address/chunk", async:
-        true);
-    req.responseType = "arraybuffer";
-    req.onReadyStateChange.listen((e) {
-      if (req.readyState == 4 && req.status == 200) {
-        ByteData data = new ByteData.view(req.response);
-        if (renderer.shouldLoad(data.getInt32(0), data.getInt32(4)))
-            world.loadChunk(req.response);
-      }
-      if (req.readyState == 4) _sentFor.remove(key);
-    });
-    _sentFor[key] = true;
-    req.send(key);
-  }
+//  /**
+//   * Request a chunk from the server
+//   */
+//  void writeRequestChunk(int x, int z) {
+//    String key = "$x:$z";
+//    if (_sentFor.containsKey(key)) return;
+//    var req = new HttpRequest();
+//    req.open("POST", "http://$address/chunk", async:
+//        true);
+//    req.responseType = "arraybuffer";
+//    req.onReadyStateChange.listen((e) {
+//      if (req.readyState == 4 && req.status == 200) {
+//        ByteData data = new ByteData.view(req.response);
+//        if (renderer.shouldLoad(data.getInt32(0), data.getInt32(4)))
+//            world.loadChunk(req.response);
+//      }
+//      if (req.readyState == 4) _sentFor.remove(key);
+//    });
+//    _sentFor[key] = true;
+//    req.send(key);
+//  }
 }

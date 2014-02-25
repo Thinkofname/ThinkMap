@@ -6,9 +6,14 @@ class LoaderIsolate {
   World world;
   bool usable = false;
 
+  Chunk currentChunk;
+
   LoaderIsolate(this.world) {
     ReceivePort rec = new ReceivePort();
-    Isolate.spawnUri(Uri.parse("isolate.dart"), new List.from(models.keys), rec.sendPort).catchError((e) {
+    List args = new List();
+    args.add(connection.address);
+    args.addAll(models.keys);
+    Isolate.spawnUri(Uri.parse("isolate.dart"), args, rec.sendPort).catchError((e) {
       print("$e");
     });
     rec.listen((msg) {
@@ -17,37 +22,50 @@ class LoaderIsolate {
         usable = true;
         return;
       }
-      var chunk = world.newChunk()..fromMap(msg)
-        ..world = world
-        ..init();
-      world.chunksLoading.remove(world._chunkKey(chunk.x, chunk.z));
-      world.addChunk(chunk);
-      usable = true;
+      if (currentChunk == null) {
+        currentChunk = world.newChunk()..fromMap(msg)
+          ..world = world
+          ..init();
+      } else {
+        currentChunk.fromMap(msg);
+      }
+      if (msg['done']) {
+        world.chunksLoading.remove(World._chunkKey(currentChunk.x, currentChunk.z));
+        world.addChunk(currentChunk);
+        usable = true;
+        currentChunk = null;
+      }
     });
   }
 
-  send(dynamic data) {
+  send(int x, int z) {
     usable = false;
-    isolateOut.send(data);
+    isolateOut.send([x, z]);
   }
 
   static void isolate(List args, SendPort port) {
-    for (String model in args) {
+    for (String model in args.sublist(1)) {
       models[model] = new Model();
     }
     ReceivePort rec = new ReceivePort();
     Logger.canLog = false;
     port.send(rec.sendPort);
-    rec.listen((Uint8List msg) {
-      if (!(msg is Uint8List)) {
-        msg = new Uint8List.fromList(msg);
+    rec.listen((List<int> msg) {
+      var req = new HttpRequest();
+      req.open("POST", "http://${args[0]}/chunk", async: false);
+      req.responseType = "arraybuffer";
+      req.send(World._chunkKey(msg[0], msg[1]));
+      if (req.readyState == 4 && req.status == 200) {
+        ByteData data = new ByteData.view(req.response);
+        Chunk.processData(new Uint8List.view(data.buffer), data, port);
       }
-      port.send(Chunk.processData(msg, new ByteData.view(msg.buffer)));
     });
   }
 }
 
 abstract class World {
+
+  static final Logger logger = new Logger("World");
 
   Map<String, Chunk> chunks = new Map();
   Map<String, bool> chunksLoading = new Map();
@@ -55,7 +73,8 @@ abstract class World {
   int currentTime = 6000;
   List<LoaderIsolate> workers = new List(5);
 
-  List<Uint8List> _needLoad = new List();
+  List<List<int>> _needLoad = new List();
+  bool needSort = false;
 
   World() {
     new Timer.periodic(new Duration(milliseconds: 1000 ~/ 20), tick);
@@ -69,21 +88,17 @@ abstract class World {
     currentTime %= 24000;
   }
 
-  void loadChunk(ByteBuffer byteBuffer) {
-    ByteData data = new ByteData.view(byteBuffer);
-    var x = data.getInt32(0);
-    var z = data.getInt32(4);
-    String key = _chunkKey(x, z);
-    if (!chunksLoading.containsKey(key) && !chunks.containsKey(key)) {
-      chunksLoading[key] = true;
-      _needLoad.add(new Uint8List.view(byteBuffer));
-    }
+  /**
+   * Request a chunk from the server
+   */
+  void writeRequestChunk(int x, int z) {
+    _needLoad.add([x, z]);
   }
 
   void addChunk(Chunk chunk) {
     String key = _chunkKey(chunk.x, chunk.z);
     if (chunks[key] != null) {
-      print("Dropped chunk after load");
+      logger.warn("Dropped chunk after load");
       // Chunk is already loaded ignore it
       return;
     }
@@ -108,6 +123,15 @@ abstract class World {
 
   // Build related methods
 
+  void tickLoaders() {
+    for (LoaderIsolate iso in workers) {
+      if (iso.usable && _needLoad.isNotEmpty) {
+        var a = _needLoad.removeLast();
+        iso.send(a[0], a[1]);
+      }
+    }
+  }
+
   Map<String, bool> _waitingForBuild = new Map();
   List<_BuildJob> _buildQueue = new List();
   _BuildJob currentBuild;
@@ -121,23 +145,12 @@ abstract class World {
     }
     _waitingForBuild[key] = true;
     _buildQueue.add(new _BuildJob(chunk, i));
+    needSort = true;
   }
 
   static int BUILD_LIMIT_MS = 8000;
-  // Lower time to allow for some rendering to occur
-  static int LOAD_LIMIT_MS = 6800;
-  int lastSort = 60;
 
   void tickBuildQueue(Stopwatch stopwatch) {
-    for (LoaderIsolate iso in workers) {
-      if (stopwatch.elapsedMicroseconds > World.BUILD_LIMIT_MS) {
-        return;
-      }
-      if (iso.usable && _needLoad.isNotEmpty) {
-        iso.send(_needLoad.removeLast());
-      }
-    }
-
     if (currentBuild != null) {
       var job = currentBuild;
       Object snapshot = job.exec(currentSnapshot, stopwatch);
@@ -154,13 +167,8 @@ abstract class World {
       return;
     }
 
-    if (stopwatch.elapsedMicroseconds > World.BUILD_LIMIT_MS) {
-      return;
-    }
-
-    lastSort--;
-    if (_buildQueue.isNotEmpty && lastSort <= 0) {
-      lastSort = 60;
+    if (_buildQueue.isNotEmpty && needSort) {
+      needSort = false;
       _buildQueue.sort(_queueCompare);
     }
     while (stopwatch.elapsedMicroseconds < BUILD_LIMIT_MS && _buildQueue.isNotEmpty) {
@@ -239,11 +247,11 @@ abstract class World {
     return getChunk(cx, cz) != null;
   }
 
-  String _chunkKey(int x, int z) {
+  static String _chunkKey(int x, int z) {
     return "${x}:${z}";
   }
 
-  String _buildKey(int x, int z, int i) {
+  static String _buildKey(int x, int z, int i) {
     return "${x.toSigned(32)}:${z.toSigned(32)}@$i";
   }
 }

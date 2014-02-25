@@ -8,5 +8,6 @@ dependencies:
   barback: any
   packer:
     path: packer/
+  crypto: any
 transformers:
 - packer

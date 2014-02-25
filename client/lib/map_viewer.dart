@@ -9,6 +9,7 @@ import "dart:convert";
 import "dart:js";
 import "dart:isolate";
 import "package:vector_math/vector_math.dart";
+import "package:crypto/crypto.dart";
 
 part "src/main.dart";
 // Rendering

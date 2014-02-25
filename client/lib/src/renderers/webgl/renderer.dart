@@ -252,8 +252,6 @@ class WebGLRenderer extends Renderer {
 
   static const int viewDistance = 4;
 
-  final Frustum viewFrustum = new Frustum();
-
   @override
   void draw() {
     frameTimer.stop();
@@ -307,8 +305,6 @@ class WebGLRenderer extends Renderer {
     uMatrix.copyIntoArray(uMatrixList);
     gl.uniformMatrix4fv(uMatrixLocation, false, uMatrixList);
 
-    viewFrustum.setFromMatrix(pMatrix * uMatrix);
-
     (world as WebGLWorld).render(this);
 
     gl.clearColor(1, 1, 1, 1);
@@ -329,13 +325,20 @@ class WebGLRenderer extends Renderer {
 
       for (int x = nx - viewDistance; x < nx + viewDistance; x++) {
         for (int z = nz - viewDistance; z < nz + viewDistance; z++) {
-          if (world.getChunk(x, z) == null) connection.writeRequestChunk(x, z);
+          if (world.getChunk(x, z) == null) world.writeRequestChunk(x, z);
         }
       }
       cx = nx;
       cz = nz;
+      world.needSort = true;
+    }
+    int ny = camera.y ~/ 16;
+    if (cy != ny) {
+      cy = ny;
+      world.needSort = true;
     }
   }
+  int cy = 0;
 
   /**
      * Creates a WebGL texture from an ImageElement
@@ -363,7 +366,7 @@ class WebGLRenderer extends Renderer {
   void connected() {
     for (int x = -viewDistance; x < viewDistance; x++) {
       for (int z = -viewDistance; z < viewDistance; z++) {
-        connection.writeRequestChunk(x, z);
+        world.writeRequestChunk(x, z);
       }
     }
   }

@@ -47,8 +47,6 @@ class WebGLChunk extends Chunk {
       var section = sections[i];
       if (section == null) continue;
 
-      if (!renderer.viewFrustum.intersectsWithAabb3(sectionAABBs[i])) continue;
-
       if (pass == 0) {
         _render(renderer, gl, normalBuffers[i], normalTriangleCount[i]);
       } else {
