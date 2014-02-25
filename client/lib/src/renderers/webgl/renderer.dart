@@ -31,16 +31,14 @@ class WebGLRenderer extends Renderer {
   bool movingForward = false;
   bool movingBackwards = false;
   Camera camera = new Camera()
-      ..y = 6.0 * 16.0
-      ..rotX = PI / 3
-      ..rotY = PI / 4;
+      ..y = 6.0 * 16.0;
   double vSpeed = MIN_VSPEED;
   static const double MIN_VSPEED = -0.2;
   bool onGround = false;
   int offGroundFor = 0;
   int cx = 0;
   int cz = 0;
-  bool firstPerson = false;
+  bool firstPerson = true;
 
   Stopwatch frameTimer = new Stopwatch()..start();
 
@@ -463,7 +461,7 @@ class WebGLRenderer extends Renderer {
   @override
   void moveTo(int x, int y, int z) {
     camera.x = x.toDouble();
-    camera.y = y.toDouble() + 75;
+    camera.y = y.toDouble() + 2.0;
     camera.z = z.toDouble();
   }
 }
