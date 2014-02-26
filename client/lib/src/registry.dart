@@ -228,10 +228,12 @@ class BlockRegistry {
         ..transparent = true)
         ..legacyId(9)
         ..build();
-    registerBlock("flowing_lava", new Block()..texture = "lava_flow")
+    registerBlock("flowing_lava", new Block()..texture = "lava_flow"
+        ..solid = false)
         ..legacyId(10)
         ..build();
-    registerBlock("lava", new Block()..texture = "lava_still")
+    registerBlock("lava", new Block()..texture = "lava_still"
+        ..solid = false)
         ..legacyId(11)
         ..build();
 

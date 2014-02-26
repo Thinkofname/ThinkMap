@@ -98,7 +98,6 @@ abstract class World {
   void addChunk(Chunk chunk) {
     String key = _chunkKey(chunk.x, chunk.z);
     if (chunks[key] != null) {
-      logger.warn("Dropped chunk after load");
       // Chunk is already loaded ignore it
       return;
     }
@@ -224,7 +223,7 @@ abstract class World {
     int cz = z >> 4;
     var chunk = getChunk(cx, cz);
     if (chunk == null) {
-      return 7;
+      return 0;
     }
     return chunk.getLight(x & 0xF, y, z & 0xF);
   }
@@ -235,7 +234,7 @@ abstract class World {
     int cz = z >> 4;
     var chunk = getChunk(cx, cz);
     if (chunk == null) {
-      return 7;
+      return 15;
     }
     return chunk.getSky(x & 0xF, y, z & 0xF);
   }

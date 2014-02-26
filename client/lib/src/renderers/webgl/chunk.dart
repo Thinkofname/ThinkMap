@@ -110,14 +110,14 @@ class WebGLChunk extends Chunk {
           if (block.renderable) {
             block.render(block.transparent ? builderTrans : builder, x, (i << 4) + y, z, this);
           }
-          if (stopwatch.elapsedMicroseconds >= World.BUILD_LIMIT_MS) {
-            snapshot.x = x;
-            snapshot.y = y + 1;
-            snapshot.z = z;
-            snapshot.builder = builder;
-            snapshot.builderTrans = builderTrans;
-            return snapshot;
-          }
+        }
+        if (stopwatch.elapsedMicroseconds >= World.BUILD_LIMIT_MS) {
+          snapshot.x = x;
+          snapshot.y = 0;
+          snapshot.z = z + 1;
+          snapshot.builder = builder;
+          snapshot.builderTrans = builderTrans;
+          return snapshot;
         }
         snapshot.x = snapshot.y = snapshot.z = 0;
       }
