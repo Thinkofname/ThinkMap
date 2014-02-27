@@ -416,6 +416,12 @@ class BlockRegistry {
           ..legacyId(54)
           ..dataValue(2 + i)
           ..build();
+        registerBlock("hopper_$k", new Block()
+          ..solid = false
+          ..model = (BlockHopper.model.clone()..join(BlockHopper.spout, 6, 4, 12)..rotateY(v * 90)))
+          ..legacyId(154)
+          ..dataValue(2 + i)
+          ..build();
         i++;
       });
     }
@@ -448,6 +454,13 @@ class BlockRegistry {
           BlockFace.BACK: "furnace_top"
         })
           ..legacyId(158)
+          ..dataValue(v)
+          ..build();
+
+        registerBlock("hopper_$k", new Block()
+          ..solid = false
+          ..model = (BlockHopper.model.clone()..join(BlockHopper.spout, 6, 0, 6)..rotateY(v * 90)))
+          ..legacyId(154)
           ..dataValue(v)
           ..build();
       });
