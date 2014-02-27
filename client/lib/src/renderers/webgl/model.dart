@@ -64,47 +64,47 @@ class Model {
     BlockFace.BACK
   ];
 
-  Model rotate(int deg) {
-    Model out = new Model();
-    Quaternion quat = new Quaternion.axisAngle(new Vector3(0.0, 1.0, 0.0), radians(deg.toDouble()));
+  void rotateY(num deg) {
+    _rotate(deg, new Vector3(0.0, 1.0, 0.0));
     for (ModelFace face in faces) {
-      ModelFace newFace = new ModelFace.zero(_rotateFaces[(_rotateFaces.indexOf(face.face) + deg~/90) % 4]);
+      face.face = _rotateFaces[(_rotateFaces.indexOf(face.face) + deg~/90) % 4];
+    }
+  }
+
+  void rotateX(num deg) => _rotate(deg, new Vector3(1.0, 0.0, 0.0));
+
+  void rotateZ(num deg) => _rotate(deg, new Vector3(0.0, 0.0, 1.0));
+
+  void _rotate(num deg, Vector3 axis) {
+    Quaternion quat = new Quaternion.axisAngle(axis, radians(deg));
+    for (ModelFace face in faces) {
+      for (ModelVertex vert in face.vertices) {
+        Vector3 vec = new Vector3(vert.x - 0.5, vert.y - 0.5, vert.z - 0.5);
+        quat.rotate(vec);
+        vert
+          ..x = vec.x + 0.5
+          ..y = vec.y + 0.5
+          ..z = vec.z + 0.5;
+      }
+    }
+  }
+
+  void join(Model other, [int ox = 0, int oy = 0, int oz = 0]) {
+    for (ModelFace face in other.faces) {
+      ModelFace newFace = new ModelFace.zero(face.face);
       newFace.texture = face.texture;
       newFace.r = face.r;
       newFace.g = face.g;
       newFace.b = face.b;
-      out.faces.add(newFace);
+      faces.add(newFace);
       for (ModelVertex vert in face.vertices) {
         ModelVertex newVert = vert.clone();
-        Vector3 vec = new Vector3(newVert.x - 0.5, newVert.y - 0.5, newVert.z - 0.5);
-        quat.rotate(vec);
-        newVert
-          ..x = vec.x + 0.5
-          ..y = vec.y + 0.5
-          ..z = vec.z + 0.5;
+        newVert.x += ox;
+        newVert.y += oy;
+        newVert.z += oz;
         newFace.vertices.add(newVert);
       }
     }
-    return out;
-  }
-
-  Model join(Model other) {
-    Model out = new Model();
-    for (Model target in [this, other]) {
-      for (ModelFace face in target.faces) {
-        ModelFace newFace = new ModelFace.zero(face.face);
-        newFace.texture = face.texture;
-        newFace.r = face.r;
-        newFace.g = face.g;
-        newFace.b = face.b;
-        out.faces.add(newFace);
-        for (ModelVertex vert in face.vertices) {
-          ModelVertex newVert = vert.clone();
-          newFace.vertices.add(newVert);
-        }
-      }
-    }
-    return out;
   }
 
   static String _noopTextureGetter(String texture) => texture;

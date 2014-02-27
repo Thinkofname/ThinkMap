@@ -69,7 +69,6 @@ class BlockChest {
       ..sizeY(-11/16, true)
       ..sizeY(-11/16)
       ..moveX(1/16)
-      ..moveY(9/16)
       ..moveY(10/16, true));
     modelLid.faces.add(new ModelFace(BlockFace.BACK)
       ..texture = "chest_side"
@@ -79,7 +78,6 @@ class BlockChest {
       ..sizeY(-11/16, true)
       ..sizeY(-11/16)
       ..moveX(1/16)
-      ..moveY(9/16)
       ..moveY(10/16, true));
     modelLid.faces.add(new ModelFace(BlockFace.LEFT)
       ..texture = "chest_side"
@@ -89,7 +87,6 @@ class BlockChest {
       ..sizeY(-11/16)
       ..moveX(15/16)
       ..moveZ(1/16)
-      ..moveY(9/16)
       ..moveY(10/16, true));
     modelLid.faces.add(new ModelFace(BlockFace.RIGHT)
       ..texture = "chest_side"
@@ -99,7 +96,6 @@ class BlockChest {
       ..sizeY(-11/16)
       ..moveX(1/16)
       ..moveZ(1/16)
-      ..moveY(9/16)
       ..moveY(10/16, true));
     modelLid.faces.add(new ModelFace(BlockFace.TOP)
       ..texture = "chest_top"
@@ -109,8 +105,7 @@ class BlockChest {
       ..sizeX(-2/16, true)
       ..sizeY(-2/16, true)
       ..moveX(1/16)
-      ..moveZ(1/16)
-      ..moveY(9/16));
+      ..moveZ(1/16));
     modelLid.faces.add(new ModelFace(BlockFace.BOTTOM)
       ..texture = "chest_top_bottom"
       ..sizeX(-2/16)
@@ -118,8 +113,7 @@ class BlockChest {
       ..sizeX(-2/16, true)
       ..sizeY(-2/16, true)
       ..moveX(1/16)
-      ..moveZ(1/16)
-      ..moveY(9/16));
+      ..moveZ(1/16));
 
     //Lock
     modelLid.faces.add(new ModelFace(BlockFace.FRONT)
@@ -130,7 +124,7 @@ class BlockChest {
       ..sizeY(-12/16, true)
       ..sizeY(-12/16)
       ..moveX(7/16)
-      ..moveY(7/16)
+      ..moveY(-2/16)
       ..moveX(1/16, true)
       ..moveY(1/16, true)
       ..moveZ(15/16));
@@ -141,7 +135,7 @@ class BlockChest {
       ..sizeY(-12/16, true)
       ..sizeY(-12/16)
       ..moveX(9/16)
-      ..moveY(7/16)
+      ..moveY(-2/16)
       ..moveY(1/16, true)
       ..moveZ(15/16));
     modelLid.faces.add(new ModelFace(BlockFace.RIGHT)
@@ -151,7 +145,7 @@ class BlockChest {
       ..sizeY(-12/16, true)
       ..sizeY(-12/16)
       ..moveX(7/16)
-      ..moveY(7/16)
+      ..moveY(-2/16)
       ..moveY(1/16, true)
       ..moveZ(15/16));
     modelLid.faces.add(new ModelFace(BlockFace.TOP)
@@ -162,7 +156,7 @@ class BlockChest {
       ..sizeX(-14/16, true)
       ..sizeY(-15/16, true)
       ..moveX(7/16)
-      ..moveY(7/16)
+      ..moveY(-2/16)
       ..moveX(1/16, true)
       ..moveZ(15/16));
     modelLid.faces.add(new ModelFace(BlockFace.BOTTOM)
@@ -172,9 +166,9 @@ class BlockChest {
       ..sizeX(-14/16, true)
       ..sizeY(-15/16, true)
       ..moveX(7/16)
-      ..moveY(7/16)
+      ..moveY(-2/16)
       ..moveX(3/16, true)
       ..moveZ(15/16));
-    return modelBottom.join(modelLid);
+    return modelBottom.clone()..join(modelLid, 0, 9/16, 0);
   }
 }

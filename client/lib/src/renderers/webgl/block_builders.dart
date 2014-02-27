@@ -9,9 +9,9 @@ class BlockBuilder {
   }
 
   void position(num x, num y, num z) {
-    _buffer.addUnsignedShort((x * 16 + 0.5).toInt());
-    _buffer.addUnsignedShort((y * 16 + 0.5).toInt());
-    _buffer.addUnsignedShort((z * 16 + 0.5).toInt());
+    _buffer.addUnsignedShort((x * 256 + 0.5).toInt());
+    _buffer.addUnsignedShort((y * 256 + 0.5).toInt());
+    _buffer.addUnsignedShort((z * 256 + 0.5).toInt());
   }
 
   void colour(int r, int g, int b) {
@@ -27,8 +27,8 @@ class BlockBuilder {
   }
 
   void tex(num x, num y) {
-    _buffer.addUnsignedShort((x * 16 + 0.5).toInt());
-    _buffer.addUnsignedShort((y * 16 + 0.5).toInt());
+    _buffer.addUnsignedShort((x * 256 + 0.5).toInt());
+    _buffer.addUnsignedShort((y * 256 + 0.5).toInt());
   }
 
   void lighting(int light, int sky) {

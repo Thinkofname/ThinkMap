@@ -351,14 +351,14 @@ class BlockRegistry {
           ..collidable = false
           ..solid = false
           ..texture = "planks_oak"
-          ..model = BlockWallSign.model.rotate(v * 90))
+          ..model = (BlockWallSign.model.clone()..rotateY(v * 90)))
           ..legacyId(68)
           ..dataValue(2 + i)
           ..build();
         registerBlock("ladder_$k", new Block()
           ..collidable = false
           ..solid = false
-          ..model = ladder.rotate(v * 90))
+          ..model = (ladder.clone()..rotateY(v * 90)))
           ..legacyId(65)
           ..dataValue(2 + i)
           ..build();
@@ -412,7 +412,7 @@ class BlockRegistry {
           ..build();
         registerBlock("chest_$k", new Block()
           ..solid = false
-          ..model = BlockChest.model.rotate(v * 90))
+          ..model = (BlockChest.model.clone()..rotateY(v * 90)))
           ..legacyId(54)
           ..dataValue(2 + i)
           ..build();
@@ -484,7 +484,7 @@ class BlockRegistry {
     for (int deg in [0, 1, 2, 3]) {
       for (int dam in [0, 1, 2]) {
         registerBlock("anvil_${deg}_$dam", new Block()..solid = false
-            ..model = models["anvil"].rotate(deg*90).clone((t) => t == "anvil_top_damaged_0" ? "anvil_top_damaged_$dam" : t))
+            ..model = (models["anvil"].clone((t) => t == "anvil_top_damaged_0" ? "anvil_top_damaged_$dam" : t)..rotateY(deg*90)))
             ..legacyId(145)
             ..dataValue(dam << 2 | (deg))
             ..build();
