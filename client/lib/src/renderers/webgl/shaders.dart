@@ -52,10 +52,10 @@ varying vec2 vLighting;
 
 void main(void) {
     float id = floor(vTextureId.x + 0.5);
-    if (floor((vTextureId.y - vTextureId.x) + 0.5) != 0.0) {
+    if (abs(floor((vTextureId.y - vTextureId.x) + 0.5) - 1.0) < 0.99) {
         id = id + floor(mod(frame, vTextureId.y - vTextureId.x) + 0.5);
     }
-    vec2 pos = vTexturePos * 0.03125;
+    vec2 pos = fract(vTexturePos) * 0.03125;
     pos.x += floor(mod(id, 32.0)) * 0.03125;
     pos.y += floor(id / 32.0) * 0.03125;
     gl_FragColor = texture2D(texture, pos) * vec4(vColour, 1.0);

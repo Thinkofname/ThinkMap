@@ -152,13 +152,19 @@ abstract class World {
   void tickBuildQueue(Stopwatch stopwatch) {
     if (currentBuild != null) {
       var job = currentBuild;
-      Object snapshot = job.exec(currentSnapshot, stopwatch);
-      currentBuild = null;
-      currentSnapshot = null;
-      if (snapshot != null) {
-        currentBuild = job;
-        currentSnapshot = snapshot;
-        return;
+      if (world.getChunk(job.chunk.x, job.chunk.z) == null) {
+        job.drop(currentSnapshot);
+        currentBuild = null;
+        currentSnapshot = null;
+      } else {
+        Object snapshot = job.exec(currentSnapshot, stopwatch);
+        currentBuild = null;
+        currentSnapshot = null;
+        if (snapshot != null) {
+          currentBuild = job;
+          currentSnapshot = snapshot;
+          return;
+        }
       }
     }
 
@@ -173,13 +179,18 @@ abstract class World {
     while (stopwatch.elapsedMicroseconds < BUILD_LIMIT_MS && _buildQueue.isNotEmpty) {
       var job = _buildQueue.removeLast();
       String key = _buildKey(job.chunk.x, job.chunk.z, job.i);
-      if (!_waitingForBuild.containsKey(key)) continue;
+      if (!_waitingForBuild.containsKey(key)) {
+        continue;
+      }
       _waitingForBuild.remove(key);
-      if (world.getChunk(job.chunk.x, job.chunk.z) == null) continue;
+      if (world.getChunk(job.chunk.x, job.chunk.z) == null) {
+        continue;
+      }
       Object snapshot = job.exec(null, stopwatch);
       if (snapshot != null) {
         currentBuild = job;
         currentSnapshot = snapshot;
+        return;
       }
     }
   }
@@ -246,11 +257,7 @@ abstract class World {
     return getChunk(cx, cz) != null;
   }
 
-  static String _chunkKey(int x, int z) {
-    return "${x}:${z}";
-  }
+  static String _chunkKey(int x, int z) => "${x}:${z}";
 
-  static String _buildKey(int x, int z, int i) {
-    return "${x.toSigned(32)}:${z.toSigned(32)}@$i";
-  }
+  static String _buildKey(int x, int z, int i) => "${x.toSigned(32)}:${z.toSigned(32)}@$i";
 }

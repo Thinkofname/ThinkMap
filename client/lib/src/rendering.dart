@@ -19,4 +19,10 @@ class _BuildJob {
   Object exec(Object snapshot, Stopwatch stopwatch) {
     return chunk.buildSection(i, snapshot, stopwatch);
   }
+
+  void drop(Object snapshot) {
+    WebGLSnapshot snap = snapshot as WebGLSnapshot;
+    snap.builder._buffer.free();
+    snap.builderTrans._buffer.free();
+  }
 }

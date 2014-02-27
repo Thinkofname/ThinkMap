@@ -8,6 +8,8 @@ import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import lombok.Getter;
 import org.bukkit.Chunk;
 import org.bukkit.World;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import think.webglmap.bukkit.web.WebHandler;
 
@@ -49,6 +51,12 @@ public class WebglMapPlugin extends JavaPlugin implements Runnable {
     public void onDisable() {
         webHandler.interrupt();
         for (ChunkManager chunkManager : chunkManagers.values()) chunkManager.cleanup();
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        sender.sendMessage(Thread.currentThread().toString());
+        return true;
     }
 
     public ChunkManager getChunkManager(World world) {

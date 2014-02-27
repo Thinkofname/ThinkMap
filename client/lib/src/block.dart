@@ -44,7 +44,7 @@ class Block {
   /**
    * Returns whether this should render its side against the [block]
    */
-  bool shouldRenderAgainst(Block block) => !block.solid && (!allowSelf || block !=
+  bool shouldRenderAgainst(Block block) => !block.solid && (allowSelf || block !=
       this);
 
   /**
