@@ -99,9 +99,9 @@ class Model {
       faces.add(newFace);
       for (ModelVertex vert in face.vertices) {
         ModelVertex newVert = vert.clone();
-        newVert.x += ox;
-        newVert.y += oy;
-        newVert.z += oz;
+        newVert.x += ox / 16;
+        newVert.y += oy / 16;
+        newVert.z += oz / 16;
         newFace.vertices.add(newVert);
       }
     }
@@ -213,24 +213,24 @@ class ModelFace {
   moveY(num a, [bool tex = false]) {
     for (ModelVertex vert in vertices) {
       if (!tex)
-        vert.y += a;
+        vert.y += a / 16;
       else
-        vert.textureY += a;
+        vert.textureY += a / 16;
     }
   }
 
   moveX(num a, [bool tex = false]) {
     for (ModelVertex vert in vertices) {
       if (!tex)
-        vert.x += a;
+        vert.x += a / 16;
       else
-        vert.textureX += a;
+        vert.textureX += a / 16;
     }
   }
 
   moveZ(num a, [bool tex = false]) {
     for (ModelVertex vert in vertices) {
-      vert.z += a;
+      vert.z += a / 16;
     }
   }
 
@@ -242,7 +242,7 @@ class ModelFace {
       }
       for (ModelVertex vert in vertices) {
         if (vert.y == largest) {
-          vert.y += a;
+          vert.y += a / 16;
         }
       }
     } else {
@@ -251,7 +251,7 @@ class ModelFace {
       }
       for (ModelVertex vert in vertices) {
         if (vert.textureY == largest) {
-          vert.textureY += a;
+          vert.textureY += a / 16;
         }
       }
     }
@@ -265,7 +265,7 @@ class ModelFace {
       }
       for (ModelVertex vert in vertices) {
         if (vert.x == largest) {
-          vert.x += a;
+          vert.x += a / 16;
         }
       }
     } else {
@@ -274,7 +274,7 @@ class ModelFace {
       }
       for (ModelVertex vert in vertices) {
         if (vert.textureX == largest) {
-          vert.textureX += a;
+          vert.textureX += a / 16;
         }
       }
     }
@@ -287,7 +287,7 @@ class ModelFace {
     }
     for (ModelVertex vert in vertices) {
       if (vert.z == largest) {
-        vert.z += a;
+        vert.z += a / 16;
       }
     }
   }

@@ -338,7 +338,7 @@ class BlockRegistry {
 
     // Rotatable blocks
     {
-      Model ladder = new Model()..faces.add(new ModelFace(BlockFace.FRONT)..moveZ(1/16)
+      Model ladder = new Model()..faces.add(new ModelFace(BlockFace.FRONT)..moveZ(1)
         ..texture = "ladder");
       int i = 0;
       ({

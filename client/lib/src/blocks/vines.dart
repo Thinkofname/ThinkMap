@@ -8,7 +8,7 @@ class BlockVines extends Block {
 
   static void register() {
     top.faces.add(new ModelFace(BlockFace.BOTTOM)
-      ..moveY(15/16)
+      ..moveY(15)
       ..r = 0x87
       ..g = 0xBA
       ..b = 0x34
@@ -19,28 +19,28 @@ class BlockVines extends Block {
         model.faces.addAll(top.faces);
       }
       if (i & 2 == 2) {
-        model.faces.add(new ModelFace(BlockFace.LEFT)..moveX(1/16)
+        model.faces.add(new ModelFace(BlockFace.LEFT)..moveX(1)
           ..r = 0x87
           ..g = 0xBA
           ..b = 0x34
           ..texture = "vine");
       }
       if (i & 8 == 8) {
-        model.faces.add(new ModelFace(BlockFace.RIGHT)..moveX(15/16)
+        model.faces.add(new ModelFace(BlockFace.RIGHT)..moveX(15)
           ..r = 0x87
           ..g = 0xBA
           ..b = 0x34
           ..texture = "vine");
       }
       if (i & 4 == 4) {
-        model.faces.add(new ModelFace(BlockFace.FRONT)..moveZ(1/16)
+        model.faces.add(new ModelFace(BlockFace.FRONT)..moveZ(1)
           ..r = 0x87
           ..g = 0xBA
           ..b = 0x34
           ..texture = "vine");
       }
       if (i & 1 == 1) {
-        model.faces.add(new ModelFace(BlockFace.BACK)..moveZ(15/16)
+        model.faces.add(new ModelFace(BlockFace.BACK)..moveZ(15)
           ..r = 0x87
           ..g = 0xBA
           ..b = 0x34
