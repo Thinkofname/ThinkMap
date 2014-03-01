@@ -217,11 +217,9 @@ abstract class Chunk {
     for (int i = 0; i < 16; i++) {
       var dSection = dSections[i];
       if (dSection != null) {
-        ChunkSection section = sections[i] = new ChunkSection();
+        ChunkSection section = sections[i] = new ChunkSection.fromList(
+          new Uint8List.fromList(CryptoUtils.base64StringToBytes(dSection['buffer'])));
         section.count = dSection['count'];
-        section.blocks = new Uint16List.view(new Uint8List.fromList(CryptoUtils.base64StringToBytes(dSection['blocks'])).buffer);
-        section.light = new Uint8List.fromList(CryptoUtils.base64StringToBytes(dSection['light']));
-        section.sky = new Uint8List.fromList(CryptoUtils.base64StringToBytes(dSection['sky']));
       }
     }
     if (data['done']) {
@@ -266,12 +264,7 @@ abstract class Chunk {
       }
       if (sMask & (1 << i) != 0) {
         int idx = 0;
-        Map section = sections[i];
-        if (section == null) section = sections[i] = new Map();
-        Uint16List blocks = new Uint16List(16 * 16 * 16);
-        List<int> lights = new List(16 * 16 * 16);
-        List<int> skys = new List(16 * 16 * 16);
-        int count = 0;
+        ChunkSection cs = new ChunkSection();
         for (int oy = 0; oy < 16; oy++) {
           for (int oz = 0; oz < 16; oz++) {
             for (int ox = 0; ox < 16; ox++) {
@@ -288,21 +281,21 @@ abstract class Chunk {
                 _nextId = (_nextId + 1) & 0xFFFF;
               }
 
-              blocks[idx] = rid;
-              lights[idx] = light;
-              skys[idx] = sky;
+              cs.blocks[idx] = rid;
+              cs.light[idx] = light;
+              cs.sky[idx] = sky;
               idx++;
 
-              if (block != Blocks.AIR) count++;
-              if (light != 0) count++;
-              if (sky != 15) count++;
+              if (block != Blocks.AIR) cs.count++;
+              if (light != 0) cs.count++;
+              if (sky != 15) cs.count++;
             }
           }
         }
-        section['blocks'] = CryptoUtils.bytesToBase64(new Uint8List.view(blocks.buffer));
-        section['light'] = CryptoUtils.bytesToBase64(lights);
-        section['sky'] = CryptoUtils.bytesToBase64(skys);
-        section['count'] = count;
+        var section = new Map();
+        sections[i] = section;
+        section['buffer'] = CryptoUtils.bytesToBase64(cs._buffer);
+        section['count'] = cs.count;
         port.send(out);
         sections[i] = null;
       }
@@ -315,11 +308,20 @@ class ChunkSection {
   static final Uint8List _emptySkySection = new Uint8List(16 * 16 * 16)..fillRange(0, 16 *
       16 * 16, 15);
 
-  Uint16List blocks = new Uint16List(16 * 16 * 16);
-  Uint8List light = new Uint8List(16 * 16 * 16);
-  Uint8List sky = new Uint8List(16 * 16 * 16)..setAll(0, _emptySkySection);
+  Uint16List blocks;
+  Uint8List light;
+  Uint8List sky;
+  Uint8List _buffer;
 
   int count = 0;
   bool needsBuild = false;
   bool needsUpdate = false;
+
+  ChunkSection() : this.fromList(new Uint8List(16 * 16 * 16 * 4));
+
+  ChunkSection.fromList(this._buffer) {
+    blocks = new Uint16List.view(_buffer.buffer, 0, 16 * 16 * 16);
+    light = new Uint8List.view(_buffer.buffer, 16 * 16 * 16 * 2, 16 * 16 * 16);
+    sky = new Uint8List.view(_buffer.buffer, 16 * 16 * 16 * 3, 16 * 16 * 16)..setAll(0, _emptySkySection);
+  }
 }
