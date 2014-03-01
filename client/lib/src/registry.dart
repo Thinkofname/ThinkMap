@@ -729,7 +729,7 @@ class BlockRegistry {
     registerBlock("netherrack", new Block()..texture = "netherrack")
       ..legacyId(87)
       ..build();
-    registerBlock("soulsand", new Block()..texture = "soulsand")
+    registerBlock("soulsand", new Block()..texture = "soul_sand")
       ..legacyId(88)
       ..build();
     registerBlock("glowstone", new Block()..texture = "glowstone")
