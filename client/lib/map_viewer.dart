@@ -25,6 +25,10 @@ part "src/renderers/webgl/model.dart";
 // World
 part "src/world.dart";
 part "src/chunk.dart";
+// Isolates
+part "src/isolate/isolate.dart";
+part "src/isolate/world.dart";
+part "src/isolate/chunk.dart";
 // Blocks
 part "src/box.dart";
 part "src/registry.dart";

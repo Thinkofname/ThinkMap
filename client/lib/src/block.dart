@@ -163,6 +163,9 @@ class Block {
   TextureInfo getTexture(BlockFace face) {
     return blockTextureInfo[texture];
   }
+
+  @override
+  String toString() => _regBlock.toString();
 }
 
 /**

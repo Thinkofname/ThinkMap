@@ -35,7 +35,7 @@ class WebGLWorld extends World {
     renderTimer.reset();
     renderTimer.start();
 
-    tickLoaders();
+    this.proxy.tick();
   }
 
   @override

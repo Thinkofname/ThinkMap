@@ -1,68 +1,5 @@
 part of map_viewer;
 
-class LoaderIsolate {
-
-  SendPort isolateOut;
-  World world;
-  bool usable = false;
-
-  Chunk currentChunk;
-
-  LoaderIsolate(this.world) {
-    ReceivePort rec = new ReceivePort();
-    List args = new List();
-    args.add(connection.address);
-    args.addAll(models.keys);
-    Isolate.spawnUri(Uri.parse("isolate.dart"), args, rec.sendPort).catchError((e) {
-      print("$e");
-    });
-    rec.listen((msg) {
-      if (isolateOut == null) {
-        isolateOut = msg;
-        usable = true;
-        return;
-      }
-      if (currentChunk == null) {
-        currentChunk = world.newChunk()..fromMap(msg)
-          ..world = world
-          ..init();
-      } else {
-        currentChunk.fromMap(msg);
-      }
-      if (msg['done']) {
-        world.chunksLoading.remove(World._chunkKey(currentChunk.x, currentChunk.z));
-        world.addChunk(currentChunk);
-        usable = true;
-        currentChunk = null;
-      }
-    });
-  }
-
-  send(int x, int z) {
-    usable = false;
-    isolateOut.send([x, z]);
-  }
-
-  static void isolate(List args, SendPort port) {
-    for (String model in args.sublist(1)) {
-      models[model] = new Model();
-    }
-    ReceivePort rec = new ReceivePort();
-    Logger.canLog = false;
-    port.send(rec.sendPort);
-    rec.listen((List<int> msg) {
-      var req = new HttpRequest();
-      req.open("POST", "http://${args[0]}/chunk", async: false);
-      req.responseType = "arraybuffer";
-      req.send(World._chunkKey(msg[0], msg[1]));
-      if (req.readyState == 4 && req.status == 200) {
-        ByteData data = new ByteData.view(req.response);
-        Chunk.processData(new Uint8List.view(data.buffer), data, port);
-      }
-    });
-  }
-}
-
 abstract class World {
 
   static final Logger logger = new Logger("World");
@@ -71,16 +8,12 @@ abstract class World {
   Map<String, bool> chunksLoading = new Map();
 
   int currentTime = 6000;
-  List<LoaderIsolate> workers = new List(5);
-
-  List<List<int>> _needLoad = new List();
+  IsolateWorldProxy proxy;
   bool needSort = false;
 
   World() {
+    if (!(this is IsolateWorld)) proxy = new IsolateWorldProxy(this);
     new Timer.periodic(new Duration(milliseconds: 1000 ~/ 20), tick);
-    for (int i = 0; i < workers.length; i++) {
-      workers[i] = new LoaderIsolate(this);
-    }
   }
 
   void tick(Timer timer) {
@@ -92,7 +25,7 @@ abstract class World {
    * Request a chunk from the server
    */
   void writeRequestChunk(int x, int z) {
-    _needLoad.add([x, z]);
+    proxy.requestChunk(x, z);
   }
 
   void addChunk(Chunk chunk) {
@@ -121,15 +54,6 @@ abstract class World {
   }
 
   // Build related methods
-
-  void tickLoaders() {
-    for (LoaderIsolate iso in workers) {
-      if (iso.usable && _needLoad.isNotEmpty) {
-        var a = _needLoad.removeLast();
-        iso.send(a[0], a[1]);
-      }
-    }
-  }
 
   Map<String, bool> _waitingForBuild = new Map();
   List<_BuildJob> _buildQueue = new List();

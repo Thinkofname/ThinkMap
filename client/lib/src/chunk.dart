@@ -222,18 +222,16 @@ abstract class Chunk {
         section.count = dSection['count'];
       }
     }
-    if (data['done']) {
-      _nextId = data['nextId'];
-      (data['idMap'] as Map<int, String>).forEach((k, v) {
-        _idMap[k] = BlockRegistry.getByName(v);
-      });
-      (data['blockMap'] as Map<String, int>).forEach((k, v) {
-        _blockMap[BlockRegistry.getByName(k)] = v;
-      });
-    }
+    _nextId = data['nextId'];
+    (data['idMap'] as Map<int, String>).forEach((k, v) {
+      _idMap[k] = BlockRegistry.getByName(v);
+    });
+    (data['blockMap'] as Map<String, int>).forEach((k, v) {
+      _blockMap[BlockRegistry.getByName(k)] = v;
+    });
   }
 
-  static Map processData(Uint8List byteData, ByteData data, SendPort port) {
+  static void processData(Uint8List byteData, ByteData data, SendPort port) {
     Map out = new Map();
     int sMask = data.getUint16(8);
     List<Map> sections = new List(16);
