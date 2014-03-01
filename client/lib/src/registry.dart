@@ -466,8 +466,284 @@ class BlockRegistry {
       });
     }
 
+    // Sandstone
+    ({
+      "normal": 0,
+      "carved": 1,
+      "smooth": 2
+    }).forEach((k, v) {
+      registerBlock("sandstone_$k", new BlockSidedTextures()
+        ..textures = {
+          BlockFace.TOP: "sandstone_top",
+          BlockFace.BOTTOM: "sandstone_bottom",
+          BlockFace.LEFT: "sandstone_$k",
+        BlockFace.RIGHT: "sandstone_$k",
+        BlockFace.FRONT: "sandstone_$k",
+        BlockFace.BACK: "sandstone_$k"
+        })
+        ..legacyId(24)
+        ..dataValue(v)
+        ..build();
+    });
+
+    registerBlock("noteblock", new Block()..texture = "noteblock")
+      ..legacyId(25)
+      ..build();
+
+    //TODO: (#26) Bed
+    //TODO: (#27) Golden rail
+    //TODO: (#28) Detector rail
+    //TODO: (#29) Sticky piston
+
+    registerBlock("web", new BlockCross()..texture = "web"
+      ..solid = false
+      ..collidable = false)
+      ..legacyId(30)
+      ..build();
+
+    ({
+      "tallgrass": 1,
+      "fern": 2,
+      "deadbush": 3
+    }).forEach((k, v) {
+      registerBlock("tallgrass_$k", new BlockCross()..texture = k
+        ..solid = false
+        ..collidable = false
+        ..forceColour = true
+        ..colour = 0xA7D389)
+        ..legacyId(31)
+        ..dataValue(v)
+        ..build();
+    });
+    registerBlock("tallgrass_shrub", new BlockCross()..texture = "deadbush"
+      ..solid = false
+      ..collidable = false)
+      ..legacyId(31)
+      ..dataValue(0)
+      ..build();
+
+    registerBlock("deadbush", new BlockCross()..texture = "deadbush"
+      ..solid = false
+      ..collidable = false)
+      ..legacyId(32)
+      ..dataValue(0)
+      ..build();
+
+    //TODO: (#33) Piston
+    //TODO: (#34) Piston head
+
+    // Wool
+    ({
+      "white": 0,
+      "orange": 1,
+      "magenta": 2,
+      "light_blue": 3,
+      "yellow": 4,
+      "lime": 5,
+      "pink": 6,
+      "gray": 7,
+      "silver": 8,
+      "cyan": 9,
+      "purple": 10,
+      "blue": 11,
+      "brown": 12,
+      "green": 13,
+      "red": 14,
+      "black": 15
+    }).forEach((k, v) {
+      registerBlock("wool_$k", new Block()..texture = "wool_colored_$k")
+        ..legacyId(35)
+        ..dataValue(v)
+        ..build();
+    });
+
+    //TODO: (#36) Piston extension
+
+    registerBlock("yellow_flower", new BlockCross()..texture = "dandelion"
+      ..solid = false
+      ..collidable = false)
+      ..legacyId(37)
+      ..build();
+
+    ({
+      "rose": 0,
+      "blue_orchid": 1,
+      "allium": 2,
+      "houstonia": 3,
+      "tulip_red": 4,
+      "tulip_orange": 5,
+      "tulip_white": 6,
+      "tulip_pink": 7,
+      "oxeye_daisy": 8
+    }).forEach((k, v) {
+      registerBlock("red_flower_$k", new BlockCross()..texture = "flower_$k"
+        ..solid = false
+        ..collidable = false)
+        ..legacyId(38)
+        ..dataValue(v)
+        ..build();
+    });
+
+    registerBlock("brown_mushroom", new BlockCross()..texture = "mushroom_brown"
+      ..solid = false
+      ..collidable = false)
+      ..legacyId(39)
+      ..build();
+    registerBlock("red_mushroom", new BlockCross()..texture = "mushroom_red"
+      ..solid = false
+      ..collidable = false)
+      ..legacyId(40)
+      ..build();
+    registerBlock("gold_block", new Block()..texture = "gold_block")
+      ..legacyId(41)
+      ..build();
+    registerBlock("iron_block", new Block()..texture = "iron_block")
+      ..legacyId(42)
+      ..build();
+
+    //TODO: (#43) Double stone slab
+    //TODO: (#44) Stone slab
+
+    registerBlock("brick_block", new Block()..texture = "brick")
+      ..legacyId(45)
+      ..build();
+    registerBlock("tnt", new BlockSidedTextures()
+      ..textures = {
+      BlockFace.TOP: "tnt_top",
+      BlockFace.BOTTOM : "tnt_bottom",
+      BlockFace.LEFT: "tnt_side",
+      BlockFace.RIGHT: "tnt_side",
+      BlockFace.FRONT: "tnt_side",
+      BlockFace.BACK: "tnt_side",
+    })
+      ..legacyId(46)
+      ..build();
+    registerBlock("bookshelf", new BlockSidedTextures()
+      ..textures = {
+        BlockFace.TOP: "planks_oak",
+        BlockFace.BOTTOM: "planks_oak",
+        BlockFace.LEFT: "bookshelf",
+        BlockFace.RIGHT: "bookshelf",
+        BlockFace.FRONT: "bookshelf",
+        BlockFace.BACK: "bookshelf"
+      })
+      ..legacyId(47)
+      ..build();
     registerBlock("mossy_cobblestone", new Block()..texture = "cobblestone_mossy")
-      ..legacyId(48)..build();
+      ..legacyId(48)
+      ..build();
+    registerBlock("obsidian", new Block()..texture = "obsidian")
+      ..legacyId(49)
+      ..build();
+
+    //TODO: (#50) Torch
+    //TODO: (#51) Fire
+
+    registerBlock("mob_spawner", new Block()..texture = "mob_spawner"
+      ..solid = false
+      ..allowSelf = true)
+      ..legacyId(52)
+      ..build();
+
+    //TODO: (#53) Stairs
+
+    //TODO: (#55) Redstone wire
+
+    registerBlock("diamond_ore", new Block()..texture = "diamond_ore")
+      ..legacyId(56)
+      ..build();
+    registerBlock("diamond_block", new Block()..texture = "diamond_block")
+      ..legacyId(57)
+      ..build();
+    registerBlock("crafting_table", new BlockSidedTextures()
+      ..textures = {
+        BlockFace.TOP: "crafting_table_top",
+        BlockFace.BOTTOM: "planks_oak",
+        BlockFace.LEFT: "crafting_table_side",
+        BlockFace.RIGHT: "crafting_table_side",
+        BlockFace.FRONT: "crafting_table_front",
+        BlockFace.BACK: "crafting_table_front",
+    })
+      ..legacyId(58)
+      ..build();
+
+    //TODO: (#59) Wheat
+    //TODO: (#60) Farmland
+
+    //TODO: (#63) Standing sign
+    //TODO: (#64) Wooden door
+
+    //TODO: (#66) Rail
+    //TODO: (#67) Stone stairs
+
+    //TODO: (#69) Lever
+    //TODO: (#70) Stone pressure plate
+    //TODO: (#71) Iron door
+    //TODO: (#72) Wooden pressure plate
+
+    registerBlock("redstone_ore", new Block()..texture = "redstone_ore")
+      ..legacyId(73)
+      ..build();
+    registerBlock("lit_redstone_ore", new Block()..texture = "redstone_ore")
+      ..legacyId(74)
+      ..build();
+
+    //TODO: (#75) Unlit redstone torch
+    //TODO: (#76) Redstone torch
+    //TODO: (#77) Stone button
+    //TODO: (#78) Snow layer
+
+    registerBlock("ice", new Block()..texture = "ice"
+      ..solid = false
+      ..transparent = true)
+      ..legacyId(79)
+      ..build();
+    registerBlock("snow", new Block()..texture = "snow")
+      ..legacyId(80)
+      ..build();
+
+    //TODO: (#81) Cactus
+
+    registerBlock("clay", new Block()..texture = "clay")
+      ..legacyId(82)
+      ..build();
+    registerBlock("reeds", new BlockCross()..texture = "reeds"
+      ..solid = false)
+      ..legacyId(83)
+      ..build();
+    registerBlock("jukebox", new BlockSidedTextures()
+      ..textures = {
+      BlockFace.TOP: "jukebox_top",
+      BlockFace.BOTTOM: "jukebox_side",
+      BlockFace.LEFT: "jukebox_side",
+      BlockFace.RIGHT: "jukebox_side",
+      BlockFace.BACK: "jukebox_side",
+      BlockFace.FRONT: "jukebox_side"
+    })
+      ..legacyId(84)
+      ..build();
+
+    //TODO: (#85) Fence
+    //TODO: (#86) Pumpkin
+
+    registerBlock("netherrack", new Block()..texture = "netherrack")
+      ..legacyId(87)
+      ..build();
+    registerBlock("soulsand", new Block()..texture = "soulsand")
+      ..legacyId(88)
+      ..build();
+    registerBlock("glowstone", new Block()..texture = "glowstone")
+      ..legacyId(89)
+      ..build();
+
+    //TODO: (#90) Portal
+    //TODO: (#91) Lit pumpkin
+    //TODO: (#92) Cake
+    //TODO: (#93) Unpowered repeater
+    //TODO: (#94) Powered repeater
+    //TODO: (#95) Stained glass
+    //TODO: (#96) Trapdoor
+    //TODO: (#97) Monster egg
 
     // Stone bricks
     {
@@ -489,22 +765,94 @@ class BlockRegistry {
         ..build();
     }
 
-    registerBlock("glowstone", new Block()..texture = "glowstone")
-        ..legacyId(89)
-        ..build();
+    //TODO: (#99) Brown mushroom block
+    //TODO: (#100) Red mushroom block
+    //TODO: (#101) Iron bars
+    //TODO: (#102) Glass pane
+    //TODO: (#103) Melon block
+    //TODO: (#104) Pumpkin stem
+    //TODO: (#105) Melon stem
+
+    BlockVines.register();
+
+    //TODO: (#107) Fence gate
+    //TODO: (#108) Brick stairs
+    //TODO: (#109) Stone brick stairs
+    //TODO: (#110) Mycelium
+    //TODO: (#111) Waterlily
+    //TODO: (#112) Nether brick
+    //TODO: (#113) Nether brick fence
+    //TODO: (#114) Nether brick stairs
+    //TODO: (#115) Nether wart
+    //TODO: (#116) Enchanting table
+    //TODO: (#117) Brewing stand
+    //TODO: (#118) Cauldron
+    //TODO: (#119) End portal
+    //TODO: (#120) End portal frame
+    //TODO: (#121) End stone
+    //TODO: (#122) Dragon egg
+    //TODO: (#123) Redstone lamp
+    //TODO: (#124) Lit redstone lamp
+    //TODO: (#125) Double wooden slab
+    //TODO: (#126) Wooden slab
+    //TODO: (#127) Cocoa
+    //TODO: (#128) Sandstone stairs
+    //TODO: (#129) Emerald ore
+    //TODO: (#130) Ender chest
+    //TODO: (#131) Tripwire hook
+    //TODO: (#132) Tripwire
+    //TODO: (#133) Emerald block
+    //TODO: (#134) Spruce stairs
+    //TODO: (#135) Birch stairs
+    //TODO: (#136) Jungle stairs
+    //TODO: (#137) Command block
+    //TODO: (#138) Beacon
+    //TODO: (#139) Cobblestone wall
+    //TODO: (#140) Flower pot
+    //TODO: (#141) Carrots
+    //TODO: (#142) Potatoes
+    //TODO: (#143) Wooden button
+    //TODO: (#144) Skull
 
     // Anvils
     for (int deg in [0, 1, 2, 3]) {
       for (int dam in [0, 1, 2]) {
         registerBlock("anvil_${deg}_$dam", new Block()..solid = false
-            ..model = (models["anvil"].clone((t) => t == "anvil_top_damaged_0" ? "anvil_top_damaged_$dam" : t)..rotateY(deg*90)))
-            ..legacyId(145)
-            ..dataValue(dam << 2 | (deg))
-            ..build();
+          ..model = (models["anvil"].clone((t) => t == "anvil_top_damaged_0" ? "anvil_top_damaged_$dam" : t)..rotateY(deg*90)))
+          ..legacyId(145)
+          ..dataValue(dam << 2 | (deg))
+          ..build();
       }
     }
 
-    BlockVines.register();
+    //TODO: (#146) Trapped chest
+    //TODO: (#147) Light weighted pressure plate
+    //TODO: (#148) Heavy weighted pressure plate
+    //TODO: (#149) Unpowered comparator
+    //TODO: (#150) Powered comparator
+    //TODO: (#151) Daylight detector
+    //TODO: (#152) Redstone block
+    //TODO: (#153) Quartz ore
+
+    //TODO: (#155) Quartz block
+    //TODO: (#156) Quartz stairs
+    //TODO: (#157) Activator rail
+
+    //TODO: (#159) Stained hardened clay
+    //TODO: (#160) Stained glass pane
+    //TODO: (#161) Leaves2
+    //TODO: (#162) Log2
+    //TODO: (#163) Acacia stairs
+    //TODO: (#164) Dark oak stairs
+
+    // Range (#165) -> (#169) unused currently
+
+    //TODO: (#170) Hay block
+    //TODO: (#171) Carpet
+    //TODO: (#172) Hardened clay
+    //TODO: (#173) Coal block
+    //TODO: (#174) Packed ice
+    //TODO: (#175) Double plant
 
     // Custom Blocks
     registerBlock("missing_block", new Block()..texture = "missing_texture",

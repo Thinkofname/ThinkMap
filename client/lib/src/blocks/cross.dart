@@ -17,15 +17,27 @@ class BlockCross extends Block {
       model = new Model();
       model.faces.add(new ModelFace(BlockFace.FRONT)
         ..texture = texture
+        ..r = r
+        ..g = g
+        ..b = b
         ..vertices.where((e) => e.x == 1).forEach((e) => e.z = 1));
       model.faces.add(new ModelFace(BlockFace.BACK)
         ..texture = texture
+        ..r = r
+        ..g = g
+        ..b = b
         ..vertices.where((e) => e.x == 1).forEach((e) => e.z = 1));
       model.faces.add(new ModelFace(BlockFace.FRONT)
         ..texture = texture
+        ..r = r
+        ..g = g
+        ..b = b
         ..vertices.where((e) => e.x == 0).forEach((e) => e.z = 1));
       model.faces.add(new ModelFace(BlockFace.BACK)
         ..texture = texture
+        ..r = r
+        ..g = g
+        ..b = b
         ..vertices.where((e) => e.x == 0).forEach((e) => e.z = 1));
     }
     super.render(builder, x, y, z, chunk);
