@@ -305,8 +305,7 @@ abstract class Chunk {
 
 class ChunkSection {
 
-  static final Uint8List _emptySkySection = new Uint8List(16 * 16 * 16)..fillRange(0, 16 *
-      16 * 16, 15);
+  static final Uint8List _emptySkySection = new Uint8List(16 * 16 * 16)..fillRange(0, 16 * 16 * 16, 15);
 
   Uint16List blocks;
   Uint8List light;
@@ -317,11 +316,14 @@ class ChunkSection {
   bool needsBuild = false;
   bool needsUpdate = false;
 
-  ChunkSection() : this.fromList(new Uint8List(16 * 16 * 16 * 4));
+  factory ChunkSection()  {
+    return new ChunkSection.fromList(new Uint8List(16 * 16 * 16 * 4))
+      ..sky.setAll(0, _emptySkySection);
+  }
 
   ChunkSection.fromList(this._buffer) {
     blocks = new Uint16List.view(_buffer.buffer, 0, 16 * 16 * 16);
     light = new Uint8List.view(_buffer.buffer, 16 * 16 * 16 * 2, 16 * 16 * 16);
-    sky = new Uint8List.view(_buffer.buffer, 16 * 16 * 16 * 3, 16 * 16 * 16)..setAll(0, _emptySkySection);
+    sky = new Uint8List.view(_buffer.buffer, 16 * 16 * 16 * 3, 16 * 16 * 16);
   }
 }
