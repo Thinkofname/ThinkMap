@@ -5,7 +5,6 @@ abstract class World {
   static final Logger logger = new Logger("World");
 
   Map<String, Chunk> chunks = new Map();
-  Map<String, bool> chunksLoading = new Map();
 
   int currentTime = 6000;
   IsolateWorldProxy proxy;

@@ -10,3 +10,4 @@ target
 packages
 /client/mc/blocks
 /client/mc/out
+/frontend/build
