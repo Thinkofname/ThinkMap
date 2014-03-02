@@ -6,9 +6,9 @@ package mapviewer.renderer;
  */
 class TextureInfo {
     /// Start index
-    private var start : Int;
+    public var start : Int;
     /// End index
-    private var end : Int;
+    public var end : Int;
 
     public function new(start : Int, end : Int) {
         this.start = start;

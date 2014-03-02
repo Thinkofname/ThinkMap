@@ -1,5 +1,7 @@
 package mapviewer;
 
+import mapviewer.renderer.webgl.WebGLRenderer;
+import mapviewer.renderer.webgl.WebGLWorld;
 import mapviewer.world.World;
 import mapviewer.network.Connection;
 import mapviewer.renderer.Renderer;
@@ -62,12 +64,14 @@ class Main {
         };
 
         connetion = new Connection('${Browser.window.location.hostname}:23333');
-
+		
+		world = new WebGLWorld();
+		renderer = new WebGLRenderer(canvas);
         Browser.window.requestAnimationFrame(draw);
     }
 
     private static function draw(unused : Float) : Bool {
-
+		renderer.draw();
         Browser.window.requestAnimationFrame(draw);
         return true;
     }

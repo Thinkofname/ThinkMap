@@ -1,5 +1,6 @@
 package mapviewer.world;
 
+import mapviewer.block.Block;
 import mapviewer.block.Blocks;
 import mapviewer.js.Utils;
 import haxe.Timer;
@@ -139,7 +140,7 @@ class World {
         return cacheChunk;
     }
 
-    public function getBlock(x : Int, y : Int, z : Int) : Dynamic {
+    public function getBlock(x : Int, y : Int, z : Int) : Block {
         if (y < 0 || y > 255) return Blocks.AIR;
         var chunk = getChunk(x >> 4, z >> 4);
         if (chunk == null) return Blocks.NULL_BLOCK;

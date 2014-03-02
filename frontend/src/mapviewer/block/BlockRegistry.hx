@@ -82,7 +82,16 @@ class BlockRegistry {
     public static function init() {
         if (hasInit) return;
         hasInit = true;
+		
+		// Vanilla blocks
+		registerBlock("air", new Block().chain()
+			.renderable(false)
+			.solid(false)
+			.collidable(false)
+			.ret())
+			.legacyId(0).build();
 
+		// Custom blocks
         registerBlock("missing_block", new Block().chain()
             .texture("missing_texture")
             .ret(), "webglmap")

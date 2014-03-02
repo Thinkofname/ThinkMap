@@ -17,7 +17,7 @@ class Chunk {
     private var sections : Array<ChunkSection>;
     private var needsUpdate : Bool = false;
     private var needsBuild : Bool =  false;
-    private var world : World;
+    public var world : World;
 
     private var idMap : Map<Int, Block>;
     private var blockMap : Map<Block, Int>;
