@@ -1,4 +1,5 @@
 package mapviewer.renderer.webgl;
+import js.Browser;
 import js.html.CanvasElement;
 import js.html.ImageElement;
 import js.html.webgl.Program;
@@ -6,9 +7,14 @@ import js.html.webgl.RenderingContext;
 import js.html.webgl.Shader;
 import js.html.webgl.Texture;
 import js.html.webgl.UniformLocation;
+import mapviewer.collision.Box;
+import mapviewer.js.Utils;
+import mapviewer.Main;
 import mapviewer.renderer.Renderer;
 import mapviewer.renderer.webgl.glmatrix.Mat4;
 import mapviewer.renderer.webgl.WebGLRenderer.Camera;
+
+typedef GL = RenderingContext;
 
 class WebGLRenderer implements Renderer {
 	
@@ -45,6 +51,7 @@ class WebGLRenderer implements Renderer {
 	public var onGround : Bool = false;
 	public var offGroundFor : Int = 0;
 	public var cx : Int = 0;
+	public var cy : Int = 0;
 	public var cz : Int = 0;
 	public var firstPerson : Bool = true;
 	
@@ -52,13 +59,15 @@ class WebGLRenderer implements Renderer {
 		this.canvas = canvas;
 		pMatrix = Mat4.create();
 		uMatrix = Mat4.create();
+		temp = Mat4.create();
 		uMatrix.identity();
 		blockTextures = new Array<Texture>();
 		camera = new Camera();
+		camera.y = 12 * 16;
 		
 		// Flags are set for performance
 		gl = canvas.getContextWebGL( { alpha: false, premultipliedAlpha: false, 
-		antialias: false } );
+			antialias: false } );
 		
 		if (gl == null) throw "WebGL not supported";
 		
@@ -69,8 +78,8 @@ class WebGLRenderer implements Renderer {
 			blockTextures.push(loadTexture(img));
 		}
 		
-		var chunkVertexShader = createShader(chunkVertexShaderSource, RenderingContext.VERTEX_SHADER);
-		var chunkFragmentShader = createShader(chunkFragmentShaderSource, RenderingContext.FRAGMENT_SHADER);
+		var chunkVertexShader = createShader(chunkVertexShaderSource, GL.VERTEX_SHADER);
+		var chunkFragmentShader = createShader(chunkFragmentShaderSource, GL.FRAGMENT_SHADER);
 		mainProgram = createProgram(chunkVertexShader, chunkFragmentShader);
 		
 		// Setup uniforms and attributes
@@ -91,19 +100,53 @@ class WebGLRenderer implements Renderer {
 		gl.enableVertexAttribArray(texturePosLocation);
 		gl.enableVertexAttribArray(lightingLocation);
 		
-		gl.enable(RenderingContext.DEPTH_TEST);
-		gl.enable(RenderingContext.CULL_FACE);
-		gl.cullFace(RenderingContext.BACK);
-		gl.frontFace(RenderingContext.CW);
+		gl.enable(GL.DEPTH_TEST);
+		gl.enable(GL.CULL_FACE);
+		gl.cullFace(GL.BACK);
+		gl.frontFace(GL.CW);
 		
-		gl.blendFunc(RenderingContext.SRC_ALPHA, RenderingContext.ONE_MINUS_SRC_ALPHA);
+		gl.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 		
-		//TODO: Controls
+		Browser.document.onmousedown = function(e) {
+			if (Utils.pointerLockElement() != Browser.document.body
+				&& firstPerson)
+					Utils.requestPointerLock(Browser.document.body);
+		};
+		Browser.document.onmousemove = function(e) {
+			if (Utils.pointerLockElement() != Browser.document.body
+				|| !firstPerson) return;
+			camera.rotY += Utils.movementX(e) / 300.0;	
+			camera.rotX += Utils.movementY(e) / 300.0;	
+		};
+		Browser.document.onkeydown = function(e) {
+			if (!firstPerson) return;
+			if (e.keyCode == 'W'.code) {
+				movingForward = true;
+			} else if (e.keyCode == 'S'.code) {
+				movingBackwards = true;
+			} else if (e.keyCode == ' '.code && (onGround || offGroundFor <= 1)) {
+				vSpeed = 0.1;
+			}
+		};
+		Browser.document.onkeyup = function(e) {
+			if (!firstPerson) return;
+			if (e.keyCode == 'W'.code) {
+				movingForward = false;
+			} else if (e.keyCode == 'S'.code) {
+				movingBackwards = false;
+			}
+		};
 	}
 	
 	inline public static var viewDistance : Int = 4;
 	
+	private var lastFrame : Int;
+	private var temp : Mat4;
+	
     public function draw() : Void {
+		var delta : Float = Math.min((Utils.now() - lastFrame) / (1000 / 60), 2.0);
+		lastFrame = Utils.now();
+		
 		gl.viewport(0, 0, canvas.width, canvas.height);
 		var skyPosition = getScale();
 		gl.clearColor(getScaledNumber(122 / 255, 0, skyPosition),
@@ -111,12 +154,175 @@ class WebGLRenderer implements Renderer {
 					  getScaledNumber(247 / 255, 0, skyPosition),
 					  1);
 		gl.colorMask(true, true, true, false);
-		gl.clear(RenderingContext.COLOR_BUFFER_BIT | RenderingContext.DEPTH_BUFFER_BIT);
+		gl.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
+		
+		gl.useProgram(mainProgram);
+		gl.uniformMatrix4fv(pMatrixLocation, false, pMatrix);
+		
+		gl.activeTexture(GL.TEXTURE0);
+		gl.bindTexture(GL.TEXTURE_2D, blockTextures[0]);
+		gl.uniform1i(blockTextureLocation, 0);
+		gl.uniform1f(frameLocation, Main.world.currentTime);
+		
+		if (firstPerson) {
+			var lx = camera.x;
+			var ly = camera.y;
+			var lz = camera.z;
+			
+			camera.y += vSpeed * delta;
+			vSpeed = Math.max(MIN_VSPEED, vSpeed - 0.005 * delta);
+			
+			if (movingForward) {
+				camera.x += 0.1 * Math.sin(camera.rotY) * delta;
+				camera.z -= 0.1 * Math.cos(camera.rotY) * delta;
+			} else if (movingBackwards) {
+				camera.x -= 0.1 * Math.sin(camera.rotY) * delta;
+				camera.z += 0.1 * Math.cos(camera.rotY) * delta;
+			}
+			
+			checkCollision(lx, ly, lz);
+			
+			if (onGround) vSpeed = 0.0;
+		}
+		
+		uMatrix.identity();
+		uMatrix.scale( -1, -1, 1);
+		uMatrix.rotateX( -camera.rotX - Math.PI);
+		uMatrix.rotateY( -(-camera.rotY - Math.PI));
+		temp.identity();
+		temp.translate([-camera.x, -camera.y, -camera.z]);
+		gl.uniformMatrix4fv(uMatrixLocation, false, uMatrix.multiply(temp));
+		
+		var ww : WebGLWorld = cast Main.world;
+		ww.render(this);
+		
+		gl.clearColor(1, 1, 1, 1);
+		gl.colorMask(false, false, false, true);
+		gl.clear(GL.COLOR_BUFFER_BIT);
+
+		var nx = (Std.int(camera.x) >> 4);
+		var nz = (Std.int(camera.z) >> 4);
+		if (nx != cx || nz != cz) {
+			for (chunk in Main.world.chunks) {
+				var x = chunk.x;
+				var z = chunk.z;
+				if (x < nx - viewDistance || x >= nx + viewDistance || z < nz -
+					viewDistance || z >= nz + viewDistance) {
+					Main.world.removeChunk(x, z);
+				}
+			}
+
+			for (x in nx - viewDistance ... nx + viewDistance) {
+				for (z in nz - viewDistance ... nz + viewDistance) {
+					if (Main.world.getChunk(x, z) == null) Main.world.writeRequestChunk(x, z);
+				}
+			}
+			cx = nx;
+			cz = nz;
+			Main.world.needSort = true;
+		}
+		var ny = Std.int(camera.y / 16);
+		if (cy != ny) {
+			cy = ny;
+			Main.world.needSort = true;
+		}
 	}
-    public function resize(width : Int, height : Int) : Void {}
-    public function connected() : Void {}
-    public function shouldLoad(x : Int, z : Int) : Void {}
-    public function moveTo(x : Int, y : Int, z : Int) : Void { }	
+	
+    public function resize(width : Int, height : Int) : Void {
+		pMatrix.identity();
+		pMatrix.perspective(Math.PI / 180 * 80, canvas.width / canvas.height, 0.1, 500);
+	}
+	
+    public function connected() : Void {
+		for (x in -viewDistance ... viewDistance) {
+			for (z in -viewDistance ... viewDistance) {
+				Main.world.writeRequestChunk(x, z);
+			}
+		}
+	}
+	
+	private function checkCollision(lx : Float, ly : Float, lz : Float) {
+		var box = new Box(lx, ly - 1.6, lz, 0.5, 1.75, 0.5);
+		
+		var cx = Std.int(box.x);
+		var cy = Std.int(box.y);
+		var cz = Std.int(box.z);
+		
+		box.x = camera.x;
+		cx = Std.int(box.x);
+		(function() {
+			for (x in cx - 2 ... cx + 2) {
+				for (z in cz - 2 ... cz + 2) {
+					for (y in cy - 3 ... cy + 3) {
+						if (Main.world.getBlock(x, y, z).collidesWith(box, x, y, z)) {
+							camera.x = lx;
+							box.x = lx;
+							return;
+						}
+					}
+				}
+			}
+		})();
+		
+		box.z = camera.z;
+		cz = Std.int(box.z);
+		(function() {
+			for (x in cx - 2 ... cx + 2) {
+				for (z in cz - 2 ... cz + 2) {
+					for (y in cy - 3 ... cy + 3) {
+						if (Main.world.getBlock(x, y, z).collidesWith(box, x, y, z)) {
+							camera.z = lz;
+							box.z = lz;
+							return;
+						}
+					}
+				}
+			}
+		})();
+		
+		box.y = camera.y - 1.6;
+		cy = Std.int(box.y);
+		onGround = false;
+		var hit = false;
+		for (x in cx - 2 ... cx + 2) {
+			for (z in cz - 2 ... cz + 2) {
+				for (y in cy - 3 ... cy + 3) {
+					if (Main.world.getBlock(x, y, z).collidesWith(box, x, y, z)) {
+						hit = true;
+						if (y <= cy) {
+							onGround = true;
+						}
+					}
+				}
+			}
+		}
+		
+		if (hit) {
+			camera.y = ly;
+			box.y = ly - 1.6;
+			if (vSpeed > 0.0) vSpeed = 0.0;
+		}
+		
+		if (!onGround) {
+			offGroundFor++;
+		} else {
+			offGroundFor = 0;
+		}
+	}
+	
+    public function shouldLoad(x : Int, z : Int) : Bool {
+		if (x < cx - viewDistance || x >= cx + viewDistance || z < cz - viewDistance
+			|| z >= cz + viewDistance) {
+			return false;
+		}
+		return true;
+	}
+	
+    public function moveTo(x : Int, y : Int, z : Int) : Void { 
+		camera.x = x;
+		camera.y = y + 2;
+		camera.z = z;
+	}	
 	
 	private function getScale() : Float {
 		var scale = (Main.world.currentTime - 6000) / 12000;
@@ -134,17 +340,17 @@ class WebGLRenderer implements Renderer {
 	
 	public function loadTexture(imageElement : ImageElement) : Texture {
 		var tex = gl.createTexture();
-		gl.bindTexture(RenderingContext.TEXTURE_2D, tex);
-		gl.pixelStorei(RenderingContext.UNPACK_FLIP_Y_WEBGL, 0);
-		gl.pixelStorei(RenderingContext.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
-		gl.texImage2D(RenderingContext.TEXTURE_2D, 0, 
-			RenderingContext.RGBA, RenderingContext.RGBA, 
-			RenderingContext.UNSIGNED_BYTE, imageElement);
-		gl.texParameteri(RenderingContext.TEXTURE_2D, 
-			RenderingContext.TEXTURE_MAG_FILTER, RenderingContext.NEAREST);
-		gl.texParameteri(RenderingContext.TEXTURE_2D, 
-			RenderingContext.TEXTURE_MIN_FILTER, RenderingContext.NEAREST);
-		gl.bindTexture(RenderingContext.TEXTURE_2D, null);
+		gl.bindTexture(GL.TEXTURE_2D, tex);
+		gl.pixelStorei(GL.UNPACK_FLIP_Y_WEBGL, 0);
+		gl.pixelStorei(GL.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
+		gl.texImage2D(GL.TEXTURE_2D, 0, 
+			GL.RGBA, GL.RGBA, 
+			GL.UNSIGNED_BYTE, imageElement);
+		gl.texParameteri(GL.TEXTURE_2D, 
+			GL.TEXTURE_MAG_FILTER, GL.NEAREST);
+		gl.texParameteri(GL.TEXTURE_2D, 
+			GL.TEXTURE_MIN_FILTER, GL.NEAREST);
+		gl.bindTexture(GL.TEXTURE_2D, null);
 		return tex;
 	}
 	
@@ -226,7 +432,7 @@ void main(void) {
 		gl.shaderSource(shader, source);
 		gl.compileShader(shader);
 
-		if (!gl.getShaderParameter(shader, RenderingContext.COMPILE_STATUS)) {
+		if (!gl.getShaderParameter(shader, GL.COMPILE_STATUS)) {
 			throw gl.getShaderInfoLog(shader);
 		}
 		return shader;
@@ -243,6 +449,12 @@ void main(void) {
 }
 
 class Camera {
+	
+	public var x : Float = 0;
+	public var y : Float = 0;
+	public var z : Float = 0;
+	public var rotX : Float = 0;
+	public var rotY : Float = 0;
 	
 	public function new() {
 		

@@ -2,14 +2,14 @@ package mapviewer.collision;
 
 class Box {
 	
-	private var x : Float;
-	private var y : Float;
-	private var z : Float;
-	private var w : Float;
-	private var h : Float;
-	private var d : Float;
+	public var x : Float;
+	public var y : Float;
+	public var z : Float;
+	public var w : Float;
+	public var h : Float;
+	public var d : Float;
 
-	public function new(x : Int, y : Int, z : Int, w : Int, h : Int, d : Int) {
+	public function new(x : Float, y : Float, z : Float, w : Float, h : Float, d : Float) {
 		this.x = x;
 		this.y = y;
 		this.z = z;

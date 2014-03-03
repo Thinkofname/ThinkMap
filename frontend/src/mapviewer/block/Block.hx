@@ -14,7 +14,7 @@ using mapviewer.renderer.webgl.BuilderUtils;
 class Block implements Chainable {
 
     /// The registration entry for this block
-    private var regBlock : BlockRegistrationEntry;
+    public var regBlock : BlockRegistrationEntry;
 
     /// Whether the block can actually be rendered
     @:chain public var renderable : Bool = true;
@@ -89,7 +89,7 @@ class Block implements Chainable {
 				texture);
 		}
 		
-		if (shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x, y + 1, (chunk.z << 4) + z))) {
+		if (shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x, y - 1, (chunk.z << 4) + z))) {
 			var texture = getTexture(Face.BOTTOM);
 			
 			var light = chunk.world.getLight((chunk.x << 4) + x, y - 1, (chunk.z << 4) + z);
@@ -123,7 +123,7 @@ class Block implements Chainable {
 			var light = chunk.world.getLight((chunk.x << 4) + x - 1, y, (chunk.z << 4) + z);
 			var sky = chunk.world.getSky((chunk.x << 4) + x - 1, y, (chunk.z << 4) + z);
 			
-			builder.addFaceRight(x + 1, y, z, 1, 1, r, g, b,
+			builder.addFaceRight(x, y, z, 1, 1, r, g, b,
 				blockLightingRegion(chunk, this, x - 1, y    , z    , x    , y + 2, z + 2, light, sky),
 				blockLightingRegion(chunk, this, x - 1, y    , z - 1, x    , y + 2, z + 1, light, sky),
 				blockLightingRegion(chunk, this, x - 1, y - 1, z    , x    , y + 1, z + 2, light, sky),

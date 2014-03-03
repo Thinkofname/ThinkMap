@@ -37,9 +37,13 @@ class BlockBuilder {
 	}
 	
 	public function lighting(light : Int, sky : Int) : BlockBuilder {
-		buffer.add(light);
-		buffer.add(sky);
+		buffer.add(light & 0xFF);
+		buffer.add(sky & 0xFF);
 		return this;
+	}
+	
+	public function free() {
+		buffer.free();
 	}
 	
 	public function toTypedArray() : Uint8Array {

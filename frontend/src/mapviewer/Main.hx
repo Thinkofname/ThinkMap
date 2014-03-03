@@ -1,5 +1,6 @@
 package mapviewer;
 
+import mapviewer.logging.Logger;
 import mapviewer.renderer.webgl.WebGLRenderer;
 import mapviewer.renderer.webgl.WebGLWorld;
 import mapviewer.world.World;
@@ -23,7 +24,7 @@ class Main {
     private static var req2 : XMLHttpRequest;
     private static var canvas : CanvasElement;
     public static var renderer : Renderer;
-    public static var connetion : Connection;
+    public static var connection : Connection;
     public static var world : World;
 
     static function main() {
@@ -38,6 +39,7 @@ class Main {
         req2.onload = ready;
         req2.open("GET", "block_models/models.json", true);
         req2.send();
+		blockTexturesRaw.push(img);
     }
 
     static function ready(event : Dynamic) {
@@ -61,9 +63,10 @@ class Main {
         Browser.window.onresize = function(e) {
             canvas.width = Browser.window.innerWidth;
             canvas.height = Browser.window.innerHeight;
+			renderer.resize(canvas.width, canvas.height);
         };
 
-        connetion = new Connection('${Browser.window.location.hostname}:23333');
+        connection = new Connection('${Browser.window.location.hostname}:23333');
 		
 		world = new WebGLWorld();
 		renderer = new WebGLRenderer(canvas);
@@ -75,4 +78,8 @@ class Main {
         Browser.window.requestAnimationFrame(draw);
         return true;
     }
+	
+	static function __init__() {
+		Logger.CAN_LOG = true;
+	}
 }

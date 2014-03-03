@@ -17,6 +17,7 @@ class Connection {
         websocket.binaryType = "arraybuffer";
         websocket.onopen = start;
         websocket.onmessage = data;
+		this.address = address;
     }
 
     private function start(e) {

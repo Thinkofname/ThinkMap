@@ -122,7 +122,7 @@ class Chunk {
     public function getLight(x : Int, y : Int, z : Int) : Int {
         var section = sections[y >> 4];
         if (section == null) return 0;
-        return section.light[x | (z << 4) | (y << 8)];
+        return section.light[x | (z << 4) | ((y&0xF) << 8)];
     }
 
     /**
@@ -166,7 +166,7 @@ class Chunk {
     public function getSky(x : Int, y : Int, z : Int) : Int {
         var section = sections[y >> 4];
         if (section == null) return 15;
-        return section.sky[x | (z << 4) | (y << 8)];
+        return section.sky[x | (z << 4) | ((y&0xF) << 8)];
     }
 
     private function update(x : Int, y : Int, z : Int) {
@@ -194,7 +194,7 @@ class Chunk {
         }
     }
 
-    public function buildSection(i : Int, snapshot : Dynamic, endTime : Int) {
+    public function buildSection(i : Int, snapshot : Dynamic, endTime : Int) : Dynamic {
         throw "NYI";
     }
 
@@ -214,7 +214,7 @@ class Chunk {
             var dSection : Dynamic = dSections[i];
             if (dSection != null) {
                 var section : ChunkSection = sections[i] = new ChunkSection(
-                    new Uint8Array(base64.decodeBytes(Bytes.ofString(dSection.buffer)).getData())
+                    new Uint8Array(dSection.buffer)
                 );
                 section.count = dSection.count;
             }
@@ -226,7 +226,7 @@ class Chunk {
         }
         var _blockMap = data.blockMap;
         for (key in Reflect.fields(_blockMap)) {
-            blockMap[BlockRegistry.get(key)] = Std.parseInt(Reflect.field(_blockMap, key));
+            blockMap[BlockRegistry.get(key)] = Reflect.field(_blockMap, key);
         }
     }
 }

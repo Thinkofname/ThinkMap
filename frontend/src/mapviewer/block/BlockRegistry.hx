@@ -70,7 +70,7 @@ class BlockRegistry {
             throw 'Tried to double register block $name';
         }
         var reg = new BlockRegistrationEntry(plugin, name, block);
-
+		block.regBlock = reg;
         blocks[plugin][name] = reg;
         logger.info('Registed block: $reg');
         return reg;
@@ -90,6 +90,15 @@ class BlockRegistry {
 			.collidable(false)
 			.ret())
 			.legacyId(0).build();
+		registerBlock("stone", new Block().chain()
+			.texture("stone").ret())
+			.legacyId(1).build();
+		registerBlock("vines", new Block().chain()
+			.renderable(false)
+			.solid(false)
+			.collidable(false)
+			.ret())
+			.legacyId(106).build();
 
 		// Custom blocks
         registerBlock("missing_block", new Block().chain()

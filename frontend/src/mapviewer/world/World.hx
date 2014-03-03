@@ -5,21 +5,24 @@ import mapviewer.block.Blocks;
 import mapviewer.js.Utils;
 import haxe.Timer;
 import mapviewer.logging.Logger;
+import mapviewer.renderer.webgl.WebGLChunk.WebGLSnapshot;
+import mapviewer.worker.WorkerWorldProxy;
+import mapviewer.world.World.BuildJob;
 class World {
 
     private static var logger : Logger = new Logger("World");
 
-    private var chunks : Map<String, Chunk>;
+    public var chunks : Map<String, Chunk>;
 
     public var currentTime : Int = 6000;
-    private var proxy : Dynamic;
+    private var proxy : WorkerWorldProxy;
     public var needSort : Bool = false;
 
-    public function new() {
+    public function new(?haveProxy : Bool = true) {
         chunks = new Map<String, Chunk>();
         waitingForBuild = new Map<String, Bool>();
-        buildQueue = new Array<Dynamic>();
-        //TODO: setup proxy
+        buildQueue = new Array<BuildJob>();
+        if (haveProxy) proxy = new WorkerWorldProxy(this);
         new Timer(Std.int(1000/20)).run = tick;
     }
 
@@ -28,7 +31,7 @@ class World {
     }
 
     public function writeRequestChunk(x : Int, z : Int) {
-        proxy.requestChunk(x, z);
+       proxy.requestChunk(x, z);
     }
 
     public function addChunk(chunk : Chunk) {
@@ -59,8 +62,8 @@ class World {
     // Build related methods
 
     private var waitingForBuild : Map<String, Bool>;
-    private var buildQueue : Array<Dynamic>;
-    private var currentBuild : Dynamic;
+    private var buildQueue : Array<BuildJob>;
+    private var currentBuild : BuildJob;
     private var currentSnapshot : Dynamic;
 
     public function requestBuild(chunk : Dynamic, i : Int) {
@@ -70,7 +73,7 @@ class World {
             return;
         }
         waitingForBuild[key] = true;
-        buildQueue.push(null /*TODO*/);
+        buildQueue.push(new BuildJob(chunk, i));
         needSort = true;
     }
 
@@ -122,7 +125,7 @@ class World {
     }
 
     public function newChunk() : Chunk { throw "NYI"; return null; }
-    public function queueCompare(a : Dynamic, b : Dynamic) : Int { throw "NYI"; return 0; }
+    public function queueCompare(a : BuildJob, b : BuildJob) : Int { throw "NYI"; return 0; }
 
     // General methods
 
@@ -173,4 +176,25 @@ class World {
     public static function buildKey(x : Int, z : Int, i : Int) : String {
         return '$x:$z@$i';
     }
+}
+
+class BuildJob {
+	
+	public var chunk : Chunk;
+	public var i : Int;
+	
+	public function new(chunk : Chunk, i : Int)  {
+		this.chunk = chunk;
+		this.i = i;
+	}
+	
+	public function exec(snapshot : Dynamic, endTime : Int) : Dynamic {
+		return chunk.buildSection(i, snapshot, endTime);
+	}
+	
+	public function drop(sn : Dynamic) {
+		var snapshot : WebGLSnapshot = cast sn;
+		snapshot.builder.free();
+		snapshot.builderTrans.free();
+	}
 }

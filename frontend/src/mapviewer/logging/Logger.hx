@@ -4,7 +4,7 @@ import js.Browser;
 class Logger {
 
     inline public static var DEBUG_MODE : Bool = true;
-    inline public static var CAN_LOG : Bool = true;
+    public static var CAN_LOG : Bool;
 
     private var name : String;
 
