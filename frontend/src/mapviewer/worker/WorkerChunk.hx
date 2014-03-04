@@ -3,6 +3,7 @@ import js.html.DataView;
 import js.html.Uint8Array;
 import mapviewer.block.BlockRegistry;
 import mapviewer.block.Blocks;
+import mapviewer.renderer.Renderer;
 import mapviewer.world.Chunk;
 import mapviewer.world.Chunk.ChunkSection;
 
@@ -56,11 +57,13 @@ class WorkerChunk extends Chunk {
 		out.z = z;
 		
 		var secs = new Array<Dynamic>();
+		var buffers = new Array<Dynamic>();
 		for (i in 0 ... 16) {
 			if (sections[i] != null) {
 				var s : Dynamic = secs[i] = { };
 				s.count = sections[i].count;
-				s.buffer = sections[i].buffer;
+				s.buffer = new Uint8Array(sections[i].buffer);
+				buffers.push(s.buffer.buffer);
 			}
 		}
 		out.sections = secs;
@@ -74,6 +77,8 @@ class WorkerChunk extends Chunk {
 		for (k in blockMap.keys()) {
 			Reflect.setField(out.blockMap, k.toString(), blockMap[k]);
 		}
-		WorkerMain.self.postMessage(out);
+		WorkerMain.self.postMessage(out, buffers);
 	}
+	
+	override public function unload(renderer : Renderer) {}
 }

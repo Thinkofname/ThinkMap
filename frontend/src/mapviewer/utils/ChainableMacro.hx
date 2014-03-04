@@ -20,6 +20,7 @@ class ChainableMacro {
         }
         var out = [];
         var builder : Array<Field> = [];
+		var builderName = (tPath.sub == null ? tPath.name : tPath.sub);
 
         for (field in fields) {
             out.push(field);
@@ -43,7 +44,7 @@ class ChainableMacro {
                             }],
                             ret: TPath({
                                 pack: tPath.pack,
-                                name: tPath.name + "$Builder",
+                                name: builderName + "$Builder",
                                 params: []
                             }),
                             expr: { expr: ExprDef.EBlock([
@@ -96,19 +97,19 @@ class ChainableMacro {
             access: [Access.APublic]
         });
         out.push({
-            name: "chain",
+            name: "chain" + builderName,
             kind: FieldType.FFun({
                 args: [],
                 ret:  TPath({
                     pack: tPath.pack,
-                    name: tPath.name + "$Builder",
+                    name: builderName + "$Builder",
                     params: []
                 }),
                 expr: { expr: ExprDef.EBlock([
                     { expr: ExprDef.EReturn({ expr:
                         ExprDef.ENew({
                                 pack: tPath.pack,
-                                name: tPath.name + "$Builder",
+                                name: builderName + "$Builder",
                                 params: []
                             },
                             [{ expr: ExprDef.EConst(Constant.CIdent("this")), pos: Context.currentPos() }]
@@ -123,7 +124,7 @@ class ChainableMacro {
         });
         Context.defineType({
             pack: tPath.pack,
-            name: tPath.name + "$Builder",
+            name: builderName + "$Builder",
             pos: Context.currentPos(),
             meta: [],
             params: [],

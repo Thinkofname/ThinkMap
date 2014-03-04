@@ -2,6 +2,7 @@ package mapviewer.block;
 
 import mapviewer.block.BlockRegistry.BlockRegistrationEntry;
 import mapviewer.logging.Logger;
+import mapviewer.model.Model;
 
 class BlockRegistry {
     public static var logger : Logger = new Logger('BlockRegistry');
@@ -84,28 +85,64 @@ class BlockRegistry {
         hasInit = true;
 		
 		// Vanilla blocks
-		registerBlock("air", new Block().chain()
+		registerBlock("air", new Block().chainBlock()
 			.renderable(false)
 			.solid(false)
 			.collidable(false)
 			.ret())
 			.legacyId(0).build();
-		registerBlock("stone", new Block().chain()
+		registerBlock("stone", new Block().chainBlock()
 			.texture("stone").ret())
 			.legacyId(1).build();
-		registerBlock("vines", new Block().chain()
-			.renderable(false)
-			.solid(false)
-			.collidable(false)
-			.ret())
-			.legacyId(106).build();
+			
+		// Dirt blocks
+		{
+			registerBlock("dirt", new Block().chainBlock()
+				.texture("dirt").ret())
+				.legacyId(3)
+				.dataValue(0)
+				.build();
+			registerBlock("dirt_grassless", new Block().chainBlock()
+				.texture("dirt").ret())
+				.legacyId(3)
+				.dataValue(1)
+				.build();
+			registerBlock("dirt_podzol", new BlockSidedTextures().chainBlockSidedTextures()
+				.textures([
+					"front" => "dirt_podzol_side",
+					"top" => "dirt_podzol_top",
+					"bottom" => "dirt",
+					"back" => "dirt_podzol_side",
+					"left" => "dirt_podzol_side",
+					"right" => "dirt_podzol_side"
+				]).ret())
+				.legacyId(3)
+				.dataValue(2)
+				.build();
+		}
+			
+		for (deg in 0 ... 4) {
+			for (dam in 0 ... 3) {
+				registerBlock('anvil_${deg}_$dam', new Block().chainBlock()
+					.solid(false)
+					.model(Model.get("anvil").clone(function(t) {
+						return t == "anvil_top_damaged_0" ? 'anvil_top_damaged_$dam' : t;
+					}).rotateY(deg * 90))
+					.ret())
+					.legacyId(145)
+					.dataValue(dam << 2 | deg)
+					.build();
+			}
+		}
+			
+		BlockVine.register();
 
 		// Custom blocks
-        registerBlock("missing_block", new Block().chain()
+        registerBlock("missing_block", new Block().chainBlock()
             .texture("missing_texture")
             .ret(), "webglmap")
             .build();
-        registerBlock("null", new Block().chain()
+        registerBlock("null", new Block().chainBlock()
             .renderable(false)
             .shade(false)
             .ret(), "webglmap").build();

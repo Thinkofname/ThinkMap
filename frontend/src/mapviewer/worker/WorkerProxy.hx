@@ -26,7 +26,10 @@ class WorkerProxy {
 			}
 			onData(msg.data);
 		}
-		worker.postMessage("start");
+		worker.postMessage( {
+			type: "models",
+			data: Main.modelData
+		});
 	}
 	
 	private function onData(message : Dynamic) {

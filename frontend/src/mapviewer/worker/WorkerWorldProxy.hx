@@ -16,7 +16,7 @@ class WorkerWorldProxy {
 		this.owner = owner;
 		toLoad = new Array();
 		proxies = new Array();
-		for (i in 0 ... 4) {
+		for (i in 0 ... 3) {
 			proxies[i] = new WorkerProxy(this, function() {
 				numberLoaded++;
 			});
@@ -47,15 +47,26 @@ class WorkerWorldProxy {
 	private function processChunk(buffer : ArrayBuffer, x : Int, z : Int) {
 		var data = new Uint8Array(buffer);
 		var message : Dynamic = { };
+		message.type = "load";
 		message.x = x;
 		message.z = z;
-		message.data = data;
 		message.sendBack = false;
 		for (proxy in proxies) {
 			if (proxy.id == lastProcessor) message.sendBack = true;
-			proxy.worker.postMessage(message);
+			message.data = new Uint8Array(data);
+			proxy.worker.postMessage(message, [message.data.buffer]);
 			if (proxy.id == lastProcessor) message.sendBack = false;
 		}
 		lastProcessor = (lastProcessor + 1) % proxies.length;
+	}
+	
+	public function removeChunk(x : Int, z : Int) {
+		var message : Dynamic = { };
+		message.type = "remove";
+		message.x = x;
+		message.z = z;
+		for (proxy in proxies) {
+			proxy.worker.postMessage(message);
+		}
 	}
 }

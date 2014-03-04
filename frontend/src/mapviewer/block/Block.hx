@@ -2,6 +2,7 @@ package mapviewer.block;
 
 import mapviewer.block.Block.Face;
 import mapviewer.collision.Box;
+import mapviewer.model.Model;
 import mapviewer.renderer.LightInfo;
 import mapviewer.renderer.TextureInfo;
 import mapviewer.renderer.webgl.BlockBuilder;
@@ -35,7 +36,7 @@ class Block implements Chainable {
     /// Whether the block can render against itself
     @:chain public var allowSelf : Bool = false;
     /// The model the block should use (if any)
-    @:chain public var model : Dynamic;
+    @:chain public var model : mapviewer.model.Model;
 
     public function new() {
 		
@@ -63,7 +64,7 @@ class Block implements Chainable {
      */
 	public function render(builder : BlockBuilder, x : Int, y : Int, z : Int, chunk : Chunk) {
 		if (model != null) {
-			// TODO: Model rendering
+			model.render(builder, x, y, z, chunk);
 			return;
 		}
 		var r : Int = 255;

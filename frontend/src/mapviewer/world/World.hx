@@ -54,6 +54,7 @@ class World {
         var chunk = getChunk(x, z);
         chunks.remove(chunkKey(x, z));
         chunk.unload(Main.renderer);
+		if (proxy != null) proxy.removeChunk(x, z);
         for (i in 0 ... 16) {
             waitingForBuild.remove(buildKey(x, z, i));
         }
