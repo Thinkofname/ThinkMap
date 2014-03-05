@@ -143,7 +143,7 @@ class WebGLRenderer implements Renderer {
 		};
 	}
 	
-	inline public static var viewDistance : Int = 6;
+	inline public static var viewDistance : Int = 4;
 	
 	private var lastFrame : Int;
 	private var temp : Mat4;
