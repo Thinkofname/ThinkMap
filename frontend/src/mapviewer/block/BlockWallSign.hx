@@ -45,12 +45,16 @@ class BlockWallSign {
 		_model.faces.push(ModelFace.fromFace(Face.TOP).chainModelFace()
 			.texture("planks_oak").ret()
 			.sizeZ(-15)
-			.sizeY(-4, true)
+			.sizeY(-14, true)
+			.sizeX(8, true)
+			.moveX(18, true)
 			.moveY(12));
 		_model.faces.push(ModelFace.fromFace(Face.BOTTOM).chainModelFace()
 			.texture("planks_oak").ret()
 			.sizeZ(-15)
-			.sizeY(-4, true)
+			.sizeY(-14, true)
+			.sizeX(8, true)
+			.moveX(18, true)
 			.moveY(4));
 		return _model;
 	}

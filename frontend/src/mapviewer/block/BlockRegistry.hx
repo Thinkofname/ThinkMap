@@ -678,7 +678,16 @@ class BlockRegistry {
 		//TODO: (#59) Wheat
 		//TODO: (#60) Farmland
 
-		//TODO: (#63) Standing sign
+		for (i in 0 ... 16) {
+			registerBlock('standing_sign_$i', new Block().chainBlock()
+				.solid(false)
+				.collidable(false)
+				.model(BlockFloorSign.model.clone().rotateY((360/16)*i)).ret())
+				.legacyId(63)
+				.dataValue(i)
+				.build();
+		}
+		
 		//TODO: (#64) Wooden door
 
 		//TODO: (#66) Rail
