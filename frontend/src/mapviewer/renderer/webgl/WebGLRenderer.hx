@@ -415,7 +415,7 @@ varying vec2 vLighting;
 
 void main(void) {
     float id = floor(vTextureId.x + 0.5);
-    if (abs(floor((vTextureId.y - vTextureId.x) + 0.5) - 1.0) < 0.99) {
+    if (floor((vTextureId.y - vTextureId.x) + 0.5) > 0.8) {
         id = id + floor(mod(frame, vTextureId.y - vTextureId.x) + 0.5);
     }
     vec2 pos = fract(vTexturePos) * 0.03125;
