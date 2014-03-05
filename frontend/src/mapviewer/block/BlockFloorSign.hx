@@ -87,6 +87,6 @@ class BlockFloorSign {
 			.sizeY( -7)
 			.sizeY( -4, true));
 			
-		return _model.join(top, 0, 5, 8).join(post, 8, 0, 8);
+		return _model.join(top, 0, 5, 8).join(post, 7.5, 0, 8);
 	}
 }

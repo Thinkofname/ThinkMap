@@ -102,7 +102,7 @@ class Model {
 		}
 	}
 	
-	public function join(other : Model, ?ox : Int = 0, ?oy : Int = 0, ?oz : Int = 0) : Model {
+	public function join(other : Model, ?ox : Float = 0, ?oy : Float = 0, ?oz : Float = 0) : Model {
 		for (face in other.faces) {
 			var newFace = new ModelFace(face.face);
 			newFace.texture = face.texture;
