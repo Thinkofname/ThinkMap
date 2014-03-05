@@ -54,6 +54,7 @@ class WebGLRenderer implements Renderer {
 	public var cy : Int = 0;
 	public var cz : Int = 0;
 	public var firstPerson : Bool = true;
+	private var flyMode : Bool = false;
 	
 	public function new(canvas : CanvasElement) {
 		this.canvas = canvas;
@@ -108,10 +109,14 @@ class WebGLRenderer implements Renderer {
 		gl.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 		
 		Browser.document.onmousedown = function(e) {
+			if (e.button == 2) flyMode = true;
 			if (Utils.pointerLockElement() != Browser.document.body
 				&& firstPerson)
 					Utils.requestPointerLock(Browser.document.body);
 		};
+		Browser.document.onmouseup = function(e) {
+			if (e.button == 2) flyMode = false;
+		}
 		Browser.document.onmousemove = function(e) {
 			if (Utils.pointerLockElement() != Browser.document.body
 				|| !firstPerson) return;
@@ -169,15 +174,21 @@ class WebGLRenderer implements Renderer {
 			var ly = camera.y;
 			var lz = camera.z;
 			
-			camera.y += vSpeed * delta;
-			vSpeed = Math.max(MIN_VSPEED, vSpeed - 0.005 * delta);
+			if (!flyMode) {
+				camera.y += vSpeed * delta;
+				vSpeed = Math.max(MIN_VSPEED, vSpeed - 0.005 * delta);
+			}
+			
+			var speed = flyMode ? 0.3 : 0.1;
 			
 			if (movingForward) {
-				camera.x += 0.1 * Math.sin(camera.rotY) * delta;
-				camera.z -= 0.1 * Math.cos(camera.rotY) * delta;
+				camera.x += speed * Math.sin(camera.rotY) * (flyMode ? Math.cos(camera.rotX) : 1) * delta;
+				camera.z -= speed * Math.cos(camera.rotY) * (flyMode ? Math.cos(camera.rotX) : 1) * delta;
+				if (flyMode) camera.y -= speed * Math.sin(camera.rotX) * delta;
 			} else if (movingBackwards) {
-				camera.x -= 0.1 * Math.sin(camera.rotY) * delta;
-				camera.z += 0.1 * Math.cos(camera.rotY) * delta;
+				camera.x -= speed * Math.sin(camera.rotY) * (flyMode ? Math.cos(camera.rotX) : 1) * delta;
+				camera.z += speed * Math.cos(camera.rotY) * (flyMode ? Math.cos(camera.rotX) : 1) * delta;
+				if (flyMode) camera.y += speed * Math.sin(camera.rotX) * delta;
 			}
 			
 			checkCollision(lx, ly, lz);

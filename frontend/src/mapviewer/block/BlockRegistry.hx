@@ -618,7 +618,7 @@ class BlockRegistry {
 		registerBlock('tnt', new BlockSidedTextures().chainBlockSidedTextures()
 			.textures([
 				'top' => 'tnt_top',
-				'bottom ' => 'tnt_bottom',
+				'bottom' => 'tnt_bottom',
 				'left' => 'tnt_side',
 				'right' => 'tnt_side',
 				'front' => 'tnt_side',
