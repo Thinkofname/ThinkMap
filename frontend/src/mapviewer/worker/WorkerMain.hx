@@ -27,7 +27,7 @@ class WorkerMain {
 					BlockRegistry.init();
 					self.postMessage("ready");
 				case "load":
-					if (msg.data.sendBack) {
+					if (!msg.data.sendBack) {
 						Main.world.addChunk(new WorkerChunk(new Uint8Array(msg.data.data)));
 					} else {
 						var chunk = new WorkerChunk(new Uint8Array(msg.data.data));
