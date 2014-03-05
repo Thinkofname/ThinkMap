@@ -1,7 +1,11 @@
 -js build/main.js
 -cp src
+-dce full
+-D js-flatten
 -main mapviewer.Main
 --next
 -js build/work.js
 -cp src
+-dce full
+-D js-flatten
 -main mapviewer.worker.WorkerMain

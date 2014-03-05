@@ -1,5 +1,0 @@
-name: packer
-dependencies:
-  archive: 1.0.9
-  image: any
-  barback: any

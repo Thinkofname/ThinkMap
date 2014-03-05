@@ -1,4 +1,5 @@
 package mapviewer.model;
+import js.html.Float32Array;
 import mapviewer.block.Block.Face;
 import mapviewer.model.Model.ModelFace;
 import mapviewer.model.Model.ModelVertex;
@@ -99,6 +100,25 @@ class Model {
 				vert.z = t2[2] + 0.5;
 			}
 		}
+	}
+	
+	public function join(other : Model, ?ox : Int = 0, ?oy : Int = 0, ?oz : Int = 0) : Model {
+		for (face in other.faces) {
+			var newFace = new ModelFace(face.face);
+			newFace.texture = face.texture;
+			newFace.r = face.r;
+			newFace.g = face.g;
+			newFace.b = face.b;
+			faces.push(newFace);
+			for (vert in face.vertices) {
+				var newVert = vert.clone();
+				newVert.x += ox / 16;
+				newVert.y += oy / 16;
+				newVert.z += oz / 16;
+				newFace.vertices.push(newVert);
+			}
+		}
+		return this;
 	}
 	
 	private static function noopTextureGetter(texture : String) : String {
@@ -273,7 +293,38 @@ class ModelFace implements Chainable {
 	}
 }
 
-class ModelVertex {
+abstract ModelVertex(Float32Array) {
+	
+	public var x(get, set) : Float;	
+	inline function get_x() : Float { return this[0]; }	
+	inline function set_x(v : Float) : Float { return this[0] = v; }
+	
+	public var y(get, set) : Float;	
+	inline function get_y() : Float { return this[1]; }	
+	inline function set_y(v : Float) : Float { return this[1] = v; }
+	
+	public var z(get, set) : Float;	
+	inline function get_z() : Float { return this[2]; }	
+	inline function set_z(v : Float) : Float { return this[2] = v; }
+	
+	public var textureX(get, set) : Float;	
+	inline function get_textureX() : Float { return this[3]; }	
+	inline function set_textureX(v : Float) : Float { return this[3] = v; }
+	
+	public var textureY(get, set) : Float;	
+	inline function get_textureY() : Float { return this[4]; }	
+	inline function set_textureY(v : Float) : Float { return this[4] = v; }
+	
+	inline public function new(x : Float, y : Float, z : Float, textureX : Float, textureY : Float) {
+		this = new Float32Array([x, y, z, textureX, textureY]);
+	}
+	
+	inline public function clone() : ModelVertex {
+		return cast new Float32Array(this);
+	}
+}
+
+/*class ModelVertex {
 	
 	public var x : Float;
 	public var y : Float;
@@ -292,4 +343,4 @@ class ModelVertex {
 	public function clone() : ModelVertex {
 		return new ModelVertex(x, y, z, textureX, textureY);
 	}
-}
+}*/

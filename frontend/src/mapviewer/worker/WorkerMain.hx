@@ -13,7 +13,6 @@ class WorkerMain {
     static function main() {
 		untyped importScripts("gl-matrix-min.js");
 		Logger.CAN_LOG = false;
-		//TODO: Models
 		Main.world = new WorkerWorld();
 		
 		self.onmessage = function(msg : Dynamic) {

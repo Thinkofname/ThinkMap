@@ -67,17 +67,13 @@ class Block implements Chainable {
 			model.render(builder, x, y, z, chunk);
 			return;
 		}
-		var r : Int = 255;
-		var g : Int = 255;
-		var b : Int = 255;
-		if (forceColour) {
-			r = (colour >> 16) & 0xFF;
-			g = (colour >> 8) & 0xFF;
-			b = colour & 0xFF;
-		}
 		
 		if (shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x, y + 1, (chunk.z << 4) + z))) {
 			var texture = getTexture(Face.TOP);
+			var colour = getColour(this, Face.TOP);
+			var r = (colour >> 16) & 0xFF;
+			var g = (colour >> 8) & 0xFF;
+			var b = colour & 0xFF;		
 			
 			var light = chunk.world.getLight((chunk.x << 4) + x, y + 1, (chunk.z << 4) + z);
 			var sky = chunk.world.getSky((chunk.x << 4) + x, y + 1, (chunk.z << 4) + z);
@@ -92,6 +88,10 @@ class Block implements Chainable {
 		
 		if (shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x, y - 1, (chunk.z << 4) + z))) {
 			var texture = getTexture(Face.BOTTOM);
+			var colour = getColour(this, Face.BOTTOM);
+			var r = (colour >> 16) & 0xFF;
+			var g = (colour >> 8) & 0xFF;
+			var b = colour & 0xFF;		
 			
 			var light = chunk.world.getLight((chunk.x << 4) + x, y - 1, (chunk.z << 4) + z);
 			var sky = chunk.world.getSky((chunk.x << 4) + x, y - 1, (chunk.z << 4) + z);
@@ -106,6 +106,10 @@ class Block implements Chainable {
 		
 		if (shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x + 1, y, (chunk.z << 4) + z))) {
 			var texture = getTexture(Face.LEFT);
+			var colour = getColour(this, Face.LEFT);
+			var r = (colour >> 16) & 0xFF;
+			var g = (colour >> 8) & 0xFF;
+			var b = colour & 0xFF;		
 			
 			var light = chunk.world.getLight((chunk.x << 4) + x + 1, y, (chunk.z << 4) + z);
 			var sky = chunk.world.getSky((chunk.x << 4) + x + 1, y, (chunk.z << 4) + z);
@@ -120,6 +124,10 @@ class Block implements Chainable {
 		
 		if (shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x - 1, y, (chunk.z << 4) + z))) {
 			var texture = getTexture(Face.RIGHT);
+			var colour = getColour(this, Face.RIGHT);
+			var r = (colour >> 16) & 0xFF;
+			var g = (colour >> 8) & 0xFF;
+			var b = colour & 0xFF;		
 			
 			var light = chunk.world.getLight((chunk.x << 4) + x - 1, y, (chunk.z << 4) + z);
 			var sky = chunk.world.getSky((chunk.x << 4) + x - 1, y, (chunk.z << 4) + z);
@@ -134,6 +142,10 @@ class Block implements Chainable {
 
 		if (shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x, y, (chunk.z << 4) + z + 1))) {
 			var texture = getTexture(Face.FRONT);
+			var colour = getColour(this, Face.FRONT);
+			var r = (colour >> 16) & 0xFF;
+			var g = (colour >> 8) & 0xFF;
+			var b = colour & 0xFF;		
 
 			var light = chunk.world.getLight((chunk.x << 4) + x, y, (chunk.z << 4) + z + 1);
 			var sky = chunk.world.getSky((chunk.x << 4) + x, y, (chunk.z << 4) + z + 1);
@@ -148,6 +160,10 @@ class Block implements Chainable {
 
 		if (shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x, y, (chunk.z << 4) + z - 1))) {
 			var texture = getTexture(Face.BACK);
+			var colour = getColour(this, Face.BACK);
+			var r = (colour >> 16) & 0xFF;
+			var g = (colour >> 8) & 0xFF;
+			var b = colour & 0xFF;		
 
 			var light = chunk.world.getLight((chunk.x << 4) + x, y, (chunk.z << 4) + z - 1);
 			var sky = chunk.world.getSky((chunk.x << 4) + x, y, (chunk.z << 4) + z - 1);
@@ -167,6 +183,10 @@ class Block implements Chainable {
 	public function getTexture(face : Face) : TextureInfo {
 		return Main.blockTextureInfo[texture];
 	}
+	
+	@:chain public var getColour : Block -> Block.Face -> Int = function(self : Block, face : Block.Face) : Int {
+		return self.forceColour ? self.colour : 0xFFFFFF;
+	};
 
     public function toString() : String {
         return regBlock.toString();
