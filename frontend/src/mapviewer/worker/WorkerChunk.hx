@@ -4,6 +4,7 @@ import js.html.Uint8Array;
 import mapviewer.block.BlockRegistry;
 import mapviewer.block.Blocks;
 import mapviewer.renderer.Renderer;
+import mapviewer.renderer.webgl.BlockBuilder;
 import mapviewer.world.Chunk;
 import mapviewer.world.Chunk.ChunkSection;
 
@@ -53,6 +54,7 @@ class WorkerChunk extends Chunk {
 	
 	public function send() {
 		var out : Dynamic = { };
+		out.type = "chunk";
 		out.x = x;
 		out.z = z;
 		
@@ -78,6 +80,30 @@ class WorkerChunk extends Chunk {
 			Reflect.setField(out.blockMap, k.toString(), blockMap[k]);
 		}
 		WorkerMain.self.postMessage(out, buffers);
+	}
+	
+	public function sendBuild(i : Int) {		
+		var builder = new BlockBuilder();
+		var builderTrans = new BlockBuilder();
+		for (x in 0 ... 16) {
+			for (z in 0 ... 16) {
+				for (y in 0 ... 16) {
+					var block = getBlock(x, (i << 4) + y, z);
+					if (block.renderable) {
+						block.render(block.transparent ? builderTrans : builder, x, (i << 4) + y, z, this);
+					}
+				}
+			}
+		}
+		var message : Dynamic = { };
+		// Store
+		message.type = "build";
+		message.data = builder.toTypedArray();
+		message.dataTrans = builderTrans.toTypedArray();
+		message.x = x;
+		message.z = z;
+		message.i = i;
+		WorkerMain.self.postMessage(message, [message.data.buffer, message.dataTrans.buffer]);
 	}
 	
 	override public function unload(renderer : Renderer) {}

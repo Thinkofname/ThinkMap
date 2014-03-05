@@ -230,12 +230,10 @@ class WebGLRenderer implements Renderer {
 			}
 			cx = nx;
 			cz = nz;
-			Main.world.needSort = true;
 		}
 		var ny = Std.int(camera.y / 16);
 		if (cy != ny) {
 			cy = ny;
-			Main.world.needSort = true;
 		}
 	}
 	

@@ -16,12 +16,10 @@ class World {
 
     public var currentTime : Int = 6000;
     private var proxy : WorkerWorldProxy;
-    public var needSort : Bool = false;
 
     public function new(?haveProxy : Bool = true) {
         chunks = new Map<String, Chunk>();
         waitingForBuild = new Map<String, Bool>();
-        buildQueue = new Array<BuildJob>();
         if (haveProxy) proxy = new WorkerWorldProxy(this);
         new Timer(Std.int(1000/20)).run = tick;
     }
@@ -52,6 +50,7 @@ class World {
 
     public function removeChunk(x : Int, z : Int) {
         var chunk = getChunk(x, z);
+		if (chunk == null) return;
         chunks.remove(chunkKey(x, z));
         chunk.unload(Main.renderer);
 		if (proxy != null) proxy.removeChunk(x, z);
@@ -62,10 +61,7 @@ class World {
 
     // Build related methods
 
-    private var waitingForBuild : Map<String, Bool>;
-    private var buildQueue : Array<BuildJob>;
-    private var currentBuild : BuildJob;
-    private var currentSnapshot : Dynamic;
+    public var waitingForBuild : Map<String, Bool>;
 
     public function requestBuild(chunk : Dynamic, i : Int) {
         var key = buildKey(chunk.x, chunk.z, i);
@@ -74,59 +70,9 @@ class World {
             return;
         }
         waitingForBuild[key] = true;
-        buildQueue.push(new BuildJob(chunk, i));
-        needSort = true;
-		//proxy.build(chunk, i);
+		proxy.build(chunk, i);
     }
-
-    inline static var BUILD_LIMIT_MS : Int = 8;
-
-    public function tickBuildQueue(endTime : Int) {
-		//return; // Disable
-        if (currentBuild != null) {
-            var job = currentBuild;
-            if (getChunk(job.chunk.x, job.chunk.z) == null) {
-                currentBuild = null;
-                currentSnapshot = null;
-            } else {
-                var snapshot = job.exec(currentSnapshot, endTime);
-                currentBuild = null;
-                currentSnapshot = null;
-                if (snapshot != null) {
-                    currentBuild = job;
-                    currentSnapshot =  snapshot;
-                    return;
-                }
-            }
-        }
-
-        if (Utils.now() >= endTime) {
-            return;
-        }
-
-        if (buildQueue.length != 0 && needSort) {
-            needSort = false;
-            buildQueue.sort(queueCompare);
-        }
-        while (Utils.now() < endTime && buildQueue.length != 0) {
-            var job = buildQueue.pop();
-            var key = buildKey(job.chunk.x, job.chunk.z, job.i);
-            if (!waitingForBuild.exists(key)) {
-                continue;
-            }
-            waitingForBuild.remove(key);
-            if (getChunk(job.chunk.x, job.chunk.z) == null) {
-                continue;
-            }
-            var snapshot = job.exec(null, endTime);
-            if (snapshot != null) {
-                currentBuild = job;
-                currentSnapshot = snapshot;
-                return;
-            }
-        }
-    }
-
+	
     public function newChunk() : Chunk { throw "NYI"; return null; }
     public function queueCompare(a : BuildJob, b : BuildJob) : Int { throw "NYI"; return 0; }
 

@@ -5,6 +5,8 @@ import mapviewer.block.BlockRegistry;
 import mapviewer.logging.Logger;
 import mapviewer.Main;
 import mapviewer.model.Model;
+import mapviewer.renderer.TextureInfo;
+import haxe.Json;
 
 class WorkerMain {
 	
@@ -17,6 +19,12 @@ class WorkerMain {
 		
 		self.onmessage = function(msg : Dynamic) {
 			switch (msg.data.type) {
+				case "textures":					
+					var js = msg.data.data;
+					for (e in Reflect.fields(js)) {
+						var ti = Reflect.field(js, e);
+						Main.blockTextureInfo[e] = new TextureInfo(ti.start, ti.end);
+					}
 				case "models":				
 					var mJs = msg.data.data;
 					for (k in Reflect.fields(mJs)) {
@@ -27,15 +35,21 @@ class WorkerMain {
 					BlockRegistry.init();
 					self.postMessage("ready");
 				case "load":
-					if (!msg.data.sendBack) {
-						Main.world.addChunk(new WorkerChunk(new Uint8Array(msg.data.data)));
-					} else {
-						var chunk = new WorkerChunk(new Uint8Array(msg.data.data));
+					var chunk = new WorkerChunk(msg.data.data);
+					chunk.world = Main.world;
+					if (msg.data.sendBack) {
 						chunk.send();
-						Main.world.addChunk(chunk);
 					}
+					Main.world.addChunk(chunk);
 				case "remove":
 					Main.world.removeChunk(msg.data.x, msg.data.z);
+				case "build":
+					var c = Main.world.getChunk(msg.data.x, msg.data.z);
+					if (c == null) {
+						return;
+					}
+					var chunk : WorkerChunk = cast c;
+					chunk.sendBuild(msg.data.i);
 			}
 		};
 	}

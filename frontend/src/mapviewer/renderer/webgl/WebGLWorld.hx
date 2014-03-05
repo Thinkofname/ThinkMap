@@ -10,8 +10,6 @@ class WebGLWorld extends World {
 		super(true);
 	}
 	
-	private var lastRender : Int;
-	
 	public function render(renderer : WebGLRenderer) {		
 		renderer.gl.uniform1i(renderer.disAlphaLocation, 1);
 		for (chunk in chunks) {
@@ -26,13 +24,6 @@ class WebGLWorld extends World {
 			w.render(renderer, 1);
 		}
 		renderer.gl.disable(RenderingContext.BLEND);
-		
-		var endTime = 16 - (Utils.now() - lastRender);
-		if (endTime < 5) endTime = 5;
-		
-		tickBuildQueue(Utils.now() + endTime);
-		
-		lastRender = Utils.now();		
 	}
 	
 	override public function newChunk() : Chunk {

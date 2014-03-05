@@ -28,6 +28,7 @@ class Main {
     public static var connection : Connection;
     public static var world : World;
 	public static var modelData : Dynamic;
+	public static var textureData : Dynamic;
 
     static function main() {
         var img = Browser.document.createImageElement();
@@ -51,6 +52,7 @@ class Main {
         }
 
         var js = Json.parse(req1.response);
+		textureData = js;
         for (e in Reflect.fields(js)) {
             var ti = Reflect.field(js, e);
             blockTextureInfo[e] = new TextureInfo(ti.start, ti.end);

@@ -14,8 +14,8 @@ class Chunk {
 
     public var x : Int;
     public var z : Int;
-    private var sections : Array<ChunkSection>;
-    private var needsUpdate : Bool = false;
+    public var sections : Array<ChunkSection>;
+    public var needsUpdate : Bool = false;
     private var needsBuild : Bool =  false;
     public var world : World;
 

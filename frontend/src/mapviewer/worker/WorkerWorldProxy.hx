@@ -2,6 +2,7 @@ package mapviewer.worker;
 import js.html.ArrayBuffer;
 import js.html.Uint8Array;
 import js.html.XMLHttpRequest;
+import mapviewer.world.Chunk;
 import mapviewer.world.World;
 
 class WorkerWorldProxy {
@@ -21,6 +22,16 @@ class WorkerWorldProxy {
 				numberLoaded++;
 			});
 		}
+	}
+	
+	public function build(chunk : Chunk, i : Int) {
+		proxies[lastProcessor].worker.postMessage( {
+			type: "build",
+			x: chunk.x,
+			z: chunk.z,
+			i: i
+		});
+		lastProcessor = (lastProcessor + 1) % proxies.length;
 	}
 	
 	public function requestChunk(x : Int, z : Int) {
