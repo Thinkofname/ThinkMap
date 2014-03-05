@@ -33,8 +33,6 @@ class WebGLWorld extends World {
 		tickBuildQueue(Utils.now() + endTime);
 		
 		lastRender = Utils.now();		
-		
-		proxy.tick();
 	}
 	
 	override public function newChunk() : Chunk {

@@ -23,12 +23,7 @@ class WorkerWorldProxy {
 		}
 	}
 	
-	public function tick() {
-		if (toLoad.length == 0 || numberLoaded != proxies.length) return;
-		var dl = toLoad.pop();
-		var x : Int = dl[0];
-		var z : Int = dl[1];
-		
+	public function requestChunk(x : Int, z : Int) {
 		var req = new XMLHttpRequest();
 		req.open("POST", 'http://${Main.connection.address}/chunk', true);
 		req.responseType = "arraybuffer";
@@ -38,10 +33,6 @@ class WorkerWorldProxy {
 			}
 		};
 		req.send(World.chunkKey(x, z));
-	}
-	
-	public function requestChunk(x : Int, z : Int) {
-		toLoad.push([x, z]);
 	}
 	
 	private function processChunk(buffer : ArrayBuffer, x : Int, z : Int) {

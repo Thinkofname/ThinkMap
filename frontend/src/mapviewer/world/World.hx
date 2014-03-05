@@ -76,11 +76,13 @@ class World {
         waitingForBuild[key] = true;
         buildQueue.push(new BuildJob(chunk, i));
         needSort = true;
+		//proxy.build(chunk, i);
     }
 
     inline static var BUILD_LIMIT_MS : Int = 8;
 
     public function tickBuildQueue(endTime : Int) {
+		//return; // Disable
         if (currentBuild != null) {
             var job = currentBuild;
             if (getChunk(job.chunk.x, job.chunk.z) == null) {
