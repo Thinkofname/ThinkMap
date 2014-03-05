@@ -1,7 +1,10 @@
 package mapviewer.renderer.webgl;
 import js.Browser;
 import js.html.CanvasElement;
+import js.html.Event;
 import js.html.ImageElement;
+import js.html.KeyboardEvent;
+import js.html.MouseEvent;
 import js.html.webgl.Program;
 import js.html.webgl.RenderingContext;
 import js.html.webgl.Shader;
@@ -108,22 +111,26 @@ class WebGLRenderer implements Renderer {
 		
 		gl.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 		
-		Browser.document.onmousedown = function(e) {
+		Browser.document.onmousedown = function(e : MouseEvent) {
+			e.preventDefault();
 			if (e.button == 2) flyMode = true;
 			if (Utils.pointerLockElement() != Browser.document.body
 				&& firstPerson)
 					Utils.requestPointerLock(Browser.document.body);
 		};
-		Browser.document.onmouseup = function(e) {
+		Browser.document.onmouseup = function(e : MouseEvent) {
+			e.preventDefault();
 			if (e.button == 2) flyMode = false;
 		}
-		Browser.document.onmousemove = function(e) {
+		Browser.document.onmousemove = function(e : MouseEvent) {
+			e.preventDefault();
 			if (Utils.pointerLockElement() != Browser.document.body
 				|| !firstPerson) return;
 			camera.rotY += Utils.movementX(e) / 300.0;	
 			camera.rotX += Utils.movementY(e) / 300.0;	
 		};
-		Browser.document.onkeydown = function(e) {
+		Browser.document.onkeydown = function(e : KeyboardEvent) {
+			e.preventDefault();
 			if (!firstPerson) return;
 			if (e.keyCode == 'W'.code) {
 				movingForward = true;
@@ -133,7 +140,8 @@ class WebGLRenderer implements Renderer {
 				vSpeed = 0.1;
 			}
 		};
-		Browser.document.onkeyup = function(e) {
+		Browser.document.onkeyup = function(e : KeyboardEvent) {
+			e.preventDefault();
 			if (!firstPerson) return;
 			if (e.keyCode == 'W'.code) {
 				movingForward = false;
@@ -141,6 +149,7 @@ class WebGLRenderer implements Renderer {
 				movingBackwards = false;
 			}
 		};
+		Browser.document.oncontextmenu = function(e : Event) { e.preventDefault(); };
 	}
 	
 	inline public static var viewDistance : Int = 4;
