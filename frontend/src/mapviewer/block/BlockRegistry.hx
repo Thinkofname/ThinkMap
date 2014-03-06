@@ -561,6 +561,13 @@ class BlockRegistry {
 				.legacyId(35)
 				.dataValue(v)
 				.build();
+			registerBlock('glass_$k', new Block().chainBlock()
+				.texture('glass_$k')
+				.solid(false)
+				.transparent(true).ret())
+				.legacyId(95)
+				.dataValue(v)
+				.build();
 		}
 
 		//TODO: (#36) Piston extension

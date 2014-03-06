@@ -10,7 +10,7 @@ class WebGLWorld extends World {
 		super(true);
 	}
 	
-	public function render(renderer : WebGLRenderer) {		
+	public function render(renderer : WebGLRenderer) {			
 		renderer.gl.uniform1i(renderer.disAlphaLocation, 1);
 		for (chunk in chunks) {
 			var w : WebGLChunk = cast chunk;

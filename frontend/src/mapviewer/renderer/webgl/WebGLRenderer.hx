@@ -130,13 +130,15 @@ class WebGLRenderer implements Renderer {
 			camera.rotX += Utils.movementY(e) / 300.0;	
 		};
 		Browser.document.onkeydown = function(e : KeyboardEvent) {
-			e.preventDefault();
 			if (!firstPerson) return;
 			if (e.keyCode == 'W'.code) {
+				e.preventDefault();
 				movingForward = true;
 			} else if (e.keyCode == 'S'.code) {
+				e.preventDefault();
 				movingBackwards = true;
 			} else if (e.keyCode == ' '.code && (onGround || offGroundFor <= 1)) {
+				e.preventDefault();
 				vSpeed = 0.1;
 			}
 		};
@@ -144,8 +146,10 @@ class WebGLRenderer implements Renderer {
 			e.preventDefault();
 			if (!firstPerson) return;
 			if (e.keyCode == 'W'.code) {
+				e.preventDefault();
 				movingForward = false;
 			} else if (e.keyCode == 'S'.code) {
+				e.preventDefault();
 				movingBackwards = false;
 			}
 		};
