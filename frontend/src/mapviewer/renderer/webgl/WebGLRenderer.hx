@@ -156,7 +156,7 @@ class WebGLRenderer implements Renderer {
 		Browser.document.oncontextmenu = function(e : Event) { e.preventDefault(); };
 	}
 	
-	inline public static var viewDistance : Int = 4;
+	inline public static var viewDistance : Int = 6;
 	
 	private var lastFrame : Int;
 	private var temp : Mat4;
