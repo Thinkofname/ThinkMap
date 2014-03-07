@@ -323,24 +323,3 @@ abstract ModelVertex(Float32Array) {
 		return cast new Float32Array(this);
 	}
 }
-
-/*class ModelVertex {
-	
-	public var x : Float;
-	public var y : Float;
-	public var z : Float;
-	public var textureX : Float;
-	public var textureY : Float;
-	
-	public function new(x : Float, y : Float, z : Float, textureX : Float, textureY : Float) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.textureX = textureX;
-		this.textureY = textureY;
-	}
-	
-	public function clone() : ModelVertex {
-		return new ModelVertex(x, y, z, textureX, textureY);
-	}
-}*/

@@ -765,7 +765,7 @@ class BlockRegistry {
 		//TODO: (#92) Cake
 		//TODO: (#93) Unpowered repeater
 		//TODO: (#94) Powered repeater
-		//TODO: (#95) Stained glass
+		
 		//TODO: (#96) Trapdoor
 		//TODO: (#97) Monster egg
 
