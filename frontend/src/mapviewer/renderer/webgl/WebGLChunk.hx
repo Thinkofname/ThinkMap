@@ -54,7 +54,7 @@ class WebGLChunk extends Chunk {
 			gl.uniform2f(renderer.offsetLocation, x, z);
 			gl.bindBuffer(RenderingContext.ARRAY_BUFFER, buffer);
 			gl.vertexAttribPointer(renderer.positionLocation, 3, RenderingContext.UNSIGNED_SHORT, false, 20, 0);
-			gl.vertexAttribPointer(renderer.colourLocation, 3, RenderingContext.UNSIGNED_BYTE, true, 20, 6);
+			gl.vertexAttribPointer(renderer.colourLocation, 4, RenderingContext.UNSIGNED_BYTE, true, 20, 6);
 			gl.vertexAttribPointer(renderer.texturePosLocation, 2, RenderingContext.UNSIGNED_SHORT, false, 20, 10);
 			gl.vertexAttribPointer(renderer.textureIdLocation, 2, RenderingContext.UNSIGNED_SHORT, false, 20, 14);
 			gl.vertexAttribPointer(renderer.lightingLocation, 2, RenderingContext.BYTE, false, 20, 18);

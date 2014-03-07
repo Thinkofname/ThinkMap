@@ -760,7 +760,14 @@ class BlockRegistry {
 			.legacyId(89)
 			.build();
 
-		//TODO: (#90) Portal
+		registerBlock("portal", new BlockPortal().chainBlock()
+			.texture("portal")
+			.solid(false)
+			.collidable(false)
+			.transparent(true)
+			.ret())
+			.legacyId(90)
+			.build();
 		//TODO: (#91) Lit pumpkin
 		//TODO: (#92) Cake
 		//TODO: (#93) Unpowered repeater

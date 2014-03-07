@@ -396,7 +396,7 @@ class WebGLRenderer implements Renderer {
 	
 	private static var chunkVertexShaderSource : String = "
 attribute vec3 position;
-attribute vec3 colour;
+attribute vec4 colour;
 attribute vec2 texturePos;
 attribute vec2 textureId;
 attribute vec2 lighting;
@@ -405,7 +405,7 @@ uniform mat4 pMatrix;
 uniform mat4 uMatrix;
 uniform vec2 offset;
 
-varying vec3 vColour;
+varying vec4 vColour;
 varying vec2 vTextureId;
 varying vec2 vTexturePos;
 varying vec2 vLighting;
@@ -437,7 +437,7 @@ uniform sampler2D texture;
 uniform float frame;
 uniform int disAlpha;
 
-varying vec3 vColour;
+varying vec4 vColour;
 varying vec2 vTextureId;
 varying vec2 vTexturePos;
 varying vec2 vLighting;
@@ -450,7 +450,7 @@ void main(void) {
     vec2 pos = fract(vTexturePos) * 0.03125;
     pos.x += floor(mod(id, 32.0)) * 0.03125;
     pos.y += floor(id / 32.0) * 0.03125;
-    gl_FragColor = texture2D(texture, pos) * vec4(vColour, 1.0);
+    gl_FragColor = texture2D(texture, pos) * vColour;
 
     float scale = (frame - 6000.0) / 12000.0;
     if (scale > 1.0) {

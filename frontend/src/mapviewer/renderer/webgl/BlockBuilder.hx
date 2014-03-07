@@ -16,11 +16,11 @@ class BlockBuilder {
 		return this;
 	}
 	
-	public function colour(r : Int, g : Int , b: Int) : BlockBuilder {
+	public function colour(r : Int, g : Int , b: Int, ?a : Int = 255) : BlockBuilder {
 		buffer.add(r);
 		buffer.add(g);
 		buffer.add(b);
-		buffer.add(0); // Padding
+		buffer.add(a);
 		return this;
 	}
 	
