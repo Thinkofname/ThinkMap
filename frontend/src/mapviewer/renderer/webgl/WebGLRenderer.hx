@@ -236,10 +236,21 @@ class WebGLRenderer implements Renderer {
 				}
 			}
 
+			var toRequest = [];
 			for (x in nx - viewDistance ... nx + viewDistance) {
 				for (z in nz - viewDistance ... nz + viewDistance) {
-					if (Main.world.getChunk(x, z) == null) Main.world.writeRequestChunk(x, z);
+					if (Main.world.getChunk(x, z) == null) toRequest.push([x, z]);
 				}
+			}
+			toRequest.sort(function(a, b) {
+				var bx = b[0] - camera.x / 16;
+				var bz = b[1] - camera.z / 16;
+				var ax = a[0] - camera.x / 16;
+				var az = a[1] - camera.z / 16;
+				return Std.int((ax * ax + az * az) - (bx * bx + bz * bz));
+			});
+			for (req in toRequest) {			
+				Main.world.writeRequestChunk(req[0], req[1]);
 			}
 			cx = nx;
 			cz = nz;
@@ -256,10 +267,17 @@ class WebGLRenderer implements Renderer {
 	}
 	
     public function connected() : Void {
+		var toRequest = [];
 		for (x in -viewDistance ... viewDistance) {
 			for (z in -viewDistance ... viewDistance) {
-				Main.world.writeRequestChunk(x, z);
+				toRequest.push([x, z]);
 			}
+		}
+		toRequest.sort(function(a, b) {
+			return (a[0] * a[0] + a[1] * a[1]) - (b[0] * b[0] + b[1] * b[1]);
+		});
+		for (req in toRequest) {			
+			Main.world.writeRequestChunk(req[0], req[1]);
 		}
 	}
 	
