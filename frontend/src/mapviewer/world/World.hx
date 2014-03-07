@@ -32,11 +32,11 @@ class World {
        proxy.requestChunk(x, z);
     }
 
-    public function addChunk(chunk : Chunk) {
+    public function addChunk(chunk : Chunk) : Bool {
         var key = chunkKey(chunk.x, chunk.z);
         if (chunks[key] != null) {
             // Chunk is already loaded ignore it
-            return;
+            return false;
         }
         chunks[key] = chunk;
         for (x in -1 ... 2) {
@@ -46,6 +46,7 @@ class World {
             }
         }
         chunk.rebuild();
+		return true;
     }
 
     public function removeChunk(x : Int, z : Int) {
