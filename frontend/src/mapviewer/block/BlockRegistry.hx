@@ -774,7 +774,33 @@ class BlockRegistry {
 		//TODO: (#94) Powered repeater
 		
 		//TODO: (#96) Trapdoor
-		//TODO: (#97) Monster egg
+		// Monster egg		
+		{
+			registerBlock('monster_egg_stone', new Block().chainBlock().texture('stone').ret())
+				.legacyId(97)
+				.dataValue(0)
+				.build();
+			registerBlock('monster_egg_cobblestone', new Block().chainBlock().texture('cobblestone').ret())
+				.legacyId(97)
+				.dataValue(1)
+				.build();
+			registerBlock('monster_egg', new Block().chainBlock().texture('stonebrick').ret())
+				.legacyId(97)
+				.dataValue(2)
+				.build();
+			registerBlock('monster_egg_mossy', new Block().chainBlock().texture('stonebrick_mossy').ret())
+				.legacyId(97)
+				.dataValue(3)
+				.build();
+			registerBlock('monster_egg_cracked', new Block().chainBlock().texture('stonebrick_cracked').ret())
+				.legacyId(97)
+				.dataValue(4)
+				.build();
+			registerBlock('monster_egg_carved', new Block().chainBlock().texture('stonebrick_carved').ret())
+				.legacyId(97)
+				.dataValue(5)
+				.build();
+		}
 
 		// Stone bricks
 		{
