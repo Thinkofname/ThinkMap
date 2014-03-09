@@ -46,17 +46,17 @@ class WebGLRenderer implements Renderer {
 	public var blockTextures : Array<Texture>;
 	
 	// Controls
-	public var movingForward : Bool = false;
-	public var movingBackwards : Bool = false;
+	private var movingForward : Bool = false;
+	private var movingBackwards : Bool = false;
 	public var camera : Camera;
-	public var vSpeed = MIN_VSPEED;
+	private var vSpeed = MIN_VSPEED;
 	inline public static var MIN_VSPEED : Float = -0.2;
-	public var onGround : Bool = false;
-	public var offGroundFor : Int = 0;
-	public var cx : Int = 0;
-	public var cy : Int = 0;
-	public var cz : Int = 0;
-	public var firstPerson : Bool = true;
+	private var onGround : Bool = false;
+	private var offGroundFor : Int = 0;
+	private var cx : Int = 0;
+	private var cy : Int = 0;
+	private var cz : Int = 0;
+	private var firstPerson : Bool = true;
 	private var flyMode : Bool = false;
 	private var moveDir : Int = 0;
 	
