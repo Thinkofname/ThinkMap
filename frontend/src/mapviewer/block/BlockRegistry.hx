@@ -840,7 +840,19 @@ class BlockRegistry {
 		//TODO: (#107) Fence gate
 		//TODO: (#108) Brick stairs
 		//TODO: (#109) Stone brick stairs
-		//TODO: (#110) Mycelium
+		
+		registerBlock("mycelium", new BlockSidedTextures().chainBlockSidedTextures()
+			.textures([
+				"front" => "mycelium_side",
+				"top" => "mycelium_top",
+				"bottom" => "dirt",
+				"back" => "mycelium_side",
+				"left" => "mycelium_side",
+				"right" => "mycelium_side"
+			]).ret())
+			.legacyId(110)
+			.build();
+				
 		//TODO: (#111) Waterlily
 		//TODO: (#112) Nether brick
 		//TODO: (#113) Nether brick fence
