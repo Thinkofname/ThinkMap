@@ -167,16 +167,17 @@ class BlockRegistry {
 				.solid(false).ret())
 				.legacyId(6)
 				.dataValue(v | 8).build();
-				
-			registerBlock('leaves_$k', new Block().chainBlock()
-				.texture('leaves_$k')
-				.solid(false)
-				.allowSelf(true)
-				.colour(0xA7D389)
-				.forceColour(true).ret())
-				.legacyId(18)
-				.dataValue(v)
-				.build();
+			for (flag in [0, 4, 8]) {
+				registerBlock('leaves_${k}_$flag', new Block().chainBlock()
+					.texture('leaves_${k}')
+					.solid(false)
+					.allowSelf(true)
+					.colour(0xA7D389)
+					.forceColour(true).ret())
+					.legacyId(18)
+					.dataValue(v | flag)
+					.build();
+			}
 		}
 		// Big oak is odd...		
 		registerBlock('planks_big_oak', new Block().chainBlock()
