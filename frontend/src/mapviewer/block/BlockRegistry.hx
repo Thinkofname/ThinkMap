@@ -902,7 +902,6 @@ class BlockRegistry {
 		//TODO: (#156) Quartz stairs
 		//TODO: (#157) Activator rail
 
-		//TODO: (#159) Stained hardened clay
 		//TODO: (#160) Stained glass pane
 		//TODO: (#161) Leaves2
 		//TODO: (#162) Log2
