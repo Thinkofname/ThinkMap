@@ -854,7 +854,11 @@ class BlockRegistry {
 			.build();
 				
 		//TODO: (#111) Waterlily
-		//TODO: (#112) Nether brick
+		
+		registerBlock("nether_brick", new Block().chainBlock().texture("nether_brick").ret())
+			.legacyId(112)
+			.build();
+		
 		//TODO: (#113) Nether brick fence
 		//TODO: (#114) Nether brick stairs
 		//TODO: (#115) Nether wart
