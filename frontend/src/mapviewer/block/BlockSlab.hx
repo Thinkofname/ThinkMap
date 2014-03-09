@@ -4,6 +4,7 @@ import mapviewer.renderer.webgl.BlockBuilder;
 import mapviewer.block.Block.Face;
 import mapviewer.block.Block.blockLightingRegion;
 import mapviewer.renderer.TextureInfo;
+import mapviewer.collision.Box;
 
 using mapviewer.renderer.webgl.BuilderUtils;
 
@@ -19,6 +20,11 @@ class BlockSlab extends Block {
 	public function new() {
 		super();
 	}
+	
+	override public function collidesWith(box : Box, x : Int, y : Int, z : Int) : Bool {
+		if (!collidable) return false;
+		return box.checkBox(x, y + (top ? 0.5 : 0), z, 1.0, 0.5, 1.0);
+	}	
 	
 	override public function getTexture(face : Face) : TextureInfo {
 		return Main.blockTextureInfo[texture == null ? textures[face.name] :texture];
