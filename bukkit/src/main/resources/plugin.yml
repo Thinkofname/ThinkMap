@@ -1,9 +1,10 @@
-name: Webgl Map
+name: Webgl_Map
 version: 0.1
 description: Displays a 3D render of your server's map in the browser
 author: Thinkofdeath
 
-main: think.webglmap.bukkit.WebglMapPlugin
+main: uk.co.thinkofdeath.webglmap.bukkit.WebglMapPlugin
+load: STARTUP
 
 commands:
    webmap:

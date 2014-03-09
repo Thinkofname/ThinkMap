@@ -1,4 +1,4 @@
-package think.webglmap.bukkit.web;
+package uk.co.thinkofdeath.webglmap.bukkit.web;
 
 import com.google.common.base.Charsets;
 import io.netty.buffer.ByteBuf;
@@ -11,20 +11,17 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.websocketx.*;
 import io.netty.util.CharsetUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
-import think.webglmap.bukkit.WebglMapPlugin;
+import uk.co.thinkofdeath.webglmap.bukkit.WebglMapPlugin;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
-import static io.netty.handler.codec.http.HttpHeaders.Names.HOST;
 import static io.netty.handler.codec.http.HttpHeaders.isKeepAlive;
 import static io.netty.handler.codec.http.HttpHeaders.setContentLength;
 import static io.netty.handler.codec.http.HttpMethod.GET;
@@ -67,8 +64,10 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
             ByteBuf out = Unpooled.buffer();
             if (plugin.getChunkManager(plugin.targetWorld).getChunkBytes(Integer.parseInt(args[0]), Integer.parseInt(args[1]), out)) {
                 FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, out);
+                response.headers().add("Content-Encoding", "gzip");
                 response.headers().add("Access-Control-Allow-Origin", "*"); //FIXME
                 sendHttpResponse(context, request, response);
+                return;
             }
             sendHttpResponse(context, request, new DefaultFullHttpResponse(HTTP_1_1, BAD_REQUEST));
             return;
@@ -85,7 +84,6 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
         InputStream stream = this.getClass().getClassLoader().getResourceAsStream("www" + request.getUri());
         if (stream == null) {
-            logger.info("404 - www" + request.getUri());
             sendHttpResponse(context, request, new DefaultFullHttpResponse(HTTP_1_1, NOT_FOUND));
             return;
         }
@@ -93,7 +91,15 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         IOUtils.copy(stream, out);
         stream.close();
         out.close();
-        FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, out.buffer());
+
+        ByteBuf buffer = out.buffer();
+        if (request.getUri().equals("/index.html")) {
+            String page = buffer.toString(Charsets.UTF_8);
+            page = page.replaceAll("%SERVERPORT%", Integer.toString(plugin.getConfig().getInt("webserver.port")));
+            buffer = Unpooled.wrappedBuffer(page.getBytes(Charsets.UTF_8));
+        }
+
+        FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, buffer);
 
         String ext = request.getUri().substring(request.getUri().lastIndexOf('.') + 1);
         String type = mimeTypes.containsKey(ext) ? mimeTypes.get(ext) : "text/plain";
@@ -111,8 +117,8 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
             ByteBuf buf = Unpooled.copiedBuffer(response.getStatus().toString(), CharsetUtil.UTF_8);
             response.content().writeBytes(buf);
             buf.release();
-            setContentLength(response, response.content().readableBytes());
         }
+        setContentLength(response, response.content().readableBytes());
 
         ChannelFuture future = context.channel().writeAndFlush(response);
         if (!isKeepAlive(request) || response.getStatus().code() != 200) {

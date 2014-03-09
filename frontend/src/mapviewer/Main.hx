@@ -76,7 +76,7 @@ class Main {
 			renderer.resize(canvas.width, canvas.height);
         };
 
-        connection = new Connection('${Browser.window.location.hostname}:23333');
+        connection = new Connection('${Config.hostname}:${Config.port}');
 		
 		world = new WebGLWorld();
 		renderer = new WebGLRenderer(canvas);

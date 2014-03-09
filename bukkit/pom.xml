@@ -22,13 +22,13 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.0.13.Final</version>
+            <version>4.0.14.Beta1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.7.2-R0.3-SNAPSHOT</version>
+            <version>1.7.2-R0.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -54,7 +54,7 @@
                 <targetPath>./</targetPath>
             </resource>
             <resource>
-                <directory>../client/build/client</directory>
+                <directory>../frontend/build/</directory>
                 <targetPath>./www</targetPath>
             </resource>
         </resources>
@@ -74,19 +74,19 @@
                             <relocations>
                                 <relocation>
                                     <pattern>io.netty</pattern>
-                                    <shadedPattern>think.webglmap.lib.netty</shadedPattern>
+                                    <shadedPattern>uk.co.thinkofdeath.webglmap.lib.netty</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.apache</pattern>
-                                    <shadedPattern>think.webglmap.lib.apache</shadedPattern>
+                                    <shadedPattern>uk.co.thinkofdeath.webglmap.lib.apache</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.jcraft</pattern>
-                                    <shadedPattern>think.webglmap.lib.jcraft</shadedPattern>
+                                    <shadedPattern>uk.co.thinkofdeath.webglmap.lib.jcraft</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>gnu.trove</pattern>
-                                    <shadedPattern>think.webglmap.lib.trove</shadedPattern>
+                                    <shadedPattern>uk.co.thinkofdeath.webglmap.lib.trove</shadedPattern>
                                 </relocation>
                             </relocations>
                             <artifactSet>

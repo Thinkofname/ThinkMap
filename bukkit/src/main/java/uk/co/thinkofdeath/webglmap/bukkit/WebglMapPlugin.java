@@ -1,17 +1,16 @@
-package think.webglmap.bukkit;
+package uk.co.thinkofdeath.webglmap.bukkit;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import lombok.Getter;
-import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import think.webglmap.bukkit.web.WebHandler;
+import uk.co.thinkofdeath.webglmap.bukkit.web.Packets;
+import uk.co.thinkofdeath.webglmap.bukkit.web.WebHandler;
+import uk.co.thinkofdeath.webglmap.bukkit.world.ChunkManager;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,16 +34,25 @@ public class WebglMapPlugin extends JavaPlugin implements Runnable {
 
     @Override
     public void onEnable() {
-        webHandler = new WebHandler(this);
-        webHandler.start();
-
         getServer().getPluginManager().registerEvents(new Events(this), this);
-        getServer().getScheduler().runTaskTimer(this, this, 0l, 20 * 5l);
+        getServer().getScheduler().runTaskTimer(this, this, 20l, 20 * 2l);
 
         for (World world : getServer().getWorlds()) {
-            if (targetWorld == null) targetWorld = world;
+            if (targetWorld == null) {
+                targetWorld = world;
                 getChunkManager(world);
+                break; // Support multiple worlds
+            }
         }
+
+        FileConfiguration config = getConfig();
+        config.options().copyDefaults(true);
+        config.addDefault("webserver.port", 23333);
+        config.addDefault("webserver.bind-address", "0.0.0.0");
+        saveConfig();
+
+        webHandler = new WebHandler(this);
+        webHandler.start();
     }
 
     @Override
@@ -54,8 +62,7 @@ public class WebglMapPlugin extends JavaPlugin implements Runnable {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        sender.sendMessage(Thread.currentThread().toString());
+    public boolean onCommand(final CommandSender sender, Command command, String label, String[] args) {
         return true;
     }
 
@@ -72,21 +79,26 @@ public class WebglMapPlugin extends JavaPlugin implements Runnable {
 
     @Override
     public void run() {
-        ByteBuf timeUpdate = Unpooled.buffer(5);
-        timeUpdate.writeByte(0);
-        timeUpdate.writeInt((int) targetWorld.getTime());
-        BinaryWebSocketFrame frame = new BinaryWebSocketFrame(timeUpdate);
-        synchronized (activeConnections) {
-            Iterator<SocketChannel> it = activeConnections.values().iterator();
-            while (it.hasNext()) {
-                SocketChannel channel = it.next();
-                if (!channel.isActive() || !channel.isOpen()) {
-                    it.remove();
-                    continue;
+        if (targetWorld == null) return;
+        final BinaryWebSocketFrame frame = new BinaryWebSocketFrame(
+                Packets.writeTimeUpdate((int) targetWorld.getTime())
+        );
+        getServer().getScheduler().runTaskAsynchronously(this, new Runnable() {
+            @Override
+            public void run() {
+                synchronized (activeConnections) {
+                    Iterator<SocketChannel> it = activeConnections.values().iterator();
+                    while (it.hasNext()) {
+                        SocketChannel channel = it.next();
+                        if (!channel.isActive() || !channel.isOpen()) {
+                            it.remove();
+                            continue;
+                        }
+                        frame.retain();
+                        channel.writeAndFlush(frame);
+                    }
                 }
-                frame.retain();
-                channel.writeAndFlush(frame);
             }
-        }
+        });
     }
 }

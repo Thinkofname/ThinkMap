@@ -1,11 +1,11 @@
-package think.webglmap.bukkit.web;
+package uk.co.thinkofdeath.webglmap.bukkit.web;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import think.webglmap.bukkit.WebglMapPlugin;
+import uk.co.thinkofdeath.webglmap.bukkit.WebglMapPlugin;
 
 public class WebHandler extends Thread {
 
@@ -25,7 +25,10 @@ public class WebHandler extends Thread {
                     channel(NioServerSocketChannel.class).
                     childHandler(new ServerHandler(plugin));
 
-            Channel channel = bootstrap.bind(23333).sync().channel();
+            Channel channel = bootstrap.bind(
+                    plugin.getConfig().getString("webserver.bind-address"),
+                    plugin.getConfig().getInt("webserver.port")
+            ).sync().channel();
 
             channel.closeFuture().sync();
         } catch (InterruptedException e) {
