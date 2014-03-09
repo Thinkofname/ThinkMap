@@ -568,6 +568,10 @@ class BlockRegistry {
 				.legacyId(95)
 				.dataValue(v)
 				.build();
+			registerBlock('hardened_clay_stained_$k', new Block().chainBlock().texture('hardened_clay_stained_$k').ret())
+				.legacyId(159)
+				.dataValue(v)
+				.build();
 		}
 
 		//TODO: (#36) Piston extension
