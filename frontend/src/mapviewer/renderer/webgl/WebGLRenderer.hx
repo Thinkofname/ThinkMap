@@ -111,29 +111,27 @@ class WebGLRenderer implements Renderer {
 		
 		gl.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 		
+		var hasLock = false;
+		
 		canvas.onmousedown = function(e : MouseEvent) {
-			if (Utils.pointerLockElement() != Browser.document.body
-				&& firstPerson)
+			if (!hasLock && firstPerson)
 					Utils.requestPointerLock(Browser.document.body);
 		};
 		Browser.document.onmousedown = function(e : MouseEvent) {
-			if (Utils.pointerLockElement() == Browser.document.body
-				&& firstPerson) {			
+			if (hasLock && firstPerson) {			
 				e.preventDefault();
 				if (e.button == 2) flyMode = true;
 			}
 		}
 		Browser.document.onmouseup = function(e : MouseEvent) {
-			if (Utils.pointerLockElement() == Browser.document.body
-				&& firstPerson) {		
+			if (hasLock	&& firstPerson) {		
 				e.preventDefault();
 				if (e.button == 2) flyMode = false;
 			}
 		}
 		Browser.document.onmousemove = function(e : MouseEvent) {
 			e.preventDefault();
-			if (Utils.pointerLockElement() != Browser.document.body
-				|| !firstPerson) return;
+			if (!hasLock || !firstPerson) return;
 			camera.rotY += Utils.movementX(e) / 300.0;	
 			camera.rotX += Utils.movementY(e) / 300.0;	
 		};
@@ -161,6 +159,12 @@ class WebGLRenderer implements Renderer {
 				movingBackwards = false;
 			}
 		};
+		function pToggle(e) {
+			hasLock = !hasLock;
+		}
+		Browser.document.addEventListener("pointerlockchange", pToggle, false);
+		Browser.document.addEventListener("webkitpointerlockchange", pToggle, false);
+		Browser.document.addEventListener("mozpointerlockchange", pToggle, false);
 		canvas.oncontextmenu = function(e : Event) { e.preventDefault(); };
 	}
 	
