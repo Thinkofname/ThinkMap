@@ -47,7 +47,7 @@
     </properties>
 
     <build>
-        <finalName>ThinkMap</finalName>
+        <finalName>ThinkMap-${project.version}</finalName>
         <resources>
             <resource>
                 <directory>./src/main/resources</directory>
