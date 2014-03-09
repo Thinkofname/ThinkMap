@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Map Viewer</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+	<script type="text/javascript">
+	MapViewerConfig = {
+		// %SERVERPORT% is replaced with the web server's port if this 
+		// is running through the plugin's internal server. Replace 
+		// this with the port if you are hosting on a different server.
+		port: "%SERVERPORT%",
+		// Replace location.hostname with the address of your server
+		// (quoted) if this running on a different server to the plugin
+		hostname: location.hostname
+	};
+	</script>
+</head>
+    <body>
+        <canvas id="main"></canvas>
+        <script type="text/javascript" src="gl-matrix-min.js"></script>
+        <script type="text/javascript" src="main.js"></script>
+		
+		<div style="position:absolute; left: 0; bottom: 0; width: 150px; height: 12px; font-size: 10px">
+			Powered by <a href="http://www.spigotmc.org/resources/thinkmap.413/">ThinkMap</a>
+		</div>
+    </body>
+</html>

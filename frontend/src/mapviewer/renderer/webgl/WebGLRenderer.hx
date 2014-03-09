@@ -111,16 +111,24 @@ class WebGLRenderer implements Renderer {
 		
 		gl.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 		
-		Browser.document.onmousedown = function(e : MouseEvent) {
-			e.preventDefault();
-			if (e.button == 2) flyMode = true;
+		canvas.onmousedown = function(e : MouseEvent) {
 			if (Utils.pointerLockElement() != Browser.document.body
 				&& firstPerson)
 					Utils.requestPointerLock(Browser.document.body);
 		};
+		Browser.document.onmousedown = function(e : MouseEvent) {
+			if (Utils.pointerLockElement() == Browser.document.body
+				&& firstPerson) {			
+				e.preventDefault();
+				if (e.button == 2) flyMode = true;
+			}
+		}
 		Browser.document.onmouseup = function(e : MouseEvent) {
-			e.preventDefault();
-			if (e.button == 2) flyMode = false;
+			if (Utils.pointerLockElement() == Browser.document.body
+				&& firstPerson) {		
+				e.preventDefault();
+				if (e.button == 2) flyMode = false;
+			}
 		}
 		Browser.document.onmousemove = function(e : MouseEvent) {
 			e.preventDefault();
@@ -153,7 +161,7 @@ class WebGLRenderer implements Renderer {
 				movingBackwards = false;
 			}
 		};
-		Browser.document.oncontextmenu = function(e : Event) { e.preventDefault(); };
+		canvas.oncontextmenu = function(e : Event) { e.preventDefault(); };
 	}
 	
 	inline public static var viewDistance : Int = 4;
