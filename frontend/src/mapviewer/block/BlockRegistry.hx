@@ -789,7 +789,7 @@ class BlockRegistry {
 				.build();				
 			registerBlock('double_stone_slab_cobblestone', new Block().chainBlock()
 				.texture("cobblestone").ret())
-				.legacyId(44)
+				.legacyId(43)
 				.dataValue(3)
 				.build();				
 			registerBlock('double_stone_slab_brick', new Block().chainBlock()
