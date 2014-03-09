@@ -3,8 +3,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>WebGLMap</artifactId>
-        <groupId>think.webglmap</groupId>
+        <artifactId>ThinkMap</artifactId>
+        <groupId>uk.co.thinkofdeath.thinkmap</groupId>
         <version>0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -47,7 +47,7 @@
     </properties>
 
     <build>
-        <finalName>WebGLMap</finalName>
+        <finalName>ThinkMap</finalName>
         <resources>
             <resource>
                 <directory>./src/main/resources</directory>
@@ -74,19 +74,19 @@
                             <relocations>
                                 <relocation>
                                     <pattern>io.netty</pattern>
-                                    <shadedPattern>uk.co.thinkofdeath.webglmap.lib.netty</shadedPattern>
+                                    <shadedPattern>uk.co.thinkofdeath.thinkmap.lib.netty</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.apache</pattern>
-                                    <shadedPattern>uk.co.thinkofdeath.webglmap.lib.apache</shadedPattern>
+                                    <shadedPattern>uk.co.thinkofdeath.thinkmap.lib.apache</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.jcraft</pattern>
-                                    <shadedPattern>uk.co.thinkofdeath.webglmap.lib.jcraft</shadedPattern>
+                                    <shadedPattern>uk.co.thinkofdeath.thinkmap.lib.jcraft</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>gnu.trove</pattern>
-                                    <shadedPattern>uk.co.thinkofdeath.webglmap.lib.trove</shadedPattern>
+                                    <shadedPattern>uk.co.thinkofdeath.thinkmap.lib.trove</shadedPattern>
                                 </relocation>
                             </relocations>
                             <artifactSet>

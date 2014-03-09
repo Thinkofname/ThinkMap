@@ -1,4 +1,4 @@
-package uk.co.thinkofdeath.webglmap.bukkit.world;
+package uk.co.thinkofdeath.thinkmap.bukkit.world;
 
 import gnu.trove.map.hash.TLongByteHashMap;
 import io.netty.buffer.ByteBuf;
@@ -8,7 +8,7 @@ import lombok.Cleanup;
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
-import uk.co.thinkofdeath.webglmap.bukkit.WebglMapPlugin;
+import uk.co.thinkofdeath.thinkmap.bukkit.ThinkMapPlugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,12 +18,12 @@ import java.util.zip.GZIPOutputStream;
 
 public class ChunkManager implements Runnable {
 
-    private final WebglMapPlugin plugin;
+    private final ThinkMapPlugin plugin;
     private final World world;
     private final TLongByteHashMap activeChunks = new TLongByteHashMap();
     private final LinkedTransferQueue<FutureTask> jobQueue = new LinkedTransferQueue<FutureTask>();
 
-    public ChunkManager(WebglMapPlugin plugin, World world) {
+    public ChunkManager(ThinkMapPlugin plugin, World world) {
         this.plugin = plugin;
         this.world = world;
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, this);

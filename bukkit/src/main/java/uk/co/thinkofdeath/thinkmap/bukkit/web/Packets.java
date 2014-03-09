@@ -1,4 +1,4 @@
-package uk.co.thinkofdeath.webglmap.bukkit.web;
+package uk.co.thinkofdeath.thinkmap.bukkit.web;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

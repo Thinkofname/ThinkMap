@@ -1,4 +1,4 @@
-package uk.co.thinkofdeath.webglmap.bukkit;
+package uk.co.thinkofdeath.thinkmap.bukkit;
 
 import lombok.RequiredArgsConstructor;
 import org.bukkit.event.EventHandler;
@@ -10,7 +10,7 @@ import org.bukkit.event.world.WorldLoadEvent;
 @RequiredArgsConstructor
 public class Events implements Listener {
 
-    private final WebglMapPlugin plugin;
+    private final ThinkMapPlugin plugin;
 
     @EventHandler
     public void onWorldLoad(WorldLoadEvent event) {

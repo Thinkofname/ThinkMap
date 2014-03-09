@@ -1,14 +1,14 @@
-name: Webgl_Map
+name: ThinkMap
 version: 0.1
 description: Displays a 3D render of your server's map in the browser
 author: Thinkofdeath
 
-main: uk.co.thinkofdeath.webglmap.bukkit.WebglMapPlugin
+main: uk.co.thinkofdeath.thinkmap.bukkit.ThinkMapPlugin
 load: STARTUP
 
 commands:
-   webmap:
+   thinkmap:
      description: TODO
-     aliases: [webglmap]
-     permission: webmap.command
+     aliases: [thinkmap]
+     permission: thinkmap.command
      usage: N/A

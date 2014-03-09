@@ -1,4 +1,4 @@
-package uk.co.thinkofdeath.webglmap.bukkit.web;
+package uk.co.thinkofdeath.thinkmap.bukkit.web;
 
 import com.google.common.base.Charsets;
 import io.netty.buffer.ByteBuf;
@@ -14,7 +14,7 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.util.CharsetUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
-import uk.co.thinkofdeath.webglmap.bukkit.WebglMapPlugin;
+import uk.co.thinkofdeath.thinkmap.bukkit.ThinkMapPlugin;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,7 +40,7 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         mimeTypes.put("css", "text/css");
     }
 
-    private final WebglMapPlugin plugin;
+    private final ThinkMapPlugin plugin;
     private final int id;
 
     @Override

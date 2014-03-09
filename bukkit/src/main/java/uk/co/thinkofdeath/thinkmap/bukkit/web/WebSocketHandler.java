@@ -1,4 +1,4 @@
-package uk.co.thinkofdeath.webglmap.bukkit.web;
+package uk.co.thinkofdeath.thinkmap.bukkit.web;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -6,7 +6,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.*;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
-import uk.co.thinkofdeath.webglmap.bukkit.WebglMapPlugin;
+import uk.co.thinkofdeath.thinkmap.bukkit.ThinkMapPlugin;
 
 import java.util.logging.Logger;
 
@@ -15,7 +15,7 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<BinaryWebSocke
 
     private final static Logger logger = Logger.getLogger(WebSocketHandler.class.getName());
 
-    private final WebglMapPlugin plugin;
+    private final ThinkMapPlugin plugin;
     private final int id;
 
     @Override

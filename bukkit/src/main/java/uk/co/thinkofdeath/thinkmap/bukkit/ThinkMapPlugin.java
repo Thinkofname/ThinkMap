@@ -1,4 +1,4 @@
-package uk.co.thinkofdeath.webglmap.bukkit;
+package uk.co.thinkofdeath.thinkmap.bukkit;
 
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
@@ -8,14 +8,14 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import uk.co.thinkofdeath.webglmap.bukkit.web.Packets;
-import uk.co.thinkofdeath.webglmap.bukkit.web.WebHandler;
-import uk.co.thinkofdeath.webglmap.bukkit.world.ChunkManager;
+import uk.co.thinkofdeath.thinkmap.bukkit.web.Packets;
+import uk.co.thinkofdeath.thinkmap.bukkit.web.WebHandler;
+import uk.co.thinkofdeath.thinkmap.bukkit.world.ChunkManager;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class WebglMapPlugin extends JavaPlugin implements Runnable {
+public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     /**
      * Returns the plugin's web handler

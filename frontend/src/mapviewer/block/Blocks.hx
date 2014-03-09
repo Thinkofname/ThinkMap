@@ -27,9 +27,9 @@ class Blocks {
 	 * mod on the server)
 	 */
 	public static var MISSING_BLOCK(get, null) : Block;
-	static function get_MISSING_BLOCK() { if (MISSING_BLOCK != null) return MISSING_BLOCK; return MISSING_BLOCK = BlockRegistry.get("webglmap:missing_block"); }
+	static function get_MISSING_BLOCK() { if (MISSING_BLOCK != null) return MISSING_BLOCK; return MISSING_BLOCK = BlockRegistry.get("thinkmap:missing_block"); }
 	
 	/// Null Block - Solid air
 	public static var NULL_BLOCK(get, null) : Block;
-	static function get_NULL_BLOCK() { if (NULL_BLOCK != null) return NULL_BLOCK; return NULL_BLOCK = BlockRegistry.get("webglmap:null"); }
+	static function get_NULL_BLOCK() { if (NULL_BLOCK != null) return NULL_BLOCK; return NULL_BLOCK = BlockRegistry.get("thinkmap:null"); }
 }

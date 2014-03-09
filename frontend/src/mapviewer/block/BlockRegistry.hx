@@ -19,7 +19,7 @@ class BlockRegistry {
      * The format of the name of 'plugin:block'. If the format
      * 'block' is used then the plugin is assumed to be 'minecraft'.
      *
-     * If the block doesn't exist then the block 'webglmap:missing_block'
+     * If the block doesn't exist then the block 'thinkmap:missing_block'
      * is returned.
      */
     public static function get(name : String) : Block {
@@ -44,7 +44,7 @@ class BlockRegistry {
      * this will look up the block and return the new system
      * version of the block.
      *
-     * If the block doesn't exist then the block 'webglmap:missing_block'
+     * If the block doesn't exist then the block 'thinkmap:missing_block'
      */
     public static function getByLegacy(id : Int, data : Int) : Block {
         if (id == 0) return Blocks.AIR;
@@ -917,12 +917,12 @@ class BlockRegistry {
 		// Custom blocks
         registerBlock("missing_block", new Block().chainBlock()
             .texture("missing_texture")
-            .ret(), "webglmap")
+            .ret(), "thinkmap")
             .build();
         registerBlock("null", new Block().chainBlock()
             .renderable(false)
             .shade(false)
-            .ret(), "webglmap").build();
+            .ret(), "thinkmap").build();
     }
 }
 

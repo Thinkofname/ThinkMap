@@ -1,17 +1,17 @@
-package uk.co.thinkofdeath.webglmap.bukkit.web;
+package uk.co.thinkofdeath.thinkmap.bukkit.web;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import uk.co.thinkofdeath.webglmap.bukkit.WebglMapPlugin;
+import uk.co.thinkofdeath.thinkmap.bukkit.ThinkMapPlugin;
 
 public class WebHandler extends Thread {
 
-    private WebglMapPlugin plugin;
+    private ThinkMapPlugin plugin;
 
-    public WebHandler(WebglMapPlugin plugin) {
+    public WebHandler(ThinkMapPlugin plugin) {
         this.plugin = plugin;
     }
 
