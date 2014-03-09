@@ -898,7 +898,67 @@ class BlockRegistry {
 		//TODO: (#152) Redstone block
 		//TODO: (#153) Quartz ore
 
-		//TODO: (#155) Quartz block
+		registerBlock("quartz", new BlockSidedTextures().chainBlockSidedTextures()
+			.textures([
+				"bottom" => "quartz_block_bottom",
+				"top" => "quartz_block_top",
+				"left" => "quartz_block_side",
+				"right" => "quartz_block_side",
+				"front" => "quartz_block_side",
+				"back" => "quartz_block_side"
+			]).ret())
+			.legacyId(155)
+			.dataValue(0)
+			.build();
+		registerBlock("quartz_chiseled", new BlockSidedTextures().chainBlockSidedTextures()
+			.textures([
+				"bottom" => "quartz_block_chiseled_top",
+				"top" => "quartz_block_chiseled_top",
+				"left" => "quartz_block_chiseled",
+				"right" => "quartz_block_chiseled",
+				"front" => "quartz_block_chiseled",
+				"back" => "quartz_block_chiseled"
+			]).ret())
+			.legacyId(155)
+			.dataValue(1)
+			.build();
+		registerBlock("quartz_pillar", new BlockSidedTextures().chainBlockSidedTextures()
+			.textures([
+				"bottom" => "quartz_block_lines_top",
+				"top" => "quartz_block_lines_top",
+				"left" => "quartz_block_lines",
+				"right" => "quartz_block_lines",
+				"front" => "quartz_block_lines",
+				"back" => "quartz_block_lines"
+			]).ret())
+			.legacyId(155)
+			.dataValue(2)
+			.build();
+		registerBlock("quartz_pillar_ns", new BlockSidedTextures().chainBlockSidedTextures()
+			.textures([
+				"bottom" => "quartz_block_lines",
+				"top" => "quartz_block_lines",
+				"left" => "quartz_block_lines_top",
+				"right" => "quartz_block_lines_top",
+				"front" => "quartz_block_lines",
+				"back" => "quartz_block_lines"
+			]).ret())
+			.legacyId(155)
+			.dataValue(3)
+			.build();
+		registerBlock("quartz_pillar_we", new BlockSidedTextures().chainBlockSidedTextures()
+			.textures([
+				"bottom" => "quartz_block_lines",
+				"top" => "quartz_block_lines",
+				"left" => "quartz_block_lines",
+				"right" => "quartz_block_lines",
+				"front" => "quartz_block_lines_top",
+				"back" => "quartz_block_lines_top"
+			]).ret())
+			.legacyId(155)
+			.dataValue(4)
+			.build();
+		
 		//TODO: (#156) Quartz stairs
 		//TODO: (#157) Activator rail
 
