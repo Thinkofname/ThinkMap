@@ -572,7 +572,7 @@ class BlockRegistry {
 
 		//TODO: (#36) Piston extension
 
-		registerBlock('yellow_flower', new BlockCross().chainBlock().texture('dandelion')
+		registerBlock('yellow_flower', new BlockCross().chainBlock().texture('flower_dandelion')
 			.solid(false)
 			.collidable(false).ret())
 			.legacyId(37)
