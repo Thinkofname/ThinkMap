@@ -30,6 +30,10 @@ class BlockSlab extends Block {
 		return Main.blockTextureInfo[texture == null ? textures[face.name] :texture];
 	}
 	
+	override public function shouldRenderAgainst(block : Block) : Bool {
+		return !block.solid;
+	}
+	
 	override public function render(builder:BlockBuilder, x:Int, y:Int, z:Int, chunk:Chunk) {		
 		var offset : Float = top ? 0.5 : 0;		
 			
