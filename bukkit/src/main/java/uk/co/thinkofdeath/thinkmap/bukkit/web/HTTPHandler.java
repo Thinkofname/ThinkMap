@@ -62,7 +62,7 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         if (request.getMethod() == POST && request.getUri().equals("/chunk")) {
             String []args = request.content().toString(Charsets.UTF_8).split(":");
             ByteBuf out = Unpooled.buffer();
-            if (plugin.getChunkManager(plugin.targetWorld).getChunkBytes(Integer.parseInt(args[0]), Integer.parseInt(args[1]), out)) {
+            if (plugin.getChunkManager(plugin.getTargetWorld()).getChunkBytes(Integer.parseInt(args[0]), Integer.parseInt(args[1]), out)) {
                 FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, out);
                 response.headers().add("Content-Encoding", "gzip");
                 response.headers().add("Access-Control-Allow-Origin", "*"); //FIXME

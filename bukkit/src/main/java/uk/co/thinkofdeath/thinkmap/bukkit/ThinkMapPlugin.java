@@ -30,7 +30,7 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
     public final Map<Integer, SocketChannel> activeConnections = Collections.synchronizedMap(new HashMap<Integer, SocketChannel>());
     public AtomicInteger lastConnectionId = new AtomicInteger();
 
-    public World targetWorld;
+    private World targetWorld;
 
     @Override
     public void onEnable() {
@@ -100,5 +100,17 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
                 }
             }
         });
+    }
+
+
+    public World getTargetWorld() {
+        if (targetWorld == null) {
+            targetWorld = getServer().getWorlds().get(0);
+        }
+        return targetWorld;
+    }
+
+    public void setTargetWorld(World targetWorld) {
+        this.targetWorld = targetWorld;
     }
 }

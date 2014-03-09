@@ -26,12 +26,12 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<BinaryWebSocke
                 plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
                     @Override
                     public void run() {
-                        Location spawn = plugin.targetWorld.getSpawnLocation();
+                        Location spawn = plugin.getTargetWorld().getSpawnLocation();
                         ctx.writeAndFlush(new BinaryWebSocketFrame(
                                 Packets.writeSpawnPosition(spawn.getBlockX(), spawn.getBlockY(), spawn.getBlockZ())
                         ));
                         ctx.writeAndFlush(new BinaryWebSocketFrame(
-                                Packets.writeTimeUpdate((int) plugin.targetWorld.getTime())
+                                Packets.writeTimeUpdate((int) plugin.getTargetWorld().getTime())
                         ));
                     }
                 });
