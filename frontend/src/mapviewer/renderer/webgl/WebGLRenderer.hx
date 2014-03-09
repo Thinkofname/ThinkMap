@@ -50,7 +50,7 @@ class WebGLRenderer implements Renderer {
 	private var movingBackwards : Bool = false;
 	public var camera : Camera;
 	private var vSpeed = MIN_VSPEED;
-	inline public static var MIN_VSPEED : Float = -0.2;
+	inline private static var MIN_VSPEED : Float = -0.2;
 	private var onGround : Bool = false;
 	private var offGroundFor : Int = 0;
 	private var cx : Int = 0;
