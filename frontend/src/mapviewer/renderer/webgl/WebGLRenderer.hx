@@ -58,6 +58,7 @@ class WebGLRenderer implements Renderer {
 	public var cz : Int = 0;
 	public var firstPerson : Bool = true;
 	private var flyMode : Bool = false;
+	private var moveDir : Int = 0;
 	
 	public function new(canvas : CanvasElement) {
 		this.canvas = canvas;
@@ -142,6 +143,10 @@ class WebGLRenderer implements Renderer {
 			} else if (e.keyCode == 'S'.code) {
 				e.preventDefault();
 				movingBackwards = true;
+			} else if (e.keyCode == 'A'.code) {
+				moveDir = 1;
+			} else if (e.keyCode == 'D'.code) {
+				moveDir = -1;
 			} else if (e.keyCode == ' '.code && (onGround || offGroundFor <= 1)) {
 				e.preventDefault();
 				vSpeed = 0.1;
@@ -156,6 +161,10 @@ class WebGLRenderer implements Renderer {
 			} else if (e.keyCode == 'S'.code) {
 				e.preventDefault();
 				movingBackwards = false;
+			} else if (e.keyCode == 'A'.code) {
+				if (moveDir == 1) moveDir = 0;
+			} else if (e.keyCode == 'D'.code) {
+				if (moveDir == -1) moveDir = 0;
 			}
 		};
 		function pToggle(e) {
@@ -213,6 +222,11 @@ class WebGLRenderer implements Renderer {
 				camera.x -= speed * Math.sin(camera.rotY) * (flyMode ? Math.cos(camera.rotX) : 1) * delta;
 				camera.z += speed * Math.cos(camera.rotY) * (flyMode ? Math.cos(camera.rotX) : 1) * delta;
 				if (flyMode) camera.y += speed * Math.sin(camera.rotX) * delta;
+			}
+			
+			if (moveDir != 0) {
+				camera.x -= moveDir * speed * Math.sin(camera.rotY + (Math.PI / 2)) * delta;
+				camera.z += moveDir * speed * Math.cos(camera.rotY + (Math.PI / 2)) * delta;
 			}
 			
 			checkCollision(lx, ly, lz);
