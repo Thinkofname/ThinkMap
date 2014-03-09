@@ -622,7 +622,137 @@ class BlockRegistry {
 			.build();
 
 		//TODO: (#43) Double stone slab
-		//TODO: (#44) Stone slab
+
+		// Slabs
+		for (v in [0, 8]) {
+			registerBlock('stone_slab_stone_$v', new BlockSlab().chainBlockSlab()
+				.top(v == 8)
+				.textures([
+					"top" => "stone_slab_top",
+					"bottom" => "stone_slab_top",
+					"left" => "stone_slab_side",
+					"right" => "stone_slab_side",
+					"front" => "stone_slab_side",
+					"back" => "stone_slab_side"
+				])
+				.ret().chainBlock()
+				.solid(false).ret())
+				.legacyId(44)
+				.dataValue(0 | v)
+				.build();				
+			registerBlock('stone_slab_sandstone_$v', new BlockSlab().chainBlockSlab()
+				.top(v == 8)
+				.textures([
+					"top" => "sandstone_top",
+					"bottom" => "sandstone_bottom",
+					"left" => "sandstone_normal",
+					"right" => "sandstone_normal",
+					"front" => "sandstone_normal",
+					"back" => "sandstone_normal"
+				])
+				.ret().chainBlock()
+				.solid(false).ret())
+				.legacyId(44)
+				.dataValue(1 | v)
+				.build();				
+			registerBlock('stone_slab_wood_$v', new BlockSlab().chainBlockSlab()
+				.top(v == 8)
+				.ret().chainBlock()
+				.texture("planks_oak")
+				.solid(false).ret())
+				.legacyId(44)
+				.dataValue(2 | v)
+				.build();				
+			registerBlock('stone_slab_cobblestone_$v', new BlockSlab().chainBlockSlab()
+				.top(v == 8)
+				.ret().chainBlock()
+				.texture("cobblestone")
+				.solid(false).ret())
+				.legacyId(44)
+				.dataValue(3 | v)
+				.build();				
+			registerBlock('stone_slab_brick_$v', new BlockSlab().chainBlockSlab()
+				.top(v == 8)
+				.ret().chainBlock()
+				.texture("brick")
+				.solid(false).ret())
+				.legacyId(44)
+				.dataValue(4 | v)
+				.build();				
+			registerBlock('stone_slab_stonebrick_$v', new BlockSlab().chainBlockSlab()
+				.top(v == 8)
+				.ret().chainBlock()
+				.texture("stonebrick")
+				.solid(false).ret())
+				.legacyId(44)
+				.dataValue(5 | v)
+				.build();				
+			registerBlock('stone_slab_netherbrick_$v', new BlockSlab().chainBlockSlab()
+				.top(v == 8)
+				.ret().chainBlock()
+				.texture("nether_brick")
+				.solid(false).ret())
+				.legacyId(44)
+				.dataValue(6 | v)
+				.build();			
+			registerBlock('stone_slab_quartz_$v', new BlockSlab().chainBlockSlab()
+				.top(v == 8)
+				.ret().chainBlock()
+				.texture("quartz_block_top")
+				.solid(false).ret())
+				.legacyId(44)
+				.dataValue(7 | v)
+				.build();	
+				
+			registerBlock('wooden_slab_oak_$v', new BlockSlab().chainBlockSlab()
+				.top(v == 8)
+				.ret().chainBlock()
+				.texture("planks_oak")
+				.solid(false).ret())
+				.legacyId(126)
+				.dataValue(0 | v)
+				.build();
+			registerBlock('wooden_slab_spruce_$v', new BlockSlab().chainBlockSlab()
+				.top(v == 8)
+				.ret().chainBlock()
+				.texture("planks_spruce")
+				.solid(false).ret())
+				.legacyId(126)
+				.dataValue(1 | v)
+				.build();
+			registerBlock('wooden_slab_birch_$v', new BlockSlab().chainBlockSlab()
+				.top(v == 8)
+				.ret().chainBlock()
+				.texture("planks_birch")
+				.solid(false).ret())
+				.legacyId(126)
+				.dataValue(2 | v)
+				.build();
+			registerBlock('wooden_slab_jungle_$v', new BlockSlab().chainBlockSlab()
+				.top(v == 8)
+				.ret().chainBlock()
+				.texture("planks_jungle")
+				.solid(false).ret())
+				.legacyId(126)
+				.dataValue(3 | v)
+				.build();
+			registerBlock('wooden_slab_acacia_$v', new BlockSlab().chainBlockSlab()
+				.top(v == 8)
+				.ret().chainBlock()
+				.texture("planks_acacia")
+				.solid(false).ret())
+				.legacyId(126)
+				.dataValue(4 | v)
+				.build();
+			registerBlock('wooden_slab_dark_oak_$v', new BlockSlab().chainBlockSlab()
+				.top(v == 8)
+				.ret().chainBlock()
+				.texture("planks_big_oak")
+				.solid(false).ret())
+				.legacyId(126)
+				.dataValue(5 | v)
+				.build();
+		}
 
 		registerBlock('brick_block', new Block().chainBlock().texture('brick').ret())
 			.legacyId(45)
@@ -872,7 +1002,7 @@ class BlockRegistry {
 		//TODO: (#123) Redstone lamp
 		//TODO: (#124) Lit redstone lamp
 		//TODO: (#125) Double wooden slab
-		//TODO: (#126) Wooden slab
+		
 		//TODO: (#127) Cocoa
 		//TODO: (#128) Sandstone stairs
 		//TODO: (#129) Emerald ore
