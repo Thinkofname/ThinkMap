@@ -114,7 +114,7 @@ class WebGLRenderer implements Renderer {
 		var hasLock = false;
 		
 		Browser.document.body.onclick = function(e : MouseEvent) {
-			Utils.requestPointerLock(Browser.document.body);
+			if (!hasLock) Utils.requestPointerLock(Browser.document.body);
 		};
 		Browser.document.onmousedown = function(e : MouseEvent) {
 			if (hasLock && firstPerson) {			
