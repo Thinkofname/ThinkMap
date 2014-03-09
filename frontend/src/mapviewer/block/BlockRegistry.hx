@@ -167,7 +167,7 @@ class BlockRegistry {
 				.solid(false).ret())
 				.legacyId(6)
 				.dataValue(v | 8).build();
-			for (flag in [0, 4, 8]) {
+			for (flag in [0, 4, 8, 12]) {
 				registerBlock('leaves_${k}_$flag', new Block().chainBlock()
 					.texture('leaves_${k}')
 					.solid(false)
