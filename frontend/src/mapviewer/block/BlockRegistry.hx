@@ -753,6 +753,97 @@ class BlockRegistry {
 				.dataValue(5 | v)
 				.build();
 		}
+		
+		// Double slabs 
+		{
+			registerBlock('double_stone_slab_stone', new BlockSidedTextures().chainBlockSidedTextures()
+				.textures([
+					"top" => "stone_slab_top",
+					"bottom" => "stone_slab_top",
+					"left" => "stone_slab_side",
+					"right" => "stone_slab_side",
+					"front" => "stone_slab_side",
+					"back" => "stone_slab_side"
+				])
+				.ret())
+				.legacyId(43)
+				.dataValue(0)
+				.build();				
+			registerBlock('double_stone_slab_sandstone', new BlockSidedTextures().chainBlockSidedTextures()
+				.textures([
+					"top" => "sandstone_top",
+					"bottom" => "sandstone_bottom",
+					"left" => "sandstone_normal",
+					"right" => "sandstone_normal",
+					"front" => "sandstone_normal",
+					"back" => "sandstone_normal"
+				])
+				.ret())
+				.legacyId(43)
+				.dataValue(1)
+				.build();				
+			registerBlock('double_stone_slab_wood', new Block().chainBlock()
+				.texture("planks_oak").ret())
+				.legacyId(43)
+				.dataValue(2)
+				.build();				
+			registerBlock('double_stone_slab_cobblestone', new Block().chainBlock()
+				.texture("cobblestone").ret())
+				.legacyId(44)
+				.dataValue(3)
+				.build();				
+			registerBlock('double_stone_slab_brick', new Block().chainBlock()
+				.texture("brick").ret())
+				.legacyId(43)
+				.dataValue(4)
+				.build();				
+			registerBlock('double_stone_slab_stonebrick', new Block().chainBlock()
+				.texture("stonebrick").ret())
+				.legacyId(43)
+				.dataValue(5)
+				.build();				
+			registerBlock('double_stone_slab_netherbrick', new Block().chainBlock()
+				.texture("nether_brick").ret())
+				.legacyId(43)
+				.dataValue(6)
+				.build();			
+			registerBlock('double_stone_slab_quartz', new Block().chainBlock()
+				.texture("quartz_block_top").ret())
+				.legacyId(43)
+				.dataValue(7)
+				.build();	
+				
+			registerBlock('double_wooden_slab_oak', new Block().chainBlock()
+				.texture("planks_oak").ret())
+				.legacyId(125)
+				.dataValue(0)
+				.build();
+			registerBlock('double_wooden_slab_spruce', new Block().chainBlock()
+				.texture("planks_spruce").ret())
+				.legacyId(125)
+				.dataValue(1)
+				.build();
+			registerBlock('double_wooden_slab_birch', new Block().chainBlock()
+				.texture("planks_birch").ret())
+				.legacyId(125)
+				.dataValue(2)
+				.build();
+			registerBlock('double_wooden_slab_jungle', new Block().chainBlock()
+				.texture("planks_jungle").ret())
+				.legacyId(125)
+				.dataValue(3)
+				.build();
+			registerBlock('double_wooden_slab_acacia', new Block().chainBlock()
+				.texture("planks_acacia").ret())
+				.legacyId(125)
+				.dataValue(4)
+				.build();
+			registerBlock('double_wooden_slab_dark_oak', new Block().chainBlock()
+				.texture("planks_big_oak").ret())
+				.legacyId(125)
+				.dataValue(5)
+				.build();
+		}
 
 		registerBlock('brick_block', new Block().chainBlock().texture('brick').ret())
 			.legacyId(45)
