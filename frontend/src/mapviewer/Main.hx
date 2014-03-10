@@ -1,5 +1,6 @@
 package mapviewer;
 
+import mapviewer.assets.TextureLoader;
 import mapviewer.logging.Logger;
 import mapviewer.model.Model;
 import mapviewer.renderer.webgl.WebGLRenderer;
@@ -21,8 +22,7 @@ class Main {
     public static var blockTexturesRaw : Array<ImageElement> = new Array();
     public static var blockTextureInfo : Map<String, TextureInfo> = new Map();
     private static var loadedCount : Int = 0;
-    private static var req1 : XMLHttpRequest;
-    private static var req2 : XMLHttpRequest;
+    private static var req : XMLHttpRequest;
     private static var canvas : CanvasElement;
     public static var renderer : Renderer;
     public static var connection : Connection;
@@ -31,34 +31,22 @@ class Main {
 	public static var textureData : Dynamic;
 
     static function main() {
-        var img = Browser.document.createImageElement();
-        img.onload = ready;
-        img.src = "block_images/blocks_0.png";
-        req1 = new XMLHttpRequest();
-        req1.onload = ready;
-        req1.open("GET", "block_images/blocks.json", true);
-        req1.send();
-        req2 = new XMLHttpRequest();
-        req2.onload = ready;
-        req2.open("GET", "block_models/models.json", true);
-        req2.send();
-		blockTexturesRaw.push(img);
+		TextureLoader.init(function() { ready(null); } );
+        req = new XMLHttpRequest();
+        req.onload = ready;
+        req.open("GET", "block_models/models.json", true);
+        req.send();
     }
 
     static function ready(event : Dynamic) {
         loadedCount++;
-        if (loadedCount != 3) {
+        if (loadedCount != 2) {
             return;
         }
-
-        var js = Json.parse(req1.response);
-		textureData = js;
-        for (e in Reflect.fields(js)) {
-            var ti = Reflect.field(js, e);
-            blockTextureInfo[e] = new TextureInfo(ti.start, ti.end);
-        }
 		
-        var mJs = Json.parse(req2.responseText);
+		blockTextureInfo = TextureLoader.textures;
+		
+        var mJs = Json.parse(req.responseText);
 		modelData = mJs;
 		for (k in Reflect.fields(mJs)) {
 			var model = new Model();

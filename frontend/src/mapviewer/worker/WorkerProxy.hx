@@ -29,10 +29,6 @@ class WorkerProxy {
 			onData(msg.data);
 		}
 		worker.postMessage( {
-			type: "textures",
-			data: Main.textureData
-		});
-		worker.postMessage( {
 			type: "models",
 			data: Main.modelData
 		});

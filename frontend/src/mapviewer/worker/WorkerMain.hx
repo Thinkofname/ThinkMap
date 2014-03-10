@@ -1,6 +1,7 @@
 package mapviewer.worker;
 import js.html.Uint8Array;
 import js.html.WorkerContext;
+import mapviewer.assets.TextureLoader;
 import mapviewer.block.BlockRegistry;
 import mapviewer.logging.Logger;
 import mapviewer.Main;
@@ -19,13 +20,8 @@ class WorkerMain {
 		
 		self.onmessage = function(msg : Dynamic) {
 			switch (msg.data.type) {
-				case "textures":					
-					var js = msg.data.data;
-					for (e in Reflect.fields(js)) {
-						var ti = Reflect.field(js, e);
-						Main.blockTextureInfo[e] = new TextureInfo(ti.start, ti.end);
-					}
-				case "models":				
+				case "models":			
+					Main.blockTextureInfo = TextureLoader.textures;	
 					var mJs = msg.data.data;
 					for (k in Reflect.fields(mJs)) {
 						var model = new Model();

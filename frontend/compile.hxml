@@ -2,10 +2,12 @@
 -cp src
 -dce full
 -D js-flatten
+-lib format
 -main mapviewer.Main
 --next
 -js build/work.js
 -cp src
 -dce full
 -D js-flatten
+-lib format
 -main mapviewer.worker.WorkerMain
