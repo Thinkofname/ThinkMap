@@ -621,8 +621,6 @@ class BlockRegistry {
 			.legacyId(42)
 			.build();
 
-		//TODO: (#43) Double stone slab
-
 		// Slabs
 		for (v in [0, 8]) {
 			registerBlock('stone_slab_stone_$v', new BlockSlab().chainBlockSlab()
@@ -1092,7 +1090,6 @@ class BlockRegistry {
 		//TODO: (#122) Dragon egg
 		//TODO: (#123) Redstone lamp
 		//TODO: (#124) Lit redstone lamp
-		//TODO: (#125) Double wooden slab
 		
 		//TODO: (#127) Cocoa
 		//TODO: (#128) Sandstone stairs
