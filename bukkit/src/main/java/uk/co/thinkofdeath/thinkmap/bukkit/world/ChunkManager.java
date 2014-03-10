@@ -150,20 +150,22 @@ public class ChunkManager implements Runnable {
 
     public boolean getChunkBytes(final int x, final int z, ByteBuf out) {
         ChunkSnapshot chunk = null;
+        boolean shouldGrabChunk = false;
         synchronized (activeChunks) {
-            if (activeChunks.containsKey(chunkKey(x, z))) {
-                try {
-                    chunk = plugin.getServer().getScheduler().callSyncMethod(plugin, new Callable<ChunkSnapshot>() {
-                        @Override
-                        public ChunkSnapshot call() throws Exception {
-                            return world.getChunkAt(x, z).getChunkSnapshot(false, true, false);
-                        }
-                    }).get();
-                } catch (InterruptedException e) {
-                    Thread.interrupted();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
+            shouldGrabChunk = activeChunks.containsKey(chunkKey(x, z));
+        }
+        if (shouldGrabChunk) {
+            try {
+                chunk = plugin.getServer().getScheduler().callSyncMethod(plugin, new Callable<ChunkSnapshot>() {
+                    @Override
+                    public ChunkSnapshot call() throws Exception {
+                        return world.getChunkAt(x, z).getChunkSnapshot(false, true, false);
+                    }
+                }).get();
+            } catch (InterruptedException e) {
+                Thread.interrupted();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
             }
         }
         if (chunk == null) {
