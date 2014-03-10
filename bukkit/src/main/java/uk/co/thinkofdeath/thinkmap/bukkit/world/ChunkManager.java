@@ -1,6 +1,8 @@
 package uk.co.thinkofdeath.thinkmap.bukkit.world;
 
 import gnu.trove.map.hash.TLongByteHashMap;
+import gnu.trove.set.TLongSet;
+import gnu.trove.set.hash.TLongHashSet;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
@@ -20,7 +22,7 @@ public class ChunkManager implements Runnable {
 
     private final ThinkMapPlugin plugin;
     private final World world;
-    private final TLongByteHashMap activeChunks = new TLongByteHashMap();
+    private final TLongSet activeChunks = new TLongHashSet();
     private final LinkedTransferQueue<FutureTask> jobQueue = new LinkedTransferQueue<FutureTask>();
 
     public ChunkManager(ThinkMapPlugin plugin, World world) {
@@ -35,7 +37,7 @@ public class ChunkManager implements Runnable {
 
     public void activateChunk(Chunk chunk) {
         synchronized (activeChunks) {
-            activeChunks.put(chunkKey(chunk.getX(), chunk.getZ()), (byte) 1);
+            activeChunks.add(chunkKey(chunk.getX(), chunk.getZ()));
         }
     }
 
@@ -150,9 +152,9 @@ public class ChunkManager implements Runnable {
 
     public boolean getChunkBytes(final int x, final int z, ByteBuf out) {
         ChunkSnapshot chunk = null;
-        boolean shouldGrabChunk = false;
+        boolean shouldGrabChunk;
         synchronized (activeChunks) {
-            shouldGrabChunk = activeChunks.containsKey(chunkKey(x, z));
+            shouldGrabChunk = activeChunks.contains(chunkKey(x, z));
         }
         if (shouldGrabChunk) {
             try {
