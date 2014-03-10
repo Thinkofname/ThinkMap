@@ -64,20 +64,21 @@ class TextureLoaderMacro {
 					meta.animation.frametime : 1;
 				var start = pos;
 				for (frame in frames) {
-					var ox = (pos % 32) * 16;
-					var oy = (Std.int(pos / 32)) * 16;
-					
-					for (y in 0 ... 16) {
-						for (x in 0 ... 16) {
-							var idx = (ox + x + (oy + y) * size) * 4;
-							var i = (x + y * 16) * 4;
-							currentImage.set(idx, img.get(i));
-							currentImage.set(idx + 1, img.get(i + 1));
-							currentImage.set(idx + 2, img.get(i + 2));
-							currentImage.set(idx + 3, img.get(i + 3));
-						}
-					}		
-					pos++;
+					for (na in 0 ... frameTime) {
+						var ox = (pos % 32) * 16;
+						var oy = (Std.int(pos / 32)) * 16;
+						for (y in 0 ... 16) {
+							for (x in 0 ... 16) {
+								var idx = (ox + x + (oy + y) * size) * 4;
+								var i = (x + (y + header.width * frame) * 16) * 4;
+								currentImage.set(idx, img.get(i));
+								currentImage.set(idx + 1, img.get(i + 1));
+								currentImage.set(idx + 2, img.get(i + 2));
+								currentImage.set(idx + 3, img.get(i + 3));
+							}
+						}	
+						pos++;	
+					}
 				}
 				var name = file.substring(0, file.length - 4);
 				vals.push({
