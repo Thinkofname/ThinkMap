@@ -159,8 +159,10 @@ class WebGLRenderer implements Renderer {
 				e.preventDefault();
 				movingBackwards = true;
 			} else if (e.keyCode == 'A'.code) {
+				e.preventDefault();
 				moveDir = 1;
 			} else if (e.keyCode == 'D'.code) {
+				e.preventDefault();
 				moveDir = -1;
 			} else if (e.keyCode == ' '.code && (onGround || offGroundFor <= 1)) {
 				e.preventDefault();

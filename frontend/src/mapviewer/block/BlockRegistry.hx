@@ -508,7 +508,25 @@ class BlockRegistry {
 			.legacyId(25)
 			.build();
 
-		//TODO: (#26) Bed
+		for (flag in [0, 4]) {
+			for (rot in 0 ... 4) {
+				registerBlock('bed_bottom_${rot}_${flag}', new Block().chainBlock()
+						.model(BlockBed.modelBottom.clone().rotateY(90 * rot))
+						.solid(false)
+						.ret())
+						.legacyId(26)
+						.dataValue(rot | flag)
+						.build();
+				registerBlock('bed_top_${rot}_${flag}', new Block().chainBlock()
+						.model(BlockBed.modelTop.clone().rotateY(90 * rot))
+						.solid(false)
+						.ret())
+						.legacyId(26)
+						.dataValue(rot | flag | 8)
+						.build();
+			}
+		}
+		
 		//TODO: (#27) Golden rail
 		//TODO: (#28) Detector rail
 		//TODO: (#29) Sticky piston
