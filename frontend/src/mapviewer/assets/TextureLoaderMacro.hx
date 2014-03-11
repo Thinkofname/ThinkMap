@@ -23,6 +23,7 @@ class TextureLoaderMacro {
 	private static var size = 512;
 	
     public static function build() : Array<Field> {
+		Context.registerModuleDependency(Context.getLocalClass().get().module, "assets/block_images/");
         var fields : Array<Field> = Context.getBuildFields();
 		var currentImage : Bytes = Bytes.alloc(size * size * 4);
 		
@@ -36,6 +37,7 @@ class TextureLoaderMacro {
 		
 		var vals = [];
 		var pos = 0;
+		#if !display
 		for (file in FileSystem.readDirectory("assets/block_images/")) {
 			if (!file.endsWith(".png")) {
 				continue;
@@ -120,6 +122,7 @@ class TextureLoaderMacro {
 		var out = File.write("build/block_images/blocks_0.png");
 		new Writer(out).write(Tools.build32ARGB(size, size, currentImage));
 		out.close();
+		#end
 		
 		fields.push( {
 			name: "textures",
