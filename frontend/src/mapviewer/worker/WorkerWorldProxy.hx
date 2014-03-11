@@ -1,12 +1,15 @@
 package mapviewer.worker;
 import js.html.ArrayBuffer;
+import js.html.Event;
 import js.html.Uint8Array;
 import js.html.XMLHttpRequest;
+import mapviewer.logging.Logger;
 import mapviewer.world.Chunk;
 import mapviewer.world.World;
 
 class WorkerWorldProxy {
 
+	private static var logger : Logger = new Logger("WorkerWorldProxy");
 	public var owner : World;
 	private var proxies : Array<WorkerProxy>;
 	private var numberLoaded : Int = 0;
@@ -38,8 +41,9 @@ class WorkerWorldProxy {
 		var req = new XMLHttpRequest();
 		req.open("POST", 'http://${Main.connection.address}/chunk', true);
 		req.responseType = "arraybuffer";
-		req.onreadystatechange = function(e) {
-			if (req.readyState == 4 && req.status == 200) {
+		req.onreadystatechange = function(e : Event) {
+			if (req.readyState != 4) return;
+			if (req.status == 200) {
 				processChunk(req.response, x, z);
 			}
 		};

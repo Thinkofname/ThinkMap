@@ -65,11 +65,13 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
             if (plugin.getChunkManager(plugin.getTargetWorld()).getChunkBytes(Integer.parseInt(args[0]), Integer.parseInt(args[1]), out)) {
                 FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, out);
                 response.headers().add("Content-Encoding", "gzip");
-                response.headers().add("Access-Control-Allow-Origin", "*"); //FIXME
+                response.headers().add("Access-Control-Allow-Origin", "*");
                 sendHttpResponse(context, request, response);
                 return;
             }
-            sendHttpResponse(context, request, new DefaultFullHttpResponse(HTTP_1_1, BAD_REQUEST));
+            DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, NOT_FOUND);
+            response.headers().add("Access-Control-Allow-Origin", "*");
+            sendHttpResponse(context, request, response);
             return;
         }
 
