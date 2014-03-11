@@ -1131,6 +1131,11 @@ class BlockRegistry {
 		//TODO: (#150) Powered comparator
 		//TODO: (#151) Daylight detector
 		//TODO: (#152) Redstone block
+		
+		registerBlock("redstone_block", new Block().chainBlock()
+			.texture("redstone_block").ret())
+			.legacyId(152).build();
+		
 		//TODO: (#153) Quartz ore
 
 		registerBlock("quartz", new BlockSidedTextures().chainBlockSidedTextures()
