@@ -35,7 +35,7 @@
                                 <exec dir="${basedir}"
                                     executable="haxe"
                                     failonerror="true">
-                                    <arg line="compile.hxml"/>
+                                    <arg line="-v compile.hxml"/>
                                 </exec>
                                 <zip destfile="${project.build.directory}/${project.build.finalName}.zip"
                                      basedir="${basedir}/build"/>

@@ -124,6 +124,7 @@ public class ChunkManager implements Runnable {
                     region.seek(8 * id);
                     region.writeInt(offset);
                     region.writeInt(size);
+                    data.release();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -198,6 +199,7 @@ public class ChunkManager implements Runnable {
                 return false;
             }
             out.writeBytes(data);
+            data.release();
             return true;
         }
         gzipChunk(chunk, out);
@@ -238,6 +240,7 @@ public class ChunkManager implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        data.release();
     }
 
     @Override
