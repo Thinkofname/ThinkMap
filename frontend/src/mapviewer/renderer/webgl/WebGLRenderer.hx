@@ -454,7 +454,7 @@ varying vec2 vLighting;
 
 void main(void) {
     vec3 pos = position;
-    gl_Position = pMatrix * uMatrix * vec4((pos / 256.0) + vec3(offset.x * 16.0, 0.0, offset.y * 16.0), 1.0);
+    gl_Position = pMatrix * uMatrix * vec4((pos / 256.0) - 1.0 + vec3(offset.x * 16.0, 0.0, offset.y * 16.0), 1.0);
     vColour = colour;
     vTextureId = textureId;
     vTexturePos = texturePos / 256.0;

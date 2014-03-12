@@ -25,9 +25,9 @@ class BlockBuilder {
 	}
 	
 	public function position(x : Float, y : Float, z : Float) : BlockBuilder {
-		buffer.addUnsignedShort(Std.int(x * 256 + 0.5));
-		buffer.addUnsignedShort(Std.int(y * 256 + 0.5));
-		buffer.addUnsignedShort(Std.int(z * 256 + 0.5));
+		buffer.addUnsignedShort(Std.int(x * 256 + 0.5) + 256); // The +256 is to allow for going negative slightly
+		buffer.addUnsignedShort(Std.int(y * 256 + 0.5) + 256);
+		buffer.addUnsignedShort(Std.int(z * 256 + 0.5) + 256);
 		return this;
 	}
 	
