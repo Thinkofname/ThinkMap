@@ -910,13 +910,25 @@ class BlockRegistry {
 			.legacyId(49)
 			.build();
 
-		// Torch
+		// Torches
 		{
 			for (i in [0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]) {
 				registerBlock('torch_standing_$i', new Block().chainBlock()
 					.model(BlockTorch.model.clone())
 					.solid(false).collidable(false).ret())
 					.legacyId(50)
+					.dataValue(i)
+					.build();
+				registerBlock('redstone_torch_standing_$i', new Block().chainBlock()
+					.model(BlockTorch.model.clone(function(t : String) return "redstone_torch_on" ))
+					.solid(false).collidable(false).ret())
+					.legacyId(76)
+					.dataValue(i)
+					.build();
+				registerBlock('unlit_redstone_torch_standing_$i', new Block().chainBlock()
+					.model(BlockTorch.model.clone(function(t : String) return "redstone_torch_off" ))
+					.solid(false).collidable(false).ret())
+					.legacyId(75)
 					.dataValue(i)
 					.build();
 			}
@@ -926,6 +938,20 @@ class BlockRegistry {
 					.model(new Model().join(BlockTorch.model.clone().rotateX(22.5), 0, 4, 5).rotateY(rot[i] * 90))
 					.solid(false).collidable(false).ret())
 					.legacyId(50)
+					.dataValue(1 + i)
+					.build();	
+				registerBlock('redstone_torch_wall_$i', new Block().chainBlock()
+					.model(new Model().join(BlockTorch.model.clone(
+						function(t : String) return "redstone_torch_on").rotateX(22.5), 0, 4, 5).rotateY(rot[i] * 90))
+					.solid(false).collidable(false).ret())
+					.legacyId(76)
+					.dataValue(1 + i)
+					.build();
+				registerBlock('unlit_redstone_torch_wall_$i', new Block().chainBlock()
+					.model(new Model().join(BlockTorch.model.clone(
+						function(t : String) return "redstone_torch_off").rotateX(22.5), 0, 4, 5).rotateY(rot[i] * 90))
+					.solid(false).collidable(false).ret())
+					.legacyId(75)
 					.dataValue(1 + i)
 					.build();
 			}
@@ -989,9 +1015,7 @@ class BlockRegistry {
 		registerBlock('lit_redstone_ore', new Block().chainBlock().texture('redstone_ore').ret())
 			.legacyId(74)
 			.build();
-
-		//TODO: (#75) Unlit redstone torch
-		//TODO: (#76) Redstone torch
+			
 		//TODO: (#77) Stone button
 		//TODO: (#78) Snow layer
 
