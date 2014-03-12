@@ -134,6 +134,8 @@ class TextureLoaderMacro {
 			});
 			pos++;
 		}
+		FileSystem.createDirectory("build");
+		FileSystem.createDirectory("build/block_images");
 		var out = File.write("build/block_images/blocks_0.png");
 		new Writer(out).write(Tools.build32ARGB(size, size, currentImage));
 		out.close();
