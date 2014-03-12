@@ -197,6 +197,7 @@ class WebGLRenderer implements Renderer {
 	
 	private var lastFrame : Int;
 	private var temp : Mat4;
+	private var currentFrame : Float = 0;
 	
     public function draw() : Void {
 		var delta : Float = Math.min((Utils.now() - lastFrame) / (1000 / 60), 2.0);
@@ -217,7 +218,9 @@ class WebGLRenderer implements Renderer {
 		gl.activeTexture(GL.TEXTURE0);
 		gl.bindTexture(GL.TEXTURE_2D, blockTextures[0]);
 		gl.uniform1i(blockTextureLocation, 0);
-		gl.uniform1f(frameLocation, Main.world.currentTime);
+		gl.uniform1f(frameLocation, Std.int(currentFrame));
+		currentFrame += (1 / 3);
+		if (currentFrame > 0xFFFFFFF) currentFrame = 0;
 		
 		if (firstPerson) {
 			var lx = camera.x;
