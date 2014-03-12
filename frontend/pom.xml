@@ -30,6 +30,8 @@
                         <phase>install</phase>
                         <configuration>
                             <target name="build frontend">
+                                <mkdir dir="${basedir}/build"/>
+                                <mkdir dir="${basedir}/build/block_models"/>
                                 <exec dir="${basedir}"
                                     executable="haxe"
                                     failonerror="true">
