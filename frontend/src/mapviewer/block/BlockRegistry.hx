@@ -910,7 +910,26 @@ class BlockRegistry {
 			.legacyId(49)
 			.build();
 
-		//TODO: (#50) Torch
+		// Torch
+		{
+			for (i in [0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]) {
+				registerBlock('torch_standing_$i', new Block().chainBlock()
+					.model(BlockTorch.model.clone())
+					.solid(false).collidable(false).ret())
+					.legacyId(50)
+					.dataValue(i)
+					.build();
+			}
+			var rot = [1, 3, 2, 0];
+			for (i in 0 ... 4) {			
+				registerBlock('torch_wall_$i', new Block().chainBlock()
+					.model(new Model().join(BlockTorch.model.clone().rotateX(22.5), 0, 4, 5).rotateY(rot[i] * 90))
+					.solid(false).collidable(false).ret())
+					.legacyId(50)
+					.dataValue(1 + i)
+					.build();
+			}
+		}
 		//TODO: (#51) Fire
 
 		registerBlock('mob_spawner', new Block().chainBlock().texture('mob_spawner')
