@@ -608,7 +608,9 @@ class BlockRegistry {
 				.build();
 		}
 
-		//TODO: (#36) Piston extension
+		registerBlock("piston_extension", new Block().chainBlock()
+			.collidable(false).solid(false).renderable(false).ret())
+			.legacyId(36).build();
 
 		registerBlock('yellow_flower', new BlockCross().chainBlock().texture('flower_dandelion')
 			.solid(false)
