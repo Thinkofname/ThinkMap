@@ -1344,7 +1344,7 @@ class BlockRegistry {
 				.dataValue(i)
 				.build();
 			registerBlock('acacia_stairs_$i', new BlockStairs(i & 0x4 == 0x4, i & 0x3).chainBlock()
-				.solid(false).texture("planks_spruce").ret())
+				.solid(false).texture("planks_acacia").ret())
 				.legacyId(163)
 				.dataValue(i)
 				.build();
