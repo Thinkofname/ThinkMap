@@ -259,34 +259,9 @@ class BlockStairs extends Block {
 			for (face in model.faces) {				
 				if (face.texture == null)
 					face.texture = texture;
-				// Correct texture positions
-				for (vert in face.vertices) {
-					if (isTop) // Flip model
-						vert.y = 1 - vert.y;
-						
-					if (face.face != Face.LEFT && face.face != Face.RIGHT) {
-						vert.textureX = vert.x;
-					}
-					if (face.face == Face.LEFT || face.face == Face.RIGHT) {			
-						vert.textureX = vert.z;				
-					} else if (face.face == Face.TOP || face.face == Face.BOTTOM) {					
-						vert.textureY = 1 - vert.z;				
-					}
-					if (face.face != Face.TOP && face.face != Face.BOTTOM) {			
-						vert.textureY = 1 - vert.y;						
-					}
-				}
-				if (isTop) { // Flip model
-					if (face.face == Face.TOP) face.face = Face.BOTTOM;
-					if (face.face == Face.BOTTOM) face.face = Face.TOP;
-					var temp = face.vertices[2];
-					face.vertices[2] = face.vertices[1];
-					face.vertices[1] = temp;
-					var temp = face.vertices[5];
-					face.vertices[5] = face.vertices[4];
-					face.vertices[4] = temp;
-				}
 			}
+			if (isTop) model.flipModel();
+			model.realignTextures();
 				
 			// Store
 			mmap[id] = model;

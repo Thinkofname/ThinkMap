@@ -101,6 +101,45 @@ class Model {
 		}
 	}
 	
+	/**
+	 * Resets the texture coordinates for the model based on the 
+	 * vertex's position
+	 */
+	public function realignTextures() {		
+		for (face in faces) {			
+			// Correct texture positions
+			for (vert in face.vertices) {					
+				if (face.face != Face.LEFT && face.face != Face.RIGHT) {
+					vert.textureX = vert.x;
+				}
+				if (face.face == Face.LEFT || face.face == Face.RIGHT) {			
+					vert.textureX = vert.z;				
+				} else if (face.face == Face.TOP || face.face == Face.BOTTOM) {					
+					vert.textureY = 1 - vert.z;				
+				}
+				if (face.face != Face.TOP && face.face != Face.BOTTOM) {			
+					vert.textureY = 1 - vert.y;						
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Flips the model upside down
+	 */
+	public function flipModel() {
+		for (face in faces) {		
+			for (vert in face.vertices) {
+				vert.y = 1 - vert.y;
+			}
+			if (face.face == Face.TOP) face.face = Face.BOTTOM;
+			if (face.face == Face.BOTTOM) face.face = Face.TOP;
+			var temp = face.vertices[2];
+			face.vertices[2] = face.vertices[1];
+			face.vertices[1] = temp;
+		}
+	}
+	
 	public function join(other : Model, ?ox : Float = 0, ?oy : Float = 0, ?oz : Float = 0) : Model {
 		for (face in other.faces) {
 			var newFace = new ModelFace(face.face);
@@ -196,6 +235,7 @@ class ModelFace implements Chainable {
 		this.face = face;
 	}
 	
+	@:deprecated("Use ModelFace.create instead")
 	public static function fromFace(face : Face) : ModelFace {
 		var f = new ModelFace(face);
 		for (vert in defaultFaces[face.name]) {
@@ -203,7 +243,16 @@ class ModelFace implements Chainable {
 		}
 		return f;
 	}
+	
+	public static function create(face : Face) : ModelFace {
+		var f = new ModelFace(face);
+		for (vert in defaultFaces[face.name]) {
+			f.vertices.push(vert.clone());
+		}
+		return f;		
+	}
 
+	@:deprecated("Use ModelFace.create or .size/.textureSize instead")
 	public function moveY(a : Float, ?tex : Bool = false) : ModelFace {
 		for (vert in vertices) {
 			if (!tex)
@@ -214,6 +263,7 @@ class ModelFace implements Chainable {
 		return this;
 	}
 
+	@:deprecated("Use ModelFace.create or .size/.textureSize instead")
 	public function moveX(a : Float, ?tex : Bool = false) : ModelFace {
 		for (vert in vertices) {
 			if (!tex)
@@ -224,6 +274,7 @@ class ModelFace implements Chainable {
 		return this;
 	}
 
+	@:deprecated("Use ModelFace.create or .size/.textureSize instead")
 	public function moveZ(a : Float, ?tex : Bool = false) : ModelFace {
 		for (vert in vertices) {
 			vert.z += a / 16;
@@ -231,6 +282,7 @@ class ModelFace implements Chainable {
 		return this;
 	}
 
+	@:deprecated("Use ModelFace.create or .size/.textureSize instead")
 	public function sizeY(a : Float, ?tex : Bool = false) : ModelFace {
 		var largest : Float = 0;
 		if (!tex) {
@@ -255,6 +307,7 @@ class ModelFace implements Chainable {
 		return this;
 	}
 
+	@:deprecated("Use ModelFace.create or .size/.textureSize instead")
 	public function sizeX(a : Float, ?tex : Bool = false) : ModelFace {
 		var largest : Float = 0;
 		if (!tex) {
@@ -279,6 +332,7 @@ class ModelFace implements Chainable {
 		return this;
 	}
 
+	@:deprecated("Use ModelFace.create or .size/.textureSize instead")
 	public function sizeZ(a : Float, ?tex : Bool = false) : ModelFace {
 		var largest : Float = 0;
 		for (vert in vertices) {
