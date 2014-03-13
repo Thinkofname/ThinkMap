@@ -84,9 +84,16 @@ class Model {
 		}
 	}
 	
+	private static var rotHelper = [Face.LEFT, Face.FRONT, Face.RIGHT, Face.BACK];
+	
 	public function rotateY(deg : Float) : Model {
 		rotate(deg, [0.0, 1.0, 0.0]);		
-		//TODO: Rotate faces
+		for (face in faces) {
+			var idx = rotHelper.indexOf(face.face);
+			if (idx != -1) {
+				face.face = rotHelper[(idx + Std.int(deg/90)) % rotHelper.length];
+			}
+		}
 		return this;
 	}
 	
@@ -209,6 +216,7 @@ class ModelFace implements Chainable {
 	
 	public function new(face : Face) {
 		vertices = new Array();
+		this.face = face;
 	}
 	
 	public static function fromFace(face : Face) : ModelFace {

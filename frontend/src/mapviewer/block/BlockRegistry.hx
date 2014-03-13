@@ -964,7 +964,13 @@ class BlockRegistry {
 			.legacyId(52)
 			.build();
 
-		//TODO: (#53) Stairs
+		for (i in 0 ... 8) {
+			registerBlock('oak_stairs_$i', new BlockStairs(i & 0x4 == 0x4, i & 0x3).chainBlock()
+				.solid(false).texture("planks_oak").ret())
+				.legacyId(53)
+				.dataValue(i)
+				.build();
+		}
 
 		//TODO: (#55) Redstone wire
 
@@ -1002,7 +1008,14 @@ class BlockRegistry {
 		//TODO: (#64) Wooden door
 
 		//TODO: (#66) Rail
-		//TODO: (#67) Stone stairs
+		
+		for (i in 0 ... 8) {
+			registerBlock('stone_stairs_$i', new BlockStairs(i & 0x4 == 0x4, i & 0x3).chainBlock()
+				.solid(false).texture("cobblestone").ret())
+				.legacyId(67)
+				.dataValue(i)
+				.build();
+		}
 
 		//TODO: (#69) Lever
 		//TODO: (#70) Stone pressure plate
@@ -1135,8 +1148,19 @@ class BlockRegistry {
 		BlockVine.register();
 
 		//TODO: (#107) Fence gate
-		//TODO: (#108) Brick stairs
-		//TODO: (#109) Stone brick stairs
+		
+		for (i in 0 ... 8) {
+			registerBlock('brick_stairs_$i', new BlockStairs(i & 0x4 == 0x4, i & 0x3).chainBlock()
+				.solid(false).texture("brick").ret())
+				.legacyId(108)
+				.dataValue(i)
+				.build();
+			registerBlock('stone_brick_stairs_$i', new BlockStairs(i & 0x4 == 0x4, i & 0x3).chainBlock()
+				.solid(false).texture("stonebrick").ret())
+				.legacyId(109)
+				.dataValue(i)
+				.build();
+		}
 		
 		registerBlock("mycelium", new BlockSidedTextures().chainBlockSidedTextures()
 			.textures([
@@ -1157,7 +1181,15 @@ class BlockRegistry {
 			.build();
 		
 		//TODO: (#113) Nether brick fence
-		//TODO: (#114) Nether brick stairs
+		
+		for (i in 0 ... 8) {
+			registerBlock('nether_brick_stairs_$i', new BlockStairs(i & 0x4 == 0x4, i & 0x3).chainBlock()
+				.solid(false).texture("nether_brick").ret())
+				.legacyId(114)
+				.dataValue(i)
+				.build();
+		}
+		
 		//TODO: (#115) Nether wart
 		//TODO: (#116) Enchanting table
 		//TODO: (#117) Brewing stand
@@ -1170,15 +1202,37 @@ class BlockRegistry {
 		//TODO: (#124) Lit redstone lamp
 		
 		//TODO: (#127) Cocoa
-		//TODO: (#128) Sandstone stairs
+		for (i in 0 ... 8) {
+			registerBlock('sandstone_stairs_$i', new BlockStairs(i & 0x4 == 0x4, i & 0x3).chainBlock()
+				.solid(false).texture("sandstone_normal").ret())
+				.legacyId(128)
+				.dataValue(i)
+				.build();
+		}
 		//TODO: (#129) Emerald ore
 		//TODO: (#130) Ender chest
 		//TODO: (#131) Tripwire hook
 		//TODO: (#132) Tripwire
 		//TODO: (#133) Emerald block
-		//TODO: (#134) Spruce stairs
-		//TODO: (#135) Birch stairs
-		//TODO: (#136) Jungle stairs
+		
+		for (i in 0 ... 8) {
+			registerBlock('spruce_stairs_$i', new BlockStairs(i & 0x4 == 0x4, i & 0x3).chainBlock()
+				.solid(false).texture("planks_spruce").ret())
+				.legacyId(134)
+				.dataValue(i)
+				.build();
+			registerBlock('birch_stairs_$i', new BlockStairs(i & 0x4 == 0x4, i & 0x3).chainBlock()
+				.solid(false).texture("planks_birch").ret())
+				.legacyId(135)
+				.dataValue(i)
+				.build();
+			registerBlock('jungle_stairs_$i', new BlockStairs(i & 0x4 == 0x4, i & 0x3).chainBlock()
+				.solid(false).texture("planks_jungle").ret())
+				.legacyId(136)
+				.dataValue(i)
+				.build();
+		}
+		
 		//TODO: (#137) Command block
 		//TODO: (#138) Beacon
 		//TODO: (#139) Cobblestone wall
@@ -1277,14 +1331,29 @@ class BlockRegistry {
 			.dataValue(4)
 			.build();
 		
-		//TODO: (#156) Quartz stairs
 		//TODO: (#157) Activator rail
 
 		//TODO: (#160) Stained glass pane
 		//TODO: (#161) Leaves2
 		//TODO: (#162) Log2
-		//TODO: (#163) Acacia stairs
-		//TODO: (#164) Dark oak stairs
+		
+		for (i in 0 ... 8) {
+			registerBlock('quartz_stairs_$i', new BlockStairs(i & 0x4 == 0x4, i & 0x3).chainBlock()
+				.solid(false).texture("quartz_block_top").ret())
+				.legacyId(156)
+				.dataValue(i)
+				.build();
+			registerBlock('acacia_stairs_$i', new BlockStairs(i & 0x4 == 0x4, i & 0x3).chainBlock()
+				.solid(false).texture("planks_spruce").ret())
+				.legacyId(163)
+				.dataValue(i)
+				.build();
+			registerBlock('big_oak_stairs_$i', new BlockStairs(i & 0x4 == 0x4, i & 0x3).chainBlock()
+				.solid(false).texture("planks_birch").ret())
+				.legacyId(164)
+				.dataValue(i)
+				.build();
+		}
 
 		// Range (#165) -> (#169) unused currently
 

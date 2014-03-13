@@ -122,8 +122,7 @@ class Chunk {
         } else if (old != 0 && light == 0) {
             section.count--;
         }
-
-
+		
         if (section.count == 0) sections[y >> 4] = null;
     }
 
