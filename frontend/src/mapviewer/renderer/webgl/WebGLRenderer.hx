@@ -47,6 +47,7 @@ class WebGLRenderer implements Renderer {
 	public var offsetLocation : UniformLocation;
 	public var blockTextureLocation : UniformLocation;
 	public var frameLocation : UniformLocation;
+	public var timeLocation : UniformLocation;
 	public var disAlphaLocation : UniformLocation;
 	public var positionLocation : Int;
 	public var colourLocation : Int;
@@ -107,6 +108,7 @@ class WebGLRenderer implements Renderer {
 		uMatrixLocation = gl.getUniformLocation(mainProgram, "uMatrix");
 		offsetLocation = gl.getUniformLocation(mainProgram, "offset");
 		frameLocation = gl.getUniformLocation(mainProgram, "frame");
+		timeLocation = gl.getUniformLocation(mainProgram, "time");
 		blockTextureLocation = gl.getUniformLocation(mainProgram, "texture");
 		disAlphaLocation = gl.getUniformLocation(mainProgram, "disAlpha");
 		positionLocation = gl.getAttribLocation(mainProgram, "position");
@@ -221,6 +223,7 @@ class WebGLRenderer implements Renderer {
 		gl.uniform1f(frameLocation, Std.int(currentFrame));
 		currentFrame += (1 / 3);
 		if (currentFrame > 0xFFFFFFF) currentFrame = 0;
+		gl.uniform1f(timeLocation, Main.world.currentTime);
 		
 		if (firstPerson) {
 			var lx = camera.x;
@@ -480,6 +483,7 @@ precision mediump float;
 
 uniform sampler2D texture;
 uniform float frame;
+uniform float time;
 uniform int disAlpha;
 
 varying vec4 vColour;
@@ -497,7 +501,7 @@ void main(void) {
     pos.y += floor(id / 32.0) * 0.03125;
     gl_FragColor = texture2D(texture, pos) * vColour;
 
-    float scale = (frame - 6000.0) / 12000.0;
+    float scale = (time - 6000.0) / 12000.0;
     if (scale > 1.0) {
         scale = 2.0 - scale;
     } else if (scale < 0.0) {
