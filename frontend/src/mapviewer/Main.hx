@@ -37,37 +37,17 @@ class Main {
     public static var blockTexturesRaw : Array<ImageElement> = new Array();
     public static var blockTextureInfo : Map<String, TextureInfo> = new Map();
     private static var loadedCount : Int = 0;
-    private static var req : XMLHttpRequest;
     private static var canvas : CanvasElement;
     public static var renderer : Renderer;
     public static var connection : Connection;
     public static var world : World;
-	public static var modelData : Dynamic;
-	public static var textureData : Dynamic;
 
     static function main() {
-		TextureLoader.init(function() { ready(null); } );
-        req = new XMLHttpRequest();
-        req.onload = ready;
-        req.open("GET", "block_models/models.json", true);
-        req.send();
+		TextureLoader.init(ready);
     }
 
-    static function ready(event : Dynamic) {
-        loadedCount++;
-        if (loadedCount != 2) {
-            return;
-        }
-		
+    static function ready() {		
 		blockTextureInfo = TextureLoader.textures;
-		
-        var mJs = Json.parse(req.responseText);
-		modelData = mJs;
-		for (k in Reflect.fields(mJs)) {
-			var model = new Model();
-			model.fromMap(Reflect.field(mJs, k));
-			Model.models[k] = model;
-		}
         BlockRegistry.init();
 
         canvas = cast Browser.document.getElementById("main");

@@ -44,8 +44,7 @@ class WorkerProxy {
 			onData(msg.data);
 		}
 		worker.postMessage( {
-			type: "models",
-			data: Main.modelData
+			type: "start"
 		});
 	}
 	

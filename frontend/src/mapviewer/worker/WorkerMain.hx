@@ -35,14 +35,8 @@ class WorkerMain {
 		
 		self.onmessage = function(msg : Dynamic) {
 			switch (msg.data.type) {
-				case "models":			
+				case "start":			
 					Main.blockTextureInfo = TextureLoader.textures;	
-					var mJs = msg.data.data;
-					for (k in Reflect.fields(mJs)) {
-						var model = new Model();
-						model.fromMap(Reflect.field(mJs, k));
-						Model.models[k] = model;
-					}
 					BlockRegistry.init();
 					self.postMessage("ready");
 				case "load":

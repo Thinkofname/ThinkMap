@@ -36,29 +36,6 @@ class Model {
 		faces = new Array();
 	}
 	
-	public function fromMap(input : Dynamic) {
-		var fs : Array<Dynamic> = input.faces;
-		for (iFace in fs) {
-			var face = new ModelFace(Face.fromName(iFace.face));
-			faces.push(face);
-			face.texture = iFace.texture;
-			face.r = iFace.colour.r;
-			face.g = iFace.colour.g;
-			face.b = iFace.colour.b;
-			var vs : Array<Dynamic> = iFace.vertices;
-			for (iVert in vs) {
-				var vert = new ModelVertex(
-					iVert.x / 16,
-					iVert.y / 16,
-					iVert.z / 16,
-					iVert.textureX / 16,
-					iVert.textureY / 16
-				);
-				face.vertices.push(vert);
-			}
-		}
-	}
-	
 	public function render(builder : BlockBuilder, x : Int, y : Int, z : Int, chunk : Chunk) {
 		var light = new LightInfo(chunk.getLight(x, y, z), chunk.getSky(x, y, z));
 		for (face in faces) {

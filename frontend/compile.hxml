@@ -5,7 +5,6 @@
 -lib format
 -cmd "cp assets/gl-matrix-min.js build/"
 -cmd "cp assets/index.html build/"
--cmd "cp assets/block_models/models.json build/block_models/"
 -main mapviewer.Main
 --next
 -js build/work.js

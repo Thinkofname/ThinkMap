@@ -1246,7 +1246,7 @@ class BlockRegistry {
 			for (dam in 0 ... 3) {
 				registerBlock('anvil_${deg}_$dam', new Block().chainBlock()
 					.solid(false)
-					.model(Model.get("anvil").clone(function(t) {
+					.model(BlockAnvil.model.clone(function(t) {
 						return t == "anvil_top_damaged_0" ? 'anvil_top_damaged_$dam' : t;
 					}).rotateY(deg * 90))
 					.ret())
