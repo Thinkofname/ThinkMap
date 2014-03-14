@@ -85,7 +85,8 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
                 sendHttpResponse(context, request, response);
                 return;
             }
-            DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, NOT_FOUND);
+            out.writeBytes("Chunk not found".getBytes(Charsets.UTF_8));
+            DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, out);
             response.headers().add("Access-Control-Allow-Origin", "*");
             sendHttpResponse(context, request, response);
             return;

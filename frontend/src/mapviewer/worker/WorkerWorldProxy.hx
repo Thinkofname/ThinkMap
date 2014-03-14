@@ -67,6 +67,12 @@ class WorkerWorldProxy {
 	
 	private function processChunk(buffer : ArrayBuffer, x : Int, z : Int) {
 		var data = new Uint8Array(buffer);
+		if (data.length == 15) {
+			// Chunk not found
+			// This is a work around the fact you can't catch
+			// http errors with out it reporting them.
+			return;
+		}
 		var message : Dynamic = { };
 		message.type = "load";
 		message.x = x;
