@@ -26,211 +26,32 @@ class BlockAnvil {
 		if (_model != null) return _model;
 
 		_model = new Model();
-		_model.faces.push(ModelFace.fromFace(Face.TOP).chainModelFace()
-			.texture("anvil_top_damaged_0").ret()
-			.moveX(3)
-			.moveY(16)
-			.sizeX(-6)
-			.moveX(3, true)
-			.sizeX(-6, true));
-		_model.faces.push(ModelFace.fromFace(Face.TOP).chainModelFace()
-			.texture("anvil_base").ret()
-			.moveX(4)
-			.moveZ(3)
-			.moveY(5)
-			.sizeX(-8)
-			.sizeZ(-6)
-			.moveX(4, true)
-			.moveY(3, true)
-			.sizeX(-8, true)
-			.sizeY(-6, true));
-		_model.faces.push(ModelFace.fromFace(Face.TOP).chainModelFace()
-			.texture("anvil_base").ret()
-			.moveX(2)
-			.moveZ(2)
-			.moveY(4)
-			.sizeX(-4)
-			.sizeZ(-4)
-			.moveX(2, true)
-			.moveY(2, true)
-			.sizeX(-4, true)
-			.sizeY(-4, true));
-		_model.faces.push(ModelFace.fromFace(Face.LEFT).chainModelFace()
-			.texture("anvil_base").ret()
-			.moveY(10)
-			.moveX(13)
-			.sizeY(-10)
-			.moveY(10, true)
-			.sizeY(-10, true));
-		_model.faces.push(ModelFace.fromFace(Face.LEFT).chainModelFace()
-			.texture("anvil_base").ret()
-			.moveY(5)
-			.moveZ(4)
-			.moveX(10)
-			.sizeY(-11)
-			.sizeZ(-8)
-			.moveX(4, true)
-			.moveY(5, true)
-			.sizeX(-8, true)
-			.sizeY(-11, true));
-		_model.faces.push(ModelFace.fromFace(Face.LEFT).chainModelFace()
-			.texture("anvil_base").ret()
-			.moveY(4)
-			.moveZ(3)
-			.moveX(12)
-			.sizeY(-15)
-			.sizeZ(-6)
-			.moveX(3, true)
-			.moveY(4, true)
-			.sizeX(-6, true)
-			.sizeY(-15, true));
-		_model.faces.push(ModelFace.fromFace(Face.LEFT).chainModelFace()
-			.texture("anvil_base").ret()
-			.moveZ(2)
-			.moveX(14)
-			.sizeY(-12)
-			.sizeZ(-4)
-			.moveX(2, true)
-			.sizeX(-4, true)
-			.sizeY(-12, true));
-		_model.faces.push(ModelFace.fromFace(Face.FRONT).chainModelFace()
-			.texture("anvil_base").ret()
-			.moveY(10)
-			.moveX(3)
-			.moveZ(16)
-			.sizeY(-10)
-			.sizeX(-6)
-			.moveX(3, true)
-			.moveY(10, true)
-			.sizeX(-6, true)
-			.sizeY(-10, true));
-		_model.faces.push(ModelFace.fromFace(Face.FRONT).chainModelFace()
-			.texture("anvil_base").ret()
-			.moveY(5)
-			.moveX(6)
-			.moveZ(12)
-			.sizeY(-11)
-			.sizeX(-12)
-			.moveX(6, true)
-			.moveY(5, true)
-			.sizeX(-12, true)
-			.sizeY(-11, true));
-		_model.faces.push(ModelFace.fromFace(Face.FRONT).chainModelFace()
-			.texture("anvil_base").ret()
-			.moveY(4)
-			.moveX(4)
-			.moveZ(13)
-			.sizeY(-15)
-			.sizeX(-8)
-			.moveX(4, true)
-			.moveY(4, true)
-			.sizeX(-8, true)
-			.sizeY(-15, true));
-		_model.faces.push(ModelFace.fromFace(Face.FRONT).chainModelFace()
-			.texture("anvil_base").ret()
-			.moveX(2)
-			.moveZ(14)
-			.sizeY(-12)
-			.sizeX(-4)
-			.moveX(2, true)
-			.sizeX(-4, true)
-			.sizeY(-12, true));
-		_model.faces.push(ModelFace.fromFace(Face.RIGHT).chainModelFace()
-			.texture("anvil_base").ret()
-			.moveY(10)
-			.moveX(3)
-			.sizeY(-10)
-			.moveY(10, true)
-			.sizeY(-10, true));
-		_model.faces.push(ModelFace.fromFace(Face.RIGHT).chainModelFace()
-			.texture("anvil_base").ret()
-			.moveY(5)
-			.moveZ(4)
-			.moveX(6)
-			.sizeY(-11)
-			.sizeZ(-8)
-			.moveX(4, true)
-			.moveY(5, true)
-			.sizeX(-8, true)
-			.sizeY(-11, true));
-		_model.faces.push(ModelFace.fromFace(Face.RIGHT).chainModelFace()
-			.texture("anvil_base").ret()
-			.moveY(4)
-			.moveZ(3)
-			.moveX(4)
-			.sizeY(-15)
-			.sizeZ(-6)
-			.moveX(3, true)
-			.moveY(4, true)
-			.sizeX(-6, true)
-			.sizeY(-15, true));
-		_model.faces.push(ModelFace.fromFace(Face.RIGHT).chainModelFace()
-			.texture("anvil_base").ret()
-			.moveZ(2)
-			.moveX(2)
-			.sizeY(-12)
-			.sizeZ(-4)
-			.moveX(2, true)
-			.sizeX(-4, true)
-			.sizeY(-12, true));
-		_model.faces.push(ModelFace.fromFace(Face.BACK).chainModelFace()
-			.texture("anvil_base").ret()
-			.moveY(10)
-			.moveX(3)
-			.sizeY(-10)
-			.sizeX(-6)
-			.moveX(3, true)
-			.moveY(10, true)
-			.sizeX(-6, true)
-			.sizeY(-10, true));
-		_model.faces.push(ModelFace.fromFace(Face.BACK).chainModelFace()
-			.texture("anvil_base").ret()
-			.moveY(5)
-			.moveX(6)
-			.moveZ(4)
-			.sizeY(-11)
-			.sizeX(-12)
-			.moveX(6, true)
-			.moveY(5, true)
-			.sizeX(-12, true)
-			.sizeY(-11, true));
-		_model.faces.push(ModelFace.fromFace(Face.BACK).chainModelFace()
-			.texture("anvil_base").ret()
-			.moveY(4)
-			.moveX(4)
-			.moveZ(3)
-			.sizeY(-15)
-			.sizeX(-8)
-			.moveX(4, true)
-			.moveY(4, true)
-			.sizeX(-8, true)
-			.sizeY(-15, true));
-		_model.faces.push(ModelFace.fromFace(Face.BACK).chainModelFace()
-			.texture("anvil_base").ret()
-			.moveX(2)
-			.moveZ(2)
-			.sizeY(-12)
-			.sizeX(-4)
-			.moveX(2, true)
-			.sizeX(-4, true)
-			.sizeY(-12, true));
-		_model.faces.push(ModelFace.fromFace(Face.BOTTOM).chainModelFace()
-			.texture("anvil_base").ret()
-			.moveX(2)
-			.moveZ(2)
-			.sizeX(-4)
-			.sizeZ(-4)
-			.moveX(2, true)
-			.moveY(2, true)
-			.sizeX(-4, true)
-			.sizeY(-4, true));
-		_model.faces.push(ModelFace.fromFace(Face.BOTTOM).chainModelFace()
-			.texture("anvil_base").ret()
-			.moveX(3)
-			.moveY(10)
-			.sizeX(-6)
-			.moveX(3, true)
-			.sizeX(-6, true));
+		_model.faces.push(ModelFace.create(Face.TOP, "anvil_top_damaged_0", 3, 0, 10, 16, 16));
+		_model.faces.push(ModelFace.create(Face.TOP, "anvil_base", 4, 3, 8, 10, 5));
+		_model.faces.push(ModelFace.create(Face.TOP, "anvil_base", 2, 2, 12, 12, 4));
+		
+		_model.faces.push(ModelFace.create(Face.LEFT, "anvil_base", 0, 10, 16, 6, 13)); 
+		_model.faces.push(ModelFace.create(Face.LEFT, "anvil_base", 4, 5, 8, 5, 10));
+		_model.faces.push(ModelFace.create(Face.LEFT, "anvil_base", 3, 4, 10, 1, 12));
+		_model.faces.push(ModelFace.create(Face.LEFT, "anvil_base", 2, 0, 12, 4, 14));
+		
+		_model.faces.push(ModelFace.create(Face.FRONT, "anvil_base", 3, 10, 10, 6, 16));
+		_model.faces.push(ModelFace.create(Face.FRONT, "anvil_base", 6, 5, 4, 5, 12));
+		_model.faces.push(ModelFace.create(Face.FRONT, "anvil_base", 4, 4, 8, 1, 13));
+		_model.faces.push(ModelFace.create(Face.FRONT, "anvil_base", 2, 0, 12, 4, 14));
+			
+		_model.faces.push(ModelFace.create(Face.RIGHT, "anvil_base", 0, 10, 16, 6, 3));
+		_model.faces.push(ModelFace.create(Face.RIGHT, "anvil_base", 4, 5, 8, 5, 6));
+		_model.faces.push(ModelFace.create(Face.RIGHT, "anvil_base", 3, 4, 10, 1, 4));
+		_model.faces.push(ModelFace.create(Face.RIGHT, "anvil_base", 2, 0, 12, 4, 2));
+			
+		_model.faces.push(ModelFace.create(Face.BACK, "anvil_base", 3, 10, 10, 6, 0));
+		_model.faces.push(ModelFace.create(Face.BACK, "anvil_base", 6, 5, 4, 5, 4));
+		_model.faces.push(ModelFace.create(Face.BACK, "anvil_base", 4, 4, 8, 1, 3));
+		_model.faces.push(ModelFace.create(Face.BACK, "anvil_base", 2, 0, 12, 4, 2));
+			
+		_model.faces.push(ModelFace.create(Face.BOTTOM, "anvil_base", 2, 2, 12, 12, 0));
+		_model.faces.push(ModelFace.create(Face.BOTTOM, "anvil_base", 3, 0, 10, 16, 10));
 		return _model;
 	}
 }
