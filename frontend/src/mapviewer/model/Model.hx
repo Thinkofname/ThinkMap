@@ -310,8 +310,8 @@ class ModelFace implements Chainable {
 		// Calculate the min and max values
 		for (vert in vertices) {
 			if (vert[i1] < sx) sx = vert[i1];
-			if (vert[i1] > ly) sx = vert[i1];
-			if (vert[i2] < ly) sy = vert[i2];
+			if (vert[i1] > lx) lx = vert[i1];
+			if (vert[i2] < sy) sy = vert[i2];
 			if (vert[i2] > ly) ly = vert[i2];
 		}
 		// Update the values
