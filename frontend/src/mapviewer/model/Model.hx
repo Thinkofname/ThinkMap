@@ -25,11 +25,6 @@ import mapviewer.utils.Chainable;
 import mapviewer.world.Chunk;
 
 class Model {
-	
-	public static var models : Map<String, Model> = new Map();
-	
-	inline public static function get(name : String) { return models[name];  }
-
 	public var faces : Array<ModelFace>;
 	
 	public function new() {
@@ -140,6 +135,14 @@ class Model {
 		}
 	}
 	
+	/**
+	 * Joins this model with the other models optionally offset.
+	 * @param	other The other model
+	 * @param	?ox   The amount to offset by on the x axis
+	 * @param	?oy   The amount to offset by on the y axis
+	 * @param	?oz   The amount to offset by on the z axis
+	 * @return  This model
+	 */
 	public function join(other : Model, ?ox : Float = 0, ?oy : Float = 0, ?oz : Float = 0) : Model {
 		for (face in other.faces) {
 			var newFace = new ModelFace(face.face);
@@ -159,10 +162,15 @@ class Model {
 		return this;
 	}
 	
-	private static function noopTextureGetter(texture : String) : String {
-		return texture;
-	}
+	// Does nothing - used by clone as a default getter
+	private static function noopTextureGetter(texture : String) : String return texture;
 	
+	/**
+	 * Creates a copy of this model optionally passing the texture of 
+	 * each face to getTexture and replacing it with the result
+	 * @param	?getTexture The texture getter to use
+	 * @return  The new model
+	 */
 	public function clone(?getTexture : String -> String) : Model {
 		if (getTexture == null) { getTexture = noopTextureGetter; }
 		var out = new Model();
@@ -244,12 +252,82 @@ class ModelFace implements Chainable {
 		return f;
 	}
 	
-	public static function create(face : Face) : ModelFace {
+	public static function create(face : Face, texture : String, 
+			x : Float, y : Float, w : Float, h : Float,
+			off : Float) : ModelFace {
 		var f = new ModelFace(face);
+		f.texture = texture;
 		for (vert in defaultFaces[face.name]) {
 			f.vertices.push(vert.clone());
 		}
+		f.offset(off);
+		f.size(x, y, w, h);
 		return f;		
+	}
+	
+	public function offset(off : Float) {
+		// What gets changed depends on the face's face
+		if (face == Face.TOP || face == Face.BOTTOM) {
+			// X, Z
+			for (vert in vertices) vert.y = off;
+		} else if (face == Face.LEFT || face == Face.RIGHT) {
+			// Z, Y
+			for (vert in vertices) vert.x = off;
+		} else if (face == Face.FRONT || face == Face.BACK) {
+			// X, Y
+			for (vert in vertices) vert.z = off;
+		}		
+	}
+	
+	/**
+	 * Resize this face. Also updates the texture position.
+	 */
+	public function size(x : Float, y : Float, w : Float, h : Float) : ModelFace {		
+		// What gets changed depends on the face's face
+		if (face == Face.TOP || face == Face.BOTTOM) {
+			// X, Z
+			sizeIndex(0, 2, x, y, w, h);
+		} else if (face == Face.LEFT || face == Face.RIGHT) {
+			// Z, Y
+			sizeIndex(2, 1, x, y, w, h);
+		} else if (face == Face.FRONT || face == Face.BACK) {
+			// X, Y
+			sizeIndex(0, 1, x, y, w, h);
+		}
+		return textureSize(x, y, w, h);
+	}
+	
+	public function textureSize(x : Float, y : Float, w : Float, h : Float) : ModelFace {
+		sizeIndex(3, 4, x, y, w, h);
+		return this;
+	}
+	
+	private function sizeIndex(i1 : Int, i2 : Int, x : Float, y : Float, w : Float, h : Float) {
+		var sx : Float = 16;
+		var sy : Float = 16;
+		var lx : Float = -16;
+		var ly : Float = -16;
+		// Calculate the min and max values
+		for (vert in vertices) {
+			if (vert[i1] < sx) sx = vert[i1];
+			if (vert[i1] > ly) sx = vert[i1];
+			if (vert[i2] < ly) sy = vert[i2];
+			if (vert[i2] > ly) ly = vert[i2];
+		}
+		// Update the values
+		for (vert in vertices) {
+			if (vert[i1] == sx) vert[i1] = x / 16;
+			if (vert[i1] == lx) vert[i1] = (x + w) / 16;
+			if (vert[i2] == sy) vert[i2] = y / 16;
+			if (vert[i2] == ly) vert[i2] = (y + h) / 16;
+		}
+	}
+	
+	public function colour(r : Int, g : Int, b : Int) : ModelFace {
+		this.r = r;
+		this.g = g;
+		this.b = b;
+		return this;
 	}
 
 	@:deprecated("Use ModelFace.create or .size/.textureSize instead")
@@ -368,6 +446,9 @@ abstract ModelVertex(Float32Array) {
 	public var textureY(get, set) : Float;	
 	inline function get_textureY() : Float { return this[4]; }	
 	inline function set_textureY(v : Float) : Float { return this[4] = v; }
+	
+	@:arrayAccess public inline function arrayAccess(i : Int) : Float { return this[i]; }
+	@:arrayAccess public inline function arrayWrite(i : Int, v : Float) : Float { return this[i] = v; }
 	
 	inline public function new(x : Float, y : Float, z : Float, textureX : Float, textureY : Float) {
 		this = new Float32Array([x, y, z, textureX, textureY]);

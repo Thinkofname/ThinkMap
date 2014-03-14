@@ -39,48 +39,32 @@ class BlockCross extends Block {
 				b = colour & 0xFF;
 			}
 			model = new Model();
-			var face = ModelFace.fromFace(Face.FRONT).chainModelFace()
-				.texture(texture)
-				.r(r)
-				.g(g)
-				.b(b).ret();
-			face.vertices.foreach(function(e) {
+			var face = ModelFace.create(Face.FRONT, texture, 0, 0, 16, 16, 0)
+				.colour(r, g, b);
+			for (e in face.vertices) {
 				if (e.x == 1) e.z = 1;
-				return true;
-			});
+			};
 			model.faces.push(face);
 			
-			face = ModelFace.fromFace(Face.BACK).chainModelFace()
-				.texture(texture)
-				.r(r)
-				.g(g)
-				.b(b).ret();
-			face.vertices.foreach(function(e) {
+			face = ModelFace.create(Face.BACK, texture, 0, 0, 16, 16, 0)
+				.colour(r, g, b);
+			for (e in face.vertices) {
 				if (e.x == 1) e.z = 1;
-				return true;
-			});
+			};
 			model.faces.push(face);
 			
-			face = ModelFace.fromFace(Face.FRONT).chainModelFace()
-				.texture(texture)
-				.r(r)
-				.g(g)
-				.b(b).ret();
-			face.vertices.foreach(function(e) {
+			face = ModelFace.create(Face.FRONT, texture, 0, 0, 16, 16, 0)
+				.colour(r, g, b);
+			for (e in face.vertices) {
 				if (e.x == 0) e.z = 1;
-				return true;
-			});
+			};
 			model.faces.push(face);
 			
-			face = ModelFace.fromFace(Face.BACK).chainModelFace()
-				.texture(texture)
-				.r(r)
-				.g(g)
-				.b(b).ret();
-			face.vertices.foreach(function(e) {
+			face = ModelFace.create(Face.BACK, texture, 0, 0, 16, 16, 0)
+				.colour(r, g, b);
+			for (e in face.vertices) {
 				if (e.x == 0) e.z = 1;
-				return true;
-			});
+			};
 			model.faces.push(face);
 		}
 		super.render(builder, x, y, z, chunk);	
