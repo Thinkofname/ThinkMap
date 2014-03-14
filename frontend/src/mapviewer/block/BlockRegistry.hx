@@ -1046,7 +1046,8 @@ class BlockRegistry {
 			.legacyId(82)
 			.build();
 		registerBlock('reeds', new BlockCross().chainBlock().texture('reeds')
-			.solid(false).ret())
+			.solid(false)
+			.collidable(false).ret())
 			.legacyId(83)
 			.build();
 		registerBlock('jukebox', new BlockSidedTextures().chainBlockSidedTextures()
