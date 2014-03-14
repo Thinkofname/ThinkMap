@@ -51,6 +51,8 @@ class WorkerProxy {
 	private function onData(message : Dynamic) {
 		switch(message.type) {
 			case "chunk":
+				var c = Main.world.getChunk(message.x, message.z);
+				if (c != null) return;
 				var chunk = Main.world.newChunk();
 				chunk.world = owner.owner;
 				chunk.fromMap(message);
