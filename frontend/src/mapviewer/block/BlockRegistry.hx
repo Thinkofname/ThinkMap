@@ -89,7 +89,6 @@ class BlockRegistry {
         var reg = new BlockRegistrationEntry(plugin, name, block);
 		block.regBlock = reg;
         blocks[plugin][name] = reg;
-        logger.info('Registed block: $reg');
         return reg;
     }
 
