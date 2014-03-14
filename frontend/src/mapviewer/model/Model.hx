@@ -269,13 +269,13 @@ class ModelFace implements Chainable {
 		// What gets changed depends on the face's face
 		if (face == Face.TOP || face == Face.BOTTOM) {
 			// X, Z
-			for (vert in vertices) vert.y = off;
+			for (vert in vertices) vert.y = off / 16;
 		} else if (face == Face.LEFT || face == Face.RIGHT) {
 			// Z, Y
-			for (vert in vertices) vert.x = off;
+			for (vert in vertices) vert.x = off / 16;
 		} else if (face == Face.FRONT || face == Face.BACK) {
 			// X, Y
-			for (vert in vertices) vert.z = off;
+			for (vert in vertices) vert.z = off / 16;
 		}		
 	}
 	
