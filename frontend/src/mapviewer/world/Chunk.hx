@@ -216,9 +216,6 @@ class Chunk {
         throw "NYI";
     }
 
-    private static var base64 : BaseCode = new BaseCode(
-        Bytes.ofString("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"));
-
     public function fromMap(data : Dynamic) {
         x = data.x;
         z = data.z;
