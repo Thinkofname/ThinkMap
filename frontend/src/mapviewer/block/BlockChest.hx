@@ -22,172 +22,60 @@ class BlockChest {
 	private static var _model : Model;
 	public static var model(get, never) : Model;
 	
+	private static var r(get, never) : Int;
+	static function get_r() : Int return Std.int(256);
+	private static var g(get, never) : Int;
+	static function get_g() : Int return Std.int(256);
+	private static var b(get, never) : Int;
+	static function get_b() : Int return Std.int(256);
+	
 	static function get_model() : Model {
 		if (_model != null) return _model;
 
 		var modelBottom = new Model();
+		
 		//Bottom
-		modelBottom.faces.push(ModelFace.fromFace(Face.FRONT).chainModelFace()
-			.texture("chest_side_front").ret()
-			.moveZ(15)
-			.sizeX(-2, true)
-			.sizeX(-2)
-			.sizeY(-6, true)
-			.sizeY(-6)
-			.moveX(1));
-		modelBottom.faces.push(ModelFace.fromFace(Face.BACK).chainModelFace()
-			.texture("chest_side").ret()
-			.moveZ(1)
-			.sizeX(-2, true)
-			.sizeX(-2)
-			.sizeY(-6, true)
-			.sizeY(-6)
-			.moveX(1));
-		modelBottom.faces.push(ModelFace.fromFace(Face.LEFT).chainModelFace()
-			.texture("chest_side").ret()
-			.sizeX(-2, true)
-			.sizeZ(-2)
-			.sizeY(-6, true)
-			.sizeY(-6)
-			.moveX(15)
-			.moveZ(1));
-		modelBottom.faces.push(ModelFace.fromFace(Face.RIGHT).chainModelFace()
-			.texture("chest_side").ret()
-			.sizeX(-2, true)
-			.sizeZ(-2)
-			.sizeY(-6, true)
-			.sizeY(-6)
-			.moveX(1)
-			.moveZ(1));
-		modelBottom.faces.push(ModelFace.fromFace(Face.TOP).chainModelFace()
-			.texture("chest_bottom_top").ret()
-			.moveY(10)
-			.sizeX(-2)
-			.sizeZ(-2)
-			.sizeX(-2, true)
-			.sizeY(-2, true)
-			.moveX(1)
-			.moveZ(1));
-		modelBottom.faces.push(ModelFace.fromFace(Face.BOTTOM).chainModelFace()
-			.texture("chest_top").ret()
-			.sizeX(-2)
-			.sizeZ(-2)
-			.sizeX(-2, true)
-			.sizeY(-2, true)
-			.moveX(1)
-			.moveZ(1));
+		modelBottom.faces.push(ModelFace.create(Face.FRONT, "chest_side_front", 1, 0, 14, 10, 15)
+			.textureSize(0, 0, 14, 10));
+		modelBottom.faces.push(ModelFace.create(Face.BACK, "chest_side", 1, 0, 14, 10, 1)
+			.textureSize(0, 0, 14, 10));
+		modelBottom.faces.push(ModelFace.create(Face.LEFT, "chest_side", 1, 0, 14, 10, 15)
+			.textureSize(0, 0, 14, 10));
+		modelBottom.faces.push(ModelFace.create(Face.RIGHT, "chest_side", 1, 0, 14, 10, 1)
+			.textureSize(0, 0, 14, 10));
+		modelBottom.faces.push(ModelFace.create(Face.TOP, "chest_bottom_top", 1, 1, 14, 14, 10)
+			.textureSize(0, 0, 14, 14));
+		modelBottom.faces.push(ModelFace.create(Face.BOTTOM, "chest_top", 1, 1, 14, 14, 0)
+			.textureSize(0, 0, 14, 14));
 
 		var modelLid = new Model();
 
 		//Top
-		modelLid.faces.push(ModelFace.fromFace(Face.FRONT).chainModelFace()
-			.texture("chest_side_front").ret()
-			.moveZ(15)
-			.sizeX(-2, true)
-			.sizeX(-2)
-			.sizeY(-11, true)
-			.sizeY(-11)
-			.moveX(1)
-			.moveY(10, true));
-		modelLid.faces.push(ModelFace.fromFace(Face.BACK).chainModelFace()
-			.texture("chest_side").ret()
-			.moveZ(1)
-			.sizeX(-2, true)
-			.sizeX(-2)
-			.sizeY(-11, true)
-			.sizeY(-11)
-			.moveX(1)
-			.moveY(10, true));
-		modelLid.faces.push(ModelFace.fromFace(Face.LEFT).chainModelFace()
-			.texture("chest_side").ret()
-			.sizeX(-2, true)
-			.sizeZ(-2)
-			.sizeY(-11, true)
-			.sizeY(-11)
-			.moveX(15)
-			.moveZ(1)
-			.moveY(10, true));
-		modelLid.faces.push(ModelFace.fromFace(Face.RIGHT).chainModelFace()
-			.texture("chest_side").ret()
-			.sizeX(-2, true)
-			.sizeZ(-2)
-			.sizeY(-11, true)
-			.sizeY(-11)
-			.moveX(1)
-			.moveZ(1)
-			.moveY(10, true));
-		modelLid.faces.push(ModelFace.fromFace(Face.TOP).chainModelFace()
-			.texture("chest_top").ret()
-			.moveY(5)
-			.sizeX(-2)
-			.sizeZ(-2)
-			.sizeX(-2, true)
-			.sizeY(-2, true)
-			.moveX(1)
-			.moveZ(1));
-		modelLid.faces.push(ModelFace.fromFace(Face.BOTTOM).chainModelFace()
-			.texture("chest_top_bottom").ret()
-			.sizeX(-2)
-			.sizeZ(-2)
-			.sizeX(-2, true)
-			.sizeY(-2, true)
-			.moveX(1)
-			.moveZ(1));
+		modelLid.faces.push(ModelFace.create(Face.FRONT, "chest_side_front", 1, 0, 14, 5, 15)
+			.textureSize(0, 10, 14, 5));
+		modelLid.faces.push(ModelFace.create(Face.BACK, "chest_side", 1, 0, 14, 5, 1)
+			.textureSize(0, 10, 14, 5));
+		modelLid.faces.push(ModelFace.create(Face.LEFT, "chest_side", 1, 0, 14, 5, 15)
+			.textureSize(0, 10, 14, 5));
+		modelLid.faces.push(ModelFace.create(Face.RIGHT, "chest_side", 1, 0, 14, 5, 1)
+			.textureSize(0, 10, 14, 5));
+		modelLid.faces.push(ModelFace.create(Face.TOP, "chest_top", 1, 1, 14, 14, 5)
+			.textureSize(0, 0, 14, 14));
+		modelLid.faces.push(ModelFace.create(Face.BOTTOM, "chest_top_bottom", 1, 1, 14, 14, 0)
+			.textureSize(0, 0, 14, 14));
 
 		//Lock
-		modelLid.faces.push(ModelFace.fromFace(Face.FRONT).chainModelFace()
-			.texture("chest_lock").ret()
-			.moveZ(1)
-			.sizeX(-14, true)
-			.sizeX(-14)
-			.sizeY(-12, true)
-			.sizeY(-12)
-			.moveX(7)
-			.moveY(-2)
-			.moveX(1, true)
-			.moveY(1, true)
-			.moveZ(15));
-		modelLid.faces.push(ModelFace.fromFace(Face.LEFT).chainModelFace()
-			.texture("chest_lock").ret()
-			.sizeX(-15, true)
-			.sizeZ(-15)
-			.sizeY(-12, true)
-			.sizeY(-12)
-			.moveX(9)
-			.moveY(-2)
-			.moveY(1, true)
-			.moveZ(15));
-		modelLid.faces.push(ModelFace.fromFace(Face.RIGHT).chainModelFace()
-			.texture("chest_lock").ret()
-			.sizeX(-15, true)
-			.sizeZ(-15)
-			.sizeY(-12, true)
-			.sizeY(-12)
-			.moveX(7)
-			.moveY(-2)
-			.moveY(1, true)
-			.moveZ(15));
-		modelLid.faces.push(ModelFace.fromFace(Face.TOP).chainModelFace()
-			.texture("chest_lock").ret()
-			.moveY(4)
-			.sizeX(-14)
-			.sizeZ(-15)
-			.sizeX(-14, true)
-			.sizeY(-15, true)
-			.moveX(7)
-			.moveY(-2)
-			.moveX(1, true)
-			.moveZ(15));
-		modelLid.faces.push(ModelFace.fromFace(Face.BOTTOM).chainModelFace()
-			.texture("chest_lock").ret()
-			.sizeX(-14)
-			.sizeZ(-15)
-			.sizeX(-14, true)
-			.sizeY(-15, true)
-			.moveX(7)
-			.moveY(-2)
-			.moveX(3, true)
-			.moveZ(15));
+		modelLid.faces.push(ModelFace.create(Face.FRONT, "chest_lock", 7, -2, 2, 4, 16)
+			.textureSize(1, 1, 2, 4));
+		modelLid.faces.push(ModelFace.create(Face.LEFT, "chest_lock", 15, -2, 1, 4, 9)
+			.textureSize(0, 1, 1, 4));
+		modelLid.faces.push(ModelFace.create(Face.RIGHT, "chest_lock", 15, -2, 1, 4, 7)
+			.textureSize(0, 1, 1, 4));
+		modelLid.faces.push(ModelFace.create(Face.TOP, "chest_lock", 7, 15, 2, 1, 2)
+			.textureSize(1, 0, 2, 1));
+		modelLid.faces.push(ModelFace.create(Face.BOTTOM, "chest_lock", 7, 15, 2, 1, -2)
+			.textureSize(3, 0, 2, 1));
+			
 		_model = modelBottom.join(modelLid, 0, 9, 0);
 		return _model;
 	}
