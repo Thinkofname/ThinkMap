@@ -28,37 +28,18 @@ class BlockBed {
 		if (_modelBottom != null) return _modelBottom;
 
 		var _modelBottom = new Model();
-		var face = ModelFace.fromFace(Face.TOP).chainModelFace()
-			.texture("bed_feet_top").ret()
-			.moveY(9);
-		face.vertices.foreach(function(v) {
-			var y = v.textureY;
-			v.textureY = v.textureX;
-			v.textureX = y;
-			return true;
-		});
+		
+		_modelBottom.faces.push(ModelFace.create(Face.TOP, "bed_feet_top", 0, 0, 16, 16, 9));		
+		_modelBottom.faces.push(ModelFace.create(Face.RIGHT, "bed_feet_end", 0, 0, 16, 9, 0)
+			.textureSize(0, 7, 16, 9));			
+		_modelBottom.faces.push(ModelFace.create(Face.FRONT, "bed_feet_side", 0, 0, 16, 9, 16)
+			.textureSize(0, 7, 16, 9));
+		var face = ModelFace.create(Face.BACK, "bed_feet_side", 0, 0, 16, 9, 0)
+			.textureSize(0, 7, 16, 9);
+		for (v in face.vertices) {
+			v.textureX = 1 - v.textureX;
+		}
 		_modelBottom.faces.push(face);
-		_modelBottom.faces.push(ModelFace.fromFace(Face.BACK).chainModelFace()
-			.texture("bed_feet_end").ret()
-			.sizeY( -7)
-			.sizeY( -7, true)
-			.moveY(7, true));
-		var face = ModelFace.fromFace(Face.LEFT).chainModelFace()
-			.texture("bed_feet_side").ret()
-			.sizeY( -7)
-			.sizeY( -7, true)
-			.moveY(7, true)
-			.moveX(16);
-		face.vertices.foreach(function(v) {
-			v.textureX = v.textureX == 1 ? 0 : 1;
-			return true;
-		});
-		_modelBottom.faces.push(face);
-		_modelBottom.faces.push(ModelFace.fromFace(Face.RIGHT).chainModelFace()
-			.texture("bed_feet_side").ret()
-			.sizeY( -7)
-			.sizeY( -7, true)
-			.moveY(7, true));
 		return _modelBottom;
 	}
 	
@@ -69,38 +50,18 @@ class BlockBed {
 		if (_modelTop != null) return _modelTop;
 
 		var _modelTop = new Model();
-		var face = ModelFace.fromFace(Face.TOP).chainModelFace()
-			.texture("bed_head_top").ret()
-			.moveY(9);
-		face.vertices.foreach(function(v) {
-			var y = v.textureY;
-			v.textureY = v.textureX;
-			v.textureX = y;
-			return true;
-		});
+		
+		_modelTop.faces.push(ModelFace.create(Face.TOP, "bed_head_top", 0, 0, 16, 16, 9));		
+		_modelTop.faces.push(ModelFace.create(Face.LEFT, "bed_head_end", 0, 0, 16, 9, 16)
+			.textureSize(0, 7, 16, 9));			
+		_modelTop.faces.push(ModelFace.create(Face.FRONT, "bed_head_side", 0, 0, 16, 9, 16)
+			.textureSize(0, 7, 16, 9));
+		var face = ModelFace.create(Face.BACK, "bed_head_side", 0, 0, 16, 9, 0)
+			.textureSize(0, 7, 16, 9);
+		for (v in face.vertices) {
+			v.textureX = 1 - v.textureX;
+		}
 		_modelTop.faces.push(face);
-		_modelTop.faces.push(ModelFace.fromFace(Face.FRONT).chainModelFace()
-			.texture("bed_head_end").ret()
-			.sizeY( -7)
-			.sizeY( -7, true)
-			.moveY(7, true)
-			.moveZ(16));
-		var face = ModelFace.fromFace(Face.LEFT).chainModelFace()
-			.texture("bed_head_side").ret()
-			.sizeY( -7)
-			.sizeY( -7, true)
-			.moveY(7, true)
-			.moveX(16);
-		face.vertices.foreach(function(v) {
-			v.textureX = v.textureX == 1 ? 0 : 1;
-			return true;
-		});
-		_modelTop.faces.push(face);
-		_modelTop.faces.push(ModelFace.fromFace(Face.RIGHT).chainModelFace()
-			.texture("bed_head_side").ret()
-			.sizeY( -7)
-			.sizeY( -7, true)
-			.moveY(7, true));		
 		return _modelTop;
 	}
 }

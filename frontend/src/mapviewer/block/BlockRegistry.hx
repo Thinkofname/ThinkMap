@@ -510,14 +510,14 @@ class BlockRegistry {
 		for (flag in [0, 4]) {
 			for (rot in 0 ... 4) {
 				registerBlock('bed_bottom_${rot}_${flag}', new Block().chainBlock()
-					.model(BlockBed.modelBottom.clone().rotateY(90 * rot))
+					.model(BlockBed.modelBottom.clone().rotateY(90 * rot + 90))
 					.solid(false)
 					.ret())
 					.legacyId(26)
 					.dataValue(rot | flag)
 					.build();
 				registerBlock('bed_top_${rot}_${flag}', new Block().chainBlock()
-					.model(BlockBed.modelTop.clone().rotateY(90 * rot))
+					.model(BlockBed.modelTop.clone().rotateY(90 * rot + 90))
 					.solid(false)
 					.ret())
 					.legacyId(26)
