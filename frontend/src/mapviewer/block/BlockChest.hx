@@ -188,6 +188,7 @@ class BlockChest {
 			.moveY(-2)
 			.moveX(3, true)
 			.moveZ(15));
-		return modelBottom.clone().join(modelLid, 0, 9, 0);
+		_model = modelBottom.join(modelLid, 0, 9, 0);
+		return _model;
 	}
 }
