@@ -17,6 +17,7 @@ package mapviewer.block;
 import mapviewer.model.Model;
 import mapviewer.world.Chunk;
 import mapviewer.renderer.webgl.BlockBuilder;
+import mapviewer.block.Block.Face;
 
 /**
  * ...
@@ -27,53 +28,28 @@ class BlockVine extends Block {
 	static var top : Model = new Model();
 	
 	public static function register() {		
-		top.faces.push(ModelFace.fromFace(Block.Face.BOTTOM)			
-			.moveY(15).chainModelFace()
-			.r(0x87)
-			.g(0xBA)
-			.b(0x34)
-			.texture("vine")
-			.ret());
+		top.faces.push(ModelFace.create(Face.BOTTOM, "vine", 0, 0, 16, 16, 15)
+			.colour(0x87, 0xBA, 0x34));
 		for (i in 0 ... 16) {
 			var model = new Model();
 			if (i == 0) {
-				model.faces.concat(top.faces);
-			}
-			if (i & 2 == 2) {
-				model.faces.push(ModelFace.fromFace(Block.Face.LEFT)
-					.moveX(1).chainModelFace()
-					.r(0x87)
-					.g(0xBA)
-					.b(0x34)
-					.texture("vine")
-					.ret());
-			}
-			if (i & 8 == 8) {
-				model.faces.push(ModelFace.fromFace(Block.Face.RIGHT)
-					.moveX(15).chainModelFace()
-					.r(0x87)
-					.g(0xBA)
-					.b(0x34)
-					.texture("vine")
-					.ret());
-			}
-			if (i & 4 == 4) {
-				model.faces.push(ModelFace.fromFace(Block.Face.FRONT)
-					.moveZ(1).chainModelFace()
-					.r(0x87)
-					.g(0xBA)
-					.b(0x34)
-					.texture("vine")
-					.ret());
+				model.join(top);
 			}
 			if (i & 1 == 1) {
-				model.faces.push(ModelFace.fromFace(Block.Face.BACK)
-					.moveZ(15).chainModelFace()
-					.r(0x87)
-					.g(0xBA)
-					.b(0x34)
-					.texture("vine")
-					.ret());
+				model.faces.push(ModelFace.create(Face.BACK, "vine", 0, 0, 16, 16, 15)
+					.colour(0x87, 0xBA, 0x34));
+			}
+			if (i & 2 == 2) {
+				model.faces.push(ModelFace.create(Face.LEFT, "vine", 0, 0, 16, 16, 1)
+					.colour(0x87, 0xBA, 0x34));
+			}
+			if (i & 4 == 4) {				
+				model.faces.push(ModelFace.create(Face.FRONT, "vine", 0, 0, 16, 16, 1)
+					.colour(0x87, 0xBA, 0x34));
+			}
+			if (i & 8 == 8) {
+				model.faces.push(ModelFace.create(Face.RIGHT, "vine", 0, 0, 16, 16, 15)
+					.colour(0x87, 0xBA, 0x34));
 			}
 			BlockRegistry.registerBlock('vine_$i', new BlockVine().chainBlock()
 				.solid(false)
