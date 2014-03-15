@@ -29,12 +29,9 @@ class BlockPortal extends Block {
 	static function get_modelNormal() : Model {
 		if (_model != null) return _model;
 		_model = new Model();
-		_model.faces.push(ModelFace.fromFace(Face.LEFT).chainModelFace()
-			.texture("portal").ret()
-			.moveX(10));
-		_model.faces.push(ModelFace.fromFace(Face.RIGHT).chainModelFace()
-			.texture("portal").ret()
-			.moveX(6));
+		
+		_model.faces.push(ModelFace.create(Face.LEFT, "portal", 0, 0, 16, 16, 10));
+		_model.faces.push(ModelFace.create(Face.RIGHT, "portal", 0, 0, 16, 16, 6));
 		return _model;
 	}
 	
