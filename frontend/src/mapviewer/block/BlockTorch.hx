@@ -26,57 +26,16 @@ class BlockTorch {
 	static function get_model() : Model { //torch_on
 		if (_model != null) return _model;
 		_model = new Model();
-		_model.faces.push(ModelFace.fromFace(Face.LEFT).chainModelFace()
-			.texture("torch_on").ret()
-			.moveX(9)
-			.sizeY(-5)
-			.sizeY( -5, true)
-			.moveY( 5, true)
-			.sizeZ( -12)
-			.sizeX( -12, true)
-			.moveZ(6)
-			.moveX(6, true));
-		_model.faces.push(ModelFace.fromFace(Face.RIGHT).chainModelFace()
-			.texture("torch_on").ret()
-			.moveX(7)
-			.sizeY(-5)
-			.sizeY(-5, true)
-			.moveY( 5, true)
-			.sizeZ( -12)
-			.sizeX( -12, true)
-			.moveZ(6)
-			.moveX(6, true));
-		_model.faces.push(ModelFace.fromFace(Face.FRONT).chainModelFace()
-			.texture("torch_on").ret()
-			.moveZ(9)
-			.sizeY(-5)
-			.sizeY(-5, true)
-			.moveY( 5, true)
-			.sizeX( -12)
-			.sizeX( -12, true)
-			.moveX(6)
-			.moveX(6, true));
-		_model.faces.push(ModelFace.fromFace(Face.BACK).chainModelFace()
-			.texture("torch_on").ret()
-			.moveZ(7)
-			.sizeY(-5)
-			.sizeY(-5, true)
-			.moveY( 5, true)
-			.sizeX( -12)
-			.sizeX( -12, true)
-			.moveX(6)
-			.moveX(6, true));
-		_model.faces.push(ModelFace.fromFace(Face.TOP).chainModelFace()
-			.texture("torch_on").ret()
-			.moveY(10)
-			.sizeX( -14)
-			.sizeX( -14, true)
-			.moveX(7)
-			.moveX(7, true)
-			.sizeZ( -14)
-			.sizeY( -14, true)
-			.moveZ(7)
-			.moveY(6, true));
+		_model.faces.push(ModelFace.create(Face.LEFT, "torch_on", 6, 0, 4, 11, 9)
+			.textureSize(6, 5, 4, 11));
+		_model.faces.push(ModelFace.create(Face.RIGHT, "torch_on", 6, 0, 4, 11, 7)
+			.textureSize(6, 5, 4, 11));
+		_model.faces.push(ModelFace.create(Face.FRONT, "torch_on", 6, 0, 4, 11, 9)
+			.textureSize(6, 5, 4, 11));
+		_model.faces.push(ModelFace.create(Face.BACK, "torch_on", 6, 0, 4, 11, 7)
+			.textureSize(6, 5, 4, 11));
+		_model.faces.push(ModelFace.create(Face.TOP, "torch_on", 7, 7, 2, 2, 10)
+			.textureSize(7, 6, 2, 2));
 		return _model;
 	}
 }
