@@ -57,7 +57,9 @@ class TextureLoaderMacro {
 			if (!file.endsWith(".png")) {
 				continue;
 			}
-			var imgData : Data = new Reader(File.read("assets/block_images/" + file)).read();
+			var iFile = File.read("assets/block_images/" + file);
+			var imgData : Data = new Reader(iFile).read();
+			iFile.close();
 			var header = Tools.getHeader(imgData);
 			var img;
 			try {

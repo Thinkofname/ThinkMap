@@ -39,7 +39,7 @@
     <hidden path="obj" />
   </hiddenPaths>
   <!-- Executed before build -->
-  <preBuildCommand>$(CompilerPath)\haxe.exe -D deprecation-warnings $(ProjectDir)\compile.hxml</preBuildCommand>
+  <preBuildCommand>$(CompilerPath)\haxe.exe --connect 50000 -D deprecation-warnings $(ProjectDir)\compile.hxml</preBuildCommand>
   <!-- Executed after build -->
   <postBuildCommand alwaysRun="False" />
   <!-- Other project options -->
