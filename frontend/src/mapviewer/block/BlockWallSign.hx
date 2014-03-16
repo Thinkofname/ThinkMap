@@ -25,52 +25,18 @@ class BlockWallSign {
 	static function get_model() : Model {
 		if (_model != null) return _model;
 		_model = new Model();
-		_model.faces.push(ModelFace.fromFace(Face.FRONT).chainModelFace()
-			.texture("planks_oak").ret()
-			.moveZ(1)
-			.sizeY(-8)
-			.sizeY(-4, true)
-			.sizeX(8, true)
-			.moveY(4)
-			.moveY(4, true)
-			.moveX(18, true));
-		_model.faces.push(ModelFace.fromFace(Face.BACK).chainModelFace()
-			.texture("planks_oak").ret()
-			.sizeY(-8)
-			.sizeY(-4, true)
-			.sizeX(8, true)
-			.moveY(4)
-			.moveY(4, true)
-			.moveX(18, true));
-		_model.faces.push(ModelFace.fromFace(Face.LEFT).chainModelFace()
-			.texture("planks_oak").ret()
-			.sizeZ(-15)
-			.sizeX(-14, true)
-			.moveX(16)
-			.sizeY(-8)
-			.sizeY(-4, true)
-			.moveY(4));
-		_model.faces.push(ModelFace.fromFace(Face.RIGHT).chainModelFace()
-			.texture("planks_oak").ret()
-			.sizeZ(-15)
-			.sizeX(-14, true)
-			.sizeY(-8)
-			.sizeY(-4, true)
-			.moveY(4));
-		_model.faces.push(ModelFace.fromFace(Face.TOP).chainModelFace()
-			.texture("planks_oak").ret()
-			.sizeZ(-15)
-			.sizeY(-14, true)
-			.sizeX(8, true)
-			.moveX(18, true)
-			.moveY(12));
-		_model.faces.push(ModelFace.fromFace(Face.BOTTOM).chainModelFace()
-			.texture("planks_oak").ret()
-			.sizeZ(-15)
-			.sizeY(-14, true)
-			.sizeX(8, true)
-			.moveX(18, true)
-			.moveY(4));
+		_model.faces.push(ModelFace.create(Face.FRONT, "planks_oak", 0, 4, 16, 8, 1)
+			.textureSize(18, 4, 24, 12));
+		_model.faces.push(ModelFace.create(Face.BACK, "planks_oak", 0, 4, 16, 8, 0)
+			.textureSize(18, 4, 24, 12));
+		_model.faces.push(ModelFace.create(Face.LEFT, "planks_oak", 0, 4, 1, 8, 16)
+			.textureSize(0, 0, 2, 12));
+		_model.faces.push(ModelFace.create(Face.RIGHT, "planks_oak", 0, 4, 1, 8, 0)
+			.textureSize(0, 0, 2, 12));
+		_model.faces.push(ModelFace.create(Face.TOP, "planks_oak", 0, 0, 16, 1, 12)
+			.textureSize(18, 0, 24, 2));
+		_model.faces.push(ModelFace.create(Face.BOTTOM, "planks_oak", 0, 0, 16, 1, 4)
+			.textureSize(18, 0, 24, 2));
 		return _model;
 	}
 }

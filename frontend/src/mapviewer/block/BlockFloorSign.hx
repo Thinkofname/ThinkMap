@@ -24,84 +24,18 @@ class BlockFloorSign {
 	
 	static function get_model() : Model {
 		if (_model != null) return _model;
-		var _model = new Model();
-		var top = new Model();
-		top.faces.push(ModelFace.fromFace(Face.FRONT).chainModelFace()
-			.texture("planks_oak").ret()
-			.moveZ(1)
-			.sizeY(-8)
-			.sizeY(-4, true)
-			.sizeX(8, true)
-			.moveY(4)
-			.moveY(4, true)
-			.moveX(18, true));
-		top.faces.push(ModelFace.fromFace(Face.BACK).chainModelFace()
-			.texture("planks_oak").ret()
-			.sizeY(-8)
-			.sizeY(-4, true)
-			.sizeX(8, true)
-			.moveY(4)
-			.moveY(4, true)
-			.moveX(18, true));
-		top.faces.push(ModelFace.fromFace(Face.LEFT).chainModelFace()
-			.texture("planks_oak").ret()
-			.sizeZ(-15)
-			.sizeX(-14, true)
-			.moveX(16)
-			.sizeY(-8)
-			.sizeY(-4, true)
-			.moveY(4));
-		top.faces.push(ModelFace.fromFace(Face.RIGHT).chainModelFace()
-			.texture("planks_oak").ret()
-			.sizeZ(-15)
-			.sizeX(-14, true)
-			.sizeY(-8)
-			.sizeY(-4, true)
-			.moveY(4));
-		top.faces.push(ModelFace.fromFace(Face.TOP).chainModelFace()
-			.texture("planks_oak").ret()
-			.sizeZ(-15)
-			.sizeY(-14, true)
-			.sizeX(8, true)
-			.moveX(18, true)
-			.moveY(12));
-		top.faces.push(ModelFace.fromFace(Face.BOTTOM).chainModelFace()
-			.texture("planks_oak").ret()
-			.sizeZ(-15)
-			.sizeY(-14, true)
-			.sizeX(8, true)
-			.moveX(18, true)
-			.moveY(4));
-		
+		var _model = new Model();		
 		//Post
 		var post = new Model();
-		post.faces.push(ModelFace.fromFace(Face.FRONT).chainModelFace()
-			.texture("log_oak").ret()
-			.moveZ(1)
-			.sizeX(-15)
-			.sizeX( -14, true)
-			.sizeY( -7)
-			.sizeY( -4, true));
-		post.faces.push(ModelFace.fromFace(Face.BACK).chainModelFace()
-			.texture("log_oak").ret()
-			.sizeX(-15)
-			.sizeX( -14, true)
-			.sizeY( -7)
-			.sizeY( -4, true));
-		post.faces.push(ModelFace.fromFace(Face.LEFT).chainModelFace()
-			.texture("log_oak").ret()
-			.moveX(1)
-			.sizeZ(-15)
-			.sizeX( -14, true)
-			.sizeY( -7)
-			.sizeY( -4, true));
-		post.faces.push(ModelFace.fromFace(Face.RIGHT).chainModelFace()
-			.texture("log_oak").ret()
-			.sizeZ(-15)
-			.sizeX( -14, true)
-			.sizeY( -7)
-			.sizeY( -4, true));
+		post.faces.push(ModelFace.create(Face.FRONT, "log_oak", 0, 0, 1, 9, 1)
+			.textureSize(0, 0, 2, 12));
+		post.faces.push(ModelFace.create(Face.BACK, "log_oak", 0, 0, 1, 9, 0)
+			.textureSize(0, 0, 2, 12));
+		post.faces.push(ModelFace.create(Face.LEFT, "log_oak", 0, 0, 1, 9, 1)
+			.textureSize(0, 0, 2, 12));
+		post.faces.push(ModelFace.create(Face.RIGHT, "log_oak", 0, 0, 1, 9, 0)
+			.textureSize(0, 0, 2, 12));
 			
-		return _model.join(top, 0, 5, 8).join(post, 7.5, 0, 8);
+		return _model.join(BlockWallSign.model, 0, 5, 7.5).join(post, 7.5, 0, 7.5);
 	}
 }
