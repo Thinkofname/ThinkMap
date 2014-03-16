@@ -27,149 +27,43 @@ class BlockHopper {
 
 		_model = new Model();
 
-		_model.faces.push(ModelFace.fromFace(Face.TOP).chainModelFace()
-			.texture("hopper_top").ret()
-			.moveY(16));
-		_model.faces.push(ModelFace.fromFace(Face.TOP).chainModelFace()
-			.texture("hopper_inside").ret()
-			.moveY(10));
+		_model.faces.push(ModelFace.create(Face.TOP, "hopper_top", 0, 0, 16, 16, 16));
+		_model.faces.push(ModelFace.create(Face.TOP, "hopper_inside", 0, 0, 16, 16, 10));
 
 		// Inside
 
-		_model.faces.push(ModelFace.fromFace(Face.FRONT).chainModelFace()
-			.texture("hopper_outside").ret()
-			.moveY(10)
-			.sizeY(-10)
-			.sizeY(-10, true)
-			.moveX(2)
-			.moveX(2, true)
-			.sizeX(-4)
-			.sizeX(-4, true)
-			.moveZ(2));
-
-		_model.faces.push(ModelFace.fromFace(Face.BACK).chainModelFace()
-			.texture("hopper_outside").ret()
-			.moveY(10)
-			.sizeY(-10)
-			.sizeY(-10, true)
-			.moveX(2)
-			.moveX(2, true)
-			.sizeX(-4)
-			.sizeX(-4, true)
-			.moveZ(14));
-
-		_model.faces.push(ModelFace.fromFace(Face.LEFT).chainModelFace()
-			.texture("hopper_outside").ret()
-			.moveY(10)
-			.sizeY(-10)
-			.sizeY(-10, true)
-			.moveZ(2)
-			.moveX(2, true)
-			.sizeZ(-4)
-			.sizeX(-4, true)
-			.moveX(2));
-
-		_model.faces.push(ModelFace.fromFace(Face.RIGHT).chainModelFace()
-			.texture("hopper_outside").ret()
-			.moveY(10)
-			.sizeY(-10)
-			.sizeY(-10, true)
-			.moveZ(2)
-			.moveX(2, true)
-			.sizeZ(-4)
-			.sizeX(-4, true)
-			.moveX(14));
+		_model.faces.push(ModelFace.create(Face.FRONT, "hopper_outside", 2, 10, 12, 6, 2)
+			.textureSize(2, 0, 12, 6));
+		_model.faces.push(ModelFace.create(Face.BACK, "hopper_outside", 2, 10, 12, 6, 14)
+			.textureSize(2, 0, 12, 6));
+		_model.faces.push(ModelFace.create(Face.LEFT, "hopper_outside", 2, 10, 12, 6, 2)
+			.textureSize(2, 0, 12, 6));
+		_model.faces.push(ModelFace.create(Face.RIGHT, "hopper_outside", 2, 10, 12, 6, 14)
+			.textureSize(2, 0, 12, 6));
 
 		// Outside - top
 
-		_model.faces.push(ModelFace.fromFace(Face.BACK).chainModelFace()
-			.texture("hopper_outside").ret()
-			.moveY(10)
-			.sizeY(-10)
-			.sizeY(-10, true));
-		_model.faces.push(ModelFace.fromFace(Face.FRONT).chainModelFace()
-			.texture("hopper_outside").ret()
-			.moveY(10)
-			.sizeY(-10)
-			.sizeY(-10, true)
-			.moveZ(16));
-
-		_model.faces.push(ModelFace.fromFace(Face.RIGHT).chainModelFace()
-			.texture("hopper_outside").ret()
-			.moveY(10)
-			.sizeY(-10)
-			.sizeY(-10, true)
-			.moveX(0));
-		_model.faces.push(ModelFace.fromFace(Face.LEFT).chainModelFace()
-			.texture("hopper_outside").ret()
-			.moveY(10)
-			.sizeY(-10)
-			.sizeY(-10, true)
-			.moveX(16));
-
-		_model.faces.push(ModelFace.fromFace(Face.BOTTOM).chainModelFace()
-			.texture("hopper_outside").ret()
-			.moveY(10));
+		_model.faces.push(ModelFace.create(Face.BACK, "hopper_outside", 0, 10, 16, 6, 0)
+			.textureSize(0, 0, 16, 6)); 
+		_model.faces.push(ModelFace.create(Face.FRONT, "hopper_outside", 0, 10, 16, 6, 16)
+			.textureSize(0, 0, 16, 6)); 
+		_model.faces.push(ModelFace.create(Face.RIGHT, "hopper_outside", 0, 10, 16, 6, 0)
+			.textureSize(0, 0, 16, 6)); 
+		_model.faces.push(ModelFace.create(Face.LEFT, "hopper_outside", 0, 10, 16, 6, 16)
+			.textureSize(0, 0, 16, 6));
+		_model.faces.push(ModelFace.create(Face.BOTTOM, "hopper_outside", 0, 0, 16, 16, 10));
 
 		// Outside - middle
 
-		_model.faces.push(ModelFace.fromFace(Face.BACK).chainModelFace()
-			.texture("hopper_outside").ret()
-			.moveY(4)
-			.sizeY(-10)
-			.sizeY(-10, true)
-			.moveY(6, true)
-			.moveZ(4)
-			.moveX(4)
-			.moveX(4, true)
-			.sizeX(-8)
-			.sizeX(-8, true));
-		_model.faces.push(ModelFace.fromFace(Face.FRONT).chainModelFace()
-			.texture("hopper_outside").ret()
-			.moveY(4)
-			.sizeY(-10)
-			.sizeY(-10, true)
-			.moveY(6, true)
-			.moveZ(12)
-			.moveX(4)
-			.moveX(4, true)
-			.sizeX(-8)
-			.sizeX(-8, true));
-
-		_model.faces.push(ModelFace.fromFace(Face.RIGHT).chainModelFace()
-			.texture("hopper_outside").ret()
-			.moveY(4)
-			.sizeY(-10)
-			.sizeY(-10, true)
-			.moveY(6, true)
-			.moveX(4)
-			.moveZ(4)
-			.moveX(4, true)
-			.sizeZ(-8)
-			.sizeX(-8, true));
-		_model.faces.push(ModelFace.fromFace(Face.LEFT).chainModelFace()
-			.texture("hopper_outside").ret()
-			.moveY(4)
-			.sizeY(-10)
-			.sizeY(-10, true)
-			.moveY(6, true)
-			.moveX(12)
-			.moveZ(4)
-			.moveX(4, true)
-			.sizeZ(-8)
-			.sizeX(-8, true));
-
-		_model.faces.push(ModelFace.fromFace(Face.BOTTOM).chainModelFace()
-			.texture("hopper_outside").ret()
-			.moveX(4)
-			.moveX(4, true)
-			.sizeX(-8)
-			.sizeX(-8, true)
-			.moveZ(4)
-			.moveY(4, true)
-			.sizeZ(-8)
-			.sizeY(-8, true)
-			.moveY(4));
+		_model.faces.push(ModelFace.create(Face.BACK, "hopper_outside", 4, 4, 8, 6, 4)
+			.textureSize(4, 6, 8, 6));
+		_model.faces.push(ModelFace.create(Face.FRONT, "hopper_outside", 4, 4, 8, 6, 12)
+			.textureSize(4, 6, 8, 6));
+		_model.faces.push(ModelFace.create(Face.RIGHT, "hopper_outside", 4, 4, 8, 6, 4)
+			.textureSize(4, 6, 8, 6));
+		_model.faces.push(ModelFace.create(Face.LEFT, "hopper_outside", 4, 4, 8, 6, 12)
+			.textureSize(4, 6, 8, 6));
+		_model.faces.push(ModelFace.create(Face.BOTTOM, "hopper_outside", 4, 4, 8, 8, 4));
 
 		return _model;
 	}
@@ -182,59 +76,18 @@ class BlockHopper {
 
 		_spout = new Model();
 
-		_spout.faces.push(ModelFace.fromFace(Face.BACK).chainModelFace()
-			.texture("hopper_outside").ret()
-			.sizeY(-12)
-			.sizeY(-12, true)
-			.moveY(12, true)
-			.moveX(6, true)
-			.sizeX(-12)
-			.sizeX(-12, true));
-		_spout.faces.push(ModelFace.fromFace(Face.FRONT).chainModelFace()
-			.texture("hopper_outside").ret()
-			.sizeY(-12)
-			.sizeY(-12, true)
-			.moveY(12, true)
-			.moveZ(4)
-			.moveX(6, true)
-			.sizeX(-12)
-			.sizeX(-12, true));
-
-		_spout.faces.push(ModelFace.fromFace(Face.RIGHT).chainModelFace()
-			.texture("hopper_outside").ret()
-			.sizeY(-12)
-			.sizeY(-12, true)
-			.moveY(12, true)
-			.moveX(6, true)
-			.sizeZ(-12)
-			.sizeX(-12, true));
-		_spout.faces.push(ModelFace.fromFace(Face.LEFT).chainModelFace()
-			.texture("hopper_outside").ret()
-			.sizeY(-12)
-			.sizeY(-12, true)
-			.moveY(12, true)
-			.moveX(4)
-			.moveX(6, true)
-			.sizeZ(-12)
-			.sizeX(-12, true));
-
-		_spout.faces.push(ModelFace.fromFace(Face.BOTTOM).chainModelFace()
-			.texture("hopper_outside").ret()
-			.moveX(6, true)
-			.sizeX(-12)
-			.sizeX(-12, true)
-			.moveY(6, true)
-			.sizeZ(-12)
-			.sizeY(-12, true));
-		_spout.faces.push(ModelFace.fromFace(Face.TOP).chainModelFace()
-			.texture("hopper_outside").ret()
-			.moveX(6, true)
-			.sizeX(-12)
-			.sizeX(-12, true)
-			.moveY(6, true)
-			.sizeZ(-12)
-			.sizeY(-12, true)
-			.moveY(4));
+		_spout.faces.push(ModelFace.create(Face.BACK, "hopper_outside", 0, 0, 4, 4, 0)
+			.textureSize(6, 12, 4, 4));
+		_spout.faces.push(ModelFace.create(Face.FRONT, "hopper_outside", 0, 0, 4, 4, 4)
+			.textureSize(6, 12, 4, 4));
+		_spout.faces.push(ModelFace.create(Face.RIGHT, "hopper_outside", 0, 0, 4, 4, 0)
+			.textureSize(6, 12, 4, 4));
+		_spout.faces.push(ModelFace.create(Face.LEFT, "hopper_outside", 0, 0, 4, 4, 4)
+			.textureSize(6, 12, 4, 4));
+		_spout.faces.push(ModelFace.create(Face.BOTTOM, "hopper_outside", 0, 0, 4, 4, 0)
+			.textureSize(6, 6, 4, 4));
+		_spout.faces.push(ModelFace.create(Face.TOP, "hopper_outside", 0, 0, 4, 4, 4)
+			.textureSize(6, 6, 4, 4));
 
 		return _spout;
 	}
