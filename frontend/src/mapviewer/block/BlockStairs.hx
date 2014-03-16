@@ -111,143 +111,55 @@ class BlockStairs extends Block {
 			model = new Model();
 			
 			//TODO: Culling on sides
-			//TODO: Fix texture scales
 			
 			// Slab part
-			model.faces.push(ModelFace.fromFace(Face.TOP)
-				.moveY(8));
-			model.faces.push(ModelFace.fromFace(Face.BOTTOM));
-			model.faces.push(ModelFace.fromFace(Face.LEFT)
-				.sizeY( -8)
-				.moveX(16));
-			model.faces.push(ModelFace.fromFace(Face.RIGHT)
-				.sizeY( -8));
-			model.faces.push(ModelFace.fromFace(Face.FRONT)
-				.sizeY( -8)
-				.moveZ(16));
-			model.faces.push(ModelFace.fromFace(Face.BACK)
-				.sizeY( -8));
+			model.faces.push(ModelFace.create(Face.TOP, null, 0, 0, 16, 16, 8));
+			model.faces.push(ModelFace.create(Face.BOTTOM, null, 0, 0, 16, 16, 0));
+			model.faces.push(ModelFace.create(Face.LEFT, null, 0, 0, 16, 8, 16));
+			model.faces.push(ModelFace.create(Face.RIGHT, null, 0, 0, 16, 8, 0));
+			model.faces.push(ModelFace.create(Face.FRONT, null, 0, 0, 16, 8, 16));
+			model.faces.push(ModelFace.create(Face.BACK, null, 0, 0, 16, 8, 0));
 				
 			// Top part
 			
 			if ((id & 8) == 0 && (id & 16) == 0) {
 				// Not special
 				var section = new Model();
-				section.faces.push(ModelFace.fromFace(Face.TOP)
-					.moveY(16)
-					.sizeX( -8));
-				section.faces.push(ModelFace.fromFace(Face.LEFT)
-					.moveY(8)
-					.sizeY( -8)
-					.moveX(8));
-				section.faces.push(ModelFace.fromFace(Face.RIGHT)
-					.moveY(8)
-					.sizeY( -8));
-				section.faces.push(ModelFace.fromFace(Face.FRONT)
-					.moveY(8)
-					.sizeY( -8)
-					.sizeX( -8)
-					.moveZ(16));
-				section.faces.push(ModelFace.fromFace(Face.BACK)
-					.moveY(8)
-					.sizeX( -8)
-					.sizeY( -8));
-					
+				section.faces.push(ModelFace.create(Face.TOP, null, 0, 0, 8, 16, 16));
+				section.faces.push(ModelFace.create(Face.LEFT, null, 0, 8, 16, 8, 8));
+				section.faces.push(ModelFace.create(Face.RIGHT, null, 0, 8, 16, 8, 0));
+				section.faces.push(ModelFace.create(Face.FRONT, null, 0, 8, 8, 8, 16));
+				section.faces.push(ModelFace.create(Face.BACK, null, 0, 8, 8, 8, 0));					
 				model.join(section.rotateY(rots[dir] * 90));
 			} else if (id & 8 == 8) {	
 				// Corner
 				var section = new Model();
-				var t = "gold_block";
-				section.faces.push(ModelFace.fromFace(Face.TOP)
-					.moveY(16)
-					.sizeX( -8)
-					.sizeZ( -8)
-					.moveZ(8));					
-				section.faces.push(ModelFace.fromFace(Face.LEFT)
-					.moveY(8)
-					.sizeY( -8)
-					.sizeZ( -8)
-					.moveX(8)
-					.moveZ(8));
-				section.faces.push(ModelFace.fromFace(Face.RIGHT)
-					.moveY(8)
-					.sizeZ( -8)
-					.sizeY( -8)
-					.moveZ(8));
-				section.faces.push(ModelFace.fromFace(Face.FRONT)
-					.moveY(8)
-					.sizeY( -8)
-					.sizeX( -8)
-					.moveZ(8)
-					.moveZ(8));
-				section.faces.push(ModelFace.fromFace(Face.BACK)
-					.moveY(8)
-					.sizeX( -8)
-					.sizeY( -8)
-					.moveZ(8));
+				section.faces.push(ModelFace.create(Face.TOP, null, 0, 8, 8, 8, 16));
+				section.faces.push(ModelFace.create(Face.LEFT, null, 8, 8, 8, 8, 8));
+				section.faces.push(ModelFace.create(Face.RIGHT, null, 8, 8, 8, 8, 0));
+				section.faces.push(ModelFace.create(Face.FRONT, null, 0, 8, 8, 8, 16));
+				section.faces.push(ModelFace.create(Face.BACK, null, 0, 8, 8, 8, 8));
 					
 				model.join(new Model().join(section, 0, 0,  
 						((dir == 0 || dir == 3) && id & 32 == 32) ||
 							((dir == 1 || dir == 2) && id & 32 == 0) ? -8 : 0 ).rotateY(rots[dir] * 90));
 				
 			} else {				
-				// Corner
+				// L Shape
 				var section = new Model();
-				var t = "coal_block";
-				section.faces.push(ModelFace.fromFace(Face.TOP)
-					.moveY(16)
-					.sizeZ( -8)
-					.moveZ(8));
-				section.faces.push(ModelFace.fromFace(Face.LEFT)
-					.moveY(8)
-					.sizeY( -8)
-					.sizeZ( -8)
-					.moveX(16)
-					.moveZ(8));
-				section.faces.push(ModelFace.fromFace(Face.RIGHT)
-					.moveY(8)
-					.sizeY( -8)
-					.sizeZ( -8)
-					.moveZ(8));
-				section.faces.push(ModelFace.fromFace(Face.FRONT)
-					.moveY(8)
-					.sizeY( -8)
-					.moveZ(8)
-					.moveZ(8));
-				section.faces.push(ModelFace.fromFace(Face.BACK)
-					.moveY(8)
-					.sizeY( -8)
-					.moveZ(8));
+				section.faces.push(ModelFace.create(Face.TOP, null, 0, 8, 16, 8, 16));
+				section.faces.push(ModelFace.create(Face.LEFT, null, 8, 8, 8, 8, 16));
+				section.faces.push(ModelFace.create(Face.RIGHT, null, 8, 8, 8, 8, 0));
+				section.faces.push(ModelFace.create(Face.FRONT, null, 0, 8, 16, 8, 16));
+				section.faces.push(ModelFace.create(Face.BACK, null, 0, 8, 16, 8, 8));
 					
 				var oz = ((dir == 0 || dir == 3) && id & 32 == 32) ||
 							((dir == 1 || dir == 2) && id & 32 == 0) ? 16 : 0;
-				section.faces.push(ModelFace.fromFace(Face.TOP)
-					.moveY(16)
-					.sizeX( -8)
-					.sizeZ( -8)
-					.moveZ(oz));				
-				section.faces.push(ModelFace.fromFace(Face.LEFT)
-					.moveY(8)
-					.sizeY( -8)
-					.sizeZ( -8)
-					.moveX(8)
-					.moveZ(oz));
-				section.faces.push(ModelFace.fromFace(Face.RIGHT)
-					.moveY(8)
-					.sizeZ( -8)
-					.sizeY( -8)
-					.moveZ(oz));
-				section.faces.push(ModelFace.fromFace(Face.FRONT)
-					.moveY(8)
-					.sizeY( -8)
-					.sizeX( -8)
-					.moveZ(8)
-					.moveZ(oz));
-				section.faces.push(ModelFace.fromFace(Face.BACK)
-					.moveY(8)
-					.sizeX( -8)
-					.sizeY( -8)
-					.moveZ(oz));
+				section.faces.push(ModelFace.create(Face.TOP, null, 0, oz, 8, 8, 16));
+				section.faces.push(ModelFace.create(Face.LEFT, null, oz, 8, 8, 8, 8));
+				section.faces.push(ModelFace.create(Face.RIGHT, null, oz, 8, 8, 8, 0));
+				section.faces.push(ModelFace.create(Face.FRONT, null, 0, 8, 8, 8, oz + 8));
+				section.faces.push(ModelFace.create(Face.BACK, null, 0, 8, 8, 8, oz));
 					
 				model.join(new Model().join(section, 0, 0,  
 						((dir == 0 || dir == 3) && id & 32 == 32) ||
