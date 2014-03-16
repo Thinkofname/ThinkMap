@@ -352,7 +352,7 @@ class BlockRegistry {
 		//Rotatable blocks
 		{
 			var ladder = new Model();
-			ladder.faces.push(ModelFace.fromFace(Face.FRONT).moveZ(1).chainModelFace().texture("ladder").ret());
+			ladder.faces.push(ModelFace.create(Face.FRONT, "ladder", 0, 0, 16, 16, 1));
 			var i = 0;
 			var temp = [
 				"north" => 2,
