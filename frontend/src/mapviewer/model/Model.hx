@@ -243,15 +243,6 @@ class ModelFace implements Chainable {
 		this.face = face;
 	}
 	
-	@:deprecated("Use ModelFace.create instead")
-	public static function fromFace(face : Face) : ModelFace {
-		var f = new ModelFace(face);
-		for (vert in defaultFaces[face.name]) {
-			f.vertices.push(vert.clone());
-		}
-		return f;
-	}
-	
 	public static function create(face : Face, texture : String, 
 			x : Float, y : Float, w : Float, h : Float,
 			off : Float) : ModelFace {
@@ -327,100 +318,6 @@ class ModelFace implements Chainable {
 		this.r = r;
 		this.g = g;
 		this.b = b;
-		return this;
-	}
-
-	@:deprecated("Use ModelFace.create or .size/.textureSize instead")
-	public function moveY(a : Float, ?tex : Bool = false) : ModelFace {
-		for (vert in vertices) {
-			if (!tex)
-				vert.y += a / 16;
-			else
-				vert.textureY += a / 16;
-		}
-		return this;
-	}
-
-	@:deprecated("Use ModelFace.create or .size/.textureSize instead")
-	public function moveX(a : Float, ?tex : Bool = false) : ModelFace {
-		for (vert in vertices) {
-			if (!tex)
-				vert.x += a / 16;
-			else
-				vert.textureX += a / 16;
-		}
-		return this;
-	}
-
-	@:deprecated("Use ModelFace.create or .size/.textureSize instead")
-	public function moveZ(a : Float, ?tex : Bool = false) : ModelFace {
-		for (vert in vertices) {
-			vert.z += a / 16;
-		}
-		return this;
-	}
-
-	@:deprecated("Use ModelFace.create or .size/.textureSize instead")
-	public function sizeY(a : Float, ?tex : Bool = false) : ModelFace {
-		var largest : Float = 0;
-		if (!tex) {
-			for (vert in vertices) {
-				if (vert.y > largest) largest = vert.y;
-			}
-			for (vert in vertices) {
-				if (vert.y == largest) {
-					vert.y += a / 16;
-				}
-			}
-		} else {
-			for (vert in vertices) {
-				if (vert.textureY > largest) largest = vert.textureY;
-			}
-			for (vert in vertices) {
-				if (vert.textureY == largest) {
-					vert.textureY += a / 16;
-				}
-			}
-		}
-		return this;
-	}
-
-	@:deprecated("Use ModelFace.create or .size/.textureSize instead")
-	public function sizeX(a : Float, ?tex : Bool = false) : ModelFace {
-		var largest : Float = 0;
-		if (!tex) {
-			for (vert in vertices) {
-				if (vert.x > largest) largest = vert.x;
-			}
-			for (vert in vertices) {
-				if (vert.x == largest) {
-					vert.x += a / 16;
-				}
-			}
-		} else {
-			for (vert in vertices) {
-				if (vert.textureX > largest) largest = vert.textureX;
-			}
-			for (vert in vertices) {
-				if (vert.textureX == largest) {
-					vert.textureX += a / 16;
-				}
-			}
-		}
-		return this;
-	}
-
-	@:deprecated("Use ModelFace.create or .size/.textureSize instead")
-	public function sizeZ(a : Float, ?tex : Bool = false) : ModelFace {
-		var largest : Float = 0;
-		for (vert in vertices) {
-			if (vert.z > largest) largest = vert.z;
-		}
-		for (vert in vertices) {
-			if (vert.z == largest) {
-				vert.z += a / 16;
-			}
-		}
 		return this;
 	}
 }
