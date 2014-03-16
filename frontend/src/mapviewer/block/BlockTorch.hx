@@ -15,8 +15,9 @@
  */
 package mapviewer.block;
 
-import mapviewer.block.Block.Face;
+import mapviewer.block.Face;
 import mapviewer.model.Model;
+import mapviewer.model.ModelFace;
 
 class BlockTorch {
 

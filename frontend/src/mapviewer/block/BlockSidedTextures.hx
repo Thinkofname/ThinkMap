@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 package mapviewer.block;
-import mapviewer.block.Block.Face;
+import mapviewer.block.Face;
 import mapviewer.renderer.TextureInfo;
 
 class BlockSidedTextures extends Block {

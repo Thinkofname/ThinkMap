@@ -15,9 +15,10 @@
  */
 package mapviewer.block;
 import mapviewer.model.Model;
+import mapviewer.model.ModelFace;
 import mapviewer.world.Chunk;
 import mapviewer.renderer.webgl.BlockBuilder;
-import mapviewer.block.Block.Face;
+import mapviewer.block.Face;
 
 /**
  * ...

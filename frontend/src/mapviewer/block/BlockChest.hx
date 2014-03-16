@@ -15,7 +15,8 @@
  */
 package mapviewer.block;
 import mapviewer.model.Model;
-import mapviewer.block.Block.Face;
+import mapviewer.model.ModelFace;
+import mapviewer.block.Face;
 
 class BlockChest {
 	

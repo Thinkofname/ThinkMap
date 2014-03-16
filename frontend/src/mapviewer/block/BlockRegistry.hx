@@ -15,10 +15,11 @@
  */
 package mapviewer.block;
 
-import mapviewer.block.Block.Face;
+import mapviewer.block.Face;
 import mapviewer.block.BlockRegistry.BlockRegistrationEntry;
 import mapviewer.logging.Logger;
 import mapviewer.model.Model;
+import mapviewer.model.ModelFace;
 
 class BlockRegistry {
     public static var logger : Logger = new Logger('BlockRegistry');

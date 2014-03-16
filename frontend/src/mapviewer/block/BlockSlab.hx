@@ -16,7 +16,7 @@
 package mapviewer.block;
 import mapviewer.world.Chunk;
 import mapviewer.renderer.webgl.BlockBuilder;
-import mapviewer.block.Block.Face;
+import mapviewer.block.Face;
 import mapviewer.block.Block.blockLightingRegion;
 import mapviewer.renderer.TextureInfo;
 import mapviewer.collision.Box;

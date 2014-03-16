@@ -16,10 +16,11 @@
 package mapviewer.block;
 
 import mapviewer.model.Model;
+import mapviewer.model.ModelFace;
 import mapviewer.renderer.LightInfo;
 import mapviewer.renderer.webgl.BlockBuilder;
 import mapviewer.world.Chunk;
-import mapviewer.block.Block.Face;
+import mapviewer.block.Face;
 
 class BlockStairs extends Block {
 	

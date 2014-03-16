@@ -15,7 +15,7 @@
  */
 package mapviewer.block;
 
-import mapviewer.block.Block.Face;
+import mapviewer.block.Face;
 import mapviewer.collision.Box;
 import mapviewer.model.Model;
 import mapviewer.renderer.LightInfo;
@@ -199,7 +199,7 @@ class Block implements Chainable {
 		return Main.blockTextureInfo[texture];
 	}
 	
-	@:chain public var getColour : Block -> Block.Face -> Int = function(self : Block, face : Block.Face) : Int {
+	@:chain public var getColour : Block -> Face -> Int = function(self : Block, face : Face) : Int {
 		return self.forceColour ? self.colour : 0xFFFFFF;
 	};
 
@@ -240,31 +240,5 @@ class Block implements Chainable {
 		}
 		if (count == 0) return new LightInfo(15, 15);
 		return new LightInfo(Std.int(light / count), Std.int(sky / count));
-	}
-}
-
-class Face {
-	
-	public static var TOP    = new Face(0, "top");
-	public static var BOTTOM = new Face(1, "bottom");
-	public static var RIGHT  = new Face(2, "right");
-	public static var LEFT   = new Face(3, "left");
-	public static var BACK   = new Face(4, "back");
-	public static var FRONT  = new Face(5, "front");
-	
-	public var id : Int;
-	public var name : String;
-	
-	private function new(id : Int, name : String) {
-		this.id = id;
-		this.name = name;
-		if (nameMap == null) nameMap = new Map<String, Face>();
-		nameMap[name] = this;
-	}
-	
-	private static var nameMap;
-	
-	public static function fromName(name : String) : Face {
-		return nameMap[name];
 	}
 }
