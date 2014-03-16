@@ -28,8 +28,8 @@ class BlockCross extends Block {
 		super();
 	}
 	
-	override public function render(builder : BlockBuilder, x : Int, y : Int, z : Int, chunk : Chunk) {		
-		if (model == null) {
+	override public function getModel():Model {
+		if (model == null) {			
 			var r = 255;
 			var g = 255;
 			var b = 255;
@@ -66,8 +66,8 @@ class BlockCross extends Block {
 				if (e.x == 0) e.z = 1;
 			};
 			model.faces.push(face);
+			cachedShouldRenderAgainst = shouldRenderAgainst;
 		}
-		super.render(builder, x, y, z, chunk);	
-	}
-	
+		return model;
+	}	
 }

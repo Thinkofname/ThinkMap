@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package mapviewer.model;
+import js.html.Uint16Array;
+import js.html.Uint8Array;
 import mapviewer.block.Face;
 
 class ModelFace {
@@ -63,6 +65,9 @@ class ModelFace {
 	public var r : Int = 255;
 	public var g : Int = 255;
 	public var b : Int = 255;
+	public var cullable : Bool = false;
+	public var width : Float = 16;
+	public var height : Float = 16;
 	
 	public function new(face : Face) {
 		vertices = new Array();
@@ -71,12 +76,13 @@ class ModelFace {
 	
 	public static function create(face : Face, texture : String, 
 			x : Float, y : Float, w : Float, h : Float,
-			off : Float) : ModelFace {
+			off : Float, ?cullable : Bool = false) : ModelFace {
 		var f = new ModelFace(face);
 		f.texture = texture;
 		for (vert in defaultFaces[face.name]) {
 			f.vertices.push(vert.clone());
 		}
+		f.cullable = cullable;
 		f.offset(off);
 		f.size(x, y, w, h);
 		return f;		
@@ -100,6 +106,8 @@ class ModelFace {
 	 * Resize this face. Also updates the texture position.
 	 */
 	public function size(x : Float, y : Float, w : Float, h : Float) : ModelFace {		
+		width = w;
+		height = h;
 		// What gets changed depends on the face's face
 		if (face == Face.TOP || face == Face.BOTTOM) {
 			// X, Z

@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 package mapviewer.block;
+import mapviewer.model.Model;
+import mapviewer.model.ModelFace;
 import mapviewer.world.Chunk;
 import mapviewer.renderer.webgl.BlockBuilder;
 import mapviewer.block.Face;
-import mapviewer.block.Block.blockLightingRegion;
 import mapviewer.renderer.TextureInfo;
 import mapviewer.collision.Box;
 
@@ -41,124 +42,39 @@ class BlockSlab extends Block {
 		return box.checkBox(x, y + (top ? 0.5 : 0), z, 1.0, 0.5, 1.0);
 	}	
 	
-	override public function getTexture(face : Face) : TextureInfo {
-		return Main.blockTextureInfo[texture == null ? textures[face.name] :texture];
+	override public function getTexture(face : Face) : String {
+		return texture == null ? textures[face.name] : texture;
 	}
 	
 	override public function shouldRenderAgainst(block : Block) : Bool {
 		return !block.solid;
 	}
 	
-	override public function render(builder:BlockBuilder, x:Int, y:Int, z:Int, chunk:Chunk) {		
-		var offset : Float = top ? 0.5 : 0;		
-			
-		if (!top || shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x, y + 1, (chunk.z << 4) + z))) {
-			var texture = getTexture(Face.TOP);
-			var colour = getColour(this, Face.TOP);
-			var r = (colour >> 16) & 0xFF;
-			var g = (colour >> 8) & 0xFF;
-			var b = colour & 0xFF;		
-			
-			var light = chunk.world.getLight((chunk.x << 4) + x, y + 1, (chunk.z << 4) + z);
-			var sky = chunk.world.getSky((chunk.x << 4) + x, y + 1, (chunk.z << 4) + z);
-			
-			builder.addFaceTop(x, y + offset + 0.5, z, 1, 1, r, g, b,
-				blockLightingRegion(chunk, this, x    , y + 1, z - 1, x + 2, y + 2, z + 1, light, sky),
-				blockLightingRegion(chunk, this, x - 1, y + 1, z - 1, x + 1, y + 2, z + 1, light, sky),
-				blockLightingRegion(chunk, this, x    , y + 1, z    , x + 2, y + 2, z + 2, light, sky),
-				blockLightingRegion(chunk, this, x - 1, y + 1, z    , x + 1, y + 2, z + 2, light, sky),
-				texture);
+	override public function getModel() : Model {
+		if (model == null) {
+			model = new Model();
+			var offset : Float = top ? 8 : 0;	
+			var i = 0;
+			for (face in [Face.TOP, Face.BOTTOM, Face.LEFT, Face.RIGHT, Face.FRONT, Face.BACK]) {
+				var colour = getColour(this, face);
+				var r = (colour >> 16) & 0xFF;
+				var g = (colour >> 8) & 0xFF;
+				var b = colour & 0xFF;	
+				model.faces.push(ModelFace.create(face, getTexture(face), 0, 
+					face != Face.TOP && face != Face.BOTTOM ? offset : 0, 
+					16, 
+					face != Face.TOP && face != Face.BOTTOM ? 8 : 16, 
+					i & 1 == 0 ? 
+						(face != Face.TOP && face != Face.BOTTOM ? 16 : offset + 8) :
+						(face != Face.TOP && face != Face.BOTTOM ? 0 : offset), 
+						(top && face != Face.BOTTOM) || (!top && face != Face.TOP)) 
+					.colour(r, g, b));
+				i++;
+			}
+			cachedShouldRenderAgainst = shouldRenderAgainst;
 		}
-		
-		if (top || shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x, y - 1, (chunk.z << 4) + z))) {
-			var texture = getTexture(Face.BOTTOM);
-			var colour = getColour(this, Face.BOTTOM);
-			var r = (colour >> 16) & 0xFF;
-			var g = (colour >> 8) & 0xFF;
-			var b = colour & 0xFF;		
-			
-			var light = chunk.world.getLight((chunk.x << 4) + x, y - 1, (chunk.z << 4) + z);
-			var sky = chunk.world.getSky((chunk.x << 4) + x, y - 1, (chunk.z << 4) + z);
-			
-			builder.addFaceBottom(x, y + offset, z, 1, 1, r, g, b,
-				blockLightingRegion(chunk, this, x    , y - 1, z - 1, x + 2, y    , z + 1, light, sky),
-				blockLightingRegion(chunk, this, x - 1, y - 1, z - 1, x + 1, y    , z + 1, light, sky),
-				blockLightingRegion(chunk, this, x    , y - 1, z    , x + 2, y    , z + 2, light, sky),
-				blockLightingRegion(chunk, this, x - 1, y - 1, z    , x + 1, y    , z + 2, light, sky),
-				texture);
-		}
-		
-		if (shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x + 1, y, (chunk.z << 4) + z))) {
-			var texture = getTexture(Face.LEFT);
-			var colour = getColour(this, Face.LEFT);
-			var r = (colour >> 16) & 0xFF;
-			var g = (colour >> 8) & 0xFF;
-			var b = colour & 0xFF;		
-			
-			var light = chunk.world.getLight((chunk.x << 4) + x + 1, y, (chunk.z << 4) + z);
-			var sky = chunk.world.getSky((chunk.x << 4) + x + 1, y, (chunk.z << 4) + z);
-			
-			builder.addFaceLeft(x + 1, y + offset, z, 1, 0.5, r, g, b,
-				blockLightingRegion(chunk, this, x + 1, y    , z - 1, x + 2, y + 2, z + 1, light, sky),
-				blockLightingRegion(chunk, this, x + 1, y    , z    , x + 2, y + 2, z + 2, light, sky),
-				blockLightingRegion(chunk, this, x + 1, y - 1, z - 1, x + 2, y + 1, z + 1, light, sky),
-				blockLightingRegion(chunk, this, x + 1, y - 1, z    , x + 2, y + 1, z + 2, light, sky),
-				texture);
-		}
-		
-		if (shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x - 1, y, (chunk.z << 4) + z))) {
-			var texture = getTexture(Face.RIGHT);
-			var colour = getColour(this, Face.RIGHT);
-			var r = (colour >> 16) & 0xFF;
-			var g = (colour >> 8) & 0xFF;
-			var b = colour & 0xFF;		
-			
-			var light = chunk.world.getLight((chunk.x << 4) + x - 1, y, (chunk.z << 4) + z);
-			var sky = chunk.world.getSky((chunk.x << 4) + x - 1, y, (chunk.z << 4) + z);
-			
-			builder.addFaceRight(x, y + offset, z, 1, 0.5, r, g, b,
-				blockLightingRegion(chunk, this, x - 1, y    , z    , x    , y + 2, z + 2, light, sky),
-				blockLightingRegion(chunk, this, x - 1, y    , z - 1, x    , y + 2, z + 1, light, sky),
-				blockLightingRegion(chunk, this, x - 1, y - 1, z    , x    , y + 1, z + 2, light, sky),
-				blockLightingRegion(chunk, this, x - 1, y - 1, z - 1, x    , y + 1, z + 1, light, sky),
-				texture);
-		}
-
-		if (shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x, y, (chunk.z << 4) + z + 1))) {
-			var texture = getTexture(Face.FRONT);
-			var colour = getColour(this, Face.FRONT);
-			var r = (colour >> 16) & 0xFF;
-			var g = (colour >> 8) & 0xFF;
-			var b = colour & 0xFF;		
-
-			var light = chunk.world.getLight((chunk.x << 4) + x, y, (chunk.z << 4) + z + 1);
-			var sky = chunk.world.getSky((chunk.x << 4) + x, y, (chunk.z << 4) + z + 1);
-
-			builder.addFaceFront(x, y + offset, z + 1, 1, 0.5, r, g, b,
-				blockLightingRegion(chunk, this, x    , y    , z + 1, x + 2, y + 2, z + 2, light, sky),
-				blockLightingRegion(chunk, this, x - 1, y    , z + 1, x + 1, y + 2, z + 2, light, sky),
-				blockLightingRegion(chunk, this, x    , y - 1, z + 1, x + 2, y + 1, z + 2, light, sky),
-				blockLightingRegion(chunk, this, x - 1, y - 1, z + 1, x + 1, y + 1, z + 2, light, sky),
-				texture);
-		}
-
-		if (shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x, y, (chunk.z << 4) + z - 1))) {
-			var texture = getTexture(Face.BACK);
-			var colour = getColour(this, Face.BACK);
-			var r = (colour >> 16) & 0xFF;
-			var g = (colour >> 8) & 0xFF;
-			var b = colour & 0xFF;		
-
-			var light = chunk.world.getLight((chunk.x << 4) + x, y, (chunk.z << 4) + z - 1);
-			var sky = chunk.world.getSky((chunk.x << 4) + x, y, (chunk.z << 4) + z - 1);
-
-			builder.addFaceBack(x, y + offset, z, 1, 0.5, r, g, b,
-				blockLightingRegion(chunk, this, x - 1, y    , z - 1, x + 1, y + 2, z, light, sky),
-				blockLightingRegion(chunk, this, x    , y    , z - 1, x + 2, y + 2, z, light, sky),
-				blockLightingRegion(chunk, this, x - 1, y - 1, z - 1, x + 1, y + 1, z, light, sky),
-				blockLightingRegion(chunk, this, x    , y - 1, z - 1, x + 2, y + 1, z, light, sky),
-				texture);
-		}
+		return model;
 	}
+	
 	
 }

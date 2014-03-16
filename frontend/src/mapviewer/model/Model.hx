@@ -15,6 +15,7 @@
  */
 package mapviewer.model;
 import js.html.Float32Array;
+import mapviewer.block.Block;
 import mapviewer.block.Face;
 import mapviewer.model.ModelFace;
 import mapviewer.model.ModelVertex;
@@ -23,20 +24,36 @@ import mapviewer.renderer.webgl.BlockBuilder;
 import mapviewer.renderer.webgl.glmatrix.Quat;
 import mapviewer.utils.Chainable;
 import mapviewer.world.Chunk;
+import mapviewer.world.World;
 
 class Model {
 	public var faces : Array<ModelFace>;
+	
+	private var isOptimized : Bool = false;
 	
 	public function new() {
 		faces = new Array();
 	}
 	
-	public function render(builder : BlockBuilder, x : Int, y : Int, z : Int, chunk : Chunk) {
-		var light = new LightInfo(chunk.getLight(x, y, z), chunk.getSky(x, y, z));
+	private static function alwaysRenderAgainst(block : Block) : Bool return true;
+	
+	public function render(builder : BlockBuilder, x : Int, y : Int, z : Int, chunk : Chunk, ?shouldRenderAgainst : Block -> Bool) {
+		if (shouldRenderAgainst == null) shouldRenderAgainst = alwaysRenderAgainst;
+		
 		for (face in faces) {
+			if (face.cullable) {
+				// This is actually faster than a look up map
+				if (face.face == Face.TOP && !shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x, y + 1, (chunk.z << 4) + z))) continue;
+				if (face.face == Face.BOTTOM && !shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x, y - 1, (chunk.z << 4) + z))) continue;
+				if (face.face == Face.LEFT && !shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x + 1, y, (chunk.z << 4) + z))) continue;
+				if (face.face == Face.RIGHT && !shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x - 1, y, (chunk.z << 4) + z))) continue;
+				if (face.face == Face.FRONT && !shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x, y, (chunk.z << 4) + z + 1))) continue;
+				if (face.face == Face.BACK && !shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x, y, (chunk.z << 4) + z - 1))) continue;
+			}
 			var texture = Main.blockTextureInfo[face.texture];
 			for (i in 0 ... 3) {
 				var vert = face.vertices[i];
+				var light = calcLight(chunk.world, (chunk.x << 4) + x + vert.x, y + vert.y, (chunk.z << 4) + z + vert.z, face.face);
 				builder
 					.position(x + vert.x, y + vert.y, z + vert.z)
 					.colour(face.r, face.g, face.b)
@@ -46,6 +63,7 @@ class Model {
 			}
 			for (i in 0 ... 3) {				
 				var vert = face.vertices[3 - i];
+				var light = calcLight(chunk.world, (chunk.x << 4) + x + vert.x, y + vert.y, (chunk.z << 4) + z + vert.z, face.face);
 				builder
 					.position(x + vert.x, y + vert.y, z + vert.z)
 					.colour(face.r, face.g, face.b)
@@ -54,6 +72,59 @@ class Model {
 					.lighting(light.light, light.sky);
 			}
 		}
+	}
+	
+	private static function calcLight(world : World, x : Float, y : Float, z : Float, face : Face) : LightInfo {
+		var light : Float = world.getLight(Std.int(x), Std.int(y), Std.int(z));
+		var sky : Float = world.getSky(Std.int(x), Std.int(y), Std.int(z));
+		var count : Float = 0;
+		
+		var isX : Int = face.offsetX != 0 ? (face.offsetX == 1 ? 2 : 0 ): 2;
+		var isY : Int = face.offsetY != 0 ? (face.offsetY == 1 ? 2 : 0 ) : 2;
+		var isZ : Int = face.offsetZ != 0 ? (face.offsetZ == 1 ? 2 : 0 ) : 2;
+		var nisX : Int = face.offsetX != 0 ? (face.offsetX == 1 ? 1 : -1 ) : -1;
+		var nisY : Int = face.offsetY != 0 ? (face.offsetY == 1 ? 1 : -1 ) : -1;
+		var nisZ : Int = face.offsetZ != 0 ? (face.offsetZ == 1 ? 1 : -1 ) : -1;
+		
+		for (ox in nisX ... isX) {
+			for (oy in nisY ... isY) {			
+				for (oz in nisZ ... isZ) {
+					var bx = Std.int(x + ox);
+					var by = Std.int(y + oy);
+					var bz = Std.int(z + oz);
+					var block = world.getBlock(bx, by, bz);
+					if (!block.shade) continue;
+					count++;
+					light += world.getLight(bx, by, bz);
+					sky += world.getSky(bx, by, bz);
+					if (block.renderable) {
+						var model = block.getModel();
+						var maxDist = 8 * 8;
+						var mscale = 1 - Math.max(1, model.faces.length / 16);
+						for (mface in model.faces) {
+							if (mface.face == face) continue;
+							var fscale = ((mface.width * mface.height) / (16 * 16)) * mscale;
+							for (vert in mface.vertices) {
+								var vx = bx + vert.x;
+								var vy = by + vert.y;
+								var vz = bz + vert.z;
+								var dx = vx - x;
+								var dy = vy - y;
+								var dz = vz - z;
+								var dist = dx * dx + dy * dy + dz * dz;
+								if (dist > maxDist) continue;
+								var scale = (1 - (dist / maxDist)) * fscale;
+								count += scale;
+								light -= 7 * scale;
+								sky -= 7 * scale;
+							}
+						}
+					}
+				}
+			}			
+		}
+		if (count == 0) new LightInfo(Std.int(light), Std.int(sky));
+		return new LightInfo(Std.int(light / count), Std.int(sky / count));
 	}
 	
 	private static var rotHelper = [Face.LEFT, Face.FRONT, Face.RIGHT, Face.BACK];

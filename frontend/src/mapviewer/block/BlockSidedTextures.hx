@@ -25,8 +25,8 @@ class BlockSidedTextures extends Block {
 		super();
 	}
 	
-	override public function getTexture(face : Face) : TextureInfo {
-		return Main.blockTextureInfo[textures[face.name]];
+	override public function getTexture(face : Face) : String {
+		return textures[face.name];
 	}
 	
 }
