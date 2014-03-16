@@ -39,17 +39,25 @@ class BlockVine extends Block {
 			if (i & 1 == 1) {
 				model.faces.push(ModelFace.create(Face.BACK, "vine", 0, 0, 16, 16, 15)
 					.colour(0x87, 0xBA, 0x34));
+				model.faces.push(ModelFace.create(Face.FRONT, "vine", 0, 0, 16, 16, 15)
+					.colour(0x87, 0xBA, 0x34));
 			}
 			if (i & 2 == 2) {
 				model.faces.push(ModelFace.create(Face.LEFT, "vine", 0, 0, 16, 16, 1)
+					.colour(0x87, 0xBA, 0x34));
+				model.faces.push(ModelFace.create(Face.RIGHT, "vine", 0, 0, 16, 16, 1)
 					.colour(0x87, 0xBA, 0x34));
 			}
 			if (i & 4 == 4) {				
 				model.faces.push(ModelFace.create(Face.FRONT, "vine", 0, 0, 16, 16, 1)
 					.colour(0x87, 0xBA, 0x34));
+				model.faces.push(ModelFace.create(Face.BACK, "vine", 0, 0, 16, 16, 1)
+					.colour(0x87, 0xBA, 0x34));
 			}
 			if (i & 8 == 8) {
 				model.faces.push(ModelFace.create(Face.RIGHT, "vine", 0, 0, 16, 16, 15)
+					.colour(0x87, 0xBA, 0x34));
+				model.faces.push(ModelFace.create(Face.LEFT, "vine", 0, 0, 16, 16, 15)
 					.colour(0x87, 0xBA, 0x34));
 			}
 			BlockRegistry.registerBlock('vine_$i', new BlockVine().chainBlock()
