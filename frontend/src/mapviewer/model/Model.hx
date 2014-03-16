@@ -190,7 +190,7 @@ class Model {
 	
 }
 
-class ModelFace implements Chainable {
+class ModelFace {
 	
 	private static var defaultFaces: Map <String, Array<ModelVertex>> = [
 		"top" => [
@@ -231,12 +231,12 @@ class ModelFace implements Chainable {
 		]
 	];
 	
-	@:chain public var texture : String;
+	public var texture : String;
 	public var vertices : Array<ModelVertex>;
 	public var face : Face;
-	@:chain public var r : Int = 255;
-	@:chain public var g : Int = 255;
-	@:chain public var b : Int = 255;
+	public var r : Int = 255;
+	public var g : Int = 255;
+	public var b : Int = 255;
 	
 	public function new(face : Face) {
 		vertices = new Array();
