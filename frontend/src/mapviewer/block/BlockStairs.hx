@@ -177,51 +177,6 @@ class BlockStairs extends Block {
 			// Store
 			mmap[id] = model;
 		}
-		// Temp: Hack lighting
-		var l = chunk.getLight(x, y, z);
-		var s = chunk.getSky(x, y, z);
-		var li : LightInfo = blockLightingRegion(chunk, this, x - 1, y - 1, z - 1, x + 2, y + 2, z + 2, 0, 0);
-		chunk.setLight(x, y, z, li.light);
-		chunk.setSky(x, y, z, li.sky);
 		model.render(builder, x, y, z, chunk);
-		chunk.setLight(x, y, z, l);
-		chunk.setSky(x, y, z, s);
-	}
-	
-	public static function blockLightingRegion(chunk : Chunk, self : Block, x1 : Int, y1 : Int, z1 : Int, 
-		x2 : Int, y2 : Int, z2 : Int, ?faceLight : Int = 0, ?faceSkyLight : Int = 0) {
-		var light = 15;
-		var sky = 15;
-		var count = 0;
-		var valSolid : Int = Std.int((15 * Math.pow(0.85, faceLight + 1)));
-		var valSkySolid : Int = Std.int((15 * Math.pow(0.85, faceSkyLight + 1)));
-		for (y in y1 ... y2) {
-			if (y < 0 || y > 255) continue;
-			for (x in x1 ... x2) {
-				for (z in z1 ... z2) {
-					var px = (chunk.x << 4) + x;
-					var pz = (chunk.z << 4) + z;
-					if (!chunk.world.isLoaded(px, y, pz)) continue;
-					count++;
-					var valSky = 6;
-					var val = 6;
-					
-					var block = chunk.world.getBlock(px, y, pz);
-					if (block.shade && (block.solid || block == self)) {
-						val -= valSolid;
-						valSky -= valSkySolid;
-					} else {
-						valSky = chunk.world.getSky(px, y, pz);
-						val = chunk.world.getLight(px, y, pz);
-					}
-					light += val;
-					sky += valSky;
-				}
-			}
-		}
-		light += 11 * count;
-		sky += 11 * count;
-		if (count == 0) return new LightInfo(15, 15);
-		return new LightInfo(Std.int(light / count), Std.int(sky / count));
 	}
 }
