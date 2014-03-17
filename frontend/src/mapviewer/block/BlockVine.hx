@@ -29,7 +29,7 @@ class BlockVine extends Block {
 	static var top : Model = new Model();
 	
 	public static function register() {		
-		top.faces.push(ModelFace.create(Face.BOTTOM, "vine", 0, 0, 16, 16, 15)
+		top.faces.push(ModelFace.create(Face.BOTTOM, "vine", 0, 0, 16, 16, 15.9)
 			.colour(0x87, 0xBA, 0x34));
 		for (i in 0 ... 16) {
 			var model = new Model();
@@ -37,27 +37,27 @@ class BlockVine extends Block {
 				model.join(top);
 			}
 			if (i & 1 == 1) {
-				model.faces.push(ModelFace.create(Face.BACK, "vine", 0, 0, 16, 16, 15)
+				model.faces.push(ModelFace.create(Face.BACK, "vine", 0, 0, 16, 16, 15.9)
 					.colour(0x87, 0xBA, 0x34));
-				model.faces.push(ModelFace.create(Face.FRONT, "vine", 0, 0, 16, 16, 15)
+				model.faces.push(ModelFace.create(Face.FRONT, "vine", 0, 0, 16, 16, 15.9, true)
 					.colour(0x87, 0xBA, 0x34));
 			}
 			if (i & 2 == 2) {
-				model.faces.push(ModelFace.create(Face.LEFT, "vine", 0, 0, 16, 16, 1)
+				model.faces.push(ModelFace.create(Face.LEFT, "vine", 0, 0, 16, 16, 0.1)
 					.colour(0x87, 0xBA, 0x34));
-				model.faces.push(ModelFace.create(Face.RIGHT, "vine", 0, 0, 16, 16, 1)
+				model.faces.push(ModelFace.create(Face.RIGHT, "vine", 0, 0, 16, 16, 0.1, true)
 					.colour(0x87, 0xBA, 0x34));
 			}
 			if (i & 4 == 4) {				
-				model.faces.push(ModelFace.create(Face.FRONT, "vine", 0, 0, 16, 16, 1)
+				model.faces.push(ModelFace.create(Face.FRONT, "vine", 0, 0, 16, 16, 0.1)
 					.colour(0x87, 0xBA, 0x34));
-				model.faces.push(ModelFace.create(Face.BACK, "vine", 0, 0, 16, 16, 1)
+				model.faces.push(ModelFace.create(Face.BACK, "vine", 0, 0, 16, 16, 0.1, true)
 					.colour(0x87, 0xBA, 0x34));
 			}
 			if (i & 8 == 8) {
-				model.faces.push(ModelFace.create(Face.RIGHT, "vine", 0, 0, 16, 16, 15)
+				model.faces.push(ModelFace.create(Face.RIGHT, "vine", 0, 0, 16, 16, 15.9)
 					.colour(0x87, 0xBA, 0x34));
-				model.faces.push(ModelFace.create(Face.LEFT, "vine", 0, 0, 16, 16, 15)
+				model.faces.push(ModelFace.create(Face.LEFT, "vine", 0, 0, 16, 16, 15.9, true)
 					.colour(0x87, 0xBA, 0x34));
 			}
 			BlockRegistry.registerBlock('vine_$i', new BlockVine().chainBlock()
@@ -82,9 +82,11 @@ class BlockVine extends Block {
 	}
 	
 	override public function render(builder : BlockBuilder, x : Int, y : Int, z : Int, chunk : Chunk) {
-		model.render(builder, x, y, z, chunk);
+		if (cachedShouldRenderAgainst == null) 
+			cachedShouldRenderAgainst = shouldRenderAgainst;
+		model.render(builder, x, y, z, chunk, cachedShouldRenderAgainst);
 		if (!shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x, y + 1, (chunk.z << 4) + z))) {
-			top.render(builder, x, y, z, chunk);
+			top.render(builder, x, y, z, chunk, cachedShouldRenderAgainst);
 		}
 	}
 	
