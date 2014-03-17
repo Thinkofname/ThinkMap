@@ -3,8 +3,7 @@
 -dce full
 -D js-flatten
 -lib format
--cmd "cp assets/gl-matrix-min.js build/"
--cmd "cp assets/index.html build/"
+-cmd "cp assets/raw/* build/"
 -main mapviewer.Main
 --next
 -js build/work.js
