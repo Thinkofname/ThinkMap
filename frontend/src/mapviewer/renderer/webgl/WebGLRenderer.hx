@@ -325,17 +325,20 @@ class WebGLRenderer implements Renderer {
 		frames++;
 		if (lastCheck + 1000 < Utils.now()) {
 			fps = 'FPS: $frames';
+			fpsInt = frames;
 			frames = 0;
 			lastCheck = Utils.now();
 		}
 		var size = ui.stringLength(fps);
-		ui.drawText(fps, Colour.WHITE, canvas.width - 5 - size, 5);
+		var offset = ui.drawText("FPS: ", Colour.WHITE, canvas.width - 5 - size, 5);
+		ui.drawText('$fpsInt', fpsInt >= 55 ? Colour.GREEN : (fpsInt >= 30 ? Colour.YELLOW : Colour.RED), canvas.width - 5 - size + offset, 5);
 	}
 	
 	// FPS things
 	private var frames : Int = 0;
 	private var lastCheck : Int = Utils.now();
 	private var fps : String = "FPS: 0";
+	private var fpsInt : Int = 0;
 	
     public function resize(width : Int, height : Int) : Void {
 		pMatrix.identity();
