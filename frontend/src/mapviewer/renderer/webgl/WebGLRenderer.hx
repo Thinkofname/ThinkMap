@@ -31,6 +31,8 @@ import mapviewer.Main;
 import mapviewer.renderer.Renderer;
 import mapviewer.renderer.webgl.glmatrix.Mat4;
 import mapviewer.renderer.webgl.WebGLRenderer.Camera;
+import mapviewer.ui.Colour;
+import mapviewer.ui.UserInterface;
 
 typedef GL = RenderingContext;
 
@@ -39,6 +41,7 @@ class WebGLRenderer implements Renderer {
 	// Rendering
 	public var gl : RenderingContext;
 	public var canvas : CanvasElement;
+	public var ui : UserInterface;
 
 	// Shaders
 	public var mainProgram : Program;
@@ -78,6 +81,7 @@ class WebGLRenderer implements Renderer {
 	
 	public function new(canvas : CanvasElement) {
 		this.canvas = canvas;
+		ui = new UserInterface();
 		pMatrix = Mat4.create();
 		uMatrix = Mat4.create();
 		temp = Mat4.create();
@@ -307,11 +311,21 @@ class WebGLRenderer implements Renderer {
 		if (cy != ny) {
 			cy = ny;
 		}
+		
+		ui.clear();
+		ui.drawText("Position:", Colour.WHITE, 5, 5);
+		var offset = ui.drawText("X: ", Colour.WHITE, 5, 25);
+		offset += ui.drawText('${Std.int(camera.x)}', camera.x >= 0 ? Colour.GREEN : Colour.RED, 5 + offset, 25);
+		offset += ui.drawText(", Y: ", Colour.WHITE, 5 + offset, 25);
+		offset += ui.drawText('${Std.int(camera.y)}', camera.y >= 0 ? Colour.GREEN : Colour.RED, 5 + offset, 25);
+		offset += ui.drawText(", Z: ", Colour.WHITE, 5 + offset, 25);
+		offset += ui.drawText('${Std.int(camera.z)}', camera.z >= 0 ? Colour.GREEN : Colour.RED, 5 + offset, 25);
 	}
 	
     public function resize(width : Int, height : Int) : Void {
 		pMatrix.identity();
 		pMatrix.perspective(Math.PI / 180 * 80, canvas.width / canvas.height, 0.1, 500);
+		ui.resize();
 	}
 	
     public function connected() : Void {
