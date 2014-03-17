@@ -79,12 +79,12 @@ class Model {
 		var sky : Float = world.getSky(Std.int(x), Std.int(y), Std.int(z));
 		var count : Float = 0;
 		
-		var isX : Int = face.offsetX != 0 ? (face.offsetX == 1 ? 2 : 0 ): 2;
-		var isY : Int = face.offsetY != 0 ? (face.offsetY == 1 ? 2 : 0 ) : 2;
-		var isZ : Int = face.offsetZ != 0 ? (face.offsetZ == 1 ? 2 : 0 ) : 2;
-		var nisX : Int = face.offsetX != 0 ? (face.offsetX == 1 ? 1 : -1 ) : -1;
-		var nisY : Int = face.offsetY != 0 ? (face.offsetY == 1 ? 1 : -1 ) : -1;
-		var nisZ : Int = face.offsetZ != 0 ? (face.offsetZ == 1 ? 1 : -1 ) : -1;
+		var isX : Int = face.offsetX != 0 ? (face.offsetX == 1 ? 1 : 0 ): 2;
+		var isY : Int = face.offsetY != 0 ? (face.offsetY == 1 ? 1 : 0 ) : 2;
+		var isZ : Int = face.offsetZ != 0 ? (face.offsetZ == 1 ? 1 : 0 ) : 2;
+		var nisX : Int = face.offsetX != 0 ? (face.offsetX == 1 ? 0 : -1 ) : -1;
+		var nisY : Int = face.offsetY != 0 ? (face.offsetY == 1 ? 0 : -1 ) : -1;
+		var nisZ : Int = face.offsetZ != 0 ? (face.offsetZ == 1 ? 0 : -1 ) : -1;
 		
 		for (ox in nisX ... isX) {
 			for (oy in nisY ... isY) {			
@@ -100,7 +100,7 @@ class Model {
 					if (block.renderable) {
 						var model = block.getModel();
 						var maxDist = 8 * 8;
-						var mscale = 1 - Math.max(1, model.faces.length / 16);
+						var mscale = 1 - Math.max(1, model.faces.length / 32);
 						for (mface in model.faces) {
 							if (mface.face == face) continue;
 							var fscale = ((mface.width * mface.height) / (16 * 16)) * mscale;
