@@ -52,7 +52,11 @@
         <resources>
             <resource>
                 <directory>./src/main/resources</directory>
+                <filtering>true</filtering>
                 <targetPath>./</targetPath>
+                <includes>
+                    <include>plugin.yml</include>
+                </includes>
             </resource>
             <resource>
                 <directory>../frontend/build/</directory>
