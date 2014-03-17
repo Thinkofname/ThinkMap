@@ -111,15 +111,13 @@ class BlockStairs extends Block {
 			// Create the model
 			model = new Model();
 			
-			//TODO: Culling on sides
-			
 			// Slab part
 			model.faces.push(ModelFace.create(Face.TOP, null, 0, 0, 16, 16, 8));
-			model.faces.push(ModelFace.create(Face.BOTTOM, null, 0, 0, 16, 16, 0));
-			model.faces.push(ModelFace.create(Face.LEFT, null, 0, 0, 16, 8, 16));
-			model.faces.push(ModelFace.create(Face.RIGHT, null, 0, 0, 16, 8, 0));
-			model.faces.push(ModelFace.create(Face.FRONT, null, 0, 0, 16, 8, 16));
-			model.faces.push(ModelFace.create(Face.BACK, null, 0, 0, 16, 8, 0));
+			model.faces.push(ModelFace.create(Face.BOTTOM, null, 0, 0, 16, 16, 0, true));
+			model.faces.push(ModelFace.create(Face.LEFT, null, 0, 0, 16, 8, 16, true));
+			model.faces.push(ModelFace.create(Face.RIGHT, null, 0, 0, 16, 8, 0, true));
+			model.faces.push(ModelFace.create(Face.FRONT, null, 0, 0, 16, 8, 16, true));
+			model.faces.push(ModelFace.create(Face.BACK, null, 0, 0, 16, 8, 0, true));
 				
 			// Top part
 			

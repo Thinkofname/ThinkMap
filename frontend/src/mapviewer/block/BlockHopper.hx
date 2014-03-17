@@ -28,7 +28,7 @@ class BlockHopper {
 
 		_model = new Model();
 
-		_model.faces.push(ModelFace.create(Face.TOP, "hopper_top", 0, 0, 16, 16, 16));
+		_model.faces.push(ModelFace.create(Face.TOP, "hopper_top", 0, 0, 16, 16, 16, true));
 		_model.faces.push(ModelFace.create(Face.TOP, "hopper_inside", 0, 0, 16, 16, 10));
 
 		// Inside

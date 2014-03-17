@@ -46,7 +46,7 @@ class BlockChest {
 			.textureSize(0, 0, 14, 10));
 		modelBottom.faces.push(ModelFace.create(Face.TOP, "chest_bottom_top", 1, 1, 14, 14, 10)
 			.textureSize(0, 0, 14, 14));
-		modelBottom.faces.push(ModelFace.create(Face.BOTTOM, "chest_top", 1, 1, 14, 14, 0)
+		modelBottom.faces.push(ModelFace.create(Face.BOTTOM, "chest_top", 1, 1, 14, 14, 0, true)
 			.textureSize(0, 0, 14, 14));
 
 		var modelLid = new Model();
@@ -66,7 +66,7 @@ class BlockChest {
 			.textureSize(0, 0, 14, 14));
 
 		//Lock
-		modelLid.faces.push(ModelFace.create(Face.FRONT, "chest_lock", 7, -2, 2, 4, 16)
+		modelLid.faces.push(ModelFace.create(Face.FRONT, "chest_lock", 7, -2, 2, 4, 16, true)
 			.textureSize(1, 1, 2, 4));
 		modelLid.faces.push(ModelFace.create(Face.LEFT, "chest_lock", 15, -2, 1, 4, 9)
 			.textureSize(0, 1, 1, 4));

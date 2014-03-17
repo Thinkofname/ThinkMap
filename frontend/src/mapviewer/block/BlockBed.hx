@@ -31,11 +31,11 @@ class BlockBed {
 		var _modelBottom = new Model();
 		
 		_modelBottom.faces.push(ModelFace.create(Face.TOP, "bed_feet_top", 0, 0, 16, 16, 9));		
-		_modelBottom.faces.push(ModelFace.create(Face.RIGHT, "bed_feet_end", 0, 0, 16, 9, 0)
+		_modelBottom.faces.push(ModelFace.create(Face.RIGHT, "bed_feet_end", 0, 0, 16, 9, 0, true)
 			.textureSize(0, 7, 16, 9));			
-		_modelBottom.faces.push(ModelFace.create(Face.FRONT, "bed_feet_side", 0, 0, 16, 9, 16)
+		_modelBottom.faces.push(ModelFace.create(Face.FRONT, "bed_feet_side", 0, 0, 16, 9, 16, true)
 			.textureSize(0, 7, 16, 9));
-		var face = ModelFace.create(Face.BACK, "bed_feet_side", 0, 0, 16, 9, 0)
+		var face = ModelFace.create(Face.BACK, "bed_feet_side", 0, 0, 16, 9, 0, true)
 			.textureSize(0, 7, 16, 9);
 		for (v in face.vertices) {
 			v.textureX = 1 - v.textureX;
@@ -53,11 +53,11 @@ class BlockBed {
 		var _modelTop = new Model();
 		
 		_modelTop.faces.push(ModelFace.create(Face.TOP, "bed_head_top", 0, 0, 16, 16, 9));		
-		_modelTop.faces.push(ModelFace.create(Face.LEFT, "bed_head_end", 0, 0, 16, 9, 16)
+		_modelTop.faces.push(ModelFace.create(Face.LEFT, "bed_head_end", 0, 0, 16, 9, 16, true)
 			.textureSize(0, 7, 16, 9));			
-		_modelTop.faces.push(ModelFace.create(Face.FRONT, "bed_head_side", 0, 0, 16, 9, 16)
+		_modelTop.faces.push(ModelFace.create(Face.FRONT, "bed_head_side", 0, 0, 16, 9, 16, true)
 			.textureSize(0, 7, 16, 9));
-		var face = ModelFace.create(Face.BACK, "bed_head_side", 0, 0, 16, 9, 0)
+		var face = ModelFace.create(Face.BACK, "bed_head_side", 0, 0, 16, 9, 0, true)
 			.textureSize(0, 7, 16, 9);
 		for (v in face.vertices) {
 			v.textureX = 1 - v.textureX;

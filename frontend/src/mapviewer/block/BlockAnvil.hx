@@ -27,7 +27,7 @@ class BlockAnvil {
 		if (_model != null) return _model;
 
 		_model = new Model();
-		_model.faces.push(ModelFace.create(Face.TOP, "anvil_top_damaged_0", 3, 0, 10, 16, 16));
+		_model.faces.push(ModelFace.create(Face.TOP, "anvil_top_damaged_0", 3, 0, 10, 16, 16,true));
 		_model.faces.push(ModelFace.create(Face.TOP, "anvil_base", 4, 3, 8, 10, 5));
 		_model.faces.push(ModelFace.create(Face.TOP, "anvil_base", 2, 2, 12, 12, 4));
 		
@@ -51,7 +51,7 @@ class BlockAnvil {
 		_model.faces.push(ModelFace.create(Face.BACK, "anvil_base", 4, 4, 8, 1, 3));
 		_model.faces.push(ModelFace.create(Face.BACK, "anvil_base", 2, 0, 12, 4, 2));
 			
-		_model.faces.push(ModelFace.create(Face.BOTTOM, "anvil_base", 2, 2, 12, 12, 0));
+		_model.faces.push(ModelFace.create(Face.BOTTOM, "anvil_base", 2, 2, 12, 12, 0, true));
 		_model.faces.push(ModelFace.create(Face.BOTTOM, "anvil_base", 3, 0, 10, 16, 10));
 		return _model;
 	}
