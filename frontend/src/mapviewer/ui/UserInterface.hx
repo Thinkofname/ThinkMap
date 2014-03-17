@@ -51,6 +51,13 @@ class UserInterface  {
 		return Std.int(ctx.measureText(txt).width);
 	}
 	
+	public function stringLength(txt : String) : Int {
+		ctx.font = "16px Minecraft";
+		ctx.textAlign = "left";
+		ctx.textBaseline = "top";
+		return Std.int(ctx.measureText(txt).width);
+	}
+	
 	public function resize() {
 		canvas.width = Browser.window.innerWidth;
 		canvas.height = Browser.window.innerHeight;

@@ -320,7 +320,22 @@ class WebGLRenderer implements Renderer {
 		offset += ui.drawText('${Std.int(camera.y)}', camera.y >= 0 ? Colour.GREEN : Colour.RED, 5 + offset, 25);
 		offset += ui.drawText(", Z: ", Colour.WHITE, 5 + offset, 25);
 		offset += ui.drawText('${Std.int(camera.z)}', camera.z >= 0 ? Colour.GREEN : Colour.RED, 5 + offset, 25);
+		
+		// Fps calculations
+		frames++;
+		if (lastCheck + 1000 < Utils.now()) {
+			fps = 'FPS: $frames';
+			frames = 0;
+			lastCheck = Utils.now();
+		}
+		var size = ui.stringLength(fps);
+		ui.drawText(fps, Colour.WHITE, canvas.width - 5 - size, 5);
 	}
+	
+	// FPS things
+	private var frames : Int = 0;
+	private var lastCheck : Int = Utils.now();
+	private var fps : String = "FPS: 0";
 	
     public function resize(width : Int, height : Int) : Void {
 		pMatrix.identity();
