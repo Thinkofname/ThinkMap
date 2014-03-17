@@ -19,6 +19,7 @@ import mapviewer.world.Chunk;
 import mapviewer.block.Face;
 import mapviewer.model.Model;
 import mapviewer.model.ModelFace;
+import mapviewer.world.World;
 
 using Lambda;
 
@@ -28,7 +29,7 @@ class BlockCross extends Block {
 		super();
 	}
 	
-	override public function getModel():Model {
+	override public function getModel(x : Int, y : Int, z : Int, world : World) : Model {
 		if (model == null) {			
 			var r = 255;
 			var g = 255;
@@ -66,8 +67,7 @@ class BlockCross extends Block {
 				if (e.x == 0) e.z = 1;
 			};
 			model.faces.push(face);
-			cachedShouldRenderAgainst = shouldRenderAgainst;
 		}
-		return model;
+		return super.getModel(x, y, z, world);
 	}	
 }

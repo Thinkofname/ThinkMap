@@ -21,6 +21,7 @@ import mapviewer.renderer.LightInfo;
 import mapviewer.renderer.webgl.BlockBuilder;
 import mapviewer.world.Chunk;
 import mapviewer.block.Face;
+import mapviewer.world.World;
 
 class BlockStairs extends Block {
 	
@@ -56,8 +57,8 @@ class BlockStairs extends Block {
 		this.dir = dir;
 	}
 	
-	function isMe(chunk : Chunk, x : Int, y : Int, z : Int) : Bool {
-		var block = chunk.world.getBlock(x, y, z);
+	function isMe(world : World, x : Int, y : Int, z : Int) : Bool {
+		var block = world.getBlock(x, y, z);
 		if (Std.is(block, BlockStairs)) {
 			var stair : BlockStairs = cast block;
 			return stair.dir == dir && stair.isTop == isTop;
@@ -65,7 +66,7 @@ class BlockStairs extends Block {
 		return false;
 	}
 	
-	override public function render(builder : BlockBuilder, x : Int, y : Int, z : Int, chunk : Chunk) {
+	override public function getModel(x : Int, y : Int, z : Int, world : World) : Model {
 		var mmap = models[texture];
 		if (mmap == null) {
 			mmap = new Map();
@@ -82,31 +83,31 @@ class BlockStairs extends Block {
 		var d = dirs[dir];
 		
 		var set = false;
-		var other : Block = chunk.world.getBlock((chunk.x << 4) + x + d[0], y, (chunk.z << 4) + z + d[1]);
+		var other : Block = world.getBlock(x + d[0], y, z + d[1]);
 		if (Std.is(other, BlockStairs)) {
 			var otherStair : BlockStairs = cast other;
 			var idx = allowedFlags[dir].indexOf(otherStair.dir);
 			var p = preventers[otherStair.dir];
-			if (otherStair.isTop == isTop && idx != -1 && !isMe(chunk, (chunk.x << 4) + x + p[0], y, (chunk.z << 4) + z + p[1])) {
+			if (otherStair.isTop == isTop && idx != -1 && !isMe(world, x + p[0], y, z + p[1])) {
 				id |= 8;
 				id |= idx << 5;
 				set = true;
 			}
 		} 
 		if (!set) {			
-			other = chunk.world.getBlock((chunk.x << 4) + x - d[0], y, (chunk.z << 4) + z - d[1]);
+			other = world.getBlock(x - d[0], y, z - d[1]);
 			if (Std.is(other, BlockStairs)) {
 				var otherStair : BlockStairs = cast other;
 				var idx = allowedFlags[dir].indexOf(otherStair.dir);
 				var p = preventers[otherStair.dir];
-				if (otherStair.isTop == isTop && idx != -1 && !isMe(chunk, (chunk.x << 4) + x - p[0], y, (chunk.z << 4) + z - p[1])) {
+				if (otherStair.isTop == isTop && idx != -1 && !isMe(world, x - p[0], y, z - p[1])) {
 					id |= 16;
 					id |= idx << 5;
 				}
 			} 
 		}
 		
-		var model = mmap[id];
+		model = mmap[id];
 		if (model == null) {
 			// Create the model
 			model = new Model();
@@ -177,6 +178,6 @@ class BlockStairs extends Block {
 			// Store
 			mmap[id] = model;
 		}
-		model.render(builder, x, y, z, chunk);
+		return super.getModel(x, y, z, world);
 	}
 }

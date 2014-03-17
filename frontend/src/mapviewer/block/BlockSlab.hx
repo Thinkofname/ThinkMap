@@ -21,6 +21,7 @@ import mapviewer.renderer.webgl.BlockBuilder;
 import mapviewer.block.Face;
 import mapviewer.renderer.TextureInfo;
 import mapviewer.collision.Box;
+import mapviewer.world.World;
 
 using mapviewer.renderer.webgl.BuilderUtils;
 
@@ -50,7 +51,7 @@ class BlockSlab extends Block {
 		return !block.solid;
 	}
 	
-	override public function getModel() : Model {
+	override public function getModel(x : Int, y : Int, z : Int, world : World) : Model {
 		if (model == null) {
 			model = new Model();
 			var offset : Float = top ? 8 : 0;	
@@ -71,9 +72,8 @@ class BlockSlab extends Block {
 					.colour(r, g, b));
 				i++;
 			}
-			cachedShouldRenderAgainst = shouldRenderAgainst;
 		}
-		return model;
+		return super.getModel(x, y, z, world);
 	}
 	
 	

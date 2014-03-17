@@ -25,6 +25,7 @@ import mapviewer.renderer.webgl.BlockBuilder;
 import mapviewer.utils.Chainable;
 import mapviewer.block.BlockRegistry.BlockRegistrationEntry;
 import mapviewer.world.Chunk;
+import mapviewer.world.World;
 
 using mapviewer.renderer.webgl.BuilderUtils;
 
@@ -77,7 +78,7 @@ class Block implements Chainable {
 	private static var defModel : Model;
 	private var cachedShouldRenderAgainst : Block -> Bool;  // For performance
 	
-	public function getModel() : Model {
+	public function getModel(x : Int, y : Int, z : Int, world : World) : Model {
 		if (model == null) {
 			model = new Model();
 			var i = 0;
@@ -90,8 +91,9 @@ class Block implements Chainable {
 					.colour(r, g, b));
 				i++;
 			}
-			cachedShouldRenderAgainst = shouldRenderAgainst;
 		}
+		if (cachedShouldRenderAgainst == null) 
+			cachedShouldRenderAgainst = shouldRenderAgainst;
 		return model;
 	}
 	
@@ -101,7 +103,7 @@ class Block implements Chainable {
      */
 	public function render(builder : BlockBuilder, x : Int, y : Int, z : Int, chunk : Chunk) {
 		if (model == null) {
-			model = getModel();
+			model = getModel(x, y, z, chunk.world);
 		}		
 		model.render(builder, x, y, z, chunk, cachedShouldRenderAgainst);
 	}

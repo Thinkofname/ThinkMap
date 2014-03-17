@@ -98,7 +98,7 @@ class Model {
 					light += world.getLight(bx, by, bz);
 					sky += world.getSky(bx, by, bz);
 					if (block.renderable) {
-						var model = block.getModel();
+						var model = block.getModel(bx, by, bz, world);
 						var maxDist = 8 * 8;
 						var mscale = 1 - Math.max(1, model.faces.length / 32);
 						for (mface in model.faces) {
