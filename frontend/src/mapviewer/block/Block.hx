@@ -102,9 +102,7 @@ class Block implements Chainable {
      * chunk
      */
 	public function render(builder : BlockBuilder, x : Int, y : Int, z : Int, chunk : Chunk) {
-		if (model == null) {
-			model = getModel(x, y, z, chunk.world);
-		}		
+		var model = getModel((chunk.x << 4) + x, y, (chunk.z << 4) + z, chunk.world);		
 		model.render(builder, x, y, z, chunk, cachedShouldRenderAgainst);
 	}
 	

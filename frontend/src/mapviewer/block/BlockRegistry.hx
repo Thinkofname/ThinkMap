@@ -956,7 +956,9 @@ class BlockRegistry {
 					.build();
 			}
 		}
-		//TODO: (#51) Fire
+		registerBlock("fire", new BlockFire().chainBlock().solid(false).collidable(false).ret())
+			.legacyId(51)
+			.build();
 
 		registerBlock('mob_spawner', new Block().chainBlock().texture('mob_spawner')
 			.solid(false)
