@@ -475,6 +475,8 @@ class WebGLRenderer implements Renderer {
 	}
 	
 	private static var chunkVertexShaderSource : String = "
+precision mediump float;
+
 attribute vec3 position;
 attribute vec4 colour;
 attribute vec2 texturePos;
@@ -484,6 +486,7 @@ attribute vec2 lighting;
 uniform mat4 pMatrix;
 uniform mat4 uMatrix;
 uniform vec2 offset;
+uniform float time;
 
 varying vec4 vColour;
 varying vec2 vTextureId;

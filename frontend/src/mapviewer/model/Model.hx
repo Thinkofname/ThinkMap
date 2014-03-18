@@ -97,29 +97,6 @@ class Model {
 					count++;
 					light += world.getLight(bx, by, bz);
 					sky += world.getSky(bx, by, bz);
-					if (block.renderable) {
-						var model = block.getModel(bx, by, bz, world);
-						var maxDist = 8 * 8;
-						var mscale = 1 - Math.max(1, model.faces.length / 32);
-						for (mface in model.faces) {
-							if (mface.face == face) continue;
-							var fscale = ((mface.width * mface.height) / (16 * 16)) * mscale;
-							for (vert in mface.vertices) {
-								var vx = bx + vert.x;
-								var vy = by + vert.y;
-								var vz = bz + vert.z;
-								var dx = vx - x;
-								var dy = vy - y;
-								var dz = vz - z;
-								var dist = dx * dx + dy * dy + dz * dz;
-								if (dist > maxDist) continue;
-								var scale = (1 - (dist / maxDist)) * fscale;
-								count += scale;
-								light -= 7 * scale;
-								sky -= 7 * scale;
-							}
-						}
-					}
 				}
 			}			
 		}
