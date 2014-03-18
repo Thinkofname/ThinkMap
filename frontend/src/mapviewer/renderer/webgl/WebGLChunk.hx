@@ -80,17 +80,24 @@ class WebGLChunk extends Chunk {
 	public function createBuffer(i : Int, data : Uint8Array, dataTrans : Uint8Array) {
 		var renderer : WebGLRenderer = cast Main.renderer;
 		var gl : RenderingContext = renderer.gl;
-		if (normalBuffers[i] == null) {
-			normalBuffers[i] = gl.createBuffer();
+		if (data.length > 0) {
+			if (normalBuffers[i] == null) {
+				normalBuffers[i] = gl.createBuffer();
+			}
+			gl.bindBuffer(RenderingContext.ARRAY_BUFFER, normalBuffers[i]);
+			gl.bufferData(RenderingContext.ARRAY_BUFFER, data, RenderingContext.STATIC_DRAW);
+		} else {
+			normalBuffers[i] = null;
 		}
-		gl.bindBuffer(RenderingContext.ARRAY_BUFFER, normalBuffers[i]);
-		gl.bufferData(RenderingContext.ARRAY_BUFFER, data, RenderingContext.STATIC_DRAW);
-
-		if (transBuffers[i] == null) {
-			transBuffers[i] = gl.createBuffer();
+		if (dataTrans.length > 0) {
+			if (transBuffers[i] == null) {
+				transBuffers[i] = gl.createBuffer();
+			}
+			gl.bindBuffer(RenderingContext.ARRAY_BUFFER, transBuffers[i]);
+			gl.bufferData(RenderingContext.ARRAY_BUFFER, dataTrans, RenderingContext.STATIC_DRAW);
+		} else {
+			transBuffers[i] = null;
 		}
-		gl.bindBuffer(RenderingContext.ARRAY_BUFFER, transBuffers[i]);
-		gl.bufferData(RenderingContext.ARRAY_BUFFER, dataTrans, RenderingContext.STATIC_DRAW);
 
 		normalTriangleCount[i] = Std.int(data.length / 20);
 		transTriangleCount[i] = Std.int(dataTrans.length / 20);
@@ -99,10 +106,10 @@ class WebGLChunk extends Chunk {
 	override public function unload(renderer : Renderer) {
 		var web : WebGLRenderer = cast renderer;
 		for (buffer in normalBuffers) {
-			web.gl.deleteBuffer(buffer);
+			if (buffer != null) web.gl.deleteBuffer(buffer);
 		}
 		for (buffer in transBuffers) {
-			web.gl.deleteBuffer(buffer);
+			if (buffer != null) web.gl.deleteBuffer(buffer);
 		}
 	}
 }

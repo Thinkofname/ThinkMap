@@ -527,8 +527,112 @@ class BlockRegistry {
 			}
 		}
 		
-		//TODO: (#27) Golden rail
-		//TODO: (#28) Detector rail
+		// Rails
+		var temp = [
+			"rail_normal" => 66,
+			"rail_golden" => 27,
+			"rail_detector" => 28,
+			"rail_activator" => 157
+		];
+		for (k in temp.keys()) {
+			var v = temp[k]; 
+			var it = v == 66 ? [0] : [0, 8];
+			for (alt in it) {
+				var model = new Model();
+				model.faces.push(ModelFace.create(Face.TOP, k + (alt == 8 ? "_powered" : ""), 0, 0, 16, 16, 1 / 32));
+				registerBlock('${k}_${alt}', new Block().chainBlock()
+					.solid(false).collidable(false)
+					.model(model).ret())
+					.legacyId(v)
+					.dataValue(0 | alt)
+					.build();
+				var model = new Model();
+				var face = ModelFace.create(Face.TOP, k + (alt == 8 ? "_powered" : ""), 0, 0, 16, 16, 1 / 32);
+				for (vert in face.vertices) {
+					var t = vert.textureX;
+					vert.textureX = vert.textureY;
+					vert.textureY = t;
+				}
+				model.faces.push(face);
+				registerBlock('${k}_${alt}_rotated', new Block().chainBlock()
+					.solid(false).collidable(false)
+					.model(model).ret())
+					.legacyId(v)
+					.dataValue(1 | alt)
+					.build();
+				// Slopes
+				
+				var model = new Model();
+				var face = ModelFace.create(Face.TOP, k + (alt == 8 ? "_powered" : ""), 0, 0, 16, 16, 1 / 32);
+				for (vert in face.vertices) {
+					var t = vert.textureX;
+					vert.textureX = vert.textureY;
+					vert.textureY = t;
+					if (vert.x == 1) vert.y = 1;
+				}
+				model.faces.push(face);
+				registerBlock('${k}_${alt}_sloped_east', new Block().chainBlock()
+					.solid(false).collidable(false)
+					.model(model).ret())
+					.legacyId(v)
+					.dataValue(2 | alt)
+					.build();
+				
+				var model = new Model();
+				var face = ModelFace.create(Face.TOP, k + (alt == 8 ? "_powered" : ""), 0, 0, 16, 16, 1 / 32);
+				for (vert in face.vertices) {
+					var t = vert.textureX;
+					vert.textureX = vert.textureY;
+					vert.textureY = t;
+					if (vert.x == 0) vert.y = 1;
+				}
+				model.faces.push(face);
+				registerBlock('${k}_${alt}_sloped_west', new Block().chainBlock()
+					.solid(false).collidable(false)
+					.model(model).ret())
+					.legacyId(v)
+					.dataValue(3 | alt)
+					.build();
+				
+				var model = new Model();
+				var face = ModelFace.create(Face.TOP, k + (alt == 8 ? "_powered" : ""), 0, 0, 16, 16, 1 / 32);
+				for (vert in face.vertices) {
+					if (vert.z == 0) vert.y = 1;
+				}
+				model.faces.push(face);
+				registerBlock('${k}_${alt}_sloped_north', new Block().chainBlock()
+					.solid(false).collidable(false)
+					.model(model).ret())
+					.legacyId(v)
+					.dataValue(4 | alt)
+					.build();
+				
+				var model = new Model();
+				var face = ModelFace.create(Face.TOP, k + (alt == 8 ? "_powered" : ""), 0, 0, 16, 16, 1 / 32);
+				for (vert in face.vertices) {
+					if (vert.z == 1) vert.y = 1;
+				}
+				model.faces.push(face);
+				registerBlock('${k}_${alt}_sloped_south', new Block().chainBlock()
+					.solid(false).collidable(false)
+					.model(model).ret())
+					.legacyId(v)
+					.dataValue(5 | alt)
+					.build();
+			}
+		}
+		
+		for (i in 0 ... 4) {			
+			var model = new Model();
+			model.faces.push(ModelFace.create(Face.TOP, "rail_normal_turned", 0, 0, 16, 16, 1 / 32));
+			registerBlock('rail_normal_turned_$i', new Block().chainBlock()
+				.solid(false).collidable(false)
+				.model(model.rotateY(90 * i)).ret())
+				.legacyId(66)
+				.dataValue(6 + i)
+				.build();
+		}
+		
 		//TODO: (#29) Sticky piston
 
 		registerBlock('web', new BlockCross().chainBlock().texture('web')
@@ -1008,8 +1112,6 @@ class BlockRegistry {
 		}
 		
 		//TODO: (#64) Wooden door
-
-		//TODO: (#66) Rail
 		
 		for (i in 0 ... 8) {
 			registerBlock('stone_stairs_$i', new BlockStairs(i & 0x4 == 0x4, i & 0x3).chainBlock()
@@ -1334,7 +1436,6 @@ class BlockRegistry {
 			.dataValue(4)
 			.build();
 		
-		//TODO: (#157) Activator rail
 
 		//TODO: (#160) Stained glass pane
 		//TODO: (#161) Leaves2
