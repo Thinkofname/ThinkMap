@@ -173,13 +173,13 @@ class WebGLRenderer implements Renderer {
 	
 	inline public static var viewDistance : Int = 4;
 	
-	private var lastFrame : Int;
+	private var lastFrame : Int = 0;
 	private var temp : Mat4;
 	private var temp2 : Mat4;
 	private var currentFrame : Float = 0;
 	
     public function draw() : Void {
-		var delta : Float = Math.min((Utils.now() - lastFrame) / (1000 / 60), 2.0);
+		var delta : Float = Math.min((Utils.now() - lastFrame) / (1000 / 60), 3.0);
 		lastFrame = Utils.now();
 		
 		gl.viewport(0, 0, canvas.width, canvas.height);
@@ -199,7 +199,7 @@ class WebGLRenderer implements Renderer {
 		mainProgram.setBlockTexture(0);
 		
 		mainProgram.setFrame(Std.int(currentFrame));
-		currentFrame += (1 / 3);
+		currentFrame += (1 / 3) * delta;
 		if (currentFrame > 0xFFFFFFF) currentFrame = 0;
 		mainProgram.setTime(Main.world.currentTime);
 		
