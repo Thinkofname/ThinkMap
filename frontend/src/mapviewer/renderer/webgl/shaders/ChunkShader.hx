@@ -111,8 +111,8 @@ void main(void) {
     vColour = colour;
     vTextureId = textureId;
     vTexturePos = texturePos / 256.0;
-	vTexturePos.x = clamp(vTexturePos.x, 0.0001, 0.9999);
-	vTexturePos.y = clamp(vTexturePos.y, 0.0001, 0.9999);
+	vTexturePos.x = vTexturePos.x;
+	vTexturePos.y = vTexturePos.y;
     vLighting = lighting;
 }	
 	";
@@ -134,7 +134,7 @@ void main(void) {
     if (floor((vTextureId.y - vTextureId.x) + 0.5) > 0.8) {
         id = id + floor(mod(frame, vTextureId.y - vTextureId.x) + 0.5);
     }
-    vec2 pos = fract(vTexturePos) * 0.03125;
+    vec2 pos = clamp(fract(vTexturePos), 0.0001, 0.9999) * 0.03125;
     pos.x += floor(mod(id, 32.0)) * 0.03125;
     pos.y += floor(id / 32.0) * 0.03125;
     gl_FragColor = texture2D(texture, pos) * vColour;
