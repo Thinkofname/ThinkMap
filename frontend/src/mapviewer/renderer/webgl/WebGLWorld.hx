@@ -130,7 +130,6 @@ class WebGLWorld extends World {
 		gl.drawArrays(GL.TRIANGLES, 0, 6);
 		
 		alphaShader.disable();
-		program.use();
 		gl.disable(GL.BLEND);
 		gl.depthMask(true);
 	}
@@ -181,8 +180,10 @@ class WebGLWorld extends World {
 		gl.bindTexture(GL.TEXTURE_2D, normalTexture);
 		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
 		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
+		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
+		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
 		
-		gl.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, sizeW, sizeH, 0, GL.RGBA, GL.UNSIGNED_BYTE, null);
+		gl.texImage2D(GL.TEXTURE_2D, 0, GL.RGB, sizeW, sizeH, 0, GL.RGB, GL.UNSIGNED_BYTE, null);
 		
 		gl.framebufferTexture2D(GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, normalTexture, 0);
 		gl.framebufferRenderbuffer(GL.FRAMEBUFFER, GL.DEPTH_ATTACHMENT, GL.RENDERBUFFER, renderBuffer);
@@ -196,6 +197,8 @@ class WebGLWorld extends World {
 		gl.bindTexture(GL.TEXTURE_2D, colourTexture);
 		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
 		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
+		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
+		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
 		
 		gl.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, sizeW, sizeH, 0, GL.RGBA, GL.UNSIGNED_BYTE, null);
 		
@@ -211,6 +214,8 @@ class WebGLWorld extends World {
 		gl.bindTexture(GL.TEXTURE_2D, weightTexture);
 		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
 		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
+		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
+		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
 		
 		gl.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, sizeW, sizeH, 0, GL.RGBA, GL.UNSIGNED_BYTE, null);
 		

@@ -72,11 +72,21 @@ class TextureLoaderMacro {
 			
 			if (header.width != 16 || header.height != 16) {
 				var meta = Json.parse(File.getContent("assets/block_images/" + file + ".mcmeta"));
-				var frames : Array<Int> = meta.animation.frames;
-				if (frames == null) {
-					frames = new Array();
+				var frames : Array<Int> = new Array();
+				var frs : Array<Dynamic> = meta.animation.frames;
+				if (frs == null) {
 					for (i in 0 ... Std.int(header.height / header.width)) {
 						frames.push(i);
+					}
+				} else {
+					for (f in frs) { 
+						if (Std.is(f, Int)) {
+							frames.push(f);
+						} else {
+							for (i in 0 ... f.time) {
+								frames.push(f.index);
+							}
+						}
 					}
 				}
 				var frameTime : Int = meta.animation.frametime != null ?
