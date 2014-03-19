@@ -21,8 +21,11 @@ import js.html.webgl.Renderbuffer;
 import js.html.webgl.RenderingContext;
 import js.html.webgl.Texture;
 import mapviewer.js.Utils;
+import mapviewer.Main;
 import mapviewer.renderer.webgl.shaders.AlphaShader;
 import mapviewer.renderer.webgl.shaders.ChunkShader;
+import mapviewer.renderer.webgl.shaders.ChunkShaderColour;
+import mapviewer.renderer.webgl.shaders.ChunkShaderWeight;
 import mapviewer.world.Chunk;
 import mapviewer.world.World;
 import mapviewer.renderer.webgl.WebGLRenderer.GL;
@@ -32,6 +35,8 @@ class WebGLWorld extends World {
 	private var chunkList : Array<WebGLChunk>;
 	
 	private var alphaShader : AlphaShader;
+	private var colourShader : ChunkShaderColour;
+	private var weightShader : ChunkShaderWeight;
 	
 	private var normalFrameBuffer : Framebuffer;
 	private var normalTexture : Texture;
@@ -62,8 +67,7 @@ class WebGLWorld extends World {
 		gl.disable(GL.BLEND);
 		gl.viewport(0, 0, screenX, screenY);		
 		gl.depthMask(true);
-		gl.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);	
-		program.setDisAlpha(1);
+		gl.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 		for (chunk in chunkList) {
 			chunk.render(renderer, program, 0);
 		}
@@ -77,9 +81,14 @@ class WebGLWorld extends World {
 		gl.clear(GL.COLOR_BUFFER_BIT);
 		gl.enable(GL.BLEND);
 		gl.blendFunc(GL.ONE, GL.ONE);
-		program.setDisAlpha(0);
+		program.disable();
+		colourShader.use();
+		colourShader.setFrame(Std.int(renderer.currentFrame));
+		colourShader.setTime(Main.world.currentTime);
+		colourShader.setPerspectiveMatrix(renderer.pMatrix);
+		colourShader.setUMatrix(renderer.temp2);
 		for (chunk in chunkList) {
-			chunk.render(renderer, program, 1);
+			chunk.render(renderer, colourShader, 1);
 		}
 		
 		gl.bindFramebuffer(GL.FRAMEBUFFER, weightFrameBuffer);
@@ -90,9 +99,14 @@ class WebGLWorld extends World {
 		gl.depthMask(false);		
 		gl.clear(GL.COLOR_BUFFER_BIT);
 		gl.blendFunc(GL.ZERO, GL.ONE_MINUS_SRC_ALPHA);
-		program.setDisAlpha(2);
+		colourShader.disable();
+		weightShader.use();
+		weightShader.setFrame(Std.int(renderer.currentFrame));
+		weightShader.setTime(Main.world.currentTime);
+		weightShader.setPerspectiveMatrix(renderer.pMatrix);
+		weightShader.setUMatrix(renderer.temp2);
 		for (chunk in chunkList) {
-			chunk.render(renderer, program, 1);
+			chunk.render(renderer, weightShader, 1);
 		}	
 		
 		gl.bindFramebuffer(GL.FRAMEBUFFER, null);
@@ -220,7 +234,11 @@ class WebGLWorld extends World {
 			]), GL.STATIC_DRAW); 
 		}
 		
-		if (alphaShader == null) alphaShader = new AlphaShader(gl);
+		if (alphaShader == null) {
+			alphaShader = new AlphaShader(gl);
+			colourShader = new ChunkShaderColour(gl);
+			weightShader = new ChunkShaderWeight(gl);
+		}
 	}
 	
 	private function getSize(x : Int, gl : RenderingContext) : Int {

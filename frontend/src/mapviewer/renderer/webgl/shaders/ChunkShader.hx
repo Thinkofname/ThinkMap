@@ -39,8 +39,14 @@ class ChunkShader extends TProgram {
 	public var texturePosition : Int;
 	public var lighting : Int;
 
-	public function new(gl : RenderingContext) {
-		super(gl, chunkVertexShaderSource, chunkFragmentShaderSource);
+	public function new(gl : RenderingContext, ?vert : String, ?frag : String) {
+		if (vert == null) vert = chunkVertexShaderSource;
+		if (frag == null) frag = chunkFragmentShaderSource;
+		super(gl, vert, frag);
+		initAttribs();
+	}	
+	
+	private function initAttribs() {		
 		// Uniforms
 		pMatrix = getUniform("pMatrix");
 		uMatrix = getUniform("uMatrix");
@@ -48,14 +54,13 @@ class ChunkShader extends TProgram {
 		frame = getUniform("frame");
 		time = getUniform("time");
 		blockTexture = getUniform("texture");
-		disAlpha = getUniform("disAlpha");
 		// Attribs
 		position = getAttrib("position");
 		colour = getAttrib("colour");
 		textureId = getAttrib("textureId");
 		texturePosition = getAttrib("texturePos");
 		lighting = getAttrib("lighting");
-	}	
+	}
 	
 	inline public function setPerspectiveMatrix(mat4 : Mat4) {
 		gl.uniformMatrix4fv(pMatrix, false, mat4);
@@ -79,10 +84,6 @@ class ChunkShader extends TProgram {
 	
 	inline public function setBlockTexture(i : Int) {
 		gl.uniform1i(blockTexture, i);
-	}
-	
-	inline public function setDisAlpha(i : Int) {
-		gl.uniform1i(disAlpha, i);
 	}	
 		
 	private static var chunkVertexShaderSource : String = "
@@ -110,16 +111,8 @@ void main(void) {
     vColour = colour;
     vTextureId = textureId;
     vTexturePos = texturePos / 256.0;
-    if (vTexturePos.x == 0.0) {
-        vTexturePos.x = 0.0001;
-    } else if (vTexturePos.x == 1.0) {
-        vTexturePos.x = 0.9999;
-    }
-    if (vTexturePos.y == 0.0) {
-        vTexturePos.y = 0.0001;
-    } else if (vTexturePos.y == 1.0) {
-        vTexturePos.y = 0.9999;
-    }
+	vTexturePos.x = clamp(vTexturePos.x, 0.0001, 0.9999);
+	vTexturePos.y = clamp(vTexturePos.y, 0.0001, 0.9999);
     vLighting = lighting;
 }	
 	";
@@ -130,7 +123,6 @@ precision mediump float;
 uniform sampler2D texture;
 uniform float frame;
 uniform float time;
-uniform int disAlpha;
 
 varying vec4 vColour;
 varying vec2 vTextureId;
@@ -158,17 +150,20 @@ void main(void) {
     float light = max(vLighting.x, vLighting.y * scale);
     float val = pow(0.9, 16.0 - light) * 2.0;
     gl_FragColor.rgb *= clamp(pow(val, 1.5) / 2.0, 0.0, 1.0);
-    if (disAlpha == 1 && gl_FragColor.a < 0.5) discard;
+    if (gl_FragColor.a < 0.5) discard;
 	
-	if (disAlpha == 0) { // Colour pass
+	#ifdef colourPass 
+		// Colour pass
 		vec4 colour = gl_FragColor;
 		colour.rgb *= colour.a;
 		float z = (gl_FragCoord.z / gl_FragCoord.w);
 		float weight = colour.a * clamp(pow(abs(z + 5.0), -4.0), 0.2, 0.8);
 		gl_FragColor = colour * weight;
-	} else if (disAlpha == 2) { // Weight pass
+	#endif
+	#ifdef weightPass
+		// Weight pass
 		gl_FragColor = vec4(gl_FragColor.a);
-	}
+	#endif
 }
 	";
 }

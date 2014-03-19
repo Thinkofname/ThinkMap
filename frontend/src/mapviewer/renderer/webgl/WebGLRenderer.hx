@@ -175,8 +175,8 @@ class WebGLRenderer implements Renderer {
 	
 	private var lastFrame : Int = 0;
 	private var temp : Mat4;
-	private var temp2 : Mat4;
-	private var currentFrame : Float = 0;
+	public var temp2 : Mat4;
+	public var currentFrame : Float = 0;
 	
     public function draw() : Void {
 		var delta : Float = Math.min((Utils.now() - lastFrame) / (1000 / 60), 3.0);
