@@ -18,6 +18,7 @@ import js.html.Uint8Array;
 import js.html.webgl.Buffer;
 import mapviewer.js.Utils;
 import mapviewer.renderer.Renderer;
+import mapviewer.renderer.webgl.shaders.ChunkShader;
 import mapviewer.world.Chunk;
 import js.html.webgl.RenderingContext;
 
@@ -38,7 +39,7 @@ class WebGLChunk extends Chunk {
 		transTriangleCount = new Array<Int>();
 	}
 	
-	public function render(renderer : WebGLRenderer, pass : Int) {
+	public function render(renderer : WebGLRenderer, program : ChunkShader, pass : Int) {
 		var gl = renderer.gl;
 		
 		if (needsBuild) {
@@ -57,22 +58,24 @@ class WebGLChunk extends Chunk {
 			if (section == null) continue;
 			
 			if (pass == 0) {
-				renderBuffer(renderer, gl, normalBuffers[i], normalTriangleCount[i]);
+				renderBuffer(renderer, gl, program, normalBuffers[i], normalTriangleCount[i]);
 			} else {
-				renderBuffer(renderer, gl, transBuffers[i], transTriangleCount[i]);
+				renderBuffer(renderer, gl, program, transBuffers[i], transTriangleCount[i]);
 			}
 		}
 	}
 	
-	private function renderBuffer(renderer : WebGLRenderer, gl : RenderingContext, buffer : Buffer, triangleCount : Int) {
+	private function renderBuffer(renderer : WebGLRenderer, gl : RenderingContext, program : ChunkShader, 
+			buffer : Buffer, triangleCount : Int) {
 		if (buffer != null && triangleCount != 0) {
-			gl.uniform2f(renderer.offsetLocation, x, z);
+			program.setOffset(x, z);
+			
 			gl.bindBuffer(RenderingContext.ARRAY_BUFFER, buffer);
-			gl.vertexAttribPointer(renderer.positionLocation, 3, RenderingContext.UNSIGNED_SHORT, false, 20, 0);
-			gl.vertexAttribPointer(renderer.colourLocation, 4, RenderingContext.UNSIGNED_BYTE, true, 20, 6);
-			gl.vertexAttribPointer(renderer.texturePosLocation, 2, RenderingContext.UNSIGNED_SHORT, false, 20, 10);
-			gl.vertexAttribPointer(renderer.textureIdLocation, 2, RenderingContext.UNSIGNED_SHORT, false, 20, 14);
-			gl.vertexAttribPointer(renderer.lightingLocation, 2, RenderingContext.BYTE, false, 20, 18);
+			gl.vertexAttribPointer(program.position, 3, RenderingContext.UNSIGNED_SHORT, false, 20, 0);
+			gl.vertexAttribPointer(program.colour, 4, RenderingContext.UNSIGNED_BYTE, true, 20, 6);
+			gl.vertexAttribPointer(program.texturePosition, 2, RenderingContext.UNSIGNED_SHORT, false, 20, 10);
+			gl.vertexAttribPointer(program.textureId, 2, RenderingContext.UNSIGNED_SHORT, false, 20, 14);
+			gl.vertexAttribPointer(program.lighting, 2, RenderingContext.BYTE, false, 20, 18);
 			gl.drawArrays(RenderingContext.TRIANGLES, 0, triangleCount);
 		}
 	}

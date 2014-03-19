@@ -14,36 +14,211 @@
  * limitations under the License.
  */
 package mapviewer.renderer.webgl;
+import js.html.Float32Array;
+import js.html.webgl.Buffer;
+import js.html.webgl.Framebuffer;
+import js.html.webgl.Renderbuffer;
 import js.html.webgl.RenderingContext;
+import js.html.webgl.Texture;
 import mapviewer.js.Utils;
+import mapviewer.renderer.webgl.shaders.AlphaShader;
+import mapviewer.renderer.webgl.shaders.ChunkShader;
 import mapviewer.world.Chunk;
 import mapviewer.world.World;
+import mapviewer.renderer.webgl.WebGLRenderer.GL;
 
 class WebGLWorld extends World {
 	
 	private var chunkList : Array<WebGLChunk>;
+	
+	private var alphaShader : AlphaShader;
+	
+	private var normalFrameBuffer : Framebuffer;
+	private var normalTexture : Texture;
+	private var colourFrameBuffer : Framebuffer;
+	private var renderBuffer : Renderbuffer;
+	private var colourTexture : Texture;
+	private var weightFrameBuffer : Framebuffer;
+	private var weightRenderBuffer : Renderbuffer;
+	private var weightTexture : Texture;
+	
+	private var buffer : Buffer;
+	
+	private var scaleX : Float = 0;
+	private var scaleY : Float = 0;
+	private var screenX : Int = 0;
+	private var screenY : Int = 0;
 
 	public function new() {
 		super(true);
 		chunkList = new Array<WebGLChunk>();
 	}
 	
-	public function render(renderer : WebGLRenderer) {		
+	public function render(renderer : WebGLRenderer, program : ChunkShader) {	
+		var gl = renderer.gl;
 		chunkList.sort(chunkSort);
 		
-		renderer.gl.uniform1i(renderer.disAlphaLocation, 1);
+		gl.bindFramebuffer(GL.FRAMEBUFFER, normalFrameBuffer);
+		gl.disable(GL.BLEND);
+		gl.viewport(0, 0, screenX, screenY);		
+		gl.depthMask(true);
+		gl.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);	
+		program.setDisAlpha(1);
 		for (chunk in chunkList) {
-			chunk.render(renderer, 0);
+			chunk.render(renderer, program, 0);
 		}
 		
-		renderer.gl.enable(RenderingContext.BLEND);
-		renderer.gl.depthMask(false);
-		renderer.gl.uniform1i(renderer.disAlphaLocation, 0);
+		gl.bindFramebuffer(GL.FRAMEBUFFER, colourFrameBuffer);
+		gl.viewport(0, 0, screenX, screenY);
+		gl.clearColor(0.0, 0.0, 0.0, 0.0);
+		gl.colorMask(true, true, true, true);	
+		
+		gl.depthMask(false);
+		gl.clear(GL.COLOR_BUFFER_BIT);
+		gl.enable(GL.BLEND);
+		gl.blendFunc(GL.ONE, GL.ONE);
+		program.setDisAlpha(0);
 		for (chunk in chunkList) {
-			chunk.render(renderer, 1);
+			chunk.render(renderer, program, 1);
 		}
-		renderer.gl.disable(RenderingContext.BLEND);
-		renderer.gl.depthMask(true);
+		
+		gl.bindFramebuffer(GL.FRAMEBUFFER, weightFrameBuffer);
+		gl.viewport(0, 0, screenX, screenY);
+		gl.clearColor(1.0, 0.0, 0.0, 0.0);
+		gl.colorMask(true, true, true, true);
+		
+		gl.depthMask(false);
+		
+		gl.clear(GL.COLOR_BUFFER_BIT);
+		gl.blendFunc(GL.ZERO, GL.ONE_MINUS_SRC_ALPHA);
+		program.setDisAlpha(2);
+		for (chunk in chunkList) {
+			chunk.render(renderer, program, 1);
+		}		
+		
+		gl.bindFramebuffer(GL.FRAMEBUFFER, null);
+		program.disable();
+		alphaShader.use();
+		gl.viewport(0, 0, renderer.canvas.width, renderer.canvas.height);
+		gl.disable(GL.BLEND);
+		alphaShader.setScreenSize(screenX, screenY);
+		alphaShader.setScale(scaleX, scaleY);
+		
+		gl.activeTexture(GL.TEXTURE0);
+		gl.bindTexture(GL.TEXTURE_2D, colourTexture);
+		gl.activeTexture(GL.TEXTURE1);
+		gl.bindTexture(GL.TEXTURE_2D, weightTexture);
+		gl.activeTexture(GL.TEXTURE2);
+		gl.bindTexture(GL.TEXTURE_2D, normalTexture);
+		alphaShader.setBuffers(0, 1, 2);
+		
+		gl.bindBuffer(GL.ARRAY_BUFFER, buffer);
+		gl.vertexAttribPointer(alphaShader.position, 2, GL.FLOAT, false, 0, 0);
+		gl.drawArrays(GL.TRIANGLES, 0, 6);
+		
+		alphaShader.disable();
+		program.use();
+		gl.disable(GL.BLEND);
+		gl.depthMask(true);
+	}
+	
+	// TODO: Resize
+	public function initBuffers(gl : RenderingContext, renderer : WebGLRenderer) {
+		var sizeW = getSize(renderer.canvas.width, gl);
+		var sizeH = getSize(renderer.canvas.height, gl);
+		if (renderer.canvas.width > renderer.canvas.height) {
+			if (renderer.canvas.width < sizeW) {
+				screenX = Std.int(renderer.canvas.width);
+				screenY = Std.int(renderer.canvas.height);
+			} else {
+				screenX = Std.int(sizeW);
+				screenY = Std.int(sizeH * (sizeW / renderer.canvas.width));
+			}
+		} else {			
+			if (renderer.canvas.height < sizeH) {
+				screenX = Std.int(renderer.canvas.width);
+				screenY = Std.int(renderer.canvas.height);
+			} else {
+				screenY = Std.int(sizeH);
+				screenX = Std.int(sizeW * (sizeH / renderer.canvas.height));
+			}
+		}
+		scaleX = screenX / sizeW;
+		scaleY = screenY / sizeH;
+		
+		renderBuffer = gl.createRenderbuffer();
+		gl.bindRenderbuffer(GL.RENDERBUFFER, renderBuffer);
+		gl.renderbufferStorage(GL.RENDERBUFFER, GL.DEPTH_COMPONENT16, sizeW, sizeH);
+		
+		// Normal
+		normalFrameBuffer = gl.createFramebuffer();
+		gl.bindFramebuffer(GL.FRAMEBUFFER, normalFrameBuffer);
+		
+		normalTexture = gl.createTexture();
+		gl.bindTexture(GL.TEXTURE_2D, normalTexture);
+		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
+		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
+		
+		gl.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, sizeW, sizeH, 0, GL.RGBA, GL.UNSIGNED_BYTE, null);
+		
+		gl.framebufferTexture2D(GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, normalTexture, 0);
+		gl.framebufferRenderbuffer(GL.FRAMEBUFFER, GL.DEPTH_ATTACHMENT, GL.RENDERBUFFER, renderBuffer);
+		
+		// Colour
+		
+		colourFrameBuffer = gl.createFramebuffer();
+		gl.bindFramebuffer(GL.FRAMEBUFFER, colourFrameBuffer);
+		
+		colourTexture = gl.createTexture();
+		gl.bindTexture(GL.TEXTURE_2D, colourTexture);
+		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
+		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
+		
+		gl.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, sizeW, sizeH, 0, GL.RGBA, GL.UNSIGNED_BYTE, null);
+		
+		gl.framebufferTexture2D(GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, colourTexture, 0);
+		gl.framebufferRenderbuffer(GL.FRAMEBUFFER, GL.DEPTH_ATTACHMENT, GL.RENDERBUFFER, renderBuffer);
+		
+		// Weight
+		
+		weightFrameBuffer = gl.createFramebuffer();
+		gl.bindFramebuffer(GL.FRAMEBUFFER, weightFrameBuffer);
+		
+		weightTexture = gl.createTexture();
+		gl.bindTexture(GL.TEXTURE_2D, weightTexture);
+		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
+		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
+		
+		gl.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, sizeW, sizeH, 0, GL.RGBA, GL.UNSIGNED_BYTE, null);
+		
+		gl.framebufferTexture2D(GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, weightTexture, 0);
+		gl.framebufferRenderbuffer(GL.FRAMEBUFFER, GL.DEPTH_ATTACHMENT, GL.RENDERBUFFER, renderBuffer);
+		
+        gl.bindTexture(GL.TEXTURE_2D, null);
+        gl.bindRenderbuffer(GL.RENDERBUFFER, null);
+        gl.bindFramebuffer(GL.FRAMEBUFFER, null);
+		
+		buffer = gl.createBuffer();
+		gl.bindBuffer(GL.ARRAY_BUFFER, buffer);
+		gl.bufferData(GL.ARRAY_BUFFER, new Float32Array([
+			-1.0, -1.0,
+			-1.0, 1.0,
+			1.0, -1.0,
+			1.0, 1.0,
+			1.0, -1.0,
+			-1.0, 1.0
+		]), GL.STATIC_DRAW); 
+		
+		alphaShader = new AlphaShader(gl);
+	}
+	
+	private function getSize(x : Int, gl : RenderingContext) : Int {
+		var size = Math.pow(2, Math.ceil(Math.log(x) / Math.log(2)));
+		var max = gl.getParameter(GL.MAX_TEXTURE_SIZE);
+		if (size > max) {
+			size = max;
+		}
+		return Std.int(size);
 	}
 	
 	private static function chunkSort(a : WebGLChunk, b : WebGLChunk) : Int {

@@ -30,6 +30,7 @@ import mapviewer.js.Utils;
 import mapviewer.Main;
 import mapviewer.renderer.Renderer;
 import mapviewer.renderer.webgl.glmatrix.Mat4;
+import mapviewer.renderer.webgl.shaders.ChunkShader;
 import mapviewer.renderer.webgl.WebGLRenderer.Camera;
 import mapviewer.ui.Colour;
 import mapviewer.ui.UserInterface;
@@ -44,19 +45,7 @@ class WebGLRenderer implements Renderer {
 	public var ui : UserInterface;
 
 	// Shaders
-	public var mainProgram : Program;
-	public var pMatrixLocation : UniformLocation;
-	public var uMatrixLocation : UniformLocation;
-	public var offsetLocation : UniformLocation;
-	public var blockTextureLocation : UniformLocation;
-	public var frameLocation : UniformLocation;
-	public var timeLocation : UniformLocation;
-	public var disAlphaLocation : UniformLocation;
-	public var positionLocation : Int;
-	public var colourLocation : Int;
-	public var textureIdLocation : Int;
-	public var texturePosLocation : Int;
-	public var lightingLocation : Int;
+	public var mainProgram : ChunkShader;
 	
 	// Matrices
 	public var pMatrix : Mat4;
@@ -85,6 +74,7 @@ class WebGLRenderer implements Renderer {
 		pMatrix = Mat4.create();
 		uMatrix = Mat4.create();
 		temp = Mat4.create();
+		temp2 = Mat4.create();
 		uMatrix.identity();
 		blockTextures = new Array<Texture>();
 		camera = new Camera();
@@ -103,28 +93,7 @@ class WebGLRenderer implements Renderer {
 			blockTextures.push(loadTexture(img));
 		}
 		
-		var chunkVertexShader = createShader(chunkVertexShaderSource, GL.VERTEX_SHADER);
-		var chunkFragmentShader = createShader(chunkFragmentShaderSource, GL.FRAGMENT_SHADER);
-		mainProgram = createProgram(chunkVertexShader, chunkFragmentShader);
-		
-		// Setup uniforms and attributes
-		pMatrixLocation = gl.getUniformLocation(mainProgram, "pMatrix");
-		uMatrixLocation = gl.getUniformLocation(mainProgram, "uMatrix");
-		offsetLocation = gl.getUniformLocation(mainProgram, "offset");
-		frameLocation = gl.getUniformLocation(mainProgram, "frame");
-		timeLocation = gl.getUniformLocation(mainProgram, "time");
-		blockTextureLocation = gl.getUniformLocation(mainProgram, "texture");
-		disAlphaLocation = gl.getUniformLocation(mainProgram, "disAlpha");
-		positionLocation = gl.getAttribLocation(mainProgram, "position");
-		colourLocation = gl.getAttribLocation(mainProgram, "colour");
-		textureIdLocation = gl.getAttribLocation(mainProgram, "textureId");
-		texturePosLocation = gl.getAttribLocation(mainProgram, "texturePos");
-		lightingLocation = gl.getAttribLocation(mainProgram, "lighting");
-		gl.enableVertexAttribArray(positionLocation);
-		gl.enableVertexAttribArray(colourLocation);
-		gl.enableVertexAttribArray(textureIdLocation);
-		gl.enableVertexAttribArray(texturePosLocation);
-		gl.enableVertexAttribArray(lightingLocation);
+		mainProgram = new ChunkShader(gl);		
 		
 		gl.enable(GL.DEPTH_TEST);
 		gl.enable(GL.CULL_FACE);
@@ -135,8 +104,8 @@ class WebGLRenderer implements Renderer {
 		
 		var hasLock = false;
 		
-		Browser.document.body.onclick = function(e : MouseEvent) {
-			if (!hasLock) Utils.requestPointerLock(Browser.document.body);
+		canvas.onclick = function(e : MouseEvent) {
+			if (!hasLock) Utils.requestPointerLock(canvas);
 		};
 		Browser.document.onmousedown = function(e : MouseEvent) {
 			if (hasLock && firstPerson) {			
@@ -197,12 +166,16 @@ class WebGLRenderer implements Renderer {
 		Browser.document.addEventListener("webkitpointerlockchange", pToggle, false);
 		Browser.document.addEventListener("mozpointerlockchange", pToggle, false);
 		canvas.oncontextmenu = function(e : Event) { e.preventDefault(); };
+		
+		var ww : WebGLWorld = cast Main.world;
+		ww.initBuffers(gl, this);
 	}
 	
 	inline public static var viewDistance : Int = 4;
 	
 	private var lastFrame : Int;
 	private var temp : Mat4;
+	private var temp2 : Mat4;
 	private var currentFrame : Float = 0;
 	
     public function draw() : Void {
@@ -218,16 +191,17 @@ class WebGLRenderer implements Renderer {
 		gl.colorMask(true, true, true, false);
 		gl.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 		
-		gl.useProgram(mainProgram);
-		gl.uniformMatrix4fv(pMatrixLocation, false, pMatrix);
+		mainProgram.use();
+		mainProgram.setPerspectiveMatrix(pMatrix);
 		
 		gl.activeTexture(GL.TEXTURE0);
 		gl.bindTexture(GL.TEXTURE_2D, blockTextures[0]);
-		gl.uniform1i(blockTextureLocation, 0);
-		gl.uniform1f(frameLocation, Std.int(currentFrame));
+		mainProgram.setBlockTexture(0);
+		
+		mainProgram.setFrame(Std.int(currentFrame));
 		currentFrame += (1 / 3);
 		if (currentFrame > 0xFFFFFFF) currentFrame = 0;
-		gl.uniform1f(timeLocation, Main.world.currentTime);
+		mainProgram.setTime(Main.world.currentTime);
 		
 		if (firstPerson) {
 			var lx = camera.x;
@@ -266,11 +240,12 @@ class WebGLRenderer implements Renderer {
 		uMatrix.rotateX( -camera.rotX - Math.PI);
 		uMatrix.rotateY( -(-camera.rotY - Math.PI));
 		temp.identity();
-		temp.translate([-camera.x, -camera.y, -camera.z]);
-		gl.uniformMatrix4fv(uMatrixLocation, false, uMatrix.multiply(temp));
+		temp.translate([ -camera.x, -camera.y, -camera.z]);
+		temp2.identity();
+		mainProgram.setUMatrix(uMatrix.multiply(temp, temp2));
 		
 		var ww : WebGLWorld = cast Main.world;
-		ww.render(this);
+		ww.render(this, mainProgram);
 		
 		gl.clearColor(1, 1, 1, 1);
 		gl.colorMask(false, false, false, true);
@@ -472,103 +447,6 @@ class WebGLRenderer implements Renderer {
 			GL.TEXTURE_MIN_FILTER, GL.NEAREST);
 		gl.bindTexture(GL.TEXTURE_2D, null);
 		return tex;
-	}
-	
-	private static var chunkVertexShaderSource : String = "
-precision mediump float;
-
-attribute vec3 position;
-attribute vec4 colour;
-attribute vec2 texturePos;
-attribute vec2 textureId;
-attribute vec2 lighting;
-
-uniform mat4 pMatrix;
-uniform mat4 uMatrix;
-uniform vec2 offset;
-uniform float time;
-
-varying vec4 vColour;
-varying vec2 vTextureId;
-varying vec2 vTexturePos;
-varying vec2 vLighting;
-
-void main(void) {
-    vec3 pos = position;
-    gl_Position = pMatrix * uMatrix * vec4((pos / 256.0) - 1.0 + vec3(offset.x * 16.0, 0.0, offset.y * 16.0), 1.0);
-    vColour = colour;
-    vTextureId = textureId;
-    vTexturePos = texturePos / 256.0;
-    if (vTexturePos.x == 0.0) {
-        vTexturePos.x = 0.0001;
-    } else if (vTexturePos.x == 1.0) {
-        vTexturePos.x = 0.9999;
-    }
-    if (vTexturePos.y == 0.0) {
-        vTexturePos.y = 0.0001;
-    } else if (vTexturePos.y == 1.0) {
-        vTexturePos.y = 0.9999;
-    }
-    vLighting = lighting;
-}	
-	";
-	
-	private static var chunkFragmentShaderSource : String = "
-precision mediump float;
-
-uniform sampler2D texture;
-uniform float frame;
-uniform float time;
-uniform int disAlpha;
-
-varying vec4 vColour;
-varying vec2 vTextureId;
-varying vec2 vTexturePos;
-varying vec2 vLighting;
-
-void main(void) {
-    float id = floor(vTextureId.x + 0.5);
-    if (floor((vTextureId.y - vTextureId.x) + 0.5) > 0.8) {
-        id = id + floor(mod(frame, vTextureId.y - vTextureId.x) + 0.5);
-    }
-    vec2 pos = fract(vTexturePos) * 0.03125;
-    pos.x += floor(mod(id, 32.0)) * 0.03125;
-    pos.y += floor(id / 32.0) * 0.03125;
-    gl_FragColor = texture2D(texture, pos) * vColour;
-
-    float scale = (time - 6000.0) / 12000.0;
-    if (scale > 1.0) {
-        scale = 2.0 - scale;
-    } else if (scale < 0.0) {
-        scale = -scale;
-    }
-    scale = 1.0 - scale;
-
-    float light = max(vLighting.x, vLighting.y * scale);
-    float val = pow(0.9, 16.0 - light) * 2.0;
-    gl_FragColor.rgb *= clamp(pow(val, 1.5) / 2.0, 0.0, 1.0);
-    if (disAlpha == 1 && gl_FragColor.a < 0.5) discard;
-}
-	";
-	
-	public function createShader(source : String, type : Int) : Shader {
-		var shader = gl.createShader(type);
-		gl.shaderSource(shader, source);
-		gl.compileShader(shader);
-
-		if (!gl.getShaderParameter(shader, GL.COMPILE_STATUS)) {
-			throw gl.getShaderInfoLog(shader);
-		}
-		return shader;
-	}
-	
-	public function createProgram(vertexShader : Shader, fragmentShader : Shader) : Program {
-		var program = gl.createProgram();
-		gl.attachShader(program, vertexShader);
-		gl.attachShader(program, fragmentShader);
-		gl.linkProgram(program);
-		gl.useProgram(program);
-		return program;
 	}
 }
 

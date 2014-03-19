@@ -39,8 +39,8 @@ extern class Mat4 extends Float32Array {
 		untyped mat4.translate(this, this, t);
 	}
 	
-	@:extern inline public function multiply(other : Mat4) : Mat4 untyped {
-		var o = mat4.create();
+	@:extern inline public function multiply(other : Mat4, ?o : Mat4) : Mat4 untyped {
+		if (o == null) o = mat4.create();
 		mat4.multiply(o, this, other);
 		return o;
 	}

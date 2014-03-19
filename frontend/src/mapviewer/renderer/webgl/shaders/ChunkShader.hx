@@ -1,0 +1,179 @@
+/*
+ * Copyright 2014 Matthew Collins
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package mapviewer.renderer.webgl.shaders;
+import haxe.ds.IntMap.IntMap;
+import js.html.webgl.RenderingContext;
+import js.html.webgl.Shader;
+import js.html.webgl.UniformLocation;
+import mapviewer.renderer.webgl.glmatrix.Mat4;
+import mapviewer.renderer.webgl.WebGLRenderer.GL;
+
+class ChunkShader extends TProgram {
+	
+	// Uniforms
+	private var pMatrix : UniformLocation;
+	private var uMatrix : UniformLocation;
+	private var offset : UniformLocation;
+	private var frame : UniformLocation;
+	private var time : UniformLocation;
+	private var blockTexture : UniformLocation;
+	// TODO: Remember why this is called 'disAlpha'
+	private var disAlpha : UniformLocation;
+	// Attribs
+	public var position : Int;
+	public var colour : Int;
+	public var textureId : Int;
+	public var texturePosition : Int;
+	public var lighting : Int;
+
+	public function new(gl : RenderingContext) {
+		super(gl, chunkVertexShaderSource, chunkFragmentShaderSource);
+		// Uniforms
+		pMatrix = getUniform("pMatrix");
+		uMatrix = getUniform("uMatrix");
+		offset = getUniform("offset");
+		frame = getUniform("frame");
+		time = getUniform("time");
+		blockTexture = getUniform("texture");
+		disAlpha = getUniform("disAlpha");
+		// Attribs
+		position = getAttrib("position");
+		colour = getAttrib("colour");
+		textureId = getAttrib("textureId");
+		texturePosition = getAttrib("texturePos");
+		lighting = getAttrib("lighting");
+	}	
+	
+	inline public function setPerspectiveMatrix(mat4 : Mat4) {
+		gl.uniformMatrix4fv(pMatrix, false, mat4);
+	}
+	
+	inline public function setUMatrix(mat4 : Mat4) {
+		gl.uniformMatrix4fv(uMatrix, false, mat4);
+	}
+	
+	inline public function setOffset(x : Int, z : Int) {
+		gl.uniform2f(offset, x, z);
+	}
+	
+	inline public function setFrame(i : Int) {
+		gl.uniform1f(frame, i);
+	}
+	
+	inline public function setTime(i : Int) {
+		gl.uniform1f(time, i);
+	}
+	
+	inline public function setBlockTexture(i : Int) {
+		gl.uniform1i(blockTexture, i);
+	}
+	
+	inline public function setDisAlpha(i : Int) {
+		gl.uniform1i(disAlpha, i);
+	}	
+		
+	private static var chunkVertexShaderSource : String = "
+precision mediump float;
+
+attribute vec3 position;
+attribute vec4 colour;
+attribute vec2 texturePos;
+attribute vec2 textureId;
+attribute vec2 lighting;
+
+uniform mat4 pMatrix;
+uniform mat4 uMatrix;
+uniform vec2 offset;
+uniform float time;
+
+varying vec4 vColour;
+varying vec2 vTextureId;
+varying vec2 vTexturePos;
+varying vec2 vLighting;
+
+void main(void) {
+    vec3 pos = position;
+    gl_Position = pMatrix * uMatrix * vec4((pos / 256.0) - 1.0 + vec3(offset.x * 16.0, 0.0, offset.y * 16.0), 1.0);
+    vColour = colour;
+    vTextureId = textureId;
+    vTexturePos = texturePos / 256.0;
+    if (vTexturePos.x == 0.0) {
+        vTexturePos.x = 0.0001;
+    } else if (vTexturePos.x == 1.0) {
+        vTexturePos.x = 0.9999;
+    }
+    if (vTexturePos.y == 0.0) {
+        vTexturePos.y = 0.0001;
+    } else if (vTexturePos.y == 1.0) {
+        vTexturePos.y = 0.9999;
+    }
+    vLighting = lighting;
+}	
+	";
+	
+	private static var chunkFragmentShaderSource : String = "
+precision mediump float;
+
+uniform sampler2D texture;
+uniform float frame;
+uniform float time;
+uniform int disAlpha;
+
+varying vec4 vColour;
+varying vec2 vTextureId;
+varying vec2 vTexturePos;
+varying vec2 vLighting;
+
+void main(void) {
+    float id = floor(vTextureId.x + 0.5);
+    if (floor((vTextureId.y - vTextureId.x) + 0.5) > 0.8) {
+        id = id + floor(mod(frame, vTextureId.y - vTextureId.x) + 0.5);
+    }
+    vec2 pos = fract(vTexturePos) * 0.03125;
+    pos.x += floor(mod(id, 32.0)) * 0.03125;
+    pos.y += floor(id / 32.0) * 0.03125;
+    gl_FragColor = texture2D(texture, pos) * vColour;
+	
+	if (disAlpha == 4) {
+		if (gl_FragColor.a < 0.5) discard;
+		return;
+	}
+	
+    float scale = (time - 6000.0) / 12000.0;
+    if (scale > 1.0) {
+        scale = 2.0 - scale;
+    } else if (scale < 0.0) {
+        scale = -scale;
+    }
+    scale = 1.0 - scale;
+
+    float light = max(vLighting.x, vLighting.y * scale);
+    float val = pow(0.9, 16.0 - light) * 2.0;
+    gl_FragColor.rgb *= clamp(pow(val, 1.5) / 2.0, 0.0, 1.0);
+    if (disAlpha == 1 && gl_FragColor.a < 0.5) discard;
+	
+	if (disAlpha == 0) { // Colour pass
+		vec4 colour = gl_FragColor;
+		colour.rgb *= colour.a;
+		float z = (gl_FragCoord.z / gl_FragCoord.w);
+		float weight = colour.a * clamp(pow(abs(z + 5.0), -4.0), 0.2, 0.8);
+		gl_FragColor = colour * weight;
+	} else if (disAlpha == 2) { // Weight pass
+		gl_FragColor = vec4(gl_FragColor.a);
+	}
+}
+	";
+}
