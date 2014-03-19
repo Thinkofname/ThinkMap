@@ -100,7 +100,7 @@ class WebGLWorld extends World {
 		alphaShader.use();
 		gl.viewport(0, 0, renderer.canvas.width, renderer.canvas.height);
 		gl.disable(GL.BLEND);
-		alphaShader.setScreenSize(screenX, screenY);
+		alphaShader.setScreenSize(renderer.canvas.width, renderer.canvas.height);
 		alphaShader.setScale(scaleX, scaleY);
 		
 		gl.activeTexture(GL.TEXTURE0);
@@ -141,7 +141,7 @@ class WebGLWorld extends World {
 				screenY = Std.int(renderer.canvas.height);
 			} else {
 				screenX = Std.int(sizeW);
-				screenY = Std.int(sizeH * (sizeW / renderer.canvas.width));
+				screenY = Std.int(renderer.canvas.height * (sizeW / renderer.canvas.width));
 			}
 		} else {			
 			if (renderer.canvas.height < sizeH) {
@@ -149,7 +149,7 @@ class WebGLWorld extends World {
 				screenY = Std.int(renderer.canvas.height);
 			} else {
 				screenY = Std.int(sizeH);
-				screenX = Std.int(sizeW * (sizeH / renderer.canvas.height));
+				screenX = Std.int(renderer.canvas.width * (sizeH / renderer.canvas.height));
 			}
 		}
 		scaleX = screenX / sizeW;
