@@ -87,14 +87,13 @@ class WebGLWorld extends World {
 		gl.clearColor(1.0, 0.0, 0.0, 0.0);
 		gl.colorMask(true, true, true, true);
 		
-		gl.depthMask(false);
-		
+		gl.depthMask(false);		
 		gl.clear(GL.COLOR_BUFFER_BIT);
 		gl.blendFunc(GL.ZERO, GL.ONE_MINUS_SRC_ALPHA);
 		program.setDisAlpha(2);
 		for (chunk in chunkList) {
 			chunk.render(renderer, program, 1);
-		}		
+		}	
 		
 		gl.bindFramebuffer(GL.FRAMEBUFFER, null);
 		program.disable();
@@ -122,7 +121,17 @@ class WebGLWorld extends World {
 		gl.depthMask(true);
 	}
 	
-	// TODO: Resize
+	public function resize(gl : RenderingContext, renderer : WebGLRenderer) {
+		gl.deleteFramebuffer(normalFrameBuffer);
+		gl.deleteFramebuffer(colourFrameBuffer);
+		gl.deleteFramebuffer(weightFrameBuffer);
+		gl.deleteRenderbuffer(renderBuffer);
+		gl.deleteTexture(normalTexture);
+		gl.deleteTexture(colourTexture);
+		gl.deleteTexture(weightTexture);
+		initBuffers(gl, renderer);
+	}
+	
 	public function initBuffers(gl : RenderingContext, renderer : WebGLRenderer) {
 		var sizeW = getSize(renderer.canvas.width, gl);
 		var sizeH = getSize(renderer.canvas.height, gl);
@@ -198,18 +207,20 @@ class WebGLWorld extends World {
         gl.bindRenderbuffer(GL.RENDERBUFFER, null);
         gl.bindFramebuffer(GL.FRAMEBUFFER, null);
 		
-		buffer = gl.createBuffer();
-		gl.bindBuffer(GL.ARRAY_BUFFER, buffer);
-		gl.bufferData(GL.ARRAY_BUFFER, new Float32Array([
-			-1.0, -1.0,
-			-1.0, 1.0,
-			1.0, -1.0,
-			1.0, 1.0,
-			1.0, -1.0,
-			-1.0, 1.0
-		]), GL.STATIC_DRAW); 
+		if (buffer == null) {
+			buffer = gl.createBuffer();
+			gl.bindBuffer(GL.ARRAY_BUFFER, buffer);
+			gl.bufferData(GL.ARRAY_BUFFER, new Float32Array([
+				-1.0, -1.0,
+				-1.0, 1.0,
+				1.0, -1.0,
+				1.0, 1.0,
+				1.0, -1.0,
+				-1.0, 1.0
+			]), GL.STATIC_DRAW); 
+		}
 		
-		alphaShader = new AlphaShader(gl);
+		if (alphaShader == null) alphaShader = new AlphaShader(gl);
 	}
 	
 	private function getSize(x : Int, gl : RenderingContext) : Int {

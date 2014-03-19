@@ -147,11 +147,6 @@ void main(void) {
     pos.y += floor(id / 32.0) * 0.03125;
     gl_FragColor = texture2D(texture, pos) * vColour;
 	
-	if (disAlpha == 4) {
-		if (gl_FragColor.a < 0.5) discard;
-		return;
-	}
-	
     float scale = (time - 6000.0) / 12000.0;
     if (scale > 1.0) {
         scale = 2.0 - scale;

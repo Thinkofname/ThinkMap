@@ -51,7 +51,7 @@ void main(void) {
 	float reveal = texture2D(wb, rp).r;
 	vec4 colour = texture2D(nb, rp);
 	vec4 blend = vec4(accum.rgb / clamp(accum.a, 1e-4, 5e4), reveal);
-	gl_FragColor = vec4(colour.rgb * (blend.a) + blend.rgb * (1.0 - blend.a), 1.0);
+	gl_FragColor = vec4(colour.rgb * blend.a + blend.rgb * (1.0 - blend.a), 1.0);
 }		
 		");
 		
