@@ -150,7 +150,11 @@ void main(void) {
     float light = max(vLighting.x, vLighting.y * scale);
     float val = pow(0.9, 16.0 - light) * 2.0;
     gl_FragColor.rgb *= clamp(pow(val, 1.5) / 2.0, 0.0, 1.0);
+	#ifndef colourPass 
+	#ifndef weightPass 
     if (gl_FragColor.a < 0.5) discard;
+	#endif
+	#endif
 	
 	#ifdef colourPass 
 		// Colour pass
