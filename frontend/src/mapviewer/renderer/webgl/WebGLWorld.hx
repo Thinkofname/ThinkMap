@@ -138,6 +138,7 @@ class WebGLWorld extends World {
 		alphaShader.disable();
 		gl.disable(GL.BLEND);
 		gl.depthMask(true);
+		
 	}
 	
 	public function resize(gl : RenderingContext, renderer : WebGLRenderer) {
@@ -152,27 +153,31 @@ class WebGLWorld extends World {
 	}
 	
 	public function initBuffers(gl : RenderingContext, renderer : WebGLRenderer) {
-		var sizeW = getSize(Std.int(renderer.canvas.width), gl);
-		var sizeH = getSize(Std.int(renderer.canvas.height), gl);
+		// Downscale for now
+		var sx = Math.round(renderer.canvas.width / 2);
+		var sy = Math.round(renderer.canvas.height / 2);
+		
+		var sizeW = getSize(sx, gl);
+		var sizeH = getSize(sy, gl);
 		if (renderer.canvas.width > renderer.canvas.height) {
 			if (renderer.canvas.width < sizeW) {
-				screenX = Std.int(renderer.canvas.width);
-				screenY = Std.int(renderer.canvas.height);
+				screenX = sx;
+				screenY = sy;
 			} else {
-				screenX = Std.int(sizeW);
-				screenY = Std.int(renderer.canvas.height * (sizeW / renderer.canvas.width));
+				screenX = Math.round(sizeW);
+				screenY = Math.round(sy * (sizeW / sx));
 			}
 		} else {			
 			if (renderer.canvas.height < sizeH) {
-				screenX = Std.int(renderer.canvas.width);
-				screenY = Std.int(renderer.canvas.height);
+				screenX = Math.round(renderer.canvas.width);
+				screenY = Math.round(renderer.canvas.height);
 			} else {
-				screenY = Std.int(sizeH);
-				screenX = Std.int(renderer.canvas.width * (sizeH / renderer.canvas.height));
+				screenY = Math.round(sizeH);
+				screenX = Math.round(sx * (sizeH / sy));
 			}
 		}
-		scaleX = screenX / sizeW;
-		scaleY = screenY / sizeH;
+		scaleX = sizeW / screenX;
+		scaleY = sizeH / screenY;
 		
 		renderBuffer = gl.createRenderbuffer();
 		gl.bindRenderbuffer(GL.RENDERBUFFER, renderBuffer);
