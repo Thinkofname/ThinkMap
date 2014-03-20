@@ -52,7 +52,7 @@ class Model {
 			}
 			var texture = Main.blockTextureInfo[face.texture];
 			for (i in 0 ... 3) {
-				var vert = face.vertices[i];
+				var vert = face.vertices[2 - i];
 				var light = calcLight(chunk.world, (chunk.x << 4) + x + vert.x, y + vert.y, (chunk.z << 4) + z + vert.z, face.face);
 				builder
 					.position(x + vert.x, y + vert.y, z + vert.z)
@@ -62,7 +62,7 @@ class Model {
 					.lighting(light.light, light.sky);
 			}
 			for (i in 0 ... 3) {				
-				var vert = face.vertices[3 - i];
+				var vert = face.vertices[1 + i];
 				var light = calcLight(chunk.world, (chunk.x << 4) + x + vert.x, y + vert.y, (chunk.z << 4) + z + vert.z, face.face);
 				builder
 					.position(x + vert.x, y + vert.y, z + vert.z)

@@ -28,7 +28,7 @@ class ChunkShader extends TProgram {
 	private var uMatrix : UniformLocation;
 	private var offset : UniformLocation;
 	private var frame : UniformLocation;
-	private var time : UniformLocation;
+	private var scale : UniformLocation;
 	private var blockTexture : UniformLocation;
 	// TODO: Remember why this is called 'disAlpha'
 	private var disAlpha : UniformLocation;
@@ -52,7 +52,7 @@ class ChunkShader extends TProgram {
 		uMatrix = getUniform("uMatrix");
 		offset = getUniform("offset");
 		frame = getUniform("frame");
-		time = getUniform("time");
+		scale = getUniform("scale");
 		blockTexture = getUniform("texture");
 		// Attribs
 		position = getAttrib("position");
@@ -78,8 +78,8 @@ class ChunkShader extends TProgram {
 		gl.uniform1f(frame, i);
 	}
 	
-	inline public function setTime(i : Int) {
-		gl.uniform1f(time, i);
+	inline public function setScale(i : Float) {
+		gl.uniform1f(scale, i);
 	}
 	
 	inline public function setBlockTexture(i : Int) {
@@ -122,7 +122,7 @@ precision mediump float;
 
 uniform sampler2D texture;
 uniform float frame;
-uniform float time;
+uniform float scale;
 
 varying vec4 vColour;
 varying vec2 vTextureId;
@@ -131,34 +131,24 @@ varying vec2 vLighting;
 
 void main(void) {
     float id = floor(vTextureId.x + 0.5);
-    if (floor((vTextureId.y - vTextureId.x) + 0.5) > 0.8) {
-        id = id + floor(mod(frame, vTextureId.y - vTextureId.x) + 0.5);
-    }
+    id = id + floor(mod(frame, floor((vTextureId.y - vTextureId.x) + 0.5) + 1.0));
     vec2 pos = clamp(fract(vTexturePos), 0.0001, 0.9999) * 0.03125;
     pos.x += floor(mod(id, 32.0)) * 0.03125;
     pos.y += floor(id / 32.0) * 0.03125;
-    gl_FragColor = texture2D(texture, pos) * vColour;
-	
-    float scale = (time - 6000.0) / 12000.0;
-    if (scale > 1.0) {
-        scale = 2.0 - scale;
-    } else if (scale < 0.0) {
-        scale = -scale;
-    }
-    scale = 1.0 - scale;
+    vec4 colour = texture2D(texture, pos) * vColour;
 
     float light = max(vLighting.x, vLighting.y * scale);
     float val = pow(0.9, 16.0 - light) * 2.0;
-    gl_FragColor.rgb *= clamp(pow(val, 1.5) / 2.0, 0.0, 1.0);
+    colour.rgb *= clamp(pow(val, 1.5) / 2.0, 0.0, 1.0);
 	#ifndef colourPass 
 	#ifndef weightPass 
-    if (gl_FragColor.a < 0.5) discard;
+		if (colour.a < 0.5) discard;
+		gl_FragColor = colour;
 	#endif
 	#endif
 	
 	#ifdef colourPass 
 		// Colour pass
-		vec4 colour = gl_FragColor;
 		colour.rgb *= colour.a;
 		float z = (gl_FragCoord.z / gl_FragCoord.w);
 		float weight = colour.a * clamp(pow(abs(z + 5.0), -4.0), 0.2, 0.8);
@@ -166,7 +156,7 @@ void main(void) {
 	#endif
 	#ifdef weightPass
 		// Weight pass
-		gl_FragColor = vec4(gl_FragColor.a);
+		gl_FragColor = vec4(colour.a);
 	#endif
 }
 	";

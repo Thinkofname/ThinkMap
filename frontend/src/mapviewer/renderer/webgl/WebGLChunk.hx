@@ -53,6 +53,8 @@ class WebGLChunk extends Chunk {
 			}
 		}
 		
+		program.setOffset(x, z);
+		
 		for (i in 0 ... 16) {
 			var section = sections[i];
 			if (section == null) continue;
@@ -67,9 +69,7 @@ class WebGLChunk extends Chunk {
 	
 	private function renderBuffer(renderer : WebGLRenderer, gl : RenderingContext, program : ChunkShader, 
 			buffer : Buffer, triangleCount : Int) {
-		if (buffer != null && triangleCount != 0) {
-			program.setOffset(x, z);
-			
+		if (buffer != null && triangleCount != 0) {			
 			gl.bindBuffer(RenderingContext.ARRAY_BUFFER, buffer);
 			gl.vertexAttribPointer(program.position, 3, RenderingContext.UNSIGNED_SHORT, false, 20, 0);
 			gl.vertexAttribPointer(program.colour, 4, RenderingContext.UNSIGNED_BYTE, true, 20, 6);

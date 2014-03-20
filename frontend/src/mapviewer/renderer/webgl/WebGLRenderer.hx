@@ -62,7 +62,7 @@ class WebGLRenderer implements Renderer {
 	private var onGround : Bool = false;
 	private var offGroundFor : Int = 0;
 	private var cx : Int = 0;
-	private var cy : Int = 0;
+	public var cy : Int = 0;
 	private var cz : Int = 0;
 	private var firstPerson : Bool = true;
 	private var flyMode : Bool = false;
@@ -98,14 +98,12 @@ class WebGLRenderer implements Renderer {
 		gl.enable(GL.DEPTH_TEST);
 		gl.enable(GL.CULL_FACE);
 		gl.cullFace(GL.BACK);
-		gl.frontFace(GL.CW);
-		
-		gl.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
+		gl.frontFace(GL.CCW);
 		
 		var hasLock = false;
 		
-		canvas.onclick = function(e : MouseEvent) {
-			if (!hasLock) Utils.requestPointerLock(canvas);
+		Browser.document.body.onclick = function(e : MouseEvent) {
+			if (!hasLock) Utils.requestPointerLock(Browser.document.body);
 		};
 		Browser.document.onmousedown = function(e : MouseEvent) {
 			if (hasLock && firstPerson) {			
@@ -166,9 +164,6 @@ class WebGLRenderer implements Renderer {
 		Browser.document.addEventListener("webkitpointerlockchange", pToggle, false);
 		Browser.document.addEventListener("mozpointerlockchange", pToggle, false);
 		canvas.oncontextmenu = function(e : Event) { e.preventDefault(); };
-		
-		var ww : WebGLWorld = cast Main.world;
-		ww.initBuffers(gl, this);
 	}
 	
 	inline public static var viewDistance : Int = 4;
@@ -182,14 +177,13 @@ class WebGLRenderer implements Renderer {
 		var delta : Float = Math.min((Utils.now() - lastFrame) / (1000 / 60), 3.0);
 		lastFrame = Utils.now();
 		
-		gl.viewport(0, 0, canvas.width, canvas.height);
+		//gl.viewport(0, 0, canvas.width, canvas.height);
 		var skyPosition = getScale();
 		gl.clearColor(getScaledNumber(122 / 255, 0, skyPosition),
 					  getScaledNumber(165 / 255, 0, skyPosition),
 					  getScaledNumber(247 / 255, 0, skyPosition),
 					  1);
-		gl.colorMask(true, true, true, false);
-		gl.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
+		//gl.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 		
 		mainProgram.use();
 		mainProgram.setPerspectiveMatrix(pMatrix);
@@ -201,7 +195,6 @@ class WebGLRenderer implements Renderer {
 		mainProgram.setFrame(Std.int(currentFrame));
 		currentFrame += (1 / 3) * delta;
 		if (currentFrame > 0xFFFFFFF) currentFrame = 0;
-		mainProgram.setTime(Main.world.currentTime);
 		
 		if (firstPerson) {
 			var lx = camera.x;
@@ -238,18 +231,15 @@ class WebGLRenderer implements Renderer {
 		uMatrix.identity();
 		uMatrix.scale( -1, -1, 1);
 		uMatrix.rotateX( -camera.rotX - Math.PI);
-		uMatrix.rotateY( -(-camera.rotY - Math.PI));
+		uMatrix.rotateY( -( -camera.rotY - Math.PI));
 		temp.identity();
 		temp.translate([ -camera.x, -camera.y, -camera.z]);
 		temp2.identity();
-		mainProgram.setUMatrix(uMatrix.multiply(temp, temp2));
+		uMatrix.multiply(temp, temp2);
+		mainProgram.setUMatrix(temp2);
 		
 		var ww : WebGLWorld = cast Main.world;
 		ww.render(this, mainProgram);
-		
-		gl.clearColor(1, 1, 1, 1);
-		gl.colorMask(false, false, false, true);
-		gl.clear(GL.COLOR_BUFFER_BIT);
 
 		var nx = (Std.int(camera.x) >> 4);
 		var nz = (Std.int(camera.z) >> 4);

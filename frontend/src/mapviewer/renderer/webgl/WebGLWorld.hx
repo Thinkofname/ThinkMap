@@ -63,46 +63,50 @@ class WebGLWorld extends World {
 		var gl = renderer.gl;
 		chunkList.sort(chunkSort);
 		
+		var scale = (Main.world.currentTime - 6000.0) / 12000.0;
+		if (scale > 1.0) {
+			scale = 2.0 - scale;
+		} else if (scale < 0.0) {
+			scale = -scale;
+		}
+		scale = 1.0 - scale;
+		program.setScale(scale);
+			
 		gl.bindFramebuffer(GL.FRAMEBUFFER, normalFrameBuffer);
-		gl.disable(GL.BLEND);
-		gl.viewport(0, 0, screenX, screenY);		
-		gl.depthMask(true);
+		gl.viewport(0, 0, screenX, screenY);	
 		gl.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 		for (chunk in chunkList) {
 			chunk.render(renderer, program, 0);
-		}
-		
-		gl.bindFramebuffer(GL.FRAMEBUFFER, colourFrameBuffer);
-		gl.viewport(0, 0, screenX, screenY);
-		gl.clearColor(0.0, 0.0, 0.0, 0.0);
-		gl.colorMask(true, true, true, true);	
+		}		
 		
 		gl.depthMask(false);
+		gl.bindFramebuffer(GL.FRAMEBUFFER, colourFrameBuffer);
+		gl.viewport(0, 0, screenX, screenY);
+		gl.clearColor(0.0, 0.0, 0.0, 0.0);	
 		gl.clear(GL.COLOR_BUFFER_BIT);
 		gl.enable(GL.BLEND);
 		gl.blendFunc(GL.ONE, GL.ONE);
 		program.disable();
 		colourShader.use();
 		colourShader.setFrame(Std.int(renderer.currentFrame));
-		colourShader.setTime(Main.world.currentTime);
+		colourShader.setScale(scale);
 		colourShader.setPerspectiveMatrix(renderer.pMatrix);
 		colourShader.setUMatrix(renderer.temp2);
 		for (chunk in chunkList) {
 			chunk.render(renderer, colourShader, 1);
 		}
 		
+		
+		gl.depthMask(false);	
 		gl.bindFramebuffer(GL.FRAMEBUFFER, weightFrameBuffer);
 		gl.viewport(0, 0, screenX, screenY);
 		gl.clearColor(1.0, 0.0, 0.0, 0.0);
-		gl.colorMask(true, true, true, true);
-		
-		gl.depthMask(false);		
-		gl.clear(GL.COLOR_BUFFER_BIT);
+		gl.clear(GL.COLOR_BUFFER_BIT);	
 		gl.blendFunc(GL.ZERO, GL.ONE_MINUS_SRC_ALPHA);
 		colourShader.disable();
 		weightShader.use();
 		weightShader.setFrame(Std.int(renderer.currentFrame));
-		weightShader.setTime(Main.world.currentTime);
+		weightShader.setScale(scale);
 		weightShader.setPerspectiveMatrix(renderer.pMatrix);
 		weightShader.setUMatrix(renderer.temp2);
 		for (chunk in chunkList) {
@@ -110,9 +114,11 @@ class WebGLWorld extends World {
 		}	
 		
 		gl.bindFramebuffer(GL.FRAMEBUFFER, null);
+		gl.viewport(0, 0, renderer.canvas.width, renderer.canvas.height);
+		gl.clearColor(0.0, 0.0, 0.0, 0.0);
+		gl.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 		program.disable();
 		alphaShader.use();
-		gl.viewport(0, 0, renderer.canvas.width, renderer.canvas.height);
 		gl.disable(GL.BLEND);
 		alphaShader.setScreenSize(renderer.canvas.width, renderer.canvas.height);
 		alphaShader.setScale(scaleX, scaleY);
@@ -146,8 +152,8 @@ class WebGLWorld extends World {
 	}
 	
 	public function initBuffers(gl : RenderingContext, renderer : WebGLRenderer) {
-		var sizeW = getSize(renderer.canvas.width, gl);
-		var sizeH = getSize(renderer.canvas.height, gl);
+		var sizeW = getSize(Std.int(renderer.canvas.width), gl);
+		var sizeH = getSize(Std.int(renderer.canvas.height), gl);
 		if (renderer.canvas.width > renderer.canvas.height) {
 			if (renderer.canvas.width < sizeW) {
 				screenX = Std.int(renderer.canvas.width);
@@ -231,11 +237,11 @@ class WebGLWorld extends World {
 			gl.bindBuffer(GL.ARRAY_BUFFER, buffer);
 			gl.bufferData(GL.ARRAY_BUFFER, new Float32Array([
 				-1.0, -1.0,
+				1.0, -1.0,
 				-1.0, 1.0,
-				1.0, -1.0,
 				1.0, 1.0,
-				1.0, -1.0,
-				-1.0, 1.0
+				-1.0, 1.0,
+				1.0, -1.0
 			]), GL.STATIC_DRAW); 
 		}
 		
