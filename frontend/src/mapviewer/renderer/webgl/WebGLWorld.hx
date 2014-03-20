@@ -111,7 +111,7 @@ class WebGLWorld extends World {
 		weightShader.setUMatrix(renderer.temp2);
 		for (chunk in chunkList) {
 			chunk.render(renderer, weightShader, 1);
-		}	
+		}
 		
 		gl.bindFramebuffer(GL.FRAMEBUFFER, null);
 		gl.viewport(0, 0, renderer.canvas.width, renderer.canvas.height);
@@ -153,31 +153,38 @@ class WebGLWorld extends World {
 	}
 	
 	public function initBuffers(gl : RenderingContext, renderer : WebGLRenderer) {
+		var canFloat = gl.getExtension("WEBGL_color_buffer_float") != null || gl.getExtension("OES_texture_float") != null;
 		// Downscale for now
-		var sx = Math.round(renderer.canvas.width / 2);
-		var sy = Math.round(renderer.canvas.height / 2);
+		var sx = Math.round(renderer.canvas.width);
+		var sy = Math.round(renderer.canvas.height);
 		
 		var sizeW = getSize(sx, gl);
 		var sizeH = getSize(sy, gl);
 		if (renderer.canvas.width > renderer.canvas.height) {
-			if (renderer.canvas.width < sizeW) {
+			if (sx < sizeW) {
 				screenX = sx;
 				screenY = sy;
+				scaleX = screenX / sizeW;
+				scaleY = screenY / sizeH;
 			} else {
 				screenX = Math.round(sizeW);
 				screenY = Math.round(sy * (sizeW / sx));
+				scaleX = sizeW / screenX;
+				scaleY = sizeH / screenY;
 			}
 		} else {			
-			if (renderer.canvas.height < sizeH) {
-				screenX = Math.round(renderer.canvas.width);
-				screenY = Math.round(renderer.canvas.height);
+			if (sy < sizeH) {
+				screenX = sx;
+				screenY = sy;
+				scaleX = screenX / sizeW;
+				scaleY = screenY / sizeH;
 			} else {
 				screenY = Math.round(sizeH);
 				screenX = Math.round(sx * (sizeH / sy));
+				scaleX = sizeW / screenX;
+				scaleY = sizeH / screenY;
 			}
 		}
-		scaleX = sizeW / screenX;
-		scaleY = sizeH / screenY;
 		
 		renderBuffer = gl.createRenderbuffer();
 		gl.bindRenderbuffer(GL.RENDERBUFFER, renderBuffer);
@@ -211,7 +218,7 @@ class WebGLWorld extends World {
 		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
 		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
 		
-		gl.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, sizeW, sizeH, 0, GL.RGBA, GL.UNSIGNED_BYTE, null);
+		gl.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, sizeW, sizeH, 0, GL.RGBA, canFloat ? GL.FLOAT : GL.UNSIGNED_BYTE, null);
 		
 		gl.framebufferTexture2D(GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, colourTexture, 0);
 		gl.framebufferRenderbuffer(GL.FRAMEBUFFER, GL.DEPTH_ATTACHMENT, GL.RENDERBUFFER, renderBuffer);
