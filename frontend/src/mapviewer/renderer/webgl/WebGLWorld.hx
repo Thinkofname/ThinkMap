@@ -164,27 +164,21 @@ class WebGLWorld extends World {
 			if (sx < sizeW) {
 				screenX = sx;
 				screenY = sy;
-				scaleX = screenX / sizeW;
-				scaleY = screenY / sizeH;
 			} else {
 				screenX = Math.round(sizeW);
 				screenY = Math.round(sy * (sizeW / sx));
-				scaleX = sizeW / screenX;
-				scaleY = sizeH / screenY;
 			}
 		} else {			
 			if (sy < sizeH) {
 				screenX = sx;
 				screenY = sy;
-				scaleX = screenX / sizeW;
-				scaleY = screenY / sizeH;
 			} else {
 				screenY = Math.round(sizeH);
 				screenX = Math.round(sx * (sizeH / sy));
-				scaleX = sizeW / screenX;
-				scaleY = sizeH / screenY;
 			}
 		}
+		scaleX = screenX / sizeW;
+		scaleY = screenY / sizeH;
 		
 		renderBuffer = gl.createRenderbuffer();
 		gl.bindRenderbuffer(GL.RENDERBUFFER, renderBuffer);
