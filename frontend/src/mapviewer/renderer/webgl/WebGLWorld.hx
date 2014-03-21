@@ -133,7 +133,7 @@ class WebGLWorld extends World {
 		
 		gl.bindBuffer(GL.ARRAY_BUFFER, buffer);
 		gl.vertexAttribPointer(alphaShader.position, 2, GL.FLOAT, false, 8, 0);
-		gl.drawArrays(GL.TRIANGLES, 0, 6);
+		gl.drawArrays(GL.TRIANGLE_STRIP, 0, 4);
 		
 		alphaShader.disable();
 		gl.disable(GL.BLEND);
@@ -245,9 +245,7 @@ class WebGLWorld extends World {
 				-1.0, -1.0,
 				1.0, -1.0,
 				-1.0, 1.0,
-				1.0, 1.0,
-				-1.0, 1.0,
-				1.0, -1.0
+				1.0, 1.0
 			]), GL.STATIC_DRAW); 
 		}
 		
