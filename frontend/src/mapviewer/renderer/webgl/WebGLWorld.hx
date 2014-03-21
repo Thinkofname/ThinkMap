@@ -132,7 +132,7 @@ class WebGLWorld extends World {
 		alphaShader.setBuffers(0, 1, 2);
 		
 		gl.bindBuffer(GL.ARRAY_BUFFER, buffer);
-		gl.vertexAttribPointer(alphaShader.position, 2, GL.FLOAT, false, 0, 0);
+		gl.vertexAttribPointer(alphaShader.position, 2, GL.FLOAT, false, 8, 0);
 		gl.drawArrays(GL.TRIANGLES, 0, 6);
 		
 		alphaShader.disable();
