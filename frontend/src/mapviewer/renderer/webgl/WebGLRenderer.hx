@@ -123,6 +123,8 @@ class WebGLRenderer implements Renderer {
 			if (!hasLock || !firstPerson) return;
 			camera.rotY += Utils.movementX(e) / 300.0;	
 			camera.rotX += Utils.movementY(e) / 300.0;	
+			if (camera.rotX > Math.PI / 2) camera.rotX = Math.PI / 2;
+			if (camera.rotX < -Math.PI / 2) camera.rotX = -Math.PI / 2;
 		};
 		Browser.document.onkeydown = function(e : KeyboardEvent) {
 			if (!firstPerson) return;
