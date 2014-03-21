@@ -151,7 +151,7 @@ void main(void) {
 		// Colour pass
 		colour.rgb *= colour.a;
 		float z = (gl_FragCoord.z / gl_FragCoord.w);
-		float weight = colour.a * clamp(pow(abs(z + 5.0), -4.0), 0.2, 0.8);
+		float weight = colour.a * clamp(0.03 / (1e-5 + pow(z / 200.0, 4.0)), 1e-2, 3e3);
 		gl_FragColor = colour * weight;
 	#endif
 	#ifdef weightPass
