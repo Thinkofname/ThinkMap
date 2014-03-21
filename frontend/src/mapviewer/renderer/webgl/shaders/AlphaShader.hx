@@ -46,7 +46,7 @@ uniform sampler2D wb;
 uniform sampler2D nb;
 
 void main(void) {
-	vec2 rp = (gl_FragCoord.xy / screen) * scale;
+	vec2 rp = (gl_FragCoord.xy * screen) * scale;
 	vec4 accum = texture2D(cb, rp);
 	float reveal = texture2D(wb, rp).r;
 	vec4 colour = texture2D(nb, rp);
@@ -63,7 +63,7 @@ void main(void) {
 		nb = getUniform("nb");
 	}
 	
-	inline public function setScreenSize(x : Int, y : Int) {
+	inline public function setScreenSize(x : Float, y : Float) {
 		gl.uniform2f(screen, x, y);
 	}	
 	
