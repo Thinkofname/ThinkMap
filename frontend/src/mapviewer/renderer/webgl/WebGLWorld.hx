@@ -123,7 +123,7 @@ class WebGLWorld extends World {
 		alphaShader.use();
 		gl.disable(GL.BLEND);
 		if (needUpdate) {
-			alphaShader.setScreenSize(renderer.canvas.width, renderer.canvas.height);
+			alphaShader.setScreenSize(1 / renderer.canvas.width, 1 / renderer.canvas.height);
 			alphaShader.setScale(scaleX, scaleY);
 			
 			gl.activeTexture(GL.TEXTURE1);
@@ -264,7 +264,7 @@ class WebGLWorld extends World {
 	}
 	
 	private function getSize(x : Int, gl : RenderingContext) : Int {
-		var size = Math.pow(2, Math.ceil(Math.log(x) / Math.log(2)));
+		var size = x;
 		var max = gl.getParameter(GL.MAX_TEXTURE_SIZE);
 		if (size > max) {
 			size = max;
