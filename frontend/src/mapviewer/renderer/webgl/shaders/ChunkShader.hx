@@ -98,22 +98,29 @@ attribute vec2 lighting;
 uniform mat4 pMatrix;
 uniform mat4 uMatrix;
 uniform vec2 offset;
-uniform float time;
+uniform float scale;
+uniform float frame;
 
 varying vec4 vColour;
-varying vec2 vTextureId;
 varying vec2 vTexturePos;
-varying vec2 vLighting;
+varying vec2 vTextureOffset;
+varying float vLighting;
 
 void main(void) {
     vec3 pos = position;
     gl_Position = pMatrix * uMatrix * vec4((pos / 256.0) - 1.0 + vec3(offset.x * 16.0, 0.0, offset.y * 16.0), 1.0);
     vColour = colour;
-    vTextureId = textureId;
-    vTexturePos = texturePos / 256.0;
-	vTexturePos.x = vTexturePos.x;
-	vTexturePos.y = vTexturePos.y;
-    vLighting = lighting;
+	
+    vec2 tPos = texturePos / 256.0;	
+    float id = floor(textureId.x + 0.5);
+    id = id + floor(mod(frame, floor((textureId.y - textureId.x) + 0.5) + 1.0));
+	vTexturePos = vec2(floor(mod(id, 32.0)) * 0.03125,
+		floor(id / 32.0) * 0.03125);
+	vTextureOffset = tPos;
+	
+    float light = max(lighting.x, lighting.y * scale);
+    float val = pow(0.9, 16.0 - light) * 2.0;
+    vLighting = clamp(pow(val, 1.5) / 2.0, 0.0, 1.0);
 }	
 	";
 	
@@ -121,25 +128,15 @@ void main(void) {
 precision mediump float;
 
 uniform sampler2D texture;
-uniform float frame;
-uniform float scale;
 
 varying vec4 vColour;
-varying vec2 vTextureId;
 varying vec2 vTexturePos;
-varying vec2 vLighting;
+varying vec2 vTextureOffset;
+varying float vLighting;
 
 void main(void) {
-    float id = floor(vTextureId.x + 0.5);
-    id = id + floor(mod(frame, floor((vTextureId.y - vTextureId.x) + 0.5) + 1.0));
-    vec2 pos = clamp(fract(vTexturePos), 0.0001, 0.9999) * 0.03125;
-    pos.x += floor(mod(id, 32.0)) * 0.03125;
-    pos.y += floor(id / 32.0) * 0.03125;
-    vec4 colour = texture2D(texture, pos) * vColour;
-
-    float light = max(vLighting.x, vLighting.y * scale);
-    float val = pow(0.9, 16.0 - light) * 2.0;
-    colour.rgb *= clamp(pow(val, 1.5) / 2.0, 0.0, 1.0);
+    vec4 colour = texture2D(texture, vTexturePos + fract(vTextureOffset) * 0.03125) * vColour;
+    colour.rgb *= vLighting;
 	#ifndef colourPass 
 	#ifndef weightPass 
 		if (colour.a < 0.5) discard;
