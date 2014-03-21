@@ -60,6 +60,8 @@ class TProgram {
 		gl.attachShader(program, fragmentShader);
 		gl.linkProgram(program);
 		gl.useProgram(program);
+		gl.deleteShader(vertexShader);
+		gl.deleteShader(fragmentShader);
 		return program;
 	}
 	
