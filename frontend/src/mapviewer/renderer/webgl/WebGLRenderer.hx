@@ -456,13 +456,11 @@ class WebGLRenderer implements Renderer {
 		gl.bindTexture(GL.TEXTURE_2D, tex);
 		gl.pixelStorei(GL.UNPACK_FLIP_Y_WEBGL, 0);
 		gl.pixelStorei(GL.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
-		gl.texImage2D(GL.TEXTURE_2D, 0, 
-			GL.RGBA, GL.RGBA, 
-			GL.UNSIGNED_BYTE, imageElement);
-		gl.texParameteri(GL.TEXTURE_2D, 
-			GL.TEXTURE_MAG_FILTER, GL.NEAREST);
-		gl.texParameteri(GL.TEXTURE_2D, 
-			GL.TEXTURE_MIN_FILTER, GL.NEAREST);
+		gl.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, imageElement);
+		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
+		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
+		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
+		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
 		gl.bindTexture(GL.TEXTURE_2D, null);
 		return tex;
 	}

@@ -158,7 +158,13 @@ class WebGLWorld extends World {
 	}
 	
 	public function initBuffers(gl : RenderingContext, renderer : WebGLRenderer) {
-		var canFloat = gl.getExtension("WEBGL_color_buffer_float") != null || gl.getExtension("OES_texture_float") != null;
+		var textureType = GL.UNSIGNED_BYTE;
+		var hf = gl.getExtension("OES_texture_half_float");
+		if (hf != null) {
+			textureType = hf.HALF_FLOAT_OES;
+		} else if (gl.getExtension("WEBGL_color_buffer_float") != null || gl.getExtension("OES_texture_float") != null) {
+			textureType = GL.FLOAT;
+		} 
 		// Downscale for now
 		var sx = Math.round(renderer.canvas.width);
 		var sy = Math.round(renderer.canvas.height);
@@ -217,7 +223,7 @@ class WebGLWorld extends World {
 		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
 		gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
 		
-		gl.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, sizeW, sizeH, 0, GL.RGBA, canFloat ? GL.FLOAT : GL.UNSIGNED_BYTE, null);
+		gl.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, sizeW, sizeH, 0, GL.RGBA, textureType, null);
 		
 		gl.framebufferTexture2D(GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, colourTexture, 0);
 		gl.framebufferRenderbuffer(GL.FRAMEBUFFER, GL.DEPTH_ATTACHMENT, GL.RENDERBUFFER, renderBuffer);
