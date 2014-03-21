@@ -177,8 +177,11 @@ class WebGLRenderer implements Renderer {
 	public var currentFrame : Float = 0;
 	
     public function draw() : Void {
-		var delta : Float = Math.min((Utils.now() - lastFrame) / (1000 / 60), 3.0);
+		var diff = (Utils.now() - lastFrame);
+		var delta : Float = Math.min(diff / (1000 / 60), 3.0);
 		lastFrame = Utils.now();
+		
+		var execStart = Utils.now();
 		
 		//gl.viewport(0, 0, canvas.width, canvas.height);
 		var skyPosition = getScale();
@@ -291,15 +294,25 @@ class WebGLRenderer implements Renderer {
 		
 		// Fps calculations
 		frames++;
+		execTotal += (Utils.now() - execStart);
+		diffTotal += diff;
 		if (lastCheck + 1000 < Utils.now()) {
 			fps = 'FPS: $frames';
 			fpsInt = frames;
 			frames = 0;
 			lastCheck = Utils.now();
+			cDiff = Std.int(diffTotal / fpsInt);
+			cExec = Std.int(execTotal / fpsInt);
+			diffTotal = 0;
+			execTotal = 0;
 		}
 		var size = ui.stringLength(fps);
 		var offset = ui.drawText("FPS: ", Colour.WHITE, canvas.width - 5 - size, 5);
 		ui.drawText('$fpsInt', fpsInt >= 55 ? Colour.GREEN : (fpsInt >= 30 ? Colour.YELLOW : Colour.RED), canvas.width - 5 - size + offset, 5);
+		
+		var ms = "MS: " + cExec + " / " + cDiff;
+		var size = ui.stringLength(ms);
+		ui.drawText(ms, Colour.WHITE, canvas.width - 5 - size, 25);
 	}
 	
 	// FPS things
@@ -307,6 +320,10 @@ class WebGLRenderer implements Renderer {
 	private var lastCheck : Int = Utils.now();
 	private var fps : String = "FPS: 0";
 	private var fpsInt : Int = 0;
+	private var cDiff : Int = 0;
+	private var cExec : Int = 0;
+	private var execTotal : Int = 0;
+	private var diffTotal : Int = 0;
 	
     public function resize(width : Int, height : Int) : Void {
 		pMatrix.identity();
