@@ -53,23 +53,28 @@ class WebGLChunk extends Chunk {
 			}
 		}
 		
-		program.setOffset(x, z);
+		var hasSet = false;
 		
 		for (i in 0 ... 16) {
 			var section = sections[i];
 			if (section == null) continue;
 			
 			if (pass == 0) {
-				renderBuffer(renderer, gl, program, normalBuffers[i], normalTriangleCount[i]);
+				hasSet = renderBuffer(renderer, gl, program, normalBuffers[i], normalTriangleCount[i], hasSet);
 			} else {
-				renderBuffer(renderer, gl, program, transBuffers[i], transTriangleCount[i]);
+				hasSet = renderBuffer(renderer, gl, program, transBuffers[i], transTriangleCount[i], hasSet);
 			}
 		}
 	}
 	
 	private function renderBuffer(renderer : WebGLRenderer, gl : RenderingContext, program : ChunkShader, 
-			buffer : Buffer, triangleCount : Int) {
-		if (buffer != null && triangleCount != 0) {			
+			buffer : Buffer, triangleCount : Int, hasSet : Bool) : Bool {
+		if (buffer != null && triangleCount != 0) {					
+			if (!hasSet) {
+				program.setOffset(x, z);				
+				hasSet = true;
+			}
+			
 			gl.bindBuffer(RenderingContext.ARRAY_BUFFER, buffer);
 			gl.vertexAttribPointer(program.position, 3, RenderingContext.UNSIGNED_SHORT, false, 20, 0);
 			gl.vertexAttribPointer(program.colour, 4, RenderingContext.UNSIGNED_BYTE, true, 20, 6);
@@ -78,6 +83,7 @@ class WebGLChunk extends Chunk {
 			gl.vertexAttribPointer(program.lighting, 2, RenderingContext.BYTE, false, 20, 18);
 			gl.drawArrays(RenderingContext.TRIANGLES, 0, triangleCount);
 		}
+		return hasSet;
 	}
 	
 	public function createBuffer(i : Int, data : Uint8Array, dataTrans : Uint8Array) {

@@ -175,6 +175,7 @@ class WebGLRenderer implements Renderer {
 	private var temp : Mat4;
 	public var temp2 : Mat4;
 	public var currentFrame : Float = 0;
+	private var needsUpdate : Bool = true;
 	
     public function draw() : Void {
 		var diff = (Utils.now() - lastFrame);
@@ -192,11 +193,15 @@ class WebGLRenderer implements Renderer {
 		//gl.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 		
 		mainProgram.use();
-		mainProgram.setPerspectiveMatrix(pMatrix);
 		
-		gl.activeTexture(GL.TEXTURE0);
-		gl.bindTexture(GL.TEXTURE_2D, blockTextures[0]);
-		mainProgram.setBlockTexture(0);
+		if (needsUpdate) {
+			mainProgram.setPerspectiveMatrix(pMatrix);
+			
+			gl.activeTexture(GL.TEXTURE0);
+			gl.bindTexture(GL.TEXTURE_2D, blockTextures[0]);
+			mainProgram.setBlockTexture(0);
+			needsUpdate = false;
+		}
 		
 		mainProgram.setFrame(Std.int(currentFrame));
 		currentFrame += (1 / 3) * delta;
@@ -331,6 +336,7 @@ class WebGLRenderer implements Renderer {
 		ui.resize();
 		var ww : WebGLWorld = cast Main.world;
 		ww.resize(gl, this);
+		needsUpdate = true;
 	}
 	
     public function connected() : Void {

@@ -53,6 +53,8 @@ class WebGLWorld extends World {
 	private var scaleY : Float = 0;
 	private var screenX : Int = 0;
 	private var screenY : Int = 0;
+	
+	private var needUpdate : Bool = true;
 
 	public function new() {
 		super(true);
@@ -120,16 +122,19 @@ class WebGLWorld extends World {
 		program.disable();
 		alphaShader.use();
 		gl.disable(GL.BLEND);
-		alphaShader.setScreenSize(renderer.canvas.width, renderer.canvas.height);
-		alphaShader.setScale(scaleX, scaleY);
-		
-		gl.activeTexture(GL.TEXTURE0);
-		gl.bindTexture(GL.TEXTURE_2D, colourTexture);
-		gl.activeTexture(GL.TEXTURE1);
-		gl.bindTexture(GL.TEXTURE_2D, weightTexture);
-		gl.activeTexture(GL.TEXTURE2);
-		gl.bindTexture(GL.TEXTURE_2D, normalTexture);
-		alphaShader.setBuffers(0, 1, 2);
+		if (needUpdate) {
+			alphaShader.setScreenSize(renderer.canvas.width, renderer.canvas.height);
+			alphaShader.setScale(scaleX, scaleY);
+			
+			gl.activeTexture(GL.TEXTURE1);
+			gl.bindTexture(GL.TEXTURE_2D, colourTexture);
+			gl.activeTexture(GL.TEXTURE2);
+			gl.bindTexture(GL.TEXTURE_2D, weightTexture);
+			gl.activeTexture(GL.TEXTURE3);
+			gl.bindTexture(GL.TEXTURE_2D, normalTexture);
+			alphaShader.setBuffers(1, 2, 3);
+			needUpdate = false;
+		}
 		
 		gl.bindBuffer(GL.ARRAY_BUFFER, buffer);
 		gl.vertexAttribPointer(alphaShader.position, 2, GL.FLOAT, false, 8, 0);
@@ -254,6 +259,8 @@ class WebGLWorld extends World {
 			colourShader = new ChunkShaderColour(gl);
 			weightShader = new ChunkShaderWeight(gl);
 		}
+		
+		needUpdate = true;
 	}
 	
 	private function getSize(x : Int, gl : RenderingContext) : Int {
