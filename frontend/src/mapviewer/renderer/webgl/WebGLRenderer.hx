@@ -332,7 +332,7 @@ class WebGLRenderer implements Renderer {
 	
     public function resize(width : Int, height : Int) : Void {
 		pMatrix.identity();
-		pMatrix.perspective(Math.PI / 180 * 80, canvas.width / canvas.height, 0.1, 500);
+		pMatrix.perspective(Math.PI / 180 * 80, canvas.width / canvas.height, 0.01, 500);
 		ui.resize();
 		var ww : WebGLWorld = cast Main.world;
 		ww.resize(gl, this);
