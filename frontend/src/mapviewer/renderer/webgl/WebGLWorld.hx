@@ -264,6 +264,10 @@ class WebGLWorld extends World {
 		if (size > max) {
 			size = max;
 		}
+		max = gl.getParameter(GL.MAX_VIEWPORT_DIMS);
+		if (size > max) {
+			size = max;
+		}
 		return Std.int(size);
 	}
 	
