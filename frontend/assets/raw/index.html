@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Map Viewer</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
+	<title>Map Viewer</title>
+	<style>
+		body {
+			margin: 0;
+			overflow: hidden;
+		}
 		canvas.no-events {
 			pointer-events: none;
 		}
@@ -20,7 +20,7 @@
 			font-weight: normal;
 			font-style: normal;
 		}
-    </style>
+	</style>
 	<script type="text/javascript">
 	MapViewerConfig = {
 		// %SERVERPORT% is replaced with the web server's port if this 
@@ -33,12 +33,12 @@
 	};
 	</script>
 </head>
-    <body>
-        <canvas id="main"></canvas>
-        <script type="text/javascript" src="gl-matrix-min.js"></script>
-        <script type="text/javascript" src="main.js"></script>		
+	<body>
+		<canvas id="main"></canvas>
+		<script type="text/javascript" src="gl-matrix-min.js"></script>
+		<script type="text/javascript" src="main.js"></script>		
 		<div style="position:absolute; left: 0; bottom: 0; width: 150px; height: 12px; font-size: 10px">
 			Powered by <a href="http://www.spigotmc.org/resources/thinkmap.413/">ThinkMap</a>
 		</div>
-    </body>
+	</body>
 </html>
