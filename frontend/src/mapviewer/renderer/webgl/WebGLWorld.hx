@@ -77,6 +77,7 @@ class WebGLWorld extends World {
 			
 		gl.bindFramebuffer(GL.FRAMEBUFFER, normalFrameBuffer);
 		gl.viewport(0, 0, screenX, screenY);	
+		gl.colorMask(true, true, true, false);
 		gl.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 		for (chunk in chunkList) {
 			chunk.render(renderer, program, 0);
@@ -85,6 +86,7 @@ class WebGLWorld extends World {
 		gl.depthMask(false);
 		gl.bindFramebuffer(GL.FRAMEBUFFER, colourFrameBuffer);
 		gl.viewport(0, 0, screenX, screenY);
+		gl.colorMask(true, true, true, true);
 		gl.clearColor(0.0, 0.0, 0.0, 0.0);	
 		gl.clear(GL.COLOR_BUFFER_BIT);
 		gl.enable(GL.BLEND);
@@ -103,6 +105,7 @@ class WebGLWorld extends World {
 		gl.depthMask(false);	
 		gl.bindFramebuffer(GL.FRAMEBUFFER, weightFrameBuffer);
 		gl.viewport(0, 0, screenX, screenY);
+		gl.colorMask(true, false, false, true);
 		gl.clearColor(1.0, 0.0, 0.0, 0.0);
 		gl.clear(GL.COLOR_BUFFER_BIT);	
 		gl.blendFunc(GL.ZERO, GL.ONE_MINUS_SRC_ALPHA);
@@ -118,6 +121,7 @@ class WebGLWorld extends World {
 		
 		gl.bindFramebuffer(GL.FRAMEBUFFER, null);
 		gl.viewport(0, 0, renderer.canvas.width, renderer.canvas.height);
+		gl.colorMask(true, true, true, true);
 		gl.clearColor(0.0, 0.0, 0.0, 0.0);
 		gl.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 		program.disable();
