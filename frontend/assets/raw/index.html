@@ -2,25 +2,7 @@
 <html>
 <head>
 	<title>Map Viewer</title>
-	<style>
-		body {
-			margin: 0;
-			overflow: hidden;
-		}
-		canvas.no-events {
-			pointer-events: none;
-		}
-		@font-face {
-			font-family: 'Minecraft';
-			src: url('minecraft_min-webfont.eot');
-			src: url('minecraft_min-webfont.eot?#iefix') format('embedded-opentype'),
-				 url('minecraft_min-webfont.woff') format('woff'),
-				 url('minecraft_min-webfont.ttf') format('truetype'),
-				 url('minecraft_min-webfont.svg#minecraftregular') format('svg');
-			font-weight: normal;
-			font-style: normal;
-		}
-	</style>
+	<link rel="stylesheet" type="text/css" href="style.min.css"/>
 	<script type="text/javascript">
 	MapViewerConfig = {
 		// %SERVERPORT% is replaced with the web server's port if this 
@@ -37,7 +19,19 @@
 		<canvas id="main"></canvas>
 		<script type="text/javascript" src="gl-matrix-min.js"></script>
 		<script type="text/javascript" src="main.js"></script>		
-		<div style="position:absolute; left: 0; bottom: 0; width: 150px; height: 12px; font-size: 10px">
+		<div class="user-interface">
+			<div class="ui-position">
+				Position: <br/>
+				X: <span id="position-x">0</span>,
+				Y: <span id="position-y">0</span>,
+				Z: <span id="position-z">0</span>
+			</div>
+			<div class="ui-fps">
+				FPS: <span id="fps">0</span><br/>
+				MS: <span id="ms">0 / 0</span>
+			</div>
+		</div>
+		<div class="link-back">
 			Powered by <a href="http://www.spigotmc.org/resources/thinkmap.413/">ThinkMap</a>
 		</div>
 	</body>

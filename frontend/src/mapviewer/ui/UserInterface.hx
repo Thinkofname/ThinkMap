@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 package mapviewer.ui;
-import js.Browser;
+import js.Browser.document;
 import js.html.CanvasElement;
 import js.html.CanvasRenderingContext2D;
+import js.html.Element;
 import js.html.Event;
 import js.html.MouseEvent;
 
@@ -26,41 +27,43 @@ class UserInterface  {
 	private var ctx : CanvasRenderingContext2D;
 
 	public function new() {
-		canvas = Browser.document.createCanvasElement();
-		Browser.document.body.appendChild(canvas);
-		canvas.style.position = "absolute";
-		canvas.style.left = "0";
-		canvas.style.top = "0";
-		canvas.classList.add("no-events");
-		ctx = canvas.getContext2d();
-		resize();
+		
 	}
 	
-	public function clear() {
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
+	private var posX : Element;
+	private var posY : Element;
+	private var posZ : Element;
+	public function updatePosition(x : Int, y : Int, z : Int) {
+		if (posX == null) {
+			posX = document.getElementById("position-x");
+			posY = document.getElementById("position-y");
+			posZ = document.getElementById("position-z");
+		}
+		posX.innerText = '$x';
+		if (x < 0) posX.style.color = Colour.RED.hexString;
+		else  posX.style.color = Colour.GREEN.hexString;
+		
+		posY.innerText = '$y';
+		if (y < 0) posY.style.color = Colour.RED.hexString;
+		else  posY.style.color = Colour.GREEN.hexString;
+		
+		posZ.innerText = '$z';
+		if (z < 0) posZ.style.color = Colour.RED.hexString;
+		else  posZ.style.color = Colour.GREEN.hexString;
 	}
 	
-	public function drawText(txt : String, colour : Colour, x : Int, y : Int) : Int {
-		ctx.font = "16px Minecraft";
-		ctx.textAlign = "left";
-		ctx.textBaseline = "top";
-		ctx.fillStyle = Colour.BLACK.hexString;
-		ctx.fillText(txt, x + 2, y + 2);
-		ctx.fillStyle = colour.hexString;
-		ctx.fillText(txt, x, y);
-		return Std.int(ctx.measureText(txt).width);
-	}
-	
-	public function stringLength(txt : String) : Int {
-		ctx.font = "16px Minecraft";
-		ctx.textAlign = "left";
-		ctx.textBaseline = "top";
-		return Std.int(ctx.measureText(txt).width);
-	}
-	
-	public function resize() {
-		canvas.width = Browser.window.innerWidth;
-		canvas.height = Browser.window.innerHeight;
+	private var fpsFPS : Element;
+	private var fpsMS : Element;
+	public function updateFPS(fps : Int, jsMS : Int, ms : Int) {
+		if (fpsFPS == null) {
+			fpsFPS = document.getElementById("fps");
+			fpsMS = document.getElementById("ms");
+		}
+		
+		fpsFPS.innerText = '$fps';
+		fpsFPS.style.color = (fps >= 55 ? Colour.GREEN : (fps >= 30 ? Colour.YELLOW : Colour.RED)).hexString;
+		
+		fpsMS.innerText = '$jsMS / $ms';
 	}
 	
 }

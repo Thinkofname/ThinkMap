@@ -287,44 +287,28 @@ class WebGLRenderer implements Renderer {
 		if (cy != ny) {
 			cy = ny;
 		}
-		
-		ui.clear();
-		ui.drawText("Position:", Colour.WHITE, 5, 5);
-		var offset = ui.drawText("X: ", Colour.WHITE, 5, 25);
-		offset += ui.drawText('${Std.int(camera.x)}', camera.x >= 0 ? Colour.GREEN : Colour.RED, 5 + offset, 25);
-		offset += ui.drawText(", Y: ", Colour.WHITE, 5 + offset, 25);
-		offset += ui.drawText('${Std.int(camera.y)}', camera.y >= 0 ? Colour.GREEN : Colour.RED, 5 + offset, 25);
-		offset += ui.drawText(", Z: ", Colour.WHITE, 5 + offset, 25);
-		offset += ui.drawText('${Std.int(camera.z)}', camera.z >= 0 ? Colour.GREEN : Colour.RED, 5 + offset, 25);
-		
+			
 		// Fps calculations
 		frames++;
 		execTotal += (Utils.now() - execStart);
 		diffTotal += diff;
 		if (lastCheck + 1000 < Utils.now()) {
-			fps = 'FPS: $frames';
-			fpsInt = frames;
+			fps = frames;
 			frames = 0;
 			lastCheck = Utils.now();
-			cDiff = Std.int(diffTotal / fpsInt);
-			cExec = Std.int(execTotal / fpsInt);
+			cDiff = Std.int(diffTotal / fps);
+			cExec = Std.int(execTotal / fps);
 			diffTotal = 0;
 			execTotal = 0;
 		}
-		var size = ui.stringLength(fps);
-		var offset = ui.drawText("FPS: ", Colour.WHITE, canvas.width - 5 - size, 5);
-		ui.drawText('$fpsInt', fpsInt >= 55 ? Colour.GREEN : (fpsInt >= 30 ? Colour.YELLOW : Colour.RED), canvas.width - 5 - size + offset, 5);
-		
-		var ms = "MS: " + cExec + " / " + cDiff;
-		var size = ui.stringLength(ms);
-		ui.drawText(ms, Colour.WHITE, canvas.width - 5 - size, 25);
+		ui.updatePosition(Std.int(camera.x), Std.int(camera.y), Std.int(camera.z));
+		ui.updateFPS(fps, cExec, cDiff);
 	}
 	
 	// FPS things
 	private var frames : Int = 0;
 	private var lastCheck : Int = Utils.now();
-	private var fps : String = "FPS: 0";
-	private var fpsInt : Int = 0;
+	private var fps : Int = 0;
 	private var cDiff : Int = 0;
 	private var cExec : Int = 0;
 	private var execTotal : Int = 0;
@@ -333,7 +317,6 @@ class WebGLRenderer implements Renderer {
     public function resize(width : Int, height : Int) : Void {
 		pMatrix.identity();
 		pMatrix.perspective(Math.PI / 180 * 80, canvas.width / canvas.height, 0.01, 500);
-		ui.resize();
 		var ww : WebGLWorld = cast Main.world;
 		ww.resize(gl, this);
 		needsUpdate = true;
