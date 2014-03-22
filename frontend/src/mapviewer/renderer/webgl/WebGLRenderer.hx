@@ -175,6 +175,7 @@ class WebGLRenderer implements Renderer {
 	private var temp : Mat4;
 	public var temp2 : Mat4;
 	public var currentFrame : Float = 0;
+	public var previousFrame : Int = -1;
 	private var needsUpdate : Bool = true;
 	
     public function draw() : Void {
@@ -201,9 +202,7 @@ class WebGLRenderer implements Renderer {
 			gl.bindTexture(GL.TEXTURE_2D, blockTextures[0]);
 			mainProgram.setBlockTexture(0);
 			needsUpdate = false;
-		}
-		
-		mainProgram.setFrame(Std.int(currentFrame));
+		}		
 		currentFrame += (1 / 3) * delta;
 		if (currentFrame > 0xFFFFFFF) currentFrame = 0;
 		
@@ -303,6 +302,8 @@ class WebGLRenderer implements Renderer {
 		}
 		ui.updatePosition(Std.int(camera.x), Std.int(camera.y), Std.int(camera.z));
 		ui.updateFPS(fps, cExec, cDiff);
+		
+		previousFrame = Std.int(currentFrame);
 	}
 	
 	// FPS things

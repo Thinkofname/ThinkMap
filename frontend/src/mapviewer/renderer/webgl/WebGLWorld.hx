@@ -73,6 +73,7 @@ class WebGLWorld extends World {
 		}
 		scale = 1.0 - scale;
 		program.setScale(scale);
+		if (renderer.currentFrame != renderer.previousFrame) program.setFrame(Std.int(renderer.currentFrame));
 			
 		gl.bindFramebuffer(GL.FRAMEBUFFER, normalFrameBuffer);
 		gl.viewport(0, 0, screenX, screenY);	
@@ -90,7 +91,7 @@ class WebGLWorld extends World {
 		gl.blendFunc(GL.ONE, GL.ONE);
 		program.disable();
 		colourShader.use();
-		colourShader.setFrame(Std.int(renderer.currentFrame));
+		if (renderer.currentFrame != renderer.previousFrame) colourShader.setFrame(Std.int(renderer.currentFrame));
 		colourShader.setScale(scale);
 		colourShader.setPerspectiveMatrix(renderer.pMatrix);
 		colourShader.setUMatrix(renderer.temp2);
@@ -107,7 +108,7 @@ class WebGLWorld extends World {
 		gl.blendFunc(GL.ZERO, GL.ONE_MINUS_SRC_ALPHA);
 		colourShader.disable();
 		weightShader.use();
-		weightShader.setFrame(Std.int(renderer.currentFrame));
+		if (renderer.currentFrame != renderer.previousFrame) weightShader.setFrame(Std.int(renderer.currentFrame));
 		weightShader.setScale(scale);
 		weightShader.setPerspectiveMatrix(renderer.pMatrix);
 		weightShader.setUMatrix(renderer.temp2);
