@@ -43,7 +43,7 @@ div.ui-fps {
 
 div.link-back { 
 	position:absolute; 
-	left: 2px; 
+	right: 2px; 
 	bottom: 2px; 
 	width: 150px; 
 	height: 12px; 
