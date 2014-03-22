@@ -39,15 +39,15 @@ class UserInterface  {
 			posY = document.getElementById("position-y");
 			posZ = document.getElementById("position-z");
 		}
-		posX.innerText = '$x';
+		posX.innerHTML = '$x';
 		if (x < 0) posX.style.color = Colour.RED.hexString;
 		else  posX.style.color = Colour.GREEN.hexString;
 		
-		posY.innerText = '$y';
+		posY.innerHTML = '$y';
 		if (y < 0) posY.style.color = Colour.RED.hexString;
 		else  posY.style.color = Colour.GREEN.hexString;
 		
-		posZ.innerText = '$z';
+		posZ.innerHTML = '$z';
 		if (z < 0) posZ.style.color = Colour.RED.hexString;
 		else  posZ.style.color = Colour.GREEN.hexString;
 	}
@@ -60,10 +60,10 @@ class UserInterface  {
 			fpsMS = document.getElementById("ms");
 		}
 		
-		fpsFPS.innerText = '$fps';
+		fpsFPS.innerHTML = '$fps';
 		fpsFPS.style.color = (fps >= 55 ? Colour.GREEN : (fps >= 30 ? Colour.YELLOW : Colour.RED)).hexString;
 		
-		fpsMS.innerText = '$jsMS / $ms';
+		fpsMS.innerHTML = '$jsMS / $ms';
 	}
 	
 }
