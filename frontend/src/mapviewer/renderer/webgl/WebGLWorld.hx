@@ -165,7 +165,7 @@ class WebGLWorld extends World {
 		} else if (gl.getExtension("WEBGL_color_buffer_float") != null || gl.getExtension("OES_texture_float") != null) {
 			textureType = GL.FLOAT;
 		} 
-		// Downscale for now
+		
 		var sx = Math.round(renderer.canvas.width);
 		var sy = Math.round(renderer.canvas.height);
 		
