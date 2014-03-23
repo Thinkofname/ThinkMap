@@ -40,6 +40,10 @@ class World {
 
     private function tick() {
         currentTime = (currentTime + 1) % 24000;
+		for (build in toBuild) {
+			proxy.build(build.chunk, build.i);
+		}
+		toBuild = new Map();
     }
 
     public function writeRequestChunk(x : Int, z : Int) {
@@ -72,9 +76,14 @@ class World {
     }
 
     // Build related methods
+	private static var toBuild : Map<String, {chunk : Chunk, i : Int}> = new Map();
 
     public function requestBuild(chunk : Dynamic, i : Int) {
-		proxy.build(chunk, i);
+		toBuild[buildKey(chunk.x, chunk.z, i)] = {chunk: chunk, i: i};
+    }
+	
+	public static function buildKey(x : Int, z : Int, i : Int) : String {
+        return '$x:$z@$i';
     }
 	
     public function newChunk() : Chunk { throw "NYI"; return null; }
