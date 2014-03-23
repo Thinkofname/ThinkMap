@@ -97,7 +97,7 @@ class WorkerChunk extends Chunk {
 		WorkerMain.self.postMessage(out, buffers);
 	}
 	
-	public function sendBuild(i : Int) {		
+	public function sendBuild(i : Int, bid : Int) {		
 		var builder = new BlockBuilder();
 		var builderTrans = new BlockBuilder();
 		for (x in 0 ... 16) {
@@ -118,6 +118,7 @@ class WorkerChunk extends Chunk {
 		message.x = x;
 		message.z = z;
 		message.i = i;
+		message.bid = bid;
 		WorkerMain.self.postMessage(message, [message.data.buffer, message.dataTrans.buffer]);
 	}
 	

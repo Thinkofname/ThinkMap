@@ -62,6 +62,10 @@ class WorkerProxy {
 				var c = Main.world.getChunk(message.x, message.z);
 				if (c == null) return;
 				var chunk : WebGLChunk = cast c;
+				if (chunk.sections[message.i] == null || message.bid < chunk.sections[message.i].lastObtainedBuild) {
+					return;
+				}
+				chunk.sections[message.i].lastObtainedBuild = message.bid;
 				chunk.createBuffer(message.i, message.data, message.dataTrans);
 		}
 	}

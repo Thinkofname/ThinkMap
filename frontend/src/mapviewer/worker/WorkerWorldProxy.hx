@@ -43,11 +43,13 @@ class WorkerWorldProxy {
 	}
 	
 	public function build(chunk : Chunk, i : Int) {
+		var bid = chunk.sections[i].lastBuildId++;
 		proxies[lastProcessor].worker.postMessage( {
 			type: "build",
 			x: chunk.x,
 			z: chunk.z,
-			i: i
+			i: i,
+			bid: bid
 		});
 		lastProcessor = (lastProcessor + 1) % proxies.length;
 	}

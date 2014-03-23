@@ -54,7 +54,7 @@ class WorkerMain {
 						return;
 					}
 					var chunk : WorkerChunk = cast c;
-					chunk.sendBuild(msg.data.i);
+					chunk.sendBuild(msg.data.i, msg.data.bid);
 			}
 		};
 	}
