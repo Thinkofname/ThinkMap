@@ -33,37 +33,46 @@ class Logger {
 
     @:extern
     inline public function info(txt : String) {
+		#if debug
         if (CAN_LOG) {
 			trace('[INFO][$name]: $txt');
 			log("INFO", txt, Colour.AQUA);
 		}
+		#end
     }
 
     @:extern
     inline public function debug(txt : String) {
+		#if debug
         if (CAN_LOG) {
             trace('[DEBUG][$name]: $txt');
 			log("DEBUG", txt, Colour.YELLOW);
 		}
+		#end
     }
 
     @:extern
     inline public function warn(txt : String) {
+		#if debug
         if (CAN_LOG) {
             trace('[WARN][$name]: $txt');
 			log("WARN", txt, Colour.GOLD);
 		}
+		#end
     }
 
     @:extern
     inline public function error(txt : String) {
+		#if debug
         if (CAN_LOG) {
             trace('[ERROR][$name]: $txt');
 			log("ERROR", txt, Colour.RED);
 		}
+		#end
     }
 	
-	private function log(type : String, txt : String, colour : Colour) {		
+	#if debug
+	private function log(type : String, txt : String, colour : Colour) {
 		var comp = new TextComponent('[$type]');
 		comp.colour = Colour.AQUA;
 		var label = new TextComponent('[$name]');
@@ -74,4 +83,5 @@ class Logger {
 		comp.addComponent(msg);
 		Main.renderer.ui.appendLine(comp);
 	}
+	#end
 }
