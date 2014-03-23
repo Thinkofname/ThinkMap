@@ -17,7 +17,6 @@ package mapviewer.renderer.webgl;
 import js.html.Uint8Array;
 import js.html.webgl.Buffer;
 import mapviewer.js.Utils;
-import mapviewer.renderer.Renderer;
 import mapviewer.renderer.webgl.shaders.ChunkShader;
 import mapviewer.world.Chunk;
 import js.html.webgl.RenderingContext;
@@ -87,7 +86,7 @@ class WebGLChunk extends Chunk {
 	}
 	
 	public function createBuffer(i : Int, data : Uint8Array, dataTrans : Uint8Array) {
-		var renderer : WebGLRenderer = cast Main.renderer;
+		var renderer : WebGLRenderer = Main.renderer;
 		var gl : RenderingContext = renderer.gl;
 		if (data.length > 0) {
 			if (normalBuffers[i] == null) {
@@ -118,8 +117,8 @@ class WebGLChunk extends Chunk {
 		transTriangleCount[i] = Std.int(dataTrans.length / 20);
 	}
 	
-	override public function unload(renderer : Renderer) {
-		var web : WebGLRenderer = cast renderer;
+	override public function unload(renderer : WebGLRenderer) {
+		var web : WebGLRenderer = renderer;
 		for (buffer in normalBuffers) {
 			if (buffer != null) web.gl.deleteBuffer(buffer);
 		}

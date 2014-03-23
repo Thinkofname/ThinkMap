@@ -18,8 +18,8 @@ import js.html.DataView;
 import js.html.Uint8Array;
 import mapviewer.block.BlockRegistry;
 import mapviewer.block.Blocks;
-import mapviewer.renderer.Renderer;
 import mapviewer.renderer.webgl.BlockBuilder;
+import mapviewer.renderer.webgl.WebGLRenderer;
 import mapviewer.world.Chunk;
 import mapviewer.world.Chunk.ChunkSection;
 
@@ -122,5 +122,5 @@ class WorkerChunk extends Chunk {
 		WorkerMain.self.postMessage(message, [message.data.buffer, message.dataTrans.buffer]);
 	}
 	
-	override public function unload(renderer : Renderer) {}
+	override public function unload(renderer : WebGLRenderer) {}
 }

@@ -16,12 +16,12 @@
 package mapviewer.world;
 
 import mapviewer.block.Block;
+import mapviewer.renderer.webgl.WebGLRenderer;
 import Reflect;
 import mapviewer.block.BlockRegistry;
 import haxe.io.Bytes;
 import haxe.crypto.BaseCode;
 import js.html.Uint8Array;
-import mapviewer.renderer.Renderer;
 import js.html.Uint16Array;
 import js.html.Uint8Array;
 import mapviewer.block.Blocks;
@@ -212,7 +212,7 @@ class Chunk {
         throw "NYI";
     }
 
-    public function unload(renderer : Renderer) {
+    public function unload(renderer : WebGLRenderer) {
         throw "NYI";
     }
 

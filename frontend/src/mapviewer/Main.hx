@@ -22,7 +22,6 @@ import mapviewer.renderer.webgl.WebGLRenderer;
 import mapviewer.renderer.webgl.WebGLWorld;
 import mapviewer.world.World;
 import mapviewer.network.Connection;
-import mapviewer.renderer.Renderer;
 import js.html.CanvasElement;
 import mapviewer.renderer.TextureInfo;
 import Reflect;
@@ -38,7 +37,7 @@ class Main {
     public static var blockTextureInfo : Map<String, TextureInfo> = new Map();
     private static var loadedCount : Int = 0;
     private static var canvas : CanvasElement;
-    public static var renderer : Renderer;
+    public static var renderer : WebGLRenderer;
     public static var connection : Connection;
     public static var world : World;
 

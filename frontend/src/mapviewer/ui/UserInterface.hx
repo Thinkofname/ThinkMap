@@ -66,4 +66,27 @@ class UserInterface  {
 		fpsMS.innerHTML = '$jsMS / $ms';
 	}
 	
+	private var chatBox : Element;
+	private var chatLines : Array<Element>;
+	
+	public function appendLine(text : String) {
+		if (chatBox == null) initChat();
+		var line = chatLines.shift();
+		chatBox.removeChild(line);
+		line.innerHTML = text + "<br/>";
+		chatLines.push(line);
+		chatBox.appendChild(line);
+	}
+	
+	private function initChat() {
+		chatBox = document.getElementById("chat-box");
+		chatLines = new Array();
+		for (i in 0 ... 12) {
+			var ele = document.createSpanElement();
+			ele.innerHTML = '<br/>';
+			chatBox.appendChild(ele);
+			chatLines.push(ele);
+		}
+	}
+	
 }

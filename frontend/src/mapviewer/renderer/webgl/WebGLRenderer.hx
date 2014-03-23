@@ -28,7 +28,6 @@ import js.html.webgl.UniformLocation;
 import mapviewer.collision.Box;
 import mapviewer.js.Utils;
 import mapviewer.Main;
-import mapviewer.renderer.Renderer;
 import mapviewer.renderer.webgl.glmatrix.Mat4;
 import mapviewer.renderer.webgl.shaders.ChunkShader;
 import mapviewer.renderer.webgl.WebGLRenderer.Camera;
@@ -37,7 +36,7 @@ import mapviewer.ui.UserInterface;
 
 typedef GL = RenderingContext;
 
-class WebGLRenderer implements Renderer {
+class WebGLRenderer {
 	
 	// Rendering
 	public var gl : RenderingContext;

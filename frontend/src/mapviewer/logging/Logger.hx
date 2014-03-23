@@ -18,7 +18,6 @@ package mapviewer.logging;
 import js.Browser;
 class Logger {
 
-    inline public static var DEBUG_MODE : Bool = true;
     public static var CAN_LOG : Bool;
 
     private var name : String;
@@ -30,13 +29,15 @@ class Logger {
 
     @:extern
     inline public function info(txt : String) {
-        if (DEBUG_MODE && CAN_LOG)
-            trace('[INFO][$name]: $txt');
+        if (CAN_LOG) {
+			trace('[INFO][$name]: $txt');
+			Main.renderer.ui.appendLine('[INFO][$name]: $txt');
+		}
     }
 
     @:extern
     inline public function debug(txt : String) {
-        if (DEBUG_MODE && CAN_LOG)
+        if (CAN_LOG)
             trace('[DEBUG][$name]: $txt');
     }
 
