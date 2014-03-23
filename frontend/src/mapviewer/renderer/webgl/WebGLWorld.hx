@@ -80,7 +80,7 @@ class WebGLWorld extends World {
 		gl.colorMask(true, true, true, false);
 		gl.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 		for (chunk in chunkList) {
-			chunk.render(renderer, program, 0);
+			chunk.render(renderer, program, false);
 		}		
 		
 		gl.depthMask(false);
@@ -98,7 +98,7 @@ class WebGLWorld extends World {
 		colourShader.setPerspectiveMatrix(renderer.pMatrix);
 		colourShader.setUMatrix(renderer.temp2);
 		for (chunk in chunkList) {
-			chunk.render(renderer, colourShader, 1);
+			chunk.render(renderer, colourShader, true);
 		}
 		
 		
@@ -116,7 +116,7 @@ class WebGLWorld extends World {
 		weightShader.setPerspectiveMatrix(renderer.pMatrix);
 		weightShader.setUMatrix(renderer.temp2);
 		for (chunk in chunkList) {
-			chunk.render(renderer, weightShader, 1);
+			chunk.render(renderer, weightShader, true);
 		}
 		
 		gl.bindFramebuffer(GL.FRAMEBUFFER, null);

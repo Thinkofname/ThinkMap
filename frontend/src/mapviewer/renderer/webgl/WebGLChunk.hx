@@ -39,7 +39,7 @@ class WebGLChunk extends Chunk {
 		transTriangleCount = new Array<Int>();
 	}
 	
-	public function render(renderer : WebGLRenderer, program : ChunkShader, pass : Int) {
+	public function render(renderer : WebGLRenderer, program : ChunkShader, transparent : Bool) {
 		var gl = renderer.gl;
 		
 		if (needsBuild) {
@@ -59,7 +59,7 @@ class WebGLChunk extends Chunk {
 			var section = sections[i];
 			if (section == null) continue;
 			
-			if (pass == 0) {
+			if (!transparent) {
 				hasSet = renderBuffer(renderer, gl, program, normalBuffers[i], normalTriangleCount[i], hasSet);
 			} else {
 				hasSet = renderBuffer(renderer, gl, program, transBuffers[i], transTriangleCount[i], hasSet);
