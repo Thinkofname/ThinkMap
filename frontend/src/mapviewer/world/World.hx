@@ -34,7 +34,6 @@ class World {
 
     public function new(?haveProxy : Bool = true) {
         chunks = new Map<String, Chunk>();
-        waitingForBuild = new Map<String, Bool>();
         if (haveProxy) proxy = new WorkerWorldProxy(this);
         new Timer(Std.int(1000/20)).run = tick;
     }
@@ -70,22 +69,11 @@ class World {
         chunks.remove(chunkKey(x, z));
         chunk.unload(Main.renderer);
 		if (proxy != null) proxy.removeChunk(x, z);
-        for (i in 0 ... 16) {
-            waitingForBuild.remove(buildKey(x, z, i));
-        }
     }
 
     // Build related methods
 
-    public var waitingForBuild : Map<String, Bool>;
-
     public function requestBuild(chunk : Dynamic, i : Int) {
-        var key = buildKey(chunk.x, chunk.z, i);
-        if (waitingForBuild.exists(key)) {
-            // Already queued
-            return;
-        }
-        waitingForBuild[key] = true;
 		proxy.build(chunk, i);
     }
 	
@@ -136,10 +124,6 @@ class World {
 
     public static function chunkKey(x : Int, z : Int) : String {
         return '$x:$z';
-    }
-
-    public static function buildKey(x : Int, z : Int, i : Int) : String {
-        return '$x:$z@$i';
     }
 }
 
