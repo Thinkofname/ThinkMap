@@ -33,12 +33,12 @@ div.ui-chat {
 	position: absolute;
 	left: 0;
 	bottom: 0;
-	margin: 5px;
+	padding: 5px;
 	background-color: rgba(0, 0, 0, 0.1);
 	width: 500px;
 	height: 180px;
 	vertical-align: bottom;
-	line-height: 14px;
+	line-height: 15px;
 	overflow-y: hidden;
 	pointer-events: all;
 	font-size: 13px;

@@ -16,6 +16,8 @@
 package mapviewer.logging;
 
 import js.Browser;
+import mapviewer.chat.TextComponent;
+import mapviewer.ui.Colour;
 class Logger {
 
     public static var CAN_LOG : Bool;
@@ -26,30 +28,50 @@ class Logger {
         this.name = name;
     }
 
+	// Methods are force inlined so that the correct line number 
+	// shows up in the console
 
     @:extern
     inline public function info(txt : String) {
         if (CAN_LOG) {
 			trace('[INFO][$name]: $txt');
-			Main.renderer.ui.appendLine('[INFO][$name]: $txt');
+			log("INFO", txt, Colour.AQUA);
 		}
     }
 
     @:extern
     inline public function debug(txt : String) {
-        if (CAN_LOG)
+        if (CAN_LOG) {
             trace('[DEBUG][$name]: $txt');
+			log("DEBUG", txt, Colour.YELLOW);
+		}
     }
 
     @:extern
     inline public function warn(txt : String) {
-        if (CAN_LOG)
+        if (CAN_LOG) {
             trace('[WARN][$name]: $txt');
+			log("WARN", txt, Colour.GOLD);
+		}
     }
 
     @:extern
     inline public function error(txt : String) {
-        if (CAN_LOG)
+        if (CAN_LOG) {
             trace('[ERROR][$name]: $txt');
+			log("ERROR", txt, Colour.RED);
+		}
     }
+	
+	private function log(type : String, txt : String, colour : Colour) {		
+		var comp = new TextComponent('[$type]');
+		comp.colour = Colour.AQUA;
+		var label = new TextComponent('[$name]');
+		label.bold = true;
+		comp.addComponent(label);
+		var msg = new TextComponent(': $txt');
+		msg.colour = Colour.WHITE;
+		comp.addComponent(msg);
+		Main.renderer.ui.appendLine(comp);
+	}
 }

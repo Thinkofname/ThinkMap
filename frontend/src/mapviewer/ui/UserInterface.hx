@@ -20,6 +20,8 @@ import js.html.CanvasRenderingContext2D;
 import js.html.Element;
 import js.html.Event;
 import js.html.MouseEvent;
+import mapviewer.chat.BaseComponent;
+import mapviewer.chat.TextComponent;
 
 class UserInterface  {
 	
@@ -69,13 +71,48 @@ class UserInterface  {
 	private var chatBox : Element;
 	private var chatLines : Array<Element>;
 	
-	public function appendLine(text : String) {
+	private function appendElement(text : Element) {
 		if (chatBox == null) initChat();
 		var line = chatLines.shift();
 		chatBox.removeChild(line);
-		line.innerHTML = text + "<br/>";
+		line.innerHTML = "";
+		line.appendChild(text);
+		line.appendChild(document.createBRElement());
 		chatLines.push(line);
 		chatBox.appendChild(line);
+	}
+	
+	public function appendLine(line : BaseComponent) {
+		appendElement(toHtml(line));
+	}
+	
+	@:access(mapviewer.chat)
+	private function toHtml(line : BaseComponent) : Element {		
+		//TODO: Click and hover events
+		var element = document.createSpanElement();
+		if (Std.is(line, TextComponent)) {
+			var txt : TextComponent = cast line;
+			element.innerHTML = txt.text;
+		} else {
+			throw "Unhandle component type";
+		}
+		if (line._colour != null) element.style.color = line._colour.hexString;
+		if (line._bold) element.style.fontWeight = "bold";
+		if (line._italic) element.style.fontStyle = "italic";
+		if (line.underlined) element.style.textDecoration = "underline";
+		if (line.strikethrough) {
+			if (element.style.textDecoration != null) {
+				element.style.textDecoration += " line-through";
+			} else {
+				element.style.textDecoration = "line-through";
+			}
+		}
+		if (line.extra != null) {
+			for (extra in line.extra) {
+				element.appendChild(toHtml(extra));
+			}
+		}
+		return element;
 	}
 	
 	private function initChat() {
