@@ -16,10 +16,12 @@
 package mapviewer;
 
 import mapviewer.assets.TextureLoader;
+import mapviewer.chat.TextComponent;
 import mapviewer.logging.Logger;
 import mapviewer.model.Model;
 import mapviewer.renderer.webgl.WebGLRenderer;
 import mapviewer.renderer.webgl.WebGLWorld;
+import mapviewer.ui.Colour;
 import mapviewer.world.World;
 import mapviewer.network.Connection;
 import js.html.CanvasElement;
@@ -63,6 +65,14 @@ class Main {
 		world = new WebGLWorld();
 		renderer = new WebGLRenderer(canvas);
         Browser.window.requestAnimationFrame(draw);
+		
+		var msg = new TextComponent("ThinkMap(");
+		msg.colour = Colour.BLUE;
+		var version = new TextComponent(BuildInfo.getVersion());
+		version.colour = Colour.YELLOW;
+		msg.addComponent(version);
+		msg.addComponent(new TextComponent(") ready"));
+		renderer.ui.appendLine(msg);
     }
 
     private static function draw(unused : Float) : Bool {
@@ -73,5 +83,5 @@ class Main {
 	
 	static function __init__() {
 		Logger.CAN_LOG = true;
-	}
+	}	
 }

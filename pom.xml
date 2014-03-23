@@ -7,11 +7,15 @@
     <groupId>uk.co.thinkofdeath.thinkmap</groupId>
     <artifactId>ThinkMap</artifactId>
     <packaging>pom</packaging>
-    <version>0.7-SNAPSHOT</version>
+    <version>0.7</version>
     <modules>
         <module>frontend</module>
         <module>bukkit</module>
     </modules>
+
+    <properties>
+        <build.number>SNAPSHOT</build.number>
+    </properties>
 
     <dependencies>
         <dependency>

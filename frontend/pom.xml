@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ThinkMap</artifactId>
         <groupId>uk.co.thinkofdeath.thinkmap</groupId>
-        <version>0.7-SNAPSHOT</version>
+        <version>0.7</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -18,7 +18,7 @@
     </properties>
 
     <build>
-        <finalName>ThinkMap-Client-${project.version}</finalName>
+        <finalName>ThinkMap-Client-${project.version}-${build.number}</finalName>
         <resources>
         </resources>
         <plugins>
@@ -35,7 +35,7 @@
                                 <exec dir="${basedir}"
                                     executable="haxe"
                                     failonerror="true">
-                                    <arg line="-v compile.hxml"/>
+                                    <arg line="-D project_version='${project.version}-${build.number}' -v compile.hxml"/>
                                 </exec>
                                 <zip destfile="${project.build.directory}/${project.build.finalName}.zip"
                                      basedir="${basedir}/build"/>
