@@ -96,7 +96,10 @@ class WebGLChunk extends Chunk {
 			gl.bindBuffer(RenderingContext.ARRAY_BUFFER, normalBuffers[i]);
 			gl.bufferData(RenderingContext.ARRAY_BUFFER, data, RenderingContext.STATIC_DRAW);
 		} else {
-			normalBuffers[i] = null;
+			if (normalBuffers[i] != null) {
+				gl.deleteBuffer(normalBuffers[i]);
+				normalBuffers[i] = null;
+			}
 		}
 		if (dataTrans.length > 0) {
 			if (transBuffers[i] == null) {
@@ -105,7 +108,10 @@ class WebGLChunk extends Chunk {
 			gl.bindBuffer(RenderingContext.ARRAY_BUFFER, transBuffers[i]);
 			gl.bufferData(RenderingContext.ARRAY_BUFFER, dataTrans, RenderingContext.STATIC_DRAW);
 		} else {
-			transBuffers[i] = null;
+			if (transBuffers[i] != null) {
+				gl.deleteBuffer(transBuffers[i]);
+				transBuffers[i] = null;
+			}
 		}
 
 		normalTriangleCount[i] = Std.int(data.length / 20);
