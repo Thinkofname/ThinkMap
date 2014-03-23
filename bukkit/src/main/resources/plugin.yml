@@ -1,5 +1,5 @@
 name: ThinkMap
-version: ${project.version}
+version: ${project.version}-${build.number}
 description: Displays a 3D render of your server's map in the browser
 author: Thinkofdeath
 
