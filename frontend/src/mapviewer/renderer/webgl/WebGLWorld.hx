@@ -124,7 +124,7 @@ class WebGLWorld extends World {
 		gl.colorMask(true, true, true, true);
 		gl.clearColor(0.0, 0.0, 0.0, 0.0);
 		gl.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
-		program.disable();
+		weightShader.disable();
 		alphaShader.use();
 		gl.disable(GL.BLEND);
 		if (needUpdate) {
