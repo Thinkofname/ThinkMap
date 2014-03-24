@@ -16,6 +16,7 @@
 
 package uk.co.thinkofdeath.thinkmap.bukkit.web;
 
+import com.google.common.base.Charsets;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
@@ -34,6 +35,14 @@ public class Packets {
         ByteBuf buf = Unpooled.buffer(5);
         buf.writeByte(0);
         buf.writeInt(time);
+        return buf;
+    }
+
+    public static ByteBuf writeChatMessage(String msg) {
+        byte[] msgBytes = msg.getBytes(Charsets.UTF_8);
+        ByteBuf buf = Unpooled.buffer(1 + msgBytes.length);
+        buf.writeByte(2);
+        buf.writeBytes(msgBytes);
         return buf;
     }
 }

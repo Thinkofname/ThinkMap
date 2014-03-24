@@ -15,9 +15,11 @@
  */
 package mapviewer.network;
 
+import haxe.io.Bytes;
 import js.html.DataView;
 import js.html.Uint8Array;
 import js.html.WebSocket;
+import mapviewer.chat.TextComponent;
 import mapviewer.logging.Logger;
 
 class Connection {
@@ -48,8 +50,16 @@ class Connection {
                 readTimeUpdate(new DataView(reader.buffer, 1));
             case 1:
                 readSpawnPosition(new DataView(reader.buffer, 1));
+			case 2:
+                readChat(new Uint8Array(reader.buffer, 1));
+				
         }
     }
+	
+	private function readChat(data : Uint8Array) {
+		// TODO: Convert from the old format
+		Main.renderer.ui.appendLine(new TextComponent(Bytes.ofData(cast data).toString()));
+	}
 
     private function readTimeUpdate(data : DataView) {
         Main.world.currentTime = data.getInt32(0, false);

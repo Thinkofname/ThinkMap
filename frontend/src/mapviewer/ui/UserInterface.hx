@@ -92,7 +92,7 @@ class UserInterface  {
 		var element = document.createSpanElement();
 		if (Std.is(line, TextComponent)) {
 			var txt : TextComponent = cast line;
-			element.innerHTML = txt.text;
+			element.innerHTML = StringTools.htmlEscape(txt.text);
 		} else {
 			throw "Unhandle component type";
 		}

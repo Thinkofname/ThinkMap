@@ -16,30 +16,44 @@
 
 package uk.co.thinkofdeath.thinkmap.bukkit;
 
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
+import uk.co.thinkofdeath.thinkmap.bukkit.web.Packets;
 
 @RequiredArgsConstructor
 public class Events implements Listener {
 
     private final ThinkMapPlugin plugin;
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onWorldLoad(WorldLoadEvent event) {
         if (plugin.getTargetWorld() == null) plugin.setTargetWorld(event.getWorld());
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChunkLoad(ChunkLoadEvent event) {
         plugin.getChunkManager(event.getWorld()).activateChunk(event.getChunk());
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChunkUnload(ChunkUnloadEvent event) {
         plugin.getChunkManager(event.getWorld()).deactivateChunk(event.getChunk());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onChat(AsyncPlayerChatEvent event) {
+        String msg = String.format(
+                event.getFormat(),
+                event.getPlayer().getDisplayName(),
+                event.getMessage()
+        );
+        plugin.sendAll(new BinaryWebSocketFrame(Packets.writeChatMessage(msg)));
     }
 }

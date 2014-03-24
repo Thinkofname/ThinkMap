@@ -102,20 +102,25 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
         getServer().getScheduler().runTaskAsynchronously(this, new Runnable() {
             @Override
             public void run() {
-                synchronized (activeConnections) {
-                    Iterator<SocketChannel> it = activeConnections.values().iterator();
-                    while (it.hasNext()) {
-                        SocketChannel channel = it.next();
-                        if (!channel.isActive() || !channel.isOpen()) {
-                            it.remove();
-                            continue;
-                        }
-                        frame.retain();
-                        channel.writeAndFlush(frame);
-                    }
-                }
+                sendAll(frame);
             }
         });
+    }
+
+    public void sendAll(BinaryWebSocketFrame frame) {
+        synchronized (activeConnections) {
+            Iterator<SocketChannel> it = activeConnections.values().iterator();
+            while (it.hasNext()) {
+                SocketChannel channel = it.next();
+                if (!channel.isActive() || !channel.isOpen()) {
+                    it.remove();
+                    continue;
+                }
+                frame.retain();
+                channel.writeAndFlush(frame);
+            }
+        }
+        frame.release();
     }
 
 
