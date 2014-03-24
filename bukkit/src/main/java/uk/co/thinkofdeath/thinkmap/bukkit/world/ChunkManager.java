@@ -39,11 +39,13 @@ public class ChunkManager implements Runnable {
     private final World world;
     private final TLongSet activeChunks = new TLongHashSet();
     private final LinkedTransferQueue<FutureTask> jobQueue = new LinkedTransferQueue<FutureTask>();
+    private final Thread chunkThread;
 
     public ChunkManager(ThinkMapPlugin plugin, World world) {
         this.plugin = plugin;
         this.world = world;
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, this);
+        chunkThread = new Thread(this);
+        chunkThread.start();
     }
 
     private static long chunkKey(int x, int z) {
@@ -163,7 +165,7 @@ public class ChunkManager implements Runnable {
     }
 
     public void cleanup() {
-
+        chunkThread.interrupt();
     }
 
     public boolean getChunkBytes(final int x, final int z, ByteBuf out) {
@@ -181,7 +183,7 @@ public class ChunkManager implements Runnable {
                     }
                 }).get();
             } catch (InterruptedException e) {
-                Thread.interrupted();
+                Thread.currentThread().interrupt();
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
@@ -247,6 +249,7 @@ public class ChunkManager implements Runnable {
     public void run() {
         while (true) {
             if (Thread.interrupted()) {
+                Thread.currentThread().interrupt();
                 return;
             }
             try {
@@ -254,6 +257,7 @@ public class ChunkManager implements Runnable {
                 job.run();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+                return;
             }
         }
     }
