@@ -7,4 +7,5 @@ dependency-reduced-pom.xml
 target
 packages
 /frontend/build
+build
 *.hxproj

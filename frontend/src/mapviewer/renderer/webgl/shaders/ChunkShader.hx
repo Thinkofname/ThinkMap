@@ -140,24 +140,8 @@ varying float vLighting;
 void main(void) {
     vec4 colour = texture2D(texture, vTexturePos + fract(vTextureOffset) * 0.03125) * vColour;
     colour.rgb *= vLighting;
-	#ifndef colourPass 
-	#ifndef weightPass 
-		if (colour.a < 0.5) discard;
-		gl_FragColor = colour;
-	#endif
-	#endif
-	
-	#ifdef colourPass 
-		// Colour pass
-		colour.rgb *= colour.a;
-		float z = (gl_FragCoord.z / gl_FragCoord.w);
-		float weight = colour.a * clamp(0.03 / (1e-5 + pow(z * 0.005, 4.0)), 1e-2, 3e3);
-		gl_FragColor = colour * weight;
-	#endif
-	#ifdef weightPass
-		// Weight pass
-		gl_FragColor = vec4(colour.a);
-	#endif
+	if (colour.a < 0.5) discard;
+	gl_FragColor = colour;
 }
 	";
 }
