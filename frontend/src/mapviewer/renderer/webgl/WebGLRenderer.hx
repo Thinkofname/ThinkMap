@@ -247,7 +247,7 @@ class WebGLRenderer {
 		uMatrix.identity();
 		uMatrix.scale( -1, -1, 1);
 		uMatrix.rotateX( -camera.rotX - Math.PI);
-		uMatrix.rotateY( -( -camera.rotY - Math.PI));
+		uMatrix.rotateY(camera.rotY + Math.PI);
 		temp.identity();
 		temp.translate([ -camera.x, -camera.y, -camera.z]);
 		temp2.identity();
