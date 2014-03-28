@@ -42,7 +42,7 @@ class WebGLWorld extends World {
 	
 	public function render(renderer : WebGLRenderer, program : ChunkShader) {	
 		var gl = renderer.gl;
-		chunkList.sort(chunkSort);
+		if (Main.renderer.shouldResort) chunkList.sort(chunkSort);
 		
 		var scale = (Main.world.currentTime - 6000.0) / 12000.0;
 		if (scale > 1.0) {
