@@ -182,7 +182,7 @@ class WebGLRenderer {
 	public var previousFrame : Int = -1;
 	private var needsUpdate : Bool = true;
 	public var numSorted : Int = 0;
-	inline public static var SORT_LIMIT : Int = 1000;
+	inline public static var SORT_LIMIT : Int = 500;
 	
     public function draw() : Void {
 		var diff = (Utils.now() - lastFrame);
