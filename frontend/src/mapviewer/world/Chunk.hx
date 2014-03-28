@@ -253,6 +253,7 @@ class ChunkSection {
     public var count : Int = 0;
     public var needsBuild : Bool = false;
     public var needsUpdate : Bool = false;
+    public var needSort : Bool = false;
 	public var lastBuildId : Int = -1;
 	public var lastObtainedBuild : Int = -1;
 	public var transBlocks : Array<TransBlock> = new Array();

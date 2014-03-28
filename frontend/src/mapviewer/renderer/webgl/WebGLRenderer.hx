@@ -181,6 +181,8 @@ class WebGLRenderer {
 	public var currentFrame : Float = 0;
 	public var previousFrame : Int = -1;
 	private var needsUpdate : Bool = true;
+	public var numSorted : Int = 0;
+	inline public static var SORT_LIMIT : Int = 1000;
 	
     public function draw() : Void {
 		var diff = (Utils.now() - lastFrame);
@@ -265,6 +267,7 @@ class WebGLRenderer {
 		var ww : WebGLWorld = cast Main.world;
 		ww.render(this, mainProgram);
 		shouldResort = false;
+		numSorted = 0;
 
 		var nx = (Std.int(camera.x) >> 4);
 		var nz = (Std.int(camera.z) >> 4);

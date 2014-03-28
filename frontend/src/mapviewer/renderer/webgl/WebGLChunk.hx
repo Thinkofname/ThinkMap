@@ -79,14 +79,23 @@ class WebGLChunk extends Chunk {
 			if (transBuffers[i] == null) {
 				transBuffers[i] = gl.createBuffer();
 			}
-			if (Main.renderer.shouldResort) section.transBlocks.sort(sortBlocks);
+			var sorted : Bool = false;
+			if (Main.renderer.shouldResort) {
+				section.needSort = true;
+			}
+			if (section.needSort && Main.renderer.numSorted < WebGLRenderer.SORT_LIMIT) {
+				section.transBlocks.sort(sortBlocks);
+				Main.renderer.numSorted += section.transBlocks.length;
+				sorted = true;
+				section.needSort = false;
+			}
 				
 			var builder = transBuilders[i];
 			if (builder == null) {
 				builder = transBuilders[i] = new BlockBuilder();
 			}
 			
-			if (Main.renderer.shouldResort) {
+			if (sorted) {
 				builder.buffer.offset = 0; // Reuse the old one to save resizing
 				
 				Model.dumbLight = true;
