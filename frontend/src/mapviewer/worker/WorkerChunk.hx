@@ -99,13 +99,17 @@ class WorkerChunk extends Chunk {
 	
 	public function sendBuild(i : Int, bid : Int) {		
 		var builder = new BlockBuilder();
-		var builderTrans = new BlockBuilder();
+		var transBlocks = new Array<{x : Int, y : Int, z : Int}>();
 		for (x in 0 ... 16) {
 			for (z in 0 ... 16) {
 				for (y in 0 ... 16) {
 					var block = getBlock(x, (i << 4) + y, z);
 					if (block.renderable) {
-						block.render(block.transparent ? builderTrans : builder, x, (i << 4) + y, z, this);
+						if (!block.transparent) {
+							block.render(builder, x, (i << 4) + y, z, this);
+						} else {
+							transBlocks.push( { x: x, y: (i << 4) + y, z: z } );
+						}
 					}
 				}
 			}
@@ -114,12 +118,12 @@ class WorkerChunk extends Chunk {
 		// Store
 		message.type = "build";
 		message.data = builder.toTypedArray();
-		message.dataTrans = builderTrans.toTypedArray();
+		message.transBlocks = transBlocks;
 		message.x = x;
 		message.z = z;
 		message.i = i;
 		message.bid = bid;
-		WorkerMain.self.postMessage(message, [message.data.buffer, message.dataTrans.buffer]);
+		WorkerMain.self.postMessage(message, [message.data.buffer]);
 	}
 	
 	override public function unload(renderer : WebGLRenderer) {}

@@ -40,7 +40,6 @@ class Uint8ArrayPool {
 			freeArrays.remove(ret);
 		} else {
 			ret = new Uint8Array(size);
-			logger.debug('Alloc $size');
 		}
 		return ret;
 	}

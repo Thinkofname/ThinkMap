@@ -17,6 +17,7 @@ package mapviewer.renderer.webgl;
 import js.html.Uint8Array;
 import js.html.webgl.Buffer;
 import mapviewer.js.Utils;
+import mapviewer.model.Model;
 import mapviewer.renderer.webgl.shaders.ChunkShader;
 import mapviewer.world.Chunk;
 import js.html.webgl.RenderingContext;
@@ -27,7 +28,7 @@ class WebGLChunk extends Chunk {
 	private var normalTriangleCount : Array<Int>;
 	
 	private var transBuffers : Array<Buffer>;
-	private var transTriangleCount : Array<Int>;
+	private var transBuilders : Array<BlockBuilder>;
 
 	public function new() {
 		super();
@@ -35,7 +36,7 @@ class WebGLChunk extends Chunk {
 		normalTriangleCount = new Array<Int>();
 		
 		transBuffers = new Array<Buffer>();
-		transTriangleCount = new Array<Int>();
+		transBuilders = new Array<BlockBuilder>();
 	}
 	
 	public function render(renderer : WebGLRenderer, program : ChunkShader, transparent : Bool) {
@@ -60,10 +61,73 @@ class WebGLChunk extends Chunk {
 			
 			if (!transparent) {
 				hasSet = renderBuffer(renderer, gl, program, normalBuffers[i], normalTriangleCount[i], hasSet);
-			} else {
-				hasSet = renderBuffer(renderer, gl, program, transBuffers[i], transTriangleCount[i], hasSet);
+			} else {	
+				hasSet = renderTrans(renderer, gl, program, i, hasSet);
 			}
 		}
+	}
+	
+	@:access(mapviewer.renderer.webgl.BlockBuilder)
+	@:access(mapviewer.renderer.webgl.DynamicUint8Array)
+	private function renderTrans(renderer : WebGLRenderer, gl : RenderingContext, program : ChunkShader, i : Int, hasSet : Bool) : Bool {
+		var section = sections[i];
+		if (section != null && section.transBlocks.length > 0) {
+			if (!hasSet) {
+				program.setOffset(x, z);				
+				hasSet = true;
+			}
+			if (transBuffers[i] == null) {
+				transBuffers[i] = gl.createBuffer();
+			}
+			if (Main.renderer.shouldResort) section.transBlocks.sort(sortBlocks);
+				
+			var builder = transBuilders[i];
+			if (builder == null) {
+				builder = transBuilders[i] = new BlockBuilder();
+			}
+			builder.buffer.offset = 0; // Reuse the old one to save resizing
+			
+			Model.dumbLight = true;
+			for (b in section.transBlocks) {
+				var block = getBlock(b.x, b.y, b.z);
+				if (block.renderable && block.transparent)
+					block.render(builder, b.x, b.y, b.z, this);
+			}
+			Model.dumbLight = false;
+			
+			var data = builder.buffer.getSub();
+			gl.bindBuffer(RenderingContext.ARRAY_BUFFER, transBuffers[i]);
+			gl.bufferData(RenderingContext.ARRAY_BUFFER, data, RenderingContext.DYNAMIC_DRAW);
+			
+			gl.vertexAttribPointer(program.position, 3, RenderingContext.UNSIGNED_SHORT, false, 20, 0);
+			gl.vertexAttribPointer(program.colour, 4, RenderingContext.UNSIGNED_BYTE, true, 20, 6);
+			gl.vertexAttribPointer(program.texturePosition, 2, RenderingContext.UNSIGNED_SHORT, false, 20, 10);
+			gl.vertexAttribPointer(program.textureId, 2, RenderingContext.UNSIGNED_SHORT, false, 20, 14);
+			gl.vertexAttribPointer(program.lighting, 2, RenderingContext.BYTE, false, 20, 18);
+			gl.drawArrays(RenderingContext.TRIANGLES, 0, Std.int(data.length / 20));
+		} else {
+			if (transBuilders[i] != null) {
+				transBuilders[i].free();
+				transBuilders[i] == null;
+			}
+		}
+		return hasSet;
+	}
+	
+	private static function sortBlocks(a : TransBlock, b : TransBlock) : Int {		
+		var camera = Main.renderer.camera;
+		var cx = Std.int(camera.x);
+		var cy = Std.int(camera.y);
+		var cz = Std.int(camera.z);
+		var adx = (a.chunk.x << 4) + a.x - cx;
+		var ady = a.y - cy;
+		var adz = (a.chunk.z << 4) + a.z - cz;
+		var distA = adx * adx + ady * ady + adz * adz;
+		var bdx = (b.chunk.x << 4) + b.x - cx;
+		var bdy = b.y - cy;
+		var bdz = (b.chunk.z << 4) + b.z - cz;
+		var distB = bdx * bdx + bdy * bdy + bdz * bdz;
+		return distB - distA;
 	}
 	
 	private function renderBuffer(renderer : WebGLRenderer, gl : RenderingContext, program : ChunkShader, 
@@ -85,7 +149,7 @@ class WebGLChunk extends Chunk {
 		return hasSet;
 	}
 	
-	public function createBuffer(i : Int, data : Uint8Array, dataTrans : Uint8Array) {
+	public function createBuffer(i : Int, data : Uint8Array) {
 		var renderer : WebGLRenderer = Main.renderer;
 		var gl : RenderingContext = renderer.gl;
 		if (data.length > 0) {
@@ -100,21 +164,8 @@ class WebGLChunk extends Chunk {
 				normalBuffers[i] = null;
 			}
 		}
-		if (dataTrans.length > 0) {
-			if (transBuffers[i] == null) {
-				transBuffers[i] = gl.createBuffer();
-			}
-			gl.bindBuffer(RenderingContext.ARRAY_BUFFER, transBuffers[i]);
-			gl.bufferData(RenderingContext.ARRAY_BUFFER, dataTrans, RenderingContext.STATIC_DRAW);
-		} else {
-			if (transBuffers[i] != null) {
-				gl.deleteBuffer(transBuffers[i]);
-				transBuffers[i] = null;
-			}
-		}
 
 		normalTriangleCount[i] = Std.int(data.length / 20);
-		transTriangleCount[i] = Std.int(dataTrans.length / 20);
 	}
 	
 	override public function unload(renderer : WebGLRenderer) {
@@ -124,6 +175,9 @@ class WebGLChunk extends Chunk {
 		}
 		for (buffer in transBuffers) {
 			if (buffer != null) web.gl.deleteBuffer(buffer);
+		}
+		for (builder in transBuilders) {
+			if (builder != null) builder.free();
 		}
 	}
 }

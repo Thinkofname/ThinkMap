@@ -101,4 +101,8 @@ class DynamicUint8Array {
 		ret.set(buffer.subarray(0, offset), 0);
 		return ret;
 	}
+	
+	private function getSub() : Uint8Array {
+		return buffer.subarray(0, offset);
+	}
 }

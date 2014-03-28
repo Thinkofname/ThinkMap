@@ -74,9 +74,14 @@ class Model {
 		}
 	}
 	
+	public static var dumbLight : Bool = false;
+	
 	private static function calcLight(world : World, x : Float, y : Float, z : Float, face : Face) : LightInfo {
 		var light : Float = world.getLight(Std.int(x), Std.int(y), Std.int(z));
 		var sky : Float = world.getSky(Std.int(x), Std.int(y), Std.int(z));
+		if (dumbLight) {
+			return new LightInfo(Std.int(light), Std.int(sky));
+		}
 		var count : Float = 0;
 		
 		var isX : Int = face.offsetX != 0 ? (face.offsetX == 1 ? 1 : 0 ): 2;
@@ -100,7 +105,7 @@ class Model {
 				}
 			}			
 		}
-		if (count == 0) new LightInfo(Std.int(light), Std.int(sky));
+		if (count == 0) return new LightInfo(Std.int(light), Std.int(sky));
 		return new LightInfo(Std.int(light / count), Std.int(sky / count));
 	}
 	

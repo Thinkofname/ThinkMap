@@ -67,6 +67,11 @@ class WebGLRenderer {
 	private var flyMode : Bool = false;
 	private var moveDir : Int = 0;
 	
+	private var plx : Int = 0;
+	private var ply : Int = 0;
+	private var plz : Int = 0;
+	public var shouldResort : Bool = true;
+	
 	public function new(canvas : CanvasElement) {
 		this.canvas = canvas;
 		ui = new UserInterface();
@@ -247,8 +252,19 @@ class WebGLRenderer {
 		uMatrix.multiply(temp, temp2);
 		mainProgram.setUMatrix(temp2);
 		
+		var px = Std.int(camera.x);
+		var py = Std.int(camera.y);
+		var pz = Std.int(camera.z);
+		if (px != plx || py != ply || pz != plz) {
+			plx = px;
+			ply = py;
+			plz = pz;
+			shouldResort = true;
+		}
+		
 		var ww : WebGLWorld = cast Main.world;
 		ww.render(this, mainProgram);
+		shouldResort = false;
 
 		var nx = (Std.int(camera.x) >> 4);
 		var nz = (Std.int(camera.z) >> 4);

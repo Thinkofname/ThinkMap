@@ -18,6 +18,7 @@ import js.html.Worker;
 import mapviewer.logging.Logger;
 import mapviewer.Main;
 import mapviewer.renderer.webgl.WebGLChunk;
+import mapviewer.world.Chunk.TransBlock;
 import mapviewer.world.World;
 
 class WorkerProxy {
@@ -66,7 +67,12 @@ class WorkerProxy {
 					return;
 				}
 				chunk.sections[message.i].lastObtainedBuild = message.bid;
-				chunk.createBuffer(message.i, message.data, message.dataTrans);
+				var tb = chunk.sections[message.i].transBlocks = new Array();
+				var mtb : Array<{x : Int, y : Int, z : Int}> = cast message.transBlocks;
+				for (b in mtb) {
+					tb.push(new TransBlock(b, chunk));
+				}
+				chunk.createBuffer(message.i, message.data);
 		}
 	}
 	

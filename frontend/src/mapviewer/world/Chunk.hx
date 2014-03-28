@@ -255,6 +255,7 @@ class ChunkSection {
     public var needsUpdate : Bool = false;
 	public var lastBuildId : Int = -1;
 	public var lastObtainedBuild : Int = -1;
+	public var transBlocks : Array<TransBlock> = new Array();
 
     public function new(buffer : Uint8Array) {
         this.buffer = buffer;
@@ -273,4 +274,19 @@ class ChunkSection {
         emptySkySection = new Uint8Array(16 * 16 * 16);
         for (i in 0 ... emptySkySection.length) emptySkySection[i] = 15;
     }
+}
+
+class TransBlock {
+	
+	public var x : Int;
+	public var y : Int;
+	public var z : Int;
+	public var chunk : Chunk;
+	
+	public function new(b : { x : Int, y : Int, z : Int }, chunk: Chunk ) {
+		this.chunk = chunk;
+		x = b.x;
+		y = b.y;
+		z = b.z;
+	}
 }

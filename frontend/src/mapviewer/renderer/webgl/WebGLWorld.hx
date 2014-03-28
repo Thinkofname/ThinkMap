@@ -23,6 +23,7 @@ import js.html.webgl.Texture;
 import mapviewer.js.Utils;
 import mapviewer.Main;
 import mapviewer.renderer.webgl.shaders.ChunkShader;
+import mapviewer.renderer.webgl.shaders.ChunkShaderAlpha;
 import mapviewer.world.Chunk;
 import mapviewer.world.World;
 import mapviewer.renderer.webgl.WebGLRenderer.GL;
@@ -32,6 +33,7 @@ class WebGLWorld extends World {
 	private var chunkList : Array<WebGLChunk>;
 	
 	private var needUpdate : Bool = true;
+	private var alphaShader : ChunkShaderAlpha;
 
 	public function new() {
 		super(true);
@@ -53,16 +55,33 @@ class WebGLWorld extends World {
 		if (renderer.currentFrame != renderer.previousFrame) program.setFrame(Std.int(renderer.currentFrame));
 			
 		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);	
+		gl.depthMask(true);
 		gl.colorMask(true, true, true, false);
 		gl.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 		for (chunk in chunkList) {
 			chunk.render(renderer, program, false);
 		}		
 		
+		alphaShader.use();
+		if (renderer.currentFrame != renderer.previousFrame) alphaShader.setFrame(Std.int(renderer.currentFrame));
+		alphaShader.setScale(scale);
+		alphaShader.setPerspectiveMatrix(renderer.pMatrix);
+		alphaShader.setUMatrix(renderer.temp2);
+		gl.enable(GL.BLEND);
+		gl.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
+		gl.depthMask(false);
+		gl.colorMask(true, true, true, true);
+		for (chunk in chunkList) {
+			chunk.render(renderer, alphaShader, true);
+		}		
+		gl.disable(GL.BLEND);
 		
 	}
 	
 	public function resize(gl : RenderingContext, renderer : WebGLRenderer) {
+		if (alphaShader == null) {
+			alphaShader = new ChunkShaderAlpha(gl);
+		}
 	}	
 	
 	private static function chunkSort(a : WebGLChunk, b : WebGLChunk) : Int {
