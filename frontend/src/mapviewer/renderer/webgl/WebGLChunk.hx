@@ -98,10 +98,19 @@ class WebGLChunk extends Chunk {
 			if (sorted) {
 				builder.buffer.offset = 0; // Reuse the old one to save resizing
 				
-				for (b in section.transBlocks) {
+				var i = 0;
+				while (i < section.transBlocks.length) {
+					var b = section.transBlocks[i];
+					var offset = builder.buffer.offset;
 					var block = getBlock(b.x, b.y, b.z);
 					if (block.renderable && block.transparent)
 						block.render(builder, b.x, b.y, b.z, this);
+					
+					if (offset == builder.buffer.offset) {
+						section.transBlocks.splice(i, 1);
+					} else {
+						i++;
+					}
 				}
 			}
 			
@@ -118,7 +127,7 @@ class WebGLChunk extends Chunk {
 		} else {
 			if (transBuilders[i] != null) {
 				transBuilders[i].free();
-				transBuilders[i] == null;
+				transBuilders[i] = null;
 			}
 		}
 		return hasSet;
