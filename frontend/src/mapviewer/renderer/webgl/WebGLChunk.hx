@@ -85,15 +85,18 @@ class WebGLChunk extends Chunk {
 			if (builder == null) {
 				builder = transBuilders[i] = new BlockBuilder();
 			}
-			builder.buffer.offset = 0; // Reuse the old one to save resizing
 			
-			Model.dumbLight = true;
-			for (b in section.transBlocks) {
-				var block = getBlock(b.x, b.y, b.z);
-				if (block.renderable && block.transparent)
-					block.render(builder, b.x, b.y, b.z, this);
+			if (Main.renderer.shouldResort) {
+				builder.buffer.offset = 0; // Reuse the old one to save resizing
+				
+				Model.dumbLight = true;
+				for (b in section.transBlocks) {
+					var block = getBlock(b.x, b.y, b.z);
+					if (block.renderable && block.transparent)
+						block.render(builder, b.x, b.y, b.z, this);
+				}
+				Model.dumbLight = false;
 			}
-			Model.dumbLight = false;
 			
 			var data = builder.buffer.getSub();
 			gl.bindBuffer(RenderingContext.ARRAY_BUFFER, transBuffers[i]);
