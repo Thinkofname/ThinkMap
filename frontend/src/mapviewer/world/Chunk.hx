@@ -194,7 +194,10 @@ class Chunk {
                     var idx = (y + oy) >> 4;
                     if (idx < 0 || idx > 15) continue;
                     var section = chunk.sections[idx];
-                    if (section != null) section.needsBuild = true;
+                    if (section != null) {
+						section.needsBuild = true;
+						section.needSort = true;
+					}
                 }
             }
         }
@@ -253,7 +256,7 @@ class ChunkSection {
     public var count : Int = 0;
     public var needsBuild : Bool = false;
     public var needsUpdate : Bool = false;
-    public var needSort : Bool = false;
+    public var needSort : Bool = true;
 	public var lastBuildId : Int = -1;
 	public var lastObtainedBuild : Int = -1;
 	public var transBlocks : Array<TransBlock> = new Array();
