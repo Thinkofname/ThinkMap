@@ -42,7 +42,14 @@ class WebGLWorld extends World {
 	
 	public function render(renderer : WebGLRenderer, program : ChunkShader) {	
 		var gl = renderer.gl;
-		if (Main.renderer.shouldResort) chunkList.sort(chunkSort);
+		
+		chunkList.sort(chunkSort);
+		
+		for (chunk in chunkList) {
+			chunk.processTrans(renderer);
+		}
+		
+		chunkList.reverse();
 		
 		var scale = (Main.world.currentTime - 6000.0) / 12000.0;
 		if (scale > 1.0) {
@@ -90,7 +97,7 @@ class WebGLWorld extends World {
 		var az = a.z * 16 + 8 - Std.int(renderer.camera.z);
 		var bx = b.x * 16 + 8 - Std.int(renderer.camera.x);
 		var bz = b.z * 16 + 8 - Std.int(renderer.camera.z);
-		return (bx * bx + bz * bz) - (ax * ax + az * az);
+		return (ax * ax + az * az) - (bx * bx + bz * bz);
 	}
 
     override public function addChunk(chunk : Chunk) : Bool {

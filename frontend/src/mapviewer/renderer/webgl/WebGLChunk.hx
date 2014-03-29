@@ -79,16 +79,6 @@ class WebGLChunk extends Chunk {
 			if (transBuffers[i] == null) {
 				transBuffers[i] = gl.createBuffer();
 			}
-			var sorted : Bool = false;
-			if (Main.renderer.shouldResort) {
-				section.needSort = true;
-			}
-			if (section.needSort && Main.renderer.numSorted < WebGLRenderer.SORT_LIMIT) {
-				section.transBlocks.sort(sortBlocks);
-				Main.renderer.numSorted += section.transBlocks.length;
-				sorted = true;
-				section.needSort = false;
-			}
 				
 			var builder = transBuilders[i];
 			if (builder == null) {
@@ -96,27 +86,6 @@ class WebGLChunk extends Chunk {
 			}
 			
 			gl.bindBuffer(RenderingContext.ARRAY_BUFFER, transBuffers[i]);
-			if (sorted) {
-				builder.buffer.offset = 0; // Reuse the old one to save resizing
-				
-				var i = 0;
-				while (i < section.transBlocks.length) {
-					var b = section.transBlocks[i];
-					var offset = builder.buffer.offset;
-					var block = getBlock(b.x, b.y, b.z);
-					if (block.renderable && block.transparent)
-						block.render(builder, b.x, b.y, b.z, this);
-					
-					if (offset == builder.buffer.offset) {
-						section.transBlocks.splice(i, 1);
-					} else {
-						i++;
-					}
-				}
-			
-				var data = builder.buffer.getSub();
-				gl.bufferData(RenderingContext.ARRAY_BUFFER, data, RenderingContext.DYNAMIC_DRAW);
-			}
 			var data = builder.buffer.getSub();
 			
 			gl.vertexAttribPointer(program.position, 3, RenderingContext.UNSIGNED_SHORT, false, 20, 0);
@@ -132,6 +101,62 @@ class WebGLChunk extends Chunk {
 			}
 		}
 		return hasSet;
+	}
+	
+	@:access(mapviewer.renderer.webgl.BlockBuilder)
+	@:access(mapviewer.renderer.webgl.DynamicUint8Array)
+	public function processTrans(renderer : WebGLRenderer) {
+		var gl = renderer.gl;
+		for (i in 0 ... 16) {
+			var section = sections[i];
+			if (section != null && section.transBlocks.length > 0) {
+				if (transBuffers[i] == null) {
+					transBuffers[i] = gl.createBuffer();
+				}
+				var sorted : Bool = false;
+				if (Main.renderer.shouldResort) {
+					section.needSort = true;
+				}
+				if (section.needSort && Main.renderer.numSorted < WebGLRenderer.SORT_LIMIT) {
+					section.transBlocks.sort(sortBlocks);
+					Main.renderer.numSorted += section.transBlocks.length;
+					sorted = true;
+					section.needSort = false;
+				}
+					
+				var builder = transBuilders[i];
+				if (builder == null) {
+					builder = transBuilders[i] = new BlockBuilder();
+				}
+				
+				if (sorted) {
+					gl.bindBuffer(RenderingContext.ARRAY_BUFFER, transBuffers[i]);
+					builder.buffer.offset = 0; // Reuse the old one to save resizing
+					
+					var i = 0;
+					while (i < section.transBlocks.length) {
+						var b = section.transBlocks[i];
+						var offset = builder.buffer.offset;
+						var block = getBlock(b.x, b.y, b.z);
+						if (block.renderable && block.transparent)
+							block.render(builder, b.x, b.y, b.z, this);
+						
+						if (offset == builder.buffer.offset) {
+							section.transBlocks.splice(i, 1);
+						} else {
+							i++;
+						}
+					}				
+					var data = builder.buffer.getSub();
+					gl.bufferData(RenderingContext.ARRAY_BUFFER, data, RenderingContext.DYNAMIC_DRAW);
+				}
+			} else {
+				if (transBuilders[i] != null) {
+					transBuilders[i].free();
+					transBuilders[i] = null;
+				}
+			}
+		}
 	}
 	
 	private static function sortBlocks(a : TransBlock, b : TransBlock) : Int {		
