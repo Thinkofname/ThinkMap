@@ -51,6 +51,9 @@ class Model {
 				if (face.face == Face.BACK && !shouldRenderAgainst(chunk.world.getBlock((chunk.x << 4) + x, y, (chunk.z << 4) + z - 1))) continue;
 			}
 			var texture = Main.blockTextureInfo[face.texture];
+			if (texture == null) {
+				trace("Missing texture: " + face.texture);
+			}
 			for (i in 0 ... 3) {
 				var vert = face.vertices[2 - i];
 				var light = calcLight(chunk.world, (chunk.x << 4) + x + vert.x, y + vert.y, (chunk.z << 4) + z + vert.z, face.face);
