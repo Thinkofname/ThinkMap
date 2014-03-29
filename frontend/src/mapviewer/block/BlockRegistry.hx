@@ -1367,7 +1367,6 @@ class BlockRegistry {
 		//TODO: (#149) Unpowered comparator
 		//TODO: (#150) Powered comparator
 		//TODO: (#151) Daylight detector
-		//TODO: (#152) Redstone block
 		
 		registerBlock("redstone_block", new Block().chainBlock()
 			.texture("redstone_block").ret())
