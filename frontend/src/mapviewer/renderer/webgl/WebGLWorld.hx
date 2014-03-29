@@ -90,7 +90,7 @@ class WebGLWorld extends World {
 		var az = a.z * 16 + 8 - Std.int(renderer.camera.z);
 		var bx = b.x * 16 + 8 - Std.int(renderer.camera.x);
 		var bz = b.z * 16 + 8 - Std.int(renderer.camera.z);
-		return (bx * bx + bz * bz) - (ax * ax + az * az);
+		return (ax * ax + az * az) - (bx * bx + bz * bz);
 	}
 
     override public function addChunk(chunk : Chunk) : Bool {
