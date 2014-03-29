@@ -79,7 +79,7 @@ class TextureLoaderMacro {
 						frames.push(i);
 					}
 				} else {
-					for (f in frs) { 
+					for (f in frs) {
 						if (Std.is(f, Int)) {
 							frames.push(f);
 						} else {
