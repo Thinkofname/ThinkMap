@@ -95,6 +95,7 @@ class WebGLChunk extends Chunk {
 				builder = transBuilders[i] = new BlockBuilder();
 			}
 			
+			gl.bindBuffer(RenderingContext.ARRAY_BUFFER, transBuffers[i]);
 			if (sorted) {
 				builder.buffer.offset = 0; // Reuse the old one to save resizing
 				
@@ -112,11 +113,11 @@ class WebGLChunk extends Chunk {
 						i++;
 					}
 				}
-			}
 			
+				var data = builder.buffer.getSub();
+				gl.bufferData(RenderingContext.ARRAY_BUFFER, data, RenderingContext.DYNAMIC_DRAW);
+			}
 			var data = builder.buffer.getSub();
-			gl.bindBuffer(RenderingContext.ARRAY_BUFFER, transBuffers[i]);
-			gl.bufferData(RenderingContext.ARRAY_BUFFER, data, RenderingContext.DYNAMIC_DRAW);
 			
 			gl.vertexAttribPointer(program.position, 3, RenderingContext.UNSIGNED_SHORT, false, 20, 0);
 			gl.vertexAttribPointer(program.colour, 4, RenderingContext.UNSIGNED_BYTE, true, 20, 6);
