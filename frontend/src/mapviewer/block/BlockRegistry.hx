@@ -1148,6 +1148,13 @@ class BlockRegistry {
 		}
 
 		//TODO: (#55) Redstone wire
+		for (power in 0 ... 16) {
+			registerBlock('redstone_dust_$power', new BlockRedstone(power).chainBlock()
+				.solid(false).collidable(false).ret())
+				.legacyId(55)
+				.dataValue(power)
+				.build();
+		}
 
 		registerBlock('diamond_ore', new Block().chainBlock().texture('diamond_ore').ret())
 			.legacyId(56)
