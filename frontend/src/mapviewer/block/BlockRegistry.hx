@@ -351,6 +351,8 @@ class BlockRegistry {
 			.legacyId(22).build();
 			
 		//Rotatable blocks
+		function sticky(s : String) : String return s == "piston_top_%type%" ? "piston_top_sticky" : s;
+		function normal(s : String) : String return s == "piston_top_%type%" ? "piston_top_normal" : s;
 		{
 			var ladder = new Model();
 			ladder.faces.push(ModelFace.create(Face.FRONT, "ladder", 0, 0, 16, 16, 1));
@@ -438,6 +440,31 @@ class BlockRegistry {
 					.legacyId(154)
 					.dataValue(2 + i)
 					.build();
+				
+				registerBlock('sticky_piston_$k', new Block().chainBlock()
+					.solid(false)
+					.model(BlockPiston.model.clone().join(BlockPiston.head.clone(sticky), 0, 0, 12).rotateY(v * 90)).ret())
+					.legacyId(29)
+					.dataValue(2 + i)
+					.build();
+				registerBlock('sticky_piston_${k}_powered', new Block().chainBlock()
+					.solid(false)
+					.model(BlockPiston.model.clone().rotateY(v * 90)).ret())
+					.legacyId(29)
+					.dataValue(2 + i + 8)
+					.build();
+				registerBlock('piston_$k', new Block().chainBlock()
+					.solid(false)
+					.model(BlockPiston.model.clone().join(BlockPiston.head.clone(normal), 0, 0, 12).rotateY(v * 90)).ret())
+					.legacyId(33)
+					.dataValue(2 + i)
+					.build();
+				registerBlock('piston_${k}_powered', new Block().chainBlock()
+					.solid(false)
+					.model(BlockPiston.model.clone().rotateY(v * 90)).ret())
+					.legacyId(33)
+					.dataValue(2 + i + 8)
+					.build();
 				i++;
 			}
 		}
@@ -479,6 +506,31 @@ class BlockRegistry {
 				.model(BlockHopper.model.clone().join(BlockHopper.spout, 6, 0, 6)).ret())
 				.legacyId(154)
 				.dataValue(v)
+				.build();
+				
+			registerBlock('sticky_piston_$k', new Block().chainBlock()
+				.solid(false)
+				.model(BlockPiston.model.clone().join(BlockPiston.head.clone(sticky), 0, 0, 12).rotateX(270 + 180 * v)).ret())
+				.legacyId(29)
+				.dataValue(v)
+				.build();
+			registerBlock('sticky_piston_${k}_powered', new Block().chainBlock()
+				.solid(false)
+				.model(BlockPiston.model.clone().rotateX(270 + 180 * v)).ret())
+				.legacyId(29)
+				.dataValue(v + 8)
+				.build();
+			registerBlock('piston_$k', new Block().chainBlock()
+				.solid(false)
+				.model(BlockPiston.model.clone().join(BlockPiston.head.clone(normal), 0, 0, 12).rotateX(270 + 180 * v)).ret())
+				.legacyId(33)
+				.dataValue(v)
+				.build();
+			registerBlock('piston_${k}_powered', new Block().chainBlock()
+				.solid(false)
+				.model(BlockPiston.model.clone().rotateX(270 + 180 * v)).ret())
+				.legacyId(33)
+				.dataValue(v + 8)
 				.build();
 		}		
 		
