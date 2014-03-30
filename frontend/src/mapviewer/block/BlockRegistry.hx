@@ -1189,6 +1189,13 @@ class BlockRegistry {
 				.legacyId(141)
 				.dataValue(i)
 				.build();
+			registerBlock('potatoes_$i', new Block().chainBlock()
+				.solid(false)
+				.collidable(false)
+				.model(BlockCrop.getModel('potatoes_stage_${i == 7 ? 3 : (i >= 4 ? 2 : (i >= 2 ? 1 : 0))}')).ret())
+				.legacyId(142)
+				.dataValue(i)
+				.build();
 		}
 		//TODO: (#60) Farmland
 
@@ -1433,7 +1440,7 @@ class BlockRegistry {
 		//TODO: (#138) Beacon
 		//TODO: (#139) Cobblestone wall
 		//TODO: (#140) Flower pot
-		//TODO: (#142) Potatoes
+		
 		//TODO: (#143) Wooden button
 		//TODO: (#144) Skull
 			
