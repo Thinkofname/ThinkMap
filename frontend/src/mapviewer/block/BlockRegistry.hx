@@ -1197,7 +1197,25 @@ class BlockRegistry {
 				.dataValue(i)
 				.build();
 		}
-		//TODO: (#60) Farmland
+		var farmland = new Model();
+		farmland.faces.push(ModelFace.create(Face.TOP, "farmland_dry", 0, 0, 16, 16, 15));
+		farmland.faces.push(ModelFace.create(Face.LEFT, "dirt", 0, 0, 16, 15, 16, true));
+		farmland.faces.push(ModelFace.create(Face.RIGHT, "dirt", 0, 0, 16, 15, 0, true));
+		farmland.faces.push(ModelFace.create(Face.FRONT, "dirt", 0, 0, 16, 15, 16, true));
+		farmland.faces.push(ModelFace.create(Face.BACK, "dirt", 0, 0, 16, 15, 0, true));
+		farmland.faces.push(ModelFace.create(Face.BOTTOM, "dirt", 0, 0, 16, 15, 0, true));
+		for (wetness in 0 ... 9) {
+			var model = farmland;
+			if (wetness != 0) {
+				model = farmland.clone(function(s) return s == "farmland_dry" ? "farmland_wet" : s);
+			}
+			registerBlock('farmland_$wetness', new Block().chainBlock()
+				.solid(false)
+				.model(model).ret())
+				.legacyId(60)
+				.dataValue(wetness)
+				.build();			
+		}
 
 		for (i in 0 ... 16) {
 			registerBlock('standing_sign_$i', new Block().chainBlock()
