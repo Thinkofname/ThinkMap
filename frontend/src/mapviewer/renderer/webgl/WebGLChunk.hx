@@ -161,18 +161,18 @@ class WebGLChunk extends Chunk {
 	
 	private static function sortBlocks(a : TransBlock, b : TransBlock) : Int {		
 		var camera = Main.renderer.camera;
-		var cx = Std.int(camera.x);
-		var cy = Std.int(camera.y);
-		var cz = Std.int(camera.z);
-		var adx = (a.chunk.x << 4) + a.x - cx;
-		var ady = a.y - cy;
-		var adz = (a.chunk.z << 4) + a.z - cz;
+		var cx = camera.x;
+		var cy = camera.y;
+		var cz = camera.z;
+		var adx = (a.chunk.x << 4) + a.x + 0.5 - cx;
+		var ady = a.y + 0.5 - cy;
+		var adz = (a.chunk.z << 4) + a.z + 0.5 - cz;
 		var distA = adx * adx + ady * ady + adz * adz;
-		var bdx = (b.chunk.x << 4) + b.x - cx;
-		var bdy = b.y - cy;
-		var bdz = (b.chunk.z << 4) + b.z - cz;
+		var bdx = (b.chunk.x << 4) + b.x + 0.5 - cx;
+		var bdy = b.y + 0.5 - cy;
+		var bdz = (b.chunk.z << 4) + b.z + 0.5 - cz;
 		var distB = bdx * bdx + bdy * bdy + bdz * bdz;
-		return distB - distA;
+		return Std.int((distB - distA) * 16);
 	}
 	
 	private function renderBuffer(renderer : WebGLRenderer, gl : RenderingContext, program : ChunkShader, 
