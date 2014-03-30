@@ -465,6 +465,15 @@ class BlockRegistry {
 					.legacyId(33)
 					.dataValue(2 + i + 8)
 					.build();
+					
+				for (type in [0, 8]) {
+					registerBlock('piston_extension_${k}_${type == 0 ? "normal" : "sticky"}', new Block().chainBlock()
+						.solid(false)
+						.model(BlockPiston.stem.clone().join(BlockPiston.head.clone(type == 0 ? normal : sticky), 0, 0, 12).rotateY(v * 90)).ret())
+						.legacyId(34)
+						.dataValue(2 + i + type)
+						.build();
+				}
 				i++;
 			}
 		}
@@ -532,6 +541,14 @@ class BlockRegistry {
 				.legacyId(33)
 				.dataValue(v + 8)
 				.build();
+			for (type in [0, 8]) {
+				registerBlock('piston_extension_${k}_${type == 0 ? "normal" : "sticky"}', new Block().chainBlock()
+					.solid(false)
+					.model(BlockPiston.stem.clone().join(BlockPiston.head.clone(type == 0 ? normal : sticky), 0, 0, 12).rotateX(270 + 180 * v)).ret())
+					.legacyId(34)
+					.dataValue(v + type)
+					.build();
+			}
 		}		
 		
 		// Sandstone

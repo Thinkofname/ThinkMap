@@ -81,4 +81,46 @@ class BlockPiston {
 		
 		return _head;
 	}
+
+	private static var _stem : Model;
+	public static var stem(get, never) : Model;
+	
+	static function get_stem() : Model {
+		if (_stem != null) return _stem;
+
+		_stem = new Model();
+		
+		_stem.faces.push(ModelFace.create(Face.LEFT, "piston_side", -4, 6, 16, 4, 10, false).forEach(function(v) {
+			if (v.textureX < 0) v.textureX = 0;
+			else if (v.textureX > 0) v.textureX = 1;			
+			if (v.textureY < 0.5) v.textureY = 0;
+			else if (v.textureY > 0.5) v.textureY = 4 / 16;
+		}));
+		_stem.faces.push(ModelFace.create(Face.RIGHT, "piston_side", -4, 6, 16, 4, 6, false).forEach(function(v) {
+			if (v.textureX < 0) v.textureX = 0;
+			else if (v.textureX > 0) v.textureX = 1;			
+			if (v.textureY < 0.5) v.textureY = 0;
+			else if (v.textureY > 0.5) v.textureY = 4 / 16;
+		}));
+		_stem.faces.push(ModelFace.create(Face.TOP, "piston_side", 6, -4, 4, 16, 10, false).forEach(function(v) {
+			if (v.textureX < 0.5) v.textureX = 0;
+			else if (v.textureX > 0.5) v.textureX = 4 / 16;			
+			if (v.textureY < 0) v.textureY = 0;
+			else if (v.textureY > 0) v.textureY = 1;
+			var x = v.textureX;
+			v.textureX = v.textureY;
+			v.textureY = x;
+		}));
+		_stem.faces.push(ModelFace.create(Face.BOTTOM, "piston_side", 6, -4, 4, 16, 6, false).forEach(function(v) {
+			if (v.textureX < 0.5) v.textureX = 0;
+			else if (v.textureX > 0.5) v.textureX = 4 / 16;			
+			if (v.textureY < 0) v.textureY = 0;
+			else if (v.textureY > 0) v.textureY = 1;
+			var x = v.textureX;
+			v.textureX = v.textureY;
+			v.textureY = x;
+		}));
+		
+		return _stem;
+	}
 }
