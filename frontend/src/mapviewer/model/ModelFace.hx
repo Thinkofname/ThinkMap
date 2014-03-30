@@ -154,4 +154,11 @@ class ModelFace {
 		this.b = b;
 		return this;
 	}
+	
+	public function forEach(it : ModelVertex -> Void) : ModelFace {
+		for (v in vertices) {
+			it(v);
+		}
+		return this;
+	}
 }
