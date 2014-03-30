@@ -1174,7 +1174,15 @@ class BlockRegistry {
 			.legacyId(58)
 			.build();
 
-		//TODO: (#59) Wheat
+		for (i in 0 ... 8) {
+			registerBlock('wheat_$i', new Block().chainBlock()
+				.solid(false)
+				.collidable(false)
+				.model(BlockCrop.getModel('wheat_stage_$i')).ret())
+				.legacyId(59)
+				.dataValue(i)
+				.build();
+		}
 		//TODO: (#60) Farmland
 
 		for (i in 0 ... 16) {
