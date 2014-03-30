@@ -26,13 +26,18 @@ import uk.co.thinkofdeath.thinkmap.bukkit.ThinkMapPlugin;
 
 import java.util.logging.Logger;
 
-@RequiredArgsConstructor
 public class WebSocketHandler extends SimpleChannelInboundHandler<BinaryWebSocketFrame> {
 
     private final static Logger logger = Logger.getLogger(WebSocketHandler.class.getName());
 
     private final ThinkMapPlugin plugin;
     private final int id;
+
+    public WebSocketHandler(ThinkMapPlugin plugin, int id) {
+        super(false);
+        this.plugin = plugin;
+        this.id = id;
+    }
 
     @Override
     protected void channelRead0(final ChannelHandlerContext ctx, BinaryWebSocketFrame msg) throws Exception {
@@ -53,5 +58,6 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<BinaryWebSocke
                 });
                 break;
         }
+        msg.release();
     }
 }
