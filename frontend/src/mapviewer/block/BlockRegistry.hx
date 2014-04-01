@@ -1234,13 +1234,25 @@ class BlockRegistry {
 				.legacyId(64)
 				.dataValue(8 + (flag ? 1 : 0))
 				.build();
+			registerBlock('iron_door_top_$flag', new BlockDoor(true, flag, 0).chainBlock()
+				.solid(false)
+				.texture("door_iron").ret())
+				.legacyId(71)
+				.dataValue(8 + (flag ? 1 : 0))
+				.build();
 			for (i in 0 ... 4) {
 				registerBlock('wooden_door_bottom_${i}_$flag', new BlockDoor(false, flag, i).chainBlock()
 					.solid(false)
 					.texture("door_wood").ret())
 					.legacyId(64)
 					.dataValue(i + (flag ? 4 : 0))
-					.build();				
+					.build();	
+				registerBlock('iron_door_bottom_${i}_$flag', new BlockDoor(false, flag, i).chainBlock()
+					.solid(false)
+					.texture("door_iron").ret())
+					.legacyId(71)
+					.dataValue(i + (flag ? 4 : 0))
+					.build();			
 			}
 		}
 		
@@ -1254,7 +1266,7 @@ class BlockRegistry {
 
 		//TODO: (#69) Lever
 		//TODO: (#70) Stone pressure plate
-		//TODO: (#71) Iron door
+		
 		//TODO: (#72) Wooden pressure plate
 
 		registerBlock('redstone_ore', new Block().chainBlock().texture('redstone_ore').ret())
