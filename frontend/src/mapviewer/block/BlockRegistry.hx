@@ -1227,7 +1227,22 @@ class BlockRegistry {
 				.build();
 		}
 		
-		//TODO: (#64) Wooden door
+		for (flag in [false, true]) {
+			registerBlock('wooden_door_top_$flag', new BlockDoor(true, flag, 0).chainBlock()
+				.solid(false)
+				.texture("door_wood").ret())
+				.legacyId(64)
+				.dataValue(8 + (flag ? 1 : 0))
+				.build();
+			for (i in 0 ... 4) {
+				registerBlock('wooden_door_bottom_${i}_$flag', new BlockDoor(false, flag, i).chainBlock()
+					.solid(false)
+					.texture("door_wood").ret())
+					.legacyId(64)
+					.dataValue(i + (flag ? 4 : 0))
+					.build();				
+			}
+		}
 		
 		for (i in 0 ... 8) {
 			registerBlock('stone_stairs_$i', new BlockStairs(i & 0x4 == 0x4, i & 0x3).chainBlock()
