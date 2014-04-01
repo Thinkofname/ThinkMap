@@ -63,9 +63,9 @@ class Block implements Chainable {
 	 * Returns whether the block at the coordinates collides with
 	 * the box
 	 */
-	public function collidesWith(box : Box, x : Int, y : Int, z : Int) : Bool {
+	public function collidesWith(box : Box, x : Int, y : Int, z : Int, world : World) : Bool {
 		if (!collidable) return false;
-		return box.checkBox(x, y, z, 1.0, 1.0, 1.0);
+		return box.checkModel(x, y, z, getModel(x, y, z, world));
 	}	
 
     /**
@@ -75,7 +75,6 @@ class Block implements Chainable {
 		return !block.solid && (allowSelf || block != this);
 	}
 	
-	private static var defModel : Model;
 	private var cachedShouldRenderAgainst : Block -> Bool;  // For performance
 	
 	public function getModel(x : Int, y : Int, z : Int, world : World) : Model {

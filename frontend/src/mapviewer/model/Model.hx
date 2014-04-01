@@ -119,7 +119,11 @@ class Model {
 		for (face in faces) {
 			var idx = rotHelper.indexOf(face.face);
 			if (idx != -1) {
-				face.face = rotHelper[(idx + Std.int(deg/90)) % rotHelper.length];
+				var nIDX = (idx + Math.round(deg / 90)) % rotHelper.length;
+				face.face = rotHelper[nIDX];
+				if (idx == (nIDX + 2) % rotHelper.length) {
+					face.off = 16 - face.off;
+				}
 			}
 		}
 		return this;

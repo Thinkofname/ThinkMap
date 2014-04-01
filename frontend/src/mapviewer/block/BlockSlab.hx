@@ -38,11 +38,6 @@ class BlockSlab extends Block {
 		super();
 	}
 	
-	override public function collidesWith(box : Box, x : Int, y : Int, z : Int) : Bool {
-		if (!collidable) return false;
-		return box.checkBox(x, y + (top ? 0.5 : 0), z, 1.0, 0.5, 1.0);
-	}	
-	
 	override public function getTexture(face : Face) : String {
 		return texture == null ? textures[face.name] : texture;
 	}

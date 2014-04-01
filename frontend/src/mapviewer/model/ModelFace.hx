@@ -66,8 +66,11 @@ class ModelFace {
 	public var g : Int = 255;
 	public var b : Int = 255;
 	public var cullable : Bool = false;
+	public var x : Float = 0;
+	public var y : Float = 0;
 	public var width : Float = 16;
 	public var height : Float = 16;
+	public var off : Float = 0;
 	
 	public function new(face : Face) {
 		vertices = new Array();
@@ -89,6 +92,7 @@ class ModelFace {
 	}
 	
 	public function offset(off : Float) {
+		this.off = off;
 		// What gets changed depends on the face's face
 		if (face == Face.TOP || face == Face.BOTTOM) {
 			// X, Z
@@ -105,7 +109,9 @@ class ModelFace {
 	/**
 	 * Resize this face. Also updates the texture position.
 	 */
-	public function size(x : Float, y : Float, w : Float, h : Float) : ModelFace {		
+	public function size(x : Float, y : Float, w : Float, h : Float) : ModelFace {	
+		this.x = x;
+		this.y = y;
 		width = w;
 		height = h;
 		// What gets changed depends on the face's face

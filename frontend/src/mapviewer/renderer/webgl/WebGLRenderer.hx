@@ -369,7 +369,7 @@ class WebGLRenderer {
 			for (x in cx - 2 ... cx + 2) {
 				for (z in cz - 2 ... cz + 2) {
 					for (y in cy - 3 ... cy + 3) {
-						if (Main.world.getBlock(x, y, z).collidesWith(box, x, y, z)) {
+						if (Main.world.getBlock(x, y, z).collidesWith(box, x, y, z, Main.world)) {
 							camera.x = lx;
 							box.x = lx;
 							return;
@@ -385,7 +385,7 @@ class WebGLRenderer {
 			for (x in cx - 2 ... cx + 2) {
 				for (z in cz - 2 ... cz + 2) {
 					for (y in cy - 3 ... cy + 3) {
-						if (Main.world.getBlock(x, y, z).collidesWith(box, x, y, z)) {
+						if (Main.world.getBlock(x, y, z).collidesWith(box, x, y, z, Main.world)) {
 							camera.z = lz;
 							box.z = lz;
 							return;
@@ -402,7 +402,7 @@ class WebGLRenderer {
 		for (x in cx - 2 ... cx + 2) {
 			for (z in cz - 2 ... cz + 2) {
 				for (y in cy - 3 ... cy + 3) {
-					if (Main.world.getBlock(x, y, z).collidesWith(box, x, y, z)) {
+					if (Main.world.getBlock(x, y, z).collidesWith(box, x, y, z, Main.world)) {
 						hit = true;
 						if (y <= cy) {
 							onGround = true;

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package mapviewer.collision;
+import mapviewer.block.Face;
+import mapviewer.model.Model;
 
 class Box {
 	
@@ -43,5 +45,36 @@ class Box {
 		var rz = z - (d / 2.0);
 		return !(rx + w < ox || rx > ox + ow || ry + h < oy || ry > oy + oh || rz +
 			d < oz || rz > oz + od);
+	}
+	
+	public function checkModel(ox : Int, oy : Int, oz : Int, model : Model) : Bool {
+		for (face in model.faces) {
+			var x = Math.POSITIVE_INFINITY;
+			var y = Math.POSITIVE_INFINITY;
+			var z = Math.POSITIVE_INFINITY;
+			var w = Math.NEGATIVE_INFINITY;
+			var h = Math.NEGATIVE_INFINITY;
+			var d = Math.NEGATIVE_INFINITY;
+			for (v in face.vertices) {
+				if (v.x < x) x = v.x;
+				if (v.y < y) y = v.y;
+				if (v.z < z) z = v.z;
+				if (v.x > w) w = v.x;
+				if (v.y > h) h = v.y;
+				if (v.z > d) d = v.z;
+			}
+			if (x == w) {
+				x -= 1 / 32;
+				w += 1 / 32;
+			} else if (y == h) {
+				y -= 1 / 32;
+				h += 1 / 32;
+			} else if (z == d) {
+				z -= 1 / 32;
+				d += 1 / 32;
+			}
+			if (checkBox(ox + x, oy + y, oz + z, w-x, h-y, d-z)) return true;
+		}
+		return false;
 	}
 }
