@@ -48,10 +48,10 @@ class BlockDoor extends Block {
 		
 		var texture = this.texture + (top ? "_upper" : "_lower");
 		
-		model.faces.push(ModelFace.create(Face.FRONT, texture, 0, 0, 16, 16, 3, true));
-		model.faces.push(ModelFace.create(Face.BACK, texture, 0, 0, 16, 16, 0, false).forEach(function(v) {
+		model.faces.push(ModelFace.create(Face.FRONT, texture, 0, 0, 16, 16, 3, true).forEach(function(v) {
 			v.textureX = 1 - v.textureX;			
 		}));
+		model.faces.push(ModelFace.create(Face.BACK, texture, 0, 0, 16, 16, 0, false));
 		model.faces.push(ModelFace.create(Face.TOP, texture, 0, 0, 16, 3, 16, true));
 		model.faces.push(ModelFace.create(Face.BOTTOM, texture, 0, 0, 16, 3, 0, true));
 		model.faces.push(ModelFace.create(Face.LEFT, texture, 0, 0, 3, 16, 16, true));
