@@ -37,6 +37,13 @@ class WebGLChunk extends Chunk {
 		
 		transBuffers = new Array<Buffer>();
 		transBuilders = new Array<BlockBuilder>();
+		
+		cull = new Array<Bool>();
+		cullFrame = new Array<Int>();
+		for (i in 0 ... 16) {
+			cull[i] = false;
+			cullFrame[i] = -1;
+		}
 	}
 	
 	public function render(renderer : WebGLRenderer, program : ChunkShader, transparent : Bool) {
@@ -58,13 +65,40 @@ class WebGLChunk extends Chunk {
 		for (i in 0 ... 16) {
 			var section = sections[i];
 			if (section == null) continue;
-			
+			if (shouldCullSection(renderer, i)) continue;
 			if (!transparent) {
 				hasSet = renderBuffer(renderer, gl, program, normalBuffers[i], normalTriangleCount[i], hasSet);
 			} else {	
 				hasSet = renderTrans(renderer, gl, program, i, hasSet);
 			}
 		}
+	}
+	
+	private var cullFrame : Array<Int>;
+	private var cull : Array<Bool>;
+	private function shouldCullSection(renderer : WebGLRenderer, i : Int) : Bool {		
+		if (Std.int(renderer.currentFrame * 3) != cullFrame[i]) {
+			var camera = renderer.camera;
+			var dx = -Math.sin(camera.rotY) * Math.cos(camera.rotX);
+			var dz = Math.cos(camera.rotY) * Math.cos(camera.rotX);
+			var dy = Math.sin(camera.rotX);
+			
+			var cx = camera.x + 16*dx - (x * 16 + 8);
+			var cy = camera.y + 16*dy - (i * 16 + 8);
+			var cz = camera.z + 16*dz - (z * 16 + 8);
+			var cl = Math.sqrt(cx * cx + cy * cy + cz * cz); //TODO: FIXME
+			cx /= cl;
+			cy /= cl;
+			cz /= cl;
+			
+			if (Math.abs(dx - cx) > 0.9 || Math.abs(dy - cy) > 1.0 || Math.abs(dz - cz) > 0.9) {
+				cull[i] = true;
+			} else {
+				cull[i] = false;
+			}
+			cullFrame[i] = Std.int(renderer.currentFrame * 3);
+		}		
+		return cull[i];
 	}
 	
 	@:access(mapviewer.renderer.webgl.BlockBuilder)
