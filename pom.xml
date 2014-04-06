@@ -9,12 +9,14 @@
     <packaging>pom</packaging>
     <version>0.8</version>
     <modules>
-        <module>frontend</module>
+        <module>client</module>
         <module>bukkit</module>
     </modules>
 
     <properties>
         <build.number>SNAPSHOT</build.number>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
 
     <dependencies>

@@ -7,5 +7,9 @@ dependency-reduced-pom.xml
 target
 packages
 /frontend/build
-build
 *.hxproj
+/client/out
+/client/build/mapviewer
+/client/build/mapviewerworker
+/client/build/WEB-INF
+gwt-unitCache
