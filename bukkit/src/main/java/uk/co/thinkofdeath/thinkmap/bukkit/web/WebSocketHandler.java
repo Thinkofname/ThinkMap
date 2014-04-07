@@ -19,8 +19,7 @@ package uk.co.thinkofdeath.thinkmap.bukkit.web;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.websocketx.*;
-import lombok.RequiredArgsConstructor;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import org.bukkit.Location;
 import uk.co.thinkofdeath.thinkmap.bukkit.ThinkMapPlugin;
 

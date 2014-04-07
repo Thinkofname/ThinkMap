@@ -28,7 +28,10 @@ import uk.co.thinkofdeath.thinkmap.bukkit.web.Packets;
 import uk.co.thinkofdeath.thinkmap.bukkit.web.WebHandler;
 import uk.co.thinkofdeath.thinkmap.bukkit.world.ChunkManager;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThinkMapPlugin extends JavaPlugin implements Runnable {

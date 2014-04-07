@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.mapviewer.shared.support;
+package uk.co.thinkofdeath.mapviewer.client.render.glmatrix;
 
-import com.google.gwt.core.client.JavaScriptObject;
-import elemental.html.ArrayBuffer;
+import elemental.js.html.JsFloat32Array;
 
-// Because GWT's version is wrong
-public class DataReader extends JavaScriptObject {
+public class Quat extends JsFloat32Array {
+    protected Quat() {
+    }
 
-    protected DataReader() {}
-
-    public static final native DataReader create(ArrayBuffer buffer)/*-{
-        return new DataView(buffer);
+    public static native void create()/*-{
+        return $wnd.quat.create();
     }-*/;
 
-    public static final native DataReader create(ArrayBuffer buffer, int offset)/*-{
-        return new DataView(buffer, offset);
-    }-*/;
-
-    public final native int getUint8(int offset)/*-{
-        return this.getUint8(offset);
+    public final native void setAxisAngle(float rad, float x, float y, float z)/*-{
+        $wnd.quat.setAxisAngle(this, axis, rad)
     }-*/;
 }
