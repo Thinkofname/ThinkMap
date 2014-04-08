@@ -32,11 +32,6 @@ public class RendererUtils {
         };
     }-*/;
 
-
-    static interface ResizeHandler {
-        void onResize();
-    }
-
     /**
      * Returns a WebGL context setup with attributes or returns null
      * if WebGL isn't supported
@@ -48,4 +43,28 @@ public class RendererUtils {
         var attrs = {alpha: false, premultipliedAlpha: false, antialias: false};
         return canvas.getContext("webgl", attrs) || canvas.getContext("experimental-webgl", attrs);
     }-*/;
+
+    /**
+     * Requests the passed runnable to be run when the browser next redraws
+     *
+     * @param runnable The Runnable to run
+     */
+    static native void requestAnimationFrame(Runnable runnable)/*-{
+        $wnd.requestAnimationFrame(function () {
+            runnable.@java.lang.Runnable::run()();
+        });
+    }-*/;
+
+    /**
+     * Returns the current time in milliseconds
+     *
+     * @return The current time
+     */
+    static native double currentTime()/*-{
+        return $wnd.Date.now();
+    }-*/;
+
+    static interface ResizeHandler {
+        void onResize();
+    }
 }

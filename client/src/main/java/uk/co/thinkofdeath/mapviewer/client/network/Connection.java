@@ -36,6 +36,7 @@ public class Connection implements EventListener {
 
     private final WebSocket webSocket;
     private final String address;
+    private final ConnectionHandler handler;
 
     /**
      * Creates a connect to the plugin at the address. Calls the callback
@@ -44,8 +45,9 @@ public class Connection implements EventListener {
      * @param address  The address to connect to, may include the port
      * @param callback The Runnable to call once the connection is completed
      */
-    public Connection(String address, final Runnable callback) {
+    public Connection(String address, ConnectionHandler handler, final Runnable callback) {
         this.address = address;
+        this.handler = handler;
         webSocket = Browser.getWindow().newWebSocket("ws://" + address + "/server");
         // Work in binary instead of strings
         webSocket.setBinaryType("arraybuffer");
@@ -76,6 +78,20 @@ public class Connection implements EventListener {
         MessageEvent event = (MessageEvent) evt;
         DataReader reader = DataReader.create((ArrayBuffer) ((MessageEvent) evt).getData());
 
-        // TODO:
+        switch (reader.getUint8(0)) {
+            case 0: // Time update
+                handler.onTimeUpdate(reader.getInt32(1));
+                break;
+            case 1: // Set position
+                handler.onSetPosition(reader.getInt32(1), reader.getUint8(5), reader.getInt32(6));
+                break;
+            case 2: // Message
+                StringBuilder builder = new StringBuilder();
+                for (int i = 1; i < reader.getLength(); i++) {
+                    builder.append((char) reader.getUint8(i));
+                }
+                handler.onMessage(builder.toString());
+                break;
+        }
     }
 }

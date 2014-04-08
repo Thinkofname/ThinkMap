@@ -18,8 +18,8 @@
         "http://google-web-toolkit.googlecode.com/svn/releases/2.0/distro-source/core/src/gwt-module.dtd">
 <module rename-to="mapviewerworker">
 
-    <inherits name="elemental.Elemental" />
-    <inherits name="com.google.gwt.core.Core" />
+    <inherits name="elemental.Elemental"/>
+    <inherits name="com.google.gwt.core.Core"/>
     <inherits name="com.google.gwt.logging.Logging"/>
 
     <source path="worker"/>

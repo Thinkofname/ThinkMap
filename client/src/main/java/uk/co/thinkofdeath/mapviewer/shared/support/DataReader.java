@@ -19,10 +19,11 @@ package uk.co.thinkofdeath.mapviewer.shared.support;
 import com.google.gwt.core.client.JavaScriptObject;
 import elemental.html.ArrayBuffer;
 
-// Because GWT's version is wrong
+// Because GWT's version of DataView is wrong
 public class DataReader extends JavaScriptObject {
 
-    protected DataReader() {}
+    protected DataReader() {
+    }
 
     public static final native DataReader create(ArrayBuffer buffer)/*-{
         return new DataView(buffer);
@@ -34,5 +35,13 @@ public class DataReader extends JavaScriptObject {
 
     public final native int getUint8(int offset)/*-{
         return this.getUint8(offset);
+    }-*/;
+
+    public final native int getInt32(int offset)/*-{
+        return this.getInt32(offset, false);
+    }-*/;
+
+    public final native int getLength() /*-{
+        return this.byteLength;
     }-*/;
 }

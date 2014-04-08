@@ -24,14 +24,17 @@ import elemental.html.WebGLTexture;
 import uk.co.thinkofdeath.mapviewer.client.MapViewer;
 import uk.co.thinkofdeath.mapviewer.client.render.glmatrix.Mat4;
 
+import static elemental.html.WebGLRenderingContext.*;
 import static uk.co.thinkofdeath.mapviewer.client.render.RendererUtils.*;
 
-public class Renderer implements ResizeHandler {
+public class Renderer implements ResizeHandler, Runnable {
 
     private final MapViewer mapViewer;
 
     private final CanvasElement canvas;
     private final WebGLRenderingContext gl;
+
+    private final Camera camera = new Camera();
 
     // Matrices
     private final Mat4 perspectiveMatrix = Mat4.create();
@@ -42,6 +45,8 @@ public class Renderer implements ResizeHandler {
 
     // Textures
     private final WebGLTexture blockTexture;
+
+    private double lastFrame;
 
     /**
      * Creates a Renderer that handles almost anything that is displayed
@@ -67,40 +72,66 @@ public class Renderer implements ResizeHandler {
 
         blockTexture = loadTexture(mapViewer.getBlockTexture());
 
-        gl.enable(WebGLRenderingContext.DEPTH_TEST);
-        gl.enable(WebGLRenderingContext.CULL_FACE);
-        gl.cullFace(WebGLRenderingContext.BACK);
-        gl.frontFace(WebGLRenderingContext.CCW);
+        gl.enable(DEPTH_TEST);
+        gl.enable(CULL_FACE);
+        gl.cullFace(BACK);
+        gl.frontFace(CCW);
 
         // TODO: Controls
+
+        run();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void run() {
+        double diff = currentTime() - lastFrame;
+        double delta = Math.min(diff / (1000 / 60), 3.0);
+        lastFrame = currentTime();
+
+        gl.clearColor(0.0f, 1.0f, 1.0f, 1.0f); // TODO: Time of day
+        gl.clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
+
+        // Camera -> Matrix
+        viewMatrix.identity();
+        tempMatrix1.identity();
+        tempMatrix2.identity();
+        tempMatrix1.scale(-1, -1, 1);
+        tempMatrix1.rotateX((float) (-camera.getRotationX() - Math.PI));
+        tempMatrix1.rotateY((float) (camera.getRotationY() + Math.PI));
+        tempMatrix2.translate(camera.getX(), camera.getY(), camera.getZ());
+        tempMatrix1.multiply(tempMatrix2, viewMatrix);
+
+        requestAnimationFrame(this);
     }
 
     /**
      * Creates a WebGL texture from an ImageElement
+     *
      * @param imageElement The image element to load
      * @return The created WebGL texture
      */
     private WebGLTexture loadTexture(ImageElement imageElement) {
         WebGLTexture texture = gl.createTexture();
-        gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, texture);
+        gl.bindTexture(TEXTURE_2D, texture);
         // Flip the Y to be like we used to
-        gl.pixelStorei(WebGLRenderingContext.UNPACK_FLIP_Y_WEBGL, 0);
-        gl.pixelStorei(WebGLRenderingContext.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
-        gl.texImage2D(WebGLRenderingContext.TEXTURE_2D, 0, WebGLRenderingContext.RGBA,
-                WebGLRenderingContext.RGBA, WebGLRenderingContext.UNSIGNED_BYTE, imageElement);
+        gl.pixelStorei(UNPACK_FLIP_Y_WEBGL, 0);
+        gl.pixelStorei(UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
+        gl.texImage2D(TEXTURE_2D, 0, RGBA, RGBA, UNSIGNED_BYTE, imageElement);
         // Nearest filtering gives a Minecrafty look
-        gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_MAG_FILTER,
-                WebGLRenderingContext.NEAREST);
-        gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_MIN_FILTER,
-                WebGLRenderingContext.NEAREST);
-        gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_WRAP_S,
-                WebGLRenderingContext.CLAMP_TO_EDGE);
-        gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_WRAP_T,
-                WebGLRenderingContext.CLAMP_TO_EDGE);
-        gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, null);
+        gl.texParameteri(TEXTURE_2D, TEXTURE_MAG_FILTER, NEAREST);
+        gl.texParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, NEAREST);
+        gl.texParameteri(TEXTURE_2D, TEXTURE_WRAP_S, CLAMP_TO_EDGE);
+        gl.texParameteri(TEXTURE_2D, TEXTURE_WRAP_T, CLAMP_TO_EDGE);
+        gl.bindTexture(TEXTURE_2D, null);
         return texture;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onResize() {
         // Fill the window
@@ -111,5 +142,14 @@ public class Renderer implements ResizeHandler {
         perspectiveMatrix.identity();
         perspectiveMatrix.perspective((float) Math.toRadians(80), (float) canvas.getWidth() / canvas.getHeight(), 0.1f, 500f);
         // TODO: toggle update
+    }
+
+    /**
+     * Returns the camera used by the renderer
+     *
+     * @return the camera
+     */
+    public Camera getCamera() {
+        return camera;
     }
 }

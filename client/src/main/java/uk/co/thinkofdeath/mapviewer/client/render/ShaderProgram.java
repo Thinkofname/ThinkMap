@@ -97,7 +97,7 @@ public abstract class ShaderProgram {
         WebGLShader shader = gl.createShader(type);
         gl.shaderSource(shader, source);
         gl.compileShader(shader);
-        if (!(boolean) gl.getShaderParameter(shader, WebGLRenderingContext.COMPILE_STATUS))
+        if (!(Boolean) gl.getShaderParameter(shader, WebGLRenderingContext.COMPILE_STATUS))
             throw new ShaderError(gl.getShaderInfoLog(shader));
         return shader;
     }

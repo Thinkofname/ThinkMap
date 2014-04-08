@@ -21,6 +21,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 public class TextureMap extends JavaScriptObject {
     protected TextureMap() {
     }
+
     public final native void forEach(Looper looper)/*-{
         for (key in this) {
             if (this.hasOwnProperty(key)) {
@@ -31,6 +32,10 @@ public class TextureMap extends JavaScriptObject {
         }
     }-*/;
 
+    public static interface Looper {
+        void forEach(String k, Texture v);
+    }
+
     public static class Texture {
 
         private int start;
@@ -40,9 +45,5 @@ public class TextureMap extends JavaScriptObject {
             this.start = start;
             this.end = end;
         }
-    }
-
-    public static interface Looper {
-        void forEach(String k, Texture v);
     }
 }

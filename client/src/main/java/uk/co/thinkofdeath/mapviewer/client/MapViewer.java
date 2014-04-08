@@ -25,17 +25,20 @@ import elemental.html.ImageElement;
 import elemental.js.util.Json;
 import elemental.xml.XMLHttpRequest;
 import uk.co.thinkofdeath.mapviewer.client.network.Connection;
+import uk.co.thinkofdeath.mapviewer.client.network.ConnectionHandler;
+import uk.co.thinkofdeath.mapviewer.client.render.Camera;
 import uk.co.thinkofdeath.mapviewer.client.render.Renderer;
 
 import java.util.HashMap;
 
-public class MapViewer implements EntryPoint, EventListener {
+public class MapViewer implements EntryPoint, EventListener, ConnectionHandler {
 
     private ImageElement texture;
     private HashMap<String, TextureMap.Texture> textures = new HashMap<>();
     private XMLHttpRequest xhr;
     private Connection connection;
     private Renderer renderer;
+    private int loaded = 0;
 
     /**
      * Entry point to the program
@@ -51,8 +54,6 @@ public class MapViewer implements EntryPoint, EventListener {
         xhr.setOnload(this);
         xhr.send();
     }
-
-    private int loaded = 0;
 
     /**
      * Internal method
@@ -72,7 +73,7 @@ public class MapViewer implements EntryPoint, EventListener {
             }
         });
 
-        connection = new Connection("localhost:23333", new Runnable() {
+        connection = new Connection("localhost:23333", this, new Runnable() {
             @Override
             public void run() {
                 renderer = new Renderer(MapViewer.this, (CanvasElement) Browser.getDocument().getElementById("main"));
@@ -88,5 +89,44 @@ public class MapViewer implements EntryPoint, EventListener {
      */
     public ImageElement getBlockTexture() {
         return texture;
+    }
+
+
+    /**
+     * Returns the camera used by the renderer
+     *
+     * @return the camera
+     * @see uk.co.thinkofdeath.mapviewer.client.render.Renderer#getCamera()
+     */
+    public Camera getCamera() {
+        return renderer.getCamera();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onTimeUpdate(int currentTime) {
+        // TODO
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onSetPosition(int x, int y, int z) {
+        Camera camera = getCamera();
+        camera.setX(x);
+        camera.setY(y);
+        camera.setZ(z);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onMessage(String message) {
+       System.out.println("Message: " + message);
+       // TODO
     }
 }
