@@ -42,7 +42,8 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     private Connection connection;
     private Renderer renderer;
     private int loaded = 0;
-    private BlockRegistry blockRegistry = new BlockRegistry(this);
+    private final LoggerFactory loggerFactory = new ClientLogger(ClientLogger.DEBUG);
+    private final BlockRegistry blockRegistry = new BlockRegistry(this);
 
     /**
      * Entry point to the program
@@ -145,8 +146,11 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
         return blockRegistry;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LoggerFactory getLoggerFactory() {
-        return null;
+        return loggerFactory;
     }
 }

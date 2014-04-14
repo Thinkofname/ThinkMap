@@ -55,7 +55,7 @@ public class Connection implements EventListener {
         webSocket.setOnopen(new EventListener() {
             @Override
             public void handleEvent(Event evt) {
-                logger.info("Connected to server");
+                Connection.this.logger.info("Connected to server");
                 send(Browser.getWindow().newUint8Array(1).getBuffer());
                 callback.run();
             }
