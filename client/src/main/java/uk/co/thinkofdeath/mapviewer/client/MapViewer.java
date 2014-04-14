@@ -28,10 +28,13 @@ import uk.co.thinkofdeath.mapviewer.client.network.Connection;
 import uk.co.thinkofdeath.mapviewer.client.network.ConnectionHandler;
 import uk.co.thinkofdeath.mapviewer.client.render.Camera;
 import uk.co.thinkofdeath.mapviewer.client.render.Renderer;
+import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
+import uk.co.thinkofdeath.mapviewer.shared.block.BlockRegistry;
+import uk.co.thinkofdeath.mapviewer.shared.logging.LoggerFactory;
 
 import java.util.HashMap;
 
-public class MapViewer implements EntryPoint, EventListener, ConnectionHandler {
+public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, IMapViewer {
 
     private ImageElement texture;
     private HashMap<String, TextureMap.Texture> textures = new HashMap<>();
@@ -39,6 +42,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler {
     private Connection connection;
     private Renderer renderer;
     private int loaded = 0;
+    private BlockRegistry blockRegistry = new BlockRegistry(this);
 
     /**
      * Entry point to the program
@@ -73,7 +77,10 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler {
             }
         });
 
-        connection = new Connection("localhost:23333", this, new Runnable() {
+        getBlockRegistry().init();
+
+        // TODO: Use config
+        connection = new Connection(getLoggerFactory().getLogger("Server Connection"), "localhost:23333", this, new Runnable() {
             @Override
             public void run() {
                 renderer = new Renderer(MapViewer.this, (CanvasElement) Browser.getDocument().getElementById("main"));
@@ -126,7 +133,20 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler {
      */
     @Override
     public void onMessage(String message) {
-       System.out.println("Message: " + message);
-       // TODO
+        System.out.println("Message: " + message);
+        // TODO
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BlockRegistry getBlockRegistry() {
+        return blockRegistry;
+    }
+
+    @Override
+    public LoggerFactory getLoggerFactory() {
+        return null;
     }
 }

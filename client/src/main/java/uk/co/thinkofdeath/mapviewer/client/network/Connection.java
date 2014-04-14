@@ -22,9 +22,8 @@ import elemental.events.EventListener;
 import elemental.events.MessageEvent;
 import elemental.html.ArrayBuffer;
 import elemental.html.WebSocket;
+import uk.co.thinkofdeath.mapviewer.shared.logging.Logger;
 import uk.co.thinkofdeath.mapviewer.shared.support.DataReader;
-
-import java.util.logging.Logger;
 
 /**
  * Manages a connection between the client and the Bukkit
@@ -32,22 +31,24 @@ import java.util.logging.Logger;
  */
 public class Connection implements EventListener {
 
-    private static final Logger logger = Logger.getLogger("Connection");
-
     private final WebSocket webSocket;
     private final String address;
     private final ConnectionHandler handler;
+    private final Logger logger;
 
     /**
      * Creates a connect to the plugin at the address. Calls the callback
      * once the connection succeeds.
      *
+     * @param logger   The logger to be used by this connection
      * @param address  The address to connect to, may include the port
+     * @param handler  The handler to handle received events
      * @param callback The Runnable to call once the connection is completed
      */
-    public Connection(String address, ConnectionHandler handler, final Runnable callback) {
+    public Connection(Logger logger, String address, ConnectionHandler handler, final Runnable callback) {
         this.address = address;
         this.handler = handler;
+        this.logger = logger;
         webSocket = Browser.getWindow().newWebSocket("ws://" + address + "/server");
         // Work in binary instead of strings
         webSocket.setBinaryType("arraybuffer");
