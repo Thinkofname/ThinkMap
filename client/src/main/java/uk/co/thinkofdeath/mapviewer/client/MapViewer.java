@@ -29,6 +29,7 @@ import uk.co.thinkofdeath.mapviewer.client.network.ConnectionHandler;
 import uk.co.thinkofdeath.mapviewer.client.render.Camera;
 import uk.co.thinkofdeath.mapviewer.client.render.Renderer;
 import uk.co.thinkofdeath.mapviewer.client.worker.WorkerPool;
+import uk.co.thinkofdeath.mapviewer.client.world.ClientChunk;
 import uk.co.thinkofdeath.mapviewer.client.world.ClientWorld;
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockRegistry;
@@ -205,7 +206,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
         switch (message.getType()) {
             case "chunk:loaded":
                 ChunkLoadedMessage chunkLoadedMessage = (ChunkLoadedMessage) message.getMessage();
-
+                world.addChunk(new ClientChunk(world, chunkLoadedMessage));
                 break;
         }
     }
