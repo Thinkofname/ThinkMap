@@ -90,6 +90,7 @@ public class Renderer implements ResizeHandler, Runnable {
         double diff = currentTime() - lastFrame;
         double delta = Math.min(diff / (1000 / 60), 3.0);
         lastFrame = currentTime();
+        mapViewer.tick(delta);
 
         gl.clearColor(0.0f, 1.0f, 1.0f, 1.0f); // TODO: Time of day
         gl.clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);

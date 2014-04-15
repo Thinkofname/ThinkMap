@@ -19,7 +19,8 @@ package uk.co.thinkofdeath.mapviewer.shared.support;
 import com.google.gwt.core.client.JavaScriptObject;
 import elemental.html.ArrayBuffer;
 
-// Because GWT's version of DataView is wrong
+// Because GWT's version of DataView is wrong and we
+// only need big endian
 public class DataReader extends JavaScriptObject {
 
     protected DataReader() {
@@ -43,5 +44,9 @@ public class DataReader extends JavaScriptObject {
 
     public final native int getLength() /*-{
         return this.byteLength;
+    }-*/;
+
+    public final native int getUint16(int offset)/*-{
+        return this.getUint16(offset, false);
     }-*/;
 }

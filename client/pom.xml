@@ -31,6 +31,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <source.mode>OBF</source.mode>
+        <fast.build>false</fast.build>
     </properties>
 
     <dependencies>
@@ -65,7 +67,9 @@
                 <version>2.6.0</version>
                 <configuration>
                     <webappDirectory>build</webappDirectory>
-                    <precompile>false</precompile>
+                    <style>${source.mode}</style>
+                    <optimizationLevel>9</optimizationLevel>
+                    <draftCompile>${fast.build}</draftCompile>
                 </configuration>
                 <executions>
                     <execution>

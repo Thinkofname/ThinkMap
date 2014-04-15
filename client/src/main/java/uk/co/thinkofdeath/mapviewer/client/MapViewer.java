@@ -28,22 +28,35 @@ import uk.co.thinkofdeath.mapviewer.client.network.Connection;
 import uk.co.thinkofdeath.mapviewer.client.network.ConnectionHandler;
 import uk.co.thinkofdeath.mapviewer.client.render.Camera;
 import uk.co.thinkofdeath.mapviewer.client.render.Renderer;
+import uk.co.thinkofdeath.mapviewer.client.worker.WorkerPool;
+import uk.co.thinkofdeath.mapviewer.client.world.ClientWorld;
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockRegistry;
 import uk.co.thinkofdeath.mapviewer.shared.logging.LoggerFactory;
+import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkLoadedMessage;
+import uk.co.thinkofdeath.mapviewer.shared.worker.WorkerMessage;
 
 import java.util.HashMap;
 
 public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, IMapViewer {
 
+    public final static int VIEW_DISTANCE = 4;
+
+    private final LoggerFactory loggerFactory = new ClientLogger(ClientLogger.DEBUG);
+
     private ImageElement texture;
     private HashMap<String, TextureMap.Texture> textures = new HashMap<>();
     private XMLHttpRequest xhr;
+    private int loaded = 0;
+
     private Connection connection;
     private Renderer renderer;
-    private int loaded = 0;
-    private final LoggerFactory loggerFactory = new ClientLogger(ClientLogger.DEBUG);
+
+    private ClientWorld world;
+    private boolean shouldUpdateWorld = false;
+
     private final BlockRegistry blockRegistry = new BlockRegistry(this);
+    private final WorkerPool workerPool = new WorkerPool(this, 4);
 
     /**
      * Entry point to the program
@@ -52,10 +65,10 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
         // Texture
         texture = (ImageElement) Browser.getDocument().createElement("img");
         texture.setOnload(this);
-        texture.setSrc("block_images/blocks.png");
+        texture.setSrc("../block_images/blocks.png");
         // Atlas to look up position of textures in the above image
         xhr = Browser.getWindow().newXMLHttpRequest();
-        xhr.open("GET", "block_images/blocks.json", true);
+        xhr.open("GET", "../block_images/blocks.json", true);
         xhr.setOnload(this);
         xhr.send();
     }
@@ -85,9 +98,18 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
             @Override
             public void run() {
                 renderer = new Renderer(MapViewer.this, (CanvasElement) Browser.getDocument().getElementById("main"));
+                world = new ClientWorld(MapViewer.this);
             }
         });
+    }
 
+    /**
+     * Called every frame by the renderer
+     */
+    public void tick(double delta) {
+        if (shouldUpdateWorld) {
+            world.update();
+        }
     }
 
     /**
@@ -127,6 +149,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
         camera.setX(x);
         camera.setY(y);
         camera.setZ(z);
+        shouldUpdateWorld = true;
     }
 
     /**
@@ -152,5 +175,38 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     @Override
     public LoggerFactory getLoggerFactory() {
         return loggerFactory;
+    }
+
+    /**
+     * Returns the connection used by the map viewer
+     *
+     * @return The connection used
+     */
+    public Connection getConnection() {
+        return connection;
+    }
+
+    /**
+     * Returns the worker pool for the map viewer which contains
+     * several workers ready for processing data
+     *
+     * @return The worker pool
+     */
+    public WorkerPool getWorkerPool() {
+        return workerPool;
+    }
+
+    /**
+     * Processes a message from a worker
+     *
+     * @param message The message to process
+     */
+    public void handleWorkerMessage(WorkerMessage message) {
+        switch (message.getType()) {
+            case "chunk:loaded":
+                ChunkLoadedMessage chunkLoadedMessage = (ChunkLoadedMessage) message.getMessage();
+
+                break;
+        }
     }
 }

@@ -17,19 +17,18 @@
 package uk.co.thinkofdeath.mapviewer.shared.world;
 
 import elemental.util.Timer;
+import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 
 import java.util.HashMap;
-import java.util.logging.Logger;
 
 public abstract class World {
 
-    private static final Logger logger = Logger.getLogger("World");
-
     private int timeOfDay = 6000;
-
     private HashMap<String, Chunk> chunks = new HashMap<>();
+    private final IMapViewer mapViewer;
 
-    protected World() {
+    protected World(IMapViewer mapViewer) {
+        this.mapViewer = mapViewer;
         new Timer() {
             @Override
             public void run() {
@@ -49,6 +48,10 @@ public abstract class World {
         return x + ":" + z;
     }
 
+    /**
+     * Tick the world and its chunks. Should be called at most
+     * 20 times a second
+     */
     private void tick() {
         timeOfDay = (timeOfDay + 1) % 24000;
     }
@@ -64,5 +67,22 @@ public abstract class World {
             return;
         }
         chunks.put(key, chunk);
+    }
+
+    /**
+     * Returns the number of loaded chunks in this world
+     *
+     * @return The number of loaded chunks
+     */
+    public int numberOfLoadedChunks() {
+        return chunks.size();
+    }
+
+    /**
+     * Returns this chunks map viewer
+     * @return The map viewer
+     */
+    public IMapViewer getMapViewer() {
+        return mapViewer;
     }
 }

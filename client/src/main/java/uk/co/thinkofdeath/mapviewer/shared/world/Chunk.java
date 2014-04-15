@@ -16,10 +16,34 @@
 
 package uk.co.thinkofdeath.mapviewer.shared.world;
 
+import uk.co.thinkofdeath.mapviewer.shared.block.Block;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public abstract class Chunk {
 
     private int x;
     private int z;
+    private final World world;
+
+    protected final ChunkSection[] sections = new ChunkSection[16];
+
+    // TODO: Fix the leaking as the blocks are never removed
+    // from these maps
+    protected final Map<Block, Integer> blockIdMap = new HashMap<>();
+    protected final Map<Integer, Block> idBlockMap = new HashMap<>();
+    protected int nextId = 1;
+
+    protected Chunk(World world, int x, int z) {
+        this.world = world;
+        this.x = x;
+        this.z = z;
+
+        // Always have air as the first block
+        blockIdMap.put(world.getMapViewer().getBlockRegistry().get("minecraft:air"), 0);
+        idBlockMap.put(0, world.getMapViewer().getBlockRegistry().get("minecraft:air"));
+    }
 
     /**
      * Gets the chunks position along the x axis

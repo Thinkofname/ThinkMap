@@ -47,7 +47,7 @@ public class WorkerLinker extends AbstractLinker {
         output.print("(function() {");
         output.indentOut();
         output.newline();
-        output.print("var $wnd = self, $doc = {compatMode:false}," +
+        output.print("var $wnd = self, window = self, $doc = {compatMode:false}," +
                 "$stats = function(){}, $sessionId = function(){};");
         output.newline();
         output.print(result.getJavaScript()[0]);

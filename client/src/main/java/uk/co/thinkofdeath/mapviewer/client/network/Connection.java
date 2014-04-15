@@ -63,6 +63,15 @@ public class Connection implements EventListener {
         webSocket.setOnmessage(this);
     }
 
+    /**
+     * The address of the server this connection is connected to
+     *
+     * @return The address of the server
+     */
+    public String getAddress() {
+        return address;
+    }
+
     // Work around for the fact that GWT doesn't support sending
     // ArrayBuffers
     private native void send(ArrayBuffer buffer)/*-{
