@@ -27,8 +27,10 @@ public class ChunkLoadedMessage extends JavaScriptObject {
     /**
      * Creates a chunk loaded message
      *
-     * @param x The x position of the loaded chunk
-     * @param z The y position of the loaded chunk
+     * @param x
+     *         The x position of the loaded chunk
+     * @param z
+     *         The y position of the loaded chunk
      * @return The created message
      */
     public static native ChunkLoadedMessage create(int x, int z)/*-{
@@ -56,9 +58,12 @@ public class ChunkLoadedMessage extends JavaScriptObject {
     /**
      * Sets the section for this message
      *
-     * @param i      Section position
-     * @param count  Non-zero item count
-     * @param buffer Data buffer
+     * @param i
+     *         Section position
+     * @param count
+     *         Non-zero item count
+     * @param buffer
+     *         Data buffer
      */
     public final native void setSection(int i, int count, TUint8Array buffer)/*-{
         this.sections[i] = {
@@ -70,7 +75,8 @@ public class ChunkLoadedMessage extends JavaScriptObject {
     /**
      * Sets the next block id for this chunk
      *
-     * @param nextId The next id
+     * @param nextId
+     *         The next id
      */
     public final native void setNextId(int nextId)/*-{
         this.nextId = nextId;
@@ -79,8 +85,10 @@ public class ChunkLoadedMessage extends JavaScriptObject {
     /**
      * Adds an id -> block mapping to the message
      *
-     * @param key   The id
-     * @param value The block
+     * @param key
+     *         The id
+     * @param value
+     *         The block
      */
     public final native void addIdBlockMapping(int key, Block value)/*-{
         this.idmap[key] = value.@uk.co.thinkofdeath.mapviewer.shared.block.Block::toString()();
@@ -89,8 +97,10 @@ public class ChunkLoadedMessage extends JavaScriptObject {
     /**
      * Adds a block -> id mapping to the message
      *
-     * @param key   The block
-     * @param value The id
+     * @param key
+     *         The block
+     * @param value
+     *         The id
      */
     public final native void addBlockIdMapping(Block key, int value)/*-{
         this.blockmap[key.@uk.co.thinkofdeath.mapviewer.shared.block.Block::toString()()] = value;

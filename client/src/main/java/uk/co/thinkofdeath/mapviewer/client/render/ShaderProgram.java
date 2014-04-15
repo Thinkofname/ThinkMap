@@ -40,7 +40,8 @@ public abstract class ShaderProgram {
     /**
      * Init and compile the program
      *
-     * @param gl The WebGL Context
+     * @param gl
+     *         The WebGL Context
      */
     public void setup(WebGLRenderingContext gl) {
         this.gl = gl;
@@ -48,8 +49,8 @@ public abstract class ShaderProgram {
     }
 
     /**
-     * Sets this program as the active program for the WebGL Context
-     * and enables all vertex attribute arrays
+     * Sets this program as the active program for the WebGL Context and enables all vertex
+     * attribute arrays
      */
     public void use() {
         gl.useProgram(program);
@@ -88,10 +89,13 @@ public abstract class ShaderProgram {
     /**
      * Creates a shader from a source string
      *
-     * @param source The shader source
-     * @param type   The type of shader. Either VERTEX_SHADER or FRAGMENT_SHADER
+     * @param source
+     *         The shader source
+     * @param type
+     *         The type of shader. Either VERTEX_SHADER or FRAGMENT_SHADER
      * @return The created WebGLShader
-     * @throws uk.co.thinkofdeath.mapviewer.client.render.ShaderProgram.ShaderError Thrown if the shader fails to compile
+     * @throws uk.co.thinkofdeath.mapviewer.client.render.ShaderProgram.ShaderError
+     *         Thrown if the shader fails to compile
      */
     private WebGLShader createShader(String source, int type) {
         WebGLShader shader = gl.createShader(type);
@@ -117,15 +121,15 @@ public abstract class ShaderProgram {
     protected abstract String getFragmentShader();
 
     /**
-     * Called when the shader is compiled so that uniforms and attributes
-     * may be setup
+     * Called when the shader is compiled so that uniforms and attributes may be setup
      */
     protected abstract void init();
 
     /**
      * Returns the location of the attribute in the program
      *
-     * @param name The name of the attribute
+     * @param name
+     *         The name of the attribute
      * @return The attribute location
      */
     protected int getAttribute(String name) {
@@ -137,7 +141,8 @@ public abstract class ShaderProgram {
     /**
      * Returns the location of the uniform in the program
      *
-     * @param name The name of the uniform
+     * @param name
+     *         The name of the uniform
      * @return The uniform location
      */
     protected WebGLUniformLocation getUniform(String name) {

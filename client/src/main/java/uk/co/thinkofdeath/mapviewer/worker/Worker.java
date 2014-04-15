@@ -90,18 +90,20 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
     /**
      * Posts a message back to the creator of this worker
      *
-     * @param message The message to send
+     * @param message
+     *         The message to send
      */
     public native void postMessage(Object message)/*-{
         $wnd.postMessage(message);
     }-*/;
 
     /**
-     * Posts a message back to the creator of this worker
-     * and transfers all of the transferables
+     * Posts a message back to the creator of this worker and transfers all of the transferables
      *
-     * @param message       The message to send
-     * @param transferables The transferables to send
+     * @param message
+     *         The message to send
+     * @param transferables
+     *         The transferables to send
      */
     public native void postMessage(Object message, Object[] transferables)/*-{
         $wnd.postMessage(message, transferables);

@@ -28,9 +28,10 @@ public class ClientChunk extends Chunk {
     /**
      * Creates a client-side chunk
      *
-     * @param world              The world which owns this chunk
-     * @param chunkLoadedMessage The message containing the data
-     *                           required to load the chunk
+     * @param world
+     *         The world which owns this chunk
+     * @param chunkLoadedMessage
+     *         The message containing the data required to load the chunk
      */
     public ClientChunk(ClientWorld world, ChunkLoadedMessage chunkLoadedMessage) {
         super(world, chunkLoadedMessage.getX(), chunkLoadedMessage.getZ());

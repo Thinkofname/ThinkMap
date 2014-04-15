@@ -44,20 +44,16 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     public final static int VIEW_DISTANCE = 4;
 
     private final LoggerFactory loggerFactory = new ClientLogger(ClientLogger.DEBUG);
-
+    private final BlockRegistry blockRegistry = new BlockRegistry(this);
+    private final WorkerPool workerPool = new WorkerPool(this, 4);
     private ImageElement texture;
     private HashMap<String, TextureMap.Texture> textures = new HashMap<>();
     private XMLHttpRequest xhr;
     private int loaded = 0;
-
     private Connection connection;
     private Renderer renderer;
-
     private ClientWorld world;
     private boolean shouldUpdateWorld = false;
-
-    private final BlockRegistry blockRegistry = new BlockRegistry(this);
-    private final WorkerPool workerPool = new WorkerPool(this, 4);
 
     /**
      * Entry point to the program
@@ -77,7 +73,8 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     /**
      * Internal method
      *
-     * @param event Event
+     * @param event
+     *         Event
      */
     @Override
     public void handleEvent(Event event) {
@@ -188,8 +185,8 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     }
 
     /**
-     * Returns the worker pool for the map viewer which contains
-     * several workers ready for processing data
+     * Returns the worker pool for the map viewer which contains several workers ready for
+     * processing data
      *
      * @return The worker pool
      */
@@ -200,7 +197,8 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     /**
      * Processes a message from a worker
      *
-     * @param message The message to process
+     * @param message
+     *         The message to process
      */
     public void handleWorkerMessage(WorkerMessage message) {
         switch (message.getType()) {

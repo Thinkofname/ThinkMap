@@ -35,8 +35,8 @@ public class ClientLogger implements LoggerFactory {
     /**
      * Creates a logger which logs to the javascript console
      *
-     * @param logLevel The smallest log level to log
-     *                 /
+     * @param logLevel
+     *         The smallest log level to log
      */
     public ClientLogger(int logLevel) {
         this.logLevel = logLevel;

@@ -23,13 +23,12 @@ import java.util.Map;
 
 public class BlockFactory {
 
+    protected Map<String, BlockState> states = new HashMap<>();
     boolean renderable = true;
     boolean solid = true;
     boolean collidable = true;
     boolean transparent = false;
     String texture;
-
-    protected Map<String, BlockState> states = new HashMap<>();
 
     /**
      * Creates a block factory
@@ -38,8 +37,7 @@ public class BlockFactory {
     }
 
     /**
-     * Returns all possible versions of the blocks from this
-     * factory
+     * Returns all possible versions of the blocks from this factory
      *
      * @return All possible blocks
      */
@@ -71,7 +69,8 @@ public class BlockFactory {
     /**
      * Creates a block with the passed states
      *
-     * @param states The block state
+     * @param states
+     *         The block state
      * @return The created block
      */
     protected Block createBlock(Map<String, Object> states) {

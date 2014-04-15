@@ -43,7 +43,8 @@ public class BlockBuilder {
     /**
      * Sets whether this block is renderable or not
      *
-     * @param renderable The renderable state for this block
+     * @param renderable
+     *         The renderable state for this block
      * @return This builder
      */
     public BlockBuilder renderable(boolean renderable) {
@@ -54,7 +55,8 @@ public class BlockBuilder {
     /**
      * Sets whether this block is solid or not
      *
-     * @param solid The solid state for this block
+     * @param solid
+     *         The solid state for this block
      * @return This builder
      */
     public BlockBuilder solid(boolean solid) {
@@ -65,7 +67,8 @@ public class BlockBuilder {
     /**
      * Sets whether this block has collisions or not
      *
-     * @param collidable The collidable state for this block
+     * @param collidable
+     *         The collidable state for this block
      * @return This builder
      */
     public BlockBuilder collidable(boolean collidable) {
@@ -76,7 +79,8 @@ public class BlockBuilder {
     /**
      * Sets whether this block is transparent or not
      *
-     * @param transparent The transparent state for this block
+     * @param transparent
+     *         The transparent state for this block
      * @return This builder
      */
     public BlockBuilder transparent(boolean transparent) {
@@ -85,10 +89,10 @@ public class BlockBuilder {
     }
 
     /**
-     * Sets the texture to be used by the block if the default
-     * model is used
+     * Sets the texture to be used by the block if the default model is used
      *
-     * @param texture The block texture
+     * @param texture
+     *         The block texture
      * @return This builder
      */
     public BlockBuilder texture(String texture) {
@@ -99,8 +103,10 @@ public class BlockBuilder {
     /**
      * Adds a state to this block
      *
-     * @param name Name of the state
-     * @param blockState The state to add
+     * @param name
+     *         Name of the state
+     * @param blockState
+     *         The state to add
      * @return This builder
      */
     public BlockBuilder state(String name, BlockState blockState) {

@@ -24,12 +24,14 @@ public class WorkerMessage extends JavaScriptObject {
     }
 
     /**
-     * Creates a worker message which can be sent between
-     * a worker and a browser
+     * Creates a worker message which can be sent between a worker and a browser
      *
-     * @param type Type of message
-     * @param msg  The actual message
-     * @param ret  Whether the worker/browser can reply
+     * @param type
+     *         Type of message
+     * @param msg
+     *         The actual message
+     * @param ret
+     *         Whether the worker/browser can reply
      * @return The created message
      */
     public static native WorkerMessage create(String type, Object msg, boolean ret)/*-{

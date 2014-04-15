@@ -48,7 +48,8 @@ public class ChunkSection {
     /**
      * Creates a section from the passed buffer
      *
-     * @param buffer The buffer to create from
+     * @param buffer
+     *         The buffer to create from
      */
     public ChunkSection(TUint8Array buffer) {
         this.buffer = buffer;
@@ -94,16 +95,14 @@ public class ChunkSection {
     }
 
     /**
-     * Increases the section's internal non-zero item
-     * counter
+     * Increases the section's internal non-zero item counter
      */
     public void increaseCount() {
         count++;
     }
 
     /**
-     * Returns the number of non-zero items in this
-     * section
+     * Returns the number of non-zero items in this section
      *
      * @return Number of non-zero items
      */

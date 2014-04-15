@@ -21,21 +21,24 @@ public interface Logger {
     /**
      * Logs a message with the log level of debug
      *
-     * @param o The object to log
+     * @param o
+     *         The object to log
      */
     public void debug(Object o);
 
     /**
      * Logs a message with the log level of info
      *
-     * @param o The object to log
+     * @param o
+     *         The object to log
      */
     public void info(Object o);
 
     /**
      * Logs a message with the log level of warn
      *
-     * @param o The object to log
+     * @param o
+     *         The object to log
      */
     public void warn(Object o);
 }

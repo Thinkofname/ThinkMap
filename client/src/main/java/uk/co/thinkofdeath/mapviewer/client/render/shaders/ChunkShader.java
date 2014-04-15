@@ -85,7 +85,8 @@ public class ChunkShader extends ShaderProgram {
     /**
      * Sets the shader's perspective matrix to the passed matrix
      *
-     * @param matrix The matrix to use
+     * @param matrix
+     *         The matrix to use
      */
     public void setPerspectiveMatrix(Mat4 matrix) {
         gl.uniformMatrix4fv(perspectiveMatrix, false, matrix);
@@ -94,7 +95,8 @@ public class ChunkShader extends ShaderProgram {
     /**
      * Sets the shader's view matrix to the passed matrix
      *
-     * @param matrix The matrix to use
+     * @param matrix
+     *         The matrix to use
      */
     public void setViewMatrix(Mat4 matrix) {
         gl.uniformMatrix4fv(viewMatrix, false, matrix);
@@ -103,8 +105,10 @@ public class ChunkShader extends ShaderProgram {
     /**
      * Sets the offset of the blocks (in chunk coordinates)
      *
-     * @param x Offset on the x axis
-     * @param z Offset on the z axis
+     * @param x
+     *         Offset on the x axis
+     * @param z
+     *         Offset on the z axis
      */
     public void setOffset(int x, int z) {
         gl.uniform2f(offset, x, z);
@@ -113,7 +117,8 @@ public class ChunkShader extends ShaderProgram {
     /**
      * Sets the current frame
      *
-     * @param i Frame
+     * @param i
+     *         Frame
      */
     public void setFrame(int i) {
         gl.uniform1f(frame, i);
@@ -122,7 +127,8 @@ public class ChunkShader extends ShaderProgram {
     /**
      * Sets the time of day scale value
      *
-     * @param i Time of day scale value
+     * @param i
+     *         Time of day scale value
      */
     public void setScale(float i) {
         gl.uniform1f(scale, i);
@@ -131,7 +137,8 @@ public class ChunkShader extends ShaderProgram {
     /**
      * Sets the id/position of the block texture
      *
-     * @param id The id/position of the texture
+     * @param id
+     *         The id/position of the texture
      */
     public void setBlockTexture(int id) {
         gl.uniform1i(blockTexture, id);

@@ -23,17 +23,15 @@ import java.util.Map;
 
 public abstract class Chunk {
 
-    private int x;
-    private int z;
-    private final World world;
-
     protected final ChunkSection[] sections = new ChunkSection[16];
-
     // TODO: Fix the leaking as the blocks are never removed
     // from these maps
     protected final Map<Block, Integer> blockIdMap = new HashMap<>();
     protected final Map<Integer, Block> idBlockMap = new HashMap<>();
+    private final World world;
     protected int nextId = 1;
+    private int x;
+    private int z;
 
     protected Chunk(World world, int x, int z) {
         this.world = world;

@@ -38,7 +38,8 @@ public class Camera {
     /**
      * Sets the camera's position on the x axis
      *
-     * @param x The x position
+     * @param x
+     *         The x position
      */
     public void setX(float x) {
         this.x = x;
@@ -56,7 +57,8 @@ public class Camera {
     /**
      * Sets the camera's position on the t axis
      *
-     * @param y The y position
+     * @param y
+     *         The y position
      */
     public void setY(float y) {
         this.y = y;
@@ -74,7 +76,8 @@ public class Camera {
     /**
      * Sets the camera's position on the z axis
      *
-     * @param z The z position
+     * @param z
+     *         The z position
      */
     public void setZ(float z) {
         this.z = z;
@@ -92,7 +95,8 @@ public class Camera {
     /**
      * Sets the camera's rotation on the x axis
      *
-     * @param rotationX The x rotation in radians
+     * @param rotationX
+     *         The x rotation in radians
      */
     public void setRotationX(float rotationX) {
         this.rotationX = rotationX;
@@ -111,7 +115,8 @@ public class Camera {
     /**
      * Sets the camera's rotation on the y axis
      *
-     * @param rotationY The y rotation in radians
+     * @param rotationY
+     *         The y rotation in radians
      */
     public void setRotationY(float rotationY) {
         this.rotationY = rotationY;

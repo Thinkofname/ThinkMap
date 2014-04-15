@@ -19,27 +19,30 @@ package uk.co.thinkofdeath.mapviewer.client.network;
 public interface ConnectionHandler {
 
     /**
-     * Called when the server sends a message syncing its time
-     * with the clients
+     * Called when the server sends a message syncing its time with the clients
      *
-     * @param currentTime The current time of the server. (0 - 23999)
+     * @param currentTime
+     *         The current time of the server. (0 - 23999)
      */
     public void onTimeUpdate(int currentTime);
 
     /**
-     * Called when the server wants to change the position of the
-     * client
+     * Called when the server wants to change the position of the client
      *
-     * @param x The position on the x axis
-     * @param y The position on the y axis
-     * @param z The position on the z axis
+     * @param x
+     *         The position on the x axis
+     * @param y
+     *         The position on the y axis
+     * @param z
+     *         The position on the z axis
      */
     public void onSetPosition(int x, int y, int z);
 
     /**
      * Called when the server sends a message to the client
      *
-     * @param message The message
+     * @param message
+     *         The message
      */
     public void onMessage(String message);
 }

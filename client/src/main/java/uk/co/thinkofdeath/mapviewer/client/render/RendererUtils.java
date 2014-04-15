@@ -24,7 +24,8 @@ public class RendererUtils {
     /**
      * Set the handler to be called when the window is resized
      *
-     * @param resizeHandler The handler to be called
+     * @param resizeHandler
+     *         The handler to be called
      */
     static native void setResizeHandler(ResizeHandler resizeHandler)/*-{
         $wnd.onresize = function () {
@@ -33,10 +34,10 @@ public class RendererUtils {
     }-*/;
 
     /**
-     * Returns a WebGL context setup with attributes or returns null
-     * if WebGL isn't supported
+     * Returns a WebGL context setup with attributes or returns null if WebGL isn't supported
      *
-     * @param canvas The canvas to get the context of
+     * @param canvas
+     *         The canvas to get the context of
      * @return The WebGL context
      */
     static native WebGLRenderingContext getContext(CanvasElement canvas)/*-{
@@ -47,7 +48,8 @@ public class RendererUtils {
     /**
      * Requests the passed runnable to be run when the browser next redraws
      *
-     * @param runnable The Runnable to run
+     * @param runnable
+     *         The Runnable to run
      */
     static native void requestAnimationFrame(Runnable runnable)/*-{
         $wnd.requestAnimationFrame(function () {

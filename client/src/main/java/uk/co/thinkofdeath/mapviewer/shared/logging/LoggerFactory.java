@@ -21,7 +21,8 @@ public interface LoggerFactory {
     /**
      * Returns or creates a logger for the given name
      *
-     * @param name The name of the logger
+     * @param name
+     *         The name of the logger
      * @return The logger
      */
     public Logger getLogger(String name);

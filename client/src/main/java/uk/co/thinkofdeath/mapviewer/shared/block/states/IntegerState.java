@@ -24,11 +24,12 @@ public class IntegerState implements BlockState {
     private final int max;
 
     /**
-     * A creates a integer factory for the given range
-     * of values
+     * A creates a integer factory for the given range of values
      *
-     * @param min The minimum value
-     * @param max The maximum value
+     * @param min
+     *         The minimum value
+     * @param max
+     *         The maximum value
      */
     public IntegerState(int min, int max) {
         this.min = min;

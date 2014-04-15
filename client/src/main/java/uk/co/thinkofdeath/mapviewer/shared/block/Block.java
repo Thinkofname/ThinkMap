@@ -20,6 +20,9 @@ import java.util.Map;
 
 public class Block {
 
+    private final Map<String, Object> state;
+    String plugin;
+    String name;
     // The following should be mirrored in BlockFactory, BlockBuilder
     // and the constructor
     private boolean renderable;
@@ -27,10 +30,8 @@ public class Block {
     private boolean collidable;
     private boolean transparent;
     private String texture;
-    // =====
-    private final Map<String, Object> state;
-    String plugin;
-    String name;
+    // Cache value since it doesn't change
+    private String toString;
 
     protected Block(BlockFactory factory, Map<String, Object> state) {
         this.state = state;
@@ -44,7 +45,8 @@ public class Block {
     /**
      * Returns the state for the given name
      *
-     * @param name The state's name
+     * @param name
+     *         The state's name
      * @return The state's value or null
      */
     public Object getState(String name) {
@@ -88,8 +90,7 @@ public class Block {
     }
 
     /**
-     * Returns the texture used by this block (if it
-     * has one)
+     * Returns the texture used by this block (if it has one)
      *
      * @return The texture or null
      */
@@ -105,9 +106,6 @@ public class Block {
     public int getLegacyData() {
         return 0;
     }
-
-    // Cache value since it doesn't change
-    private String toString;
 
     /**
      * {@inheritDoc}

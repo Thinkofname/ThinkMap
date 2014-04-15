@@ -33,7 +33,8 @@ public class BlockRegistry {
     /**
      * Creates a block registry which contains all the known blocks
      *
-     * @param mapViewer The map viewer to use for access to other parts of the program
+     * @param mapViewer
+     *         The map viewer to use for access to other parts of the program
      */
     public BlockRegistry(IMapViewer mapViewer) {
         this.mapViewer = mapViewer;
@@ -41,10 +42,11 @@ public class BlockRegistry {
     }
 
     /**
-     * Returns a block by its name. If the 'plugin:' prefix
-     * is omitted then it is assumed to be minecraft
+     * Returns a block by its name. If the 'plugin:' prefix is omitted then it is assumed to be
+     * minecraft
      *
-     * @param name The name of the block
+     * @param name
+     *         The name of the block
      * @return The block or null
      */
     public Block get(String name) {
@@ -57,8 +59,10 @@ public class BlockRegistry {
     /**
      * Returns a block by its name and plugin.
      *
-     * @param plugin The plugin that owns the block
-     * @param name   The name of the block
+     * @param plugin
+     *         The plugin that owns the block
+     * @param name
+     *         The name of the block
      * @return The block or null
      */
     public Block get(String plugin, String name) {
@@ -66,11 +70,12 @@ public class BlockRegistry {
     }
 
     /**
-     * Returns a block by its legacy id and data
-     * value
+     * Returns a block by its legacy id and data value
      *
-     * @param legacyId  The old style id for the block
-     * @param dataValue The data value for the block
+     * @param legacyId
+     *         The old style id for the block
+     * @param dataValue
+     *         The data value for the block
      * @return The block or null
      */
     public Block get(int legacyId, int dataValue) {
@@ -81,22 +86,29 @@ public class BlockRegistry {
     /**
      * Adds the block to this registry
      *
-     * @param plugin The plugin the block belongs to
-     * @param name   The name of the block
-     * @param blocks The blocks to add
+     * @param plugin
+     *         The plugin the block belongs to
+     * @param name
+     *         The name of the block
+     * @param blocks
+     *         The blocks to add
      */
     private void register(String plugin, String name, BlockFactory blocks) {
         register(plugin, name, blocks, -1);
     }
 
     /**
-     * Adds the block to this registry with a legacy id.
-     * Legacy ids are only valid for 'minecraft' blocks
+     * Adds the block to this registry with a legacy id. Legacy ids are only valid for 'minecraft'
+     * blocks
      *
-     * @param plugin   The plugin the block belongs to
-     * @param name     The name of the block
-     * @param blocks   The blocks to add
-     * @param legacyId The old style id for this block
+     * @param plugin
+     *         The plugin the block belongs to
+     * @param name
+     *         The name of the block
+     * @param blocks
+     *         The blocks to add
+     * @param legacyId
+     *         The old style id for this block
      */
     private void register(String plugin, String name, BlockFactory blocks, int legacyId) {
         if (legacyId == -1 && plugin.equals("minecraft")) {

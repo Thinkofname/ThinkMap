@@ -49,11 +49,12 @@ public class Renderer implements ResizeHandler, Runnable {
     private double lastFrame;
 
     /**
-     * Creates a Renderer that handles almost anything that is displayed
-     * to the user
+     * Creates a Renderer that handles almost anything that is displayed to the user
      *
-     * @param mapViewer     The MapViewer that owns this renderer
-     * @param canvasElement The canvas to render to
+     * @param mapViewer
+     *         The MapViewer that owns this renderer
+     * @param canvasElement
+     *         The canvas to render to
      */
     public Renderer(MapViewer mapViewer, CanvasElement canvasElement) {
         this.mapViewer = mapViewer;
@@ -111,7 +112,8 @@ public class Renderer implements ResizeHandler, Runnable {
     /**
      * Creates a WebGL texture from an ImageElement
      *
-     * @param imageElement The image element to load
+     * @param imageElement
+     *         The image element to load
      * @return The created WebGL texture
      */
     private WebGLTexture loadTexture(ImageElement imageElement) {

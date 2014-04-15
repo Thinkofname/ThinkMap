@@ -15,8 +15,8 @@
   ~ limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>ThinkMap</artifactId>
@@ -95,15 +95,18 @@
                             <relocations>
                                 <relocation>
                                     <pattern>io.netty</pattern>
-                                    <shadedPattern>uk.co.thinkofdeath.thinkmap.lib.netty</shadedPattern>
+                                    <shadedPattern>uk.co.thinkofdeath.thinkmap.lib.netty
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.apache</pattern>
-                                    <shadedPattern>uk.co.thinkofdeath.thinkmap.lib.apache</shadedPattern>
+                                    <shadedPattern>uk.co.thinkofdeath.thinkmap.lib.apache
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>gnu.trove</pattern>
-                                    <shadedPattern>uk.co.thinkofdeath.thinkmap.lib.trove</shadedPattern>
+                                    <shadedPattern>uk.co.thinkofdeath.thinkmap.lib.trove
+                                    </shadedPattern>
                                 </relocation>
                             </relocations>
                             <artifactSet>

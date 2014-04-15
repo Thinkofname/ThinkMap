@@ -26,8 +26,8 @@ import uk.co.thinkofdeath.mapviewer.shared.logging.Logger;
 import uk.co.thinkofdeath.mapviewer.shared.support.DataReader;
 
 /**
- * Manages a connection between the client and the Bukkit
- * plugin. Fires events based on messages received.
+ * Manages a connection between the client and the Bukkit plugin. Fires events based on messages
+ * received.
  */
 public class Connection implements EventListener {
 
@@ -37,13 +37,17 @@ public class Connection implements EventListener {
     private final Logger logger;
 
     /**
-     * Creates a connect to the plugin at the address. Calls the callback
-     * once the connection succeeds.
+     * Creates a connect to the plugin at the address. Calls the callback once the connection
+     * succeeds.
      *
-     * @param logger   The logger to be used by this connection
-     * @param address  The address to connect to, may include the port
-     * @param handler  The handler to handle received events
-     * @param callback The Runnable to call once the connection is completed
+     * @param logger
+     *         The logger to be used by this connection
+     * @param address
+     *         The address to connect to, may include the port
+     * @param handler
+     *         The handler to handle received events
+     * @param callback
+     *         The Runnable to call once the connection is completed
      */
     public Connection(Logger logger, String address, ConnectionHandler handler, final Runnable callback) {
         this.address = address;
@@ -81,7 +85,8 @@ public class Connection implements EventListener {
     /**
      * Internal method to receive websocket messages
      *
-     * @param evt Event
+     * @param evt
+     *         Event
      */
     @Override
     public void handleEvent(Event evt) {

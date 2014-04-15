@@ -24,7 +24,8 @@ public class WorkerWorld extends World {
     /**
      * Creates a world designed to run on workers
      *
-     * @param worker The worker which owns this world
+     * @param worker
+     *         The worker which owns this world
      */
     public WorkerWorld(Worker worker) {
         super(worker);

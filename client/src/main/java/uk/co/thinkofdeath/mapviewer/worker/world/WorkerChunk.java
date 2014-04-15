@@ -35,8 +35,10 @@ public class WorkerChunk extends Chunk {
     /**
      * Creates a chunk at the passed position
      *
-     * @param x The x position
-     * @param z The z position
+     * @param x
+     *         The x position
+     * @param z
+     *         The z position
      */
     public WorkerChunk(WorkerWorld world, int x, int z, ArrayBuffer data, boolean reply) {
         super(world, x, z);

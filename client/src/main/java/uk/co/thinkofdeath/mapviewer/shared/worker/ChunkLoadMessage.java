@@ -26,9 +26,12 @@ public class ChunkLoadMessage extends JavaScriptObject {
     /**
      * Creates a new chunk load message
      *
-     * @param x    The x position of the chunk
-     * @param z    The z position of the chunk
-     * @param data The data of the chunk
+     * @param x
+     *         The x position of the chunk
+     * @param z
+     *         The z position of the chunk
+     * @param data
+     *         The data of the chunk
      * @return The message
      */
     public static native ChunkLoadMessage create(int x, int z, ArrayBuffer data)/*-{

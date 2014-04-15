@@ -21,7 +21,6 @@ import elemental.events.Event;
 import elemental.events.EventListener;
 import elemental.events.MessageEvent;
 import elemental.html.Worker;
-import elemental.util.Indexable;
 import uk.co.thinkofdeath.mapviewer.client.MapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.logging.Logger;
 import uk.co.thinkofdeath.mapviewer.shared.worker.WorkerMessage;
@@ -38,8 +37,10 @@ public class WorkerPool {
     /**
      * Creates a worker pool with a limit of the number of workers created
      *
-     * @param mapViewer The map viewer that owns this pool
-     * @param limit     The max number of workers
+     * @param mapViewer
+     *         The map viewer that owns this pool
+     * @param limit
+     *         The max number of workers
      */
     public WorkerPool(MapViewer mapViewer, int limit) {
         this.mapViewer = mapViewer;
@@ -52,24 +53,29 @@ public class WorkerPool {
     /**
      * Alias for sendMessage(type, msg, transferables, false);
      *
-     * @param type          The message type
-     * @param msg           The message to send
-     * @param transferables Array of transferable objects (ArrayBuffers and
-     *                      MessagePorts)
+     * @param type
+     *         The message type
+     * @param msg
+     *         The message to send
+     * @param transferables
+     *         Array of transferable objects (ArrayBuffers and MessagePorts)
      */
     public void sendMessage(String type, Object msg, Object[] transferables) {
         sendMessage(type, msg, transferables, false);
     }
 
     /**
-     * Sends the message to a free worker. If all is set then all workers
-     * will get the message but only one will reply
+     * Sends the message to a free worker. If all is set then all workers will get the message but
+     * only one will reply
      *
-     * @param type          The message type
-     * @param msg           The message to send
-     * @param transferables Array of transferable objects (ArrayBuffers and
-     *                      MessagePorts)
-     * @param all Whether to send to all workers
+     * @param type
+     *         The message type
+     * @param msg
+     *         The message to send
+     * @param transferables
+     *         Array of transferable objects (ArrayBuffers and MessagePorts)
+     * @param all
+     *         Whether to send to all workers
      */
     public void sendMessage(String type, Object msg, Object[] transferables, boolean all) {
         PooledWorker lowestWorker = workers.get(0);

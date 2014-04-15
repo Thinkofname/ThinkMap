@@ -36,6 +36,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
+    public final Map<Integer, SocketChannel> activeConnections = Collections.synchronizedMap(new HashMap<Integer, SocketChannel>());
+    private final Map<String, ChunkManager> chunkManagers = new HashMap<String, ChunkManager>();
+    public AtomicInteger lastConnectionId = new AtomicInteger();
     /**
      * Returns the plugin's web handler
      *
@@ -43,12 +46,6 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
      */
     @Getter
     private WebHandler webHandler;
-
-    private final Map<String, ChunkManager> chunkManagers = new HashMap<String, ChunkManager>();
-
-    public final Map<Integer, SocketChannel> activeConnections = Collections.synchronizedMap(new HashMap<Integer, SocketChannel>());
-    public AtomicInteger lastConnectionId = new AtomicInteger();
-
     private World targetWorld;
 
     @Override

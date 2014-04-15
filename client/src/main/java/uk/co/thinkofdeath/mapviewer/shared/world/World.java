@@ -23,9 +23,9 @@ import java.util.HashMap;
 
 public abstract class World {
 
+    private final IMapViewer mapViewer;
     private int timeOfDay = 6000;
     private HashMap<String, Chunk> chunks = new HashMap<>();
-    private final IMapViewer mapViewer;
 
     protected World(IMapViewer mapViewer) {
         this.mapViewer = mapViewer;
@@ -40,8 +40,10 @@ public abstract class World {
     /**
      * Returns a String that can be used to identify a chunk
      *
-     * @param x The position of the chunk on the x axis
-     * @param z The position of the chunk on the z axis
+     * @param x
+     *         The position of the chunk on the x axis
+     * @param z
+     *         The position of the chunk on the z axis
      * @return The string key
      */
     public static String chunkKey(int x, int z) {
@@ -49,8 +51,7 @@ public abstract class World {
     }
 
     /**
-     * Tick the world and its chunks. Should be called at most
-     * 20 times a second
+     * Tick the world and its chunks. Should be called at most 20 times a second
      */
     private void tick() {
         timeOfDay = (timeOfDay + 1) % 24000;
@@ -59,7 +60,8 @@ public abstract class World {
     /**
      * Adds the chunk to the world if it isn't already loaded
      *
-     * @param chunk The chunk to add
+     * @param chunk
+     *         The chunk to add
      */
     public void addChunk(Chunk chunk) {
         String key = chunkKey(chunk.getX(), chunk.getZ());
@@ -80,6 +82,7 @@ public abstract class World {
 
     /**
      * Returns this chunks map viewer
+     *
      * @return The map viewer
      */
     public IMapViewer getMapViewer() {

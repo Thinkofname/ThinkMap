@@ -29,7 +29,8 @@ public class TUint16Array extends JavaScriptObject {
     /**
      * Creates a new TUint8Array (Uint8Array) with the specified size
      *
-     * @param size Size of the array
+     * @param size
+     *         Size of the array
      * @return The created array
      */
     public static native TUint16Array create(int size)/*-{
@@ -39,9 +40,12 @@ public class TUint16Array extends JavaScriptObject {
     /**
      * Creates a view into the ArrayBuffer
      *
-     * @param buffer The buffer to create a view of
-     * @param start  The start position
-     * @param length The length of the view
+     * @param buffer
+     *         The buffer to create a view of
+     * @param start
+     *         The start position
+     * @param length
+     *         The length of the view
      * @return The view
      */
     public static native TUint16Array create(ArrayBuffer buffer, int start, int length)/*-{
@@ -51,8 +55,10 @@ public class TUint16Array extends JavaScriptObject {
     /**
      * Sets the value at the specified index in the array
      *
-     * @param index Index in the array
-     * @param value Value to set to
+     * @param index
+     *         Index in the array
+     * @param value
+     *         Value to set to
      */
     public final native void set(int index, int value)/*-{
         this[index] = value;
@@ -62,8 +68,10 @@ public class TUint16Array extends JavaScriptObject {
     /**
      * Sets the values at the specified index in the array
      *
-     * @param index  Index in the array
-     * @param values Values to set to
+     * @param index
+     *         Index in the array
+     * @param values
+     *         Values to set to
      */
     public final native void set(int index, int[] values)/*-{
         this.set(values, index);
@@ -72,7 +80,8 @@ public class TUint16Array extends JavaScriptObject {
     /**
      * Sets the values at the beginning of the array
      *
-     * @param values Values to set to
+     * @param values
+     *         Values to set to
      */
     public final native void set(int[] values)/*-{
         this.set(values);
@@ -81,8 +90,10 @@ public class TUint16Array extends JavaScriptObject {
     /**
      * Sets the values at the specified index in the array
      *
-     * @param index  Index in the array
-     * @param values Values to set to
+     * @param index
+     *         Index in the array
+     * @param values
+     *         Values to set to
      */
     public final native void set(int index, ArrayBufferView values)/*-{
         this.set(values, index);
@@ -91,7 +102,8 @@ public class TUint16Array extends JavaScriptObject {
     /**
      * Sets the values at the beginning of the array
      *
-     * @param values Values to set to
+     * @param values
+     *         Values to set to
      */
     public final native void set(ArrayBufferView values)/*-{
         this.set(values);
@@ -100,8 +112,10 @@ public class TUint16Array extends JavaScriptObject {
     /**
      * Sets the values at the specified index in the array
      *
-     * @param index  Index in the array
-     * @param values Values to set to
+     * @param index
+     *         Index in the array
+     * @param values
+     *         Values to set to
      */
     public final native void set(int index, TUint16Array values)/*-{
         this.set(values, index);
@@ -110,7 +124,8 @@ public class TUint16Array extends JavaScriptObject {
     /**
      * Sets the values at the beginning of the array
      *
-     * @param values Values to set to
+     * @param values
+     *         Values to set to
      */
     public final native void set(TUint16Array values)/*-{
         this.set(values);
@@ -119,7 +134,8 @@ public class TUint16Array extends JavaScriptObject {
     /**
      * Returns the value at the specified index in the array
      *
-     * @param index Index in the array
+     * @param index
+     *         Index in the array
      * @return The value
      */
     public final native int get(int index)/*-{
@@ -127,10 +143,10 @@ public class TUint16Array extends JavaScriptObject {
     }-*/;
 
     /**
-     * Creates a sub array of this array starting at the
-     * specified index. This is a view not a copy
+     * Creates a sub array of this array starting at the specified index. This is a view not a copy
      *
-     * @param start The start position
+     * @param start
+     *         The start position
      * @return The sub array
      */
     public final native TUint16Array subarray(int start)/*-{
@@ -138,11 +154,13 @@ public class TUint16Array extends JavaScriptObject {
     }-*/;
 
     /**
-     * Creates a sub array of this array starting and finishing
-     * at the specified indexes. This is a view not a copy
+     * Creates a sub array of this array starting and finishing at the specified indexes. This is a
+     * view not a copy
      *
-     * @param start The start position
-     * @param end   The end position
+     * @param start
+     *         The start position
+     * @param end
+     *         The end position
      * @return The sub array
      */
     public final native TUint16Array subarray(int start, int end)/*-{

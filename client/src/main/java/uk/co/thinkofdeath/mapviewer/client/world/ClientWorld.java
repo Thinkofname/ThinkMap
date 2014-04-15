@@ -31,14 +31,15 @@ import java.util.Set;
 
 public class ClientWorld extends World {
 
+    private final MapViewer mapViewer;
     private boolean firstTick = true;
     private Set<String> loadingChunks = new HashSet<>();
-    private final MapViewer mapViewer;
 
     /**
      * Creates a client world
      *
-     * @param mapViewer The map viewer for this world
+     * @param mapViewer
+     *         The map viewer for this world
      */
     public ClientWorld(MapViewer mapViewer) {
         super(mapViewer);
@@ -62,12 +63,13 @@ public class ClientWorld extends World {
     }
 
     /**
-     * Triggers an async request to load the chunk. The chunk
-     * is forwarded to all workers to be processed before being
-     * returned to the client
+     * Triggers an async request to load the chunk. The chunk is forwarded to all workers to be
+     * processed before being returned to the client
      *
-     * @param x The chunk x position
-     * @param z The chunk z position
+     * @param x
+     *         The chunk x position
+     * @param z
+     *         The chunk z position
      */
     private void loadChunk(final int x, final int z) {
         final String key = chunkKey(x, z);

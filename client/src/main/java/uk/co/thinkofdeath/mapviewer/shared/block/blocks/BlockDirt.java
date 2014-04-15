@@ -38,18 +38,6 @@ public class BlockDirt extends BlockFactory {
         return new BlockImpl(this, states);
     }
 
-    public static class BlockImpl extends Block {
-
-        BlockImpl(BlockFactory factory, Map<String, Object> state) {
-            super(factory, state);
-        }
-
-        @Override
-        public int getLegacyData() {
-            return ((Variants) getState(VARIENT)).ordinal();
-        }
-    }
-
     public static enum Variants {
         DEFAULT,
         GRASSLESS,
@@ -61,6 +49,18 @@ public class BlockDirt extends BlockFactory {
         @Override
         public String toString() {
             return super.toString().toLowerCase();
+        }
+    }
+
+    public static class BlockImpl extends Block {
+
+        BlockImpl(BlockFactory factory, Map<String, Object> state) {
+            super(factory, state);
+        }
+
+        @Override
+        public int getLegacyData() {
+            return ((Variants) getState(VARIENT)).ordinal();
         }
     }
 }
