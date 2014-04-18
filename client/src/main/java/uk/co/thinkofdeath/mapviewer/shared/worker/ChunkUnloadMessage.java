@@ -17,29 +17,26 @@
 package uk.co.thinkofdeath.mapviewer.shared.worker;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import elemental.html.ArrayBuffer;
 
 public class ChunkUnloadMessage extends JavaScriptObject {
     protected ChunkUnloadMessage() {
     }
 
     /**
-     * Creates a new chunk load message
+     * Creates a new chunk unload message
      *
      * @param x
      *         The x position of the chunk
      * @param z
      *         The z position of the chunk
-     * @param data
-     *         The data of the chunk
      * @return The message
      */
-    public static native ChunkUnloadMessage create(int x, int z, ArrayBuffer data)/*-{
+    public static native ChunkUnloadMessage create(int x, int z)/*-{
         return {x: x, z: z, data: data};
     }-*/;
 
     /**
-     * Returns the x position of the requested chunk
+     * Returns the x position of the chunk
      *
      * @return The x position
      */
@@ -48,20 +45,11 @@ public class ChunkUnloadMessage extends JavaScriptObject {
     }-*/;
 
     /**
-     * Returns the z position of the requested chunk
+     * Returns the z position of the chunk
      *
      * @return The z position
      */
     public final native int getZ()/*-{
         return this.z;
-    }-*/;
-
-    /**
-     * Returns the data needed to load this chunk
-     *
-     * @return The data
-     */
-    public final native ArrayBuffer getData()/*-{
-        return this.data;
     }-*/;
 }

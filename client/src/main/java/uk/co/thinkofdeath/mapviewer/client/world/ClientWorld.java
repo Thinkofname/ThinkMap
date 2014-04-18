@@ -51,7 +51,7 @@ public class ClientWorld extends World {
     }
 
     /**
-     * Updates the worlds state
+     * Updates the world's state
      */
     public void update() {
         boolean hasMoved = false;
