@@ -60,4 +60,12 @@ public abstract class Chunk {
     public int getZ() {
         return z;
     }
+
+    /**
+     * Called when the chunk is unloaded by the world. May be overridden to handle unloading of
+     * resources.
+     */
+    public void unload() {
+
+    }
 }

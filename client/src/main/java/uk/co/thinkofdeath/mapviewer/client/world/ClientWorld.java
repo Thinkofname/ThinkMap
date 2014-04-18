@@ -23,6 +23,7 @@ import elemental.html.ArrayBuffer;
 import elemental.xml.XMLHttpRequest;
 import uk.co.thinkofdeath.mapviewer.client.MapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkLoadMessage;
+import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkUnloadMessage;
 import uk.co.thinkofdeath.mapviewer.shared.world.Chunk;
 import uk.co.thinkofdeath.mapviewer.shared.world.World;
 
@@ -34,6 +35,9 @@ public class ClientWorld extends World {
     private final MapViewer mapViewer;
     private boolean firstTick = true;
     private Set<String> loadingChunks = new HashSet<>();
+    // Last chunk the camera was in
+    private int lastChunkX = 0;
+    private int lastChunkZ = 0;
 
     /**
      * Creates a client world
@@ -50,15 +54,36 @@ public class ClientWorld extends World {
      * Updates the worlds state
      */
     public void update() {
+        boolean hasMoved = false;
         if (firstTick) {
             firstTick = false;
-            int cx = (int) mapViewer.getCamera().getX() >> 4;
-            int cz = (int) mapViewer.getCamera().getZ() >> 4;
+            hasMoved = true;
+        }
+
+        int cx = (int) mapViewer.getCamera().getX() >> 4;
+        int cz = (int) mapViewer.getCamera().getZ() >> 4;
+        if (cx != lastChunkX || cz != lastChunkZ) {
+            hasMoved = true;
+        }
+
+        if (hasMoved) {
             for (int x = -MapViewer.VIEW_DISTANCE; x < MapViewer.VIEW_DISTANCE; x++) {
                 for (int z = -MapViewer.VIEW_DISTANCE; z < MapViewer.VIEW_DISTANCE; z++) {
                     loadChunk(cx + x, cz + z);
                 }
             }
+
+            for (Chunk chunk : getChunks()) {
+                if (chunk.getX() < cx - MapViewer.VIEW_DISTANCE
+                        || chunk.getX() >= cx + MapViewer.VIEW_DISTANCE
+                        || chunk.getZ() < cz - MapViewer.VIEW_DISTANCE
+                        || chunk.getZ() >= cz + MapViewer.VIEW_DISTANCE) {
+                    unloadChunk(chunk.getX(), chunk.getZ());
+                }
+            }
+
+            lastChunkX = cx;
+            lastChunkZ = cz;
         }
     }
 
@@ -73,7 +98,7 @@ public class ClientWorld extends World {
      */
     private void loadChunk(final int x, final int z) {
         final String key = chunkKey(x, z);
-        if (loadingChunks.contains(key)) {
+        if (loadingChunks.contains(key) || isLoaded(key)) {
             return;
         }
         final XMLHttpRequest xmlHttpRequest = Browser.getWindow().newXMLHttpRequest();
@@ -115,5 +140,17 @@ public class ClientWorld extends World {
     public void addChunk(Chunk chunk) {
         super.addChunk(chunk);
         loadingChunks.remove(chunkKey(chunk.getX(), chunk.getZ()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void unloadChunk(int x, int z) {
+        super.unloadChunk(x, z);
+        mapViewer.getWorkerPool().sendMessage("chunk:unload",
+                ChunkUnloadMessage.create(x, z),
+                new Object[0],
+                true);
     }
 }

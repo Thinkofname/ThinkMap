@@ -19,7 +19,9 @@ package uk.co.thinkofdeath.mapviewer.shared.world;
 import elemental.util.Timer;
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public abstract class World {
 
@@ -78,6 +80,56 @@ public abstract class World {
      */
     public int numberOfLoadedChunks() {
         return chunks.size();
+    }
+
+    /**
+     * Returns a list of every chunk in this world
+     *
+     * @return Every chunk in the world
+     */
+    public List<Chunk> getChunks() {
+        return new ArrayList<>(chunks.values());
+    }
+
+    /**
+     * Returns whether the chunk at the position x, z (chunk coordinates) is loaded or not
+     *
+     * @param x
+     *         The position of the chunk on the x axis
+     * @param z
+     *         The position of the chunk on the z axis
+     * @return Whether the chunk is loaded
+     */
+    public boolean isLoaded(int x, int z) {
+        return isLoaded(chunkKey(x, z));
+    }
+
+    /**
+     * Version of isLoaded(int, int) which doesn't create a new chunk key
+     *
+     * @param key
+     *         The chunk key to use
+     * @return Whether the chunk is loaded
+     */
+    protected boolean isLoaded(String key) {
+        return chunks.containsKey(key);
+    }
+
+    /**
+     * Unloads the chunk at the position x, z (chunk coordinates)
+     *
+     * @param x
+     *         The position of the chunk on the x axis
+     * @param z
+     *         The position of the chunk on the z axis
+     */
+    public void unloadChunk(int x, int z) {
+        String key = chunkKey(x, z);
+        if (!isLoaded(key)) {
+            return;
+        }
+        Chunk chunk = chunks.remove(key);
+        chunk.unload();
     }
 
     /**

@@ -26,6 +26,7 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockRegistry;
 import uk.co.thinkofdeath.mapviewer.shared.logging.LoggerFactory;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkLoadMessage;
+import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkUnloadMessage;
 import uk.co.thinkofdeath.mapviewer.shared.worker.WorkerMessage;
 import uk.co.thinkofdeath.mapviewer.worker.world.WorkerChunk;
 import uk.co.thinkofdeath.mapviewer.worker.world.WorkerWorld;
@@ -56,6 +57,10 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
                 world.addChunk(new WorkerChunk(world,
                         chunkLoadMessage.getX(), chunkLoadMessage.getZ(),
                         chunkLoadMessage.getData(), message.getReturn()));
+                break;
+            case "chunk:unload":
+                ChunkUnloadMessage chunkUnloadMessage = (ChunkUnloadMessage) message.getMessage();
+                world.unloadChunk(chunkUnloadMessage.getX(), chunkUnloadMessage.getZ());
                 break;
         }
     }
