@@ -22,7 +22,7 @@ import elemental.html.ImageElement;
 import elemental.html.WebGLRenderingContext;
 import elemental.html.WebGLTexture;
 import uk.co.thinkofdeath.mapviewer.client.MapViewer;
-import uk.co.thinkofdeath.mapviewer.client.render.glmatrix.Mat4;
+import uk.co.thinkofdeath.mapviewer.shared.glmatrix.Mat4;
 
 import static elemental.html.WebGLRenderingContext.*;
 import static uk.co.thinkofdeath.mapviewer.client.render.RendererUtils.*;

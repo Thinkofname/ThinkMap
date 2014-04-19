@@ -24,6 +24,8 @@ import uk.co.thinkofdeath.mapviewer.shared.world.ChunkSection;
 public class ClientChunk extends Chunk {
 
     private final ClientWorld world;
+    // Sections of the chunk that need (re)building
+    private final boolean[] outdatedSections = new boolean[16];
 
     /**
      * Creates a client-side chunk
@@ -39,9 +41,26 @@ public class ClientChunk extends Chunk {
 
         for (int i = 0; i < 16; i++) {
             sections[i] = extractSection(chunkLoadedMessage, i);
+            outdatedSections[i] = true;
         }
 
         extractChunk(chunkLoadedMessage);
+    }
+
+    /**
+     * Updates the chunk's state
+     */
+    public void update() {
+        // Check for sections that need rebuilding
+        for (int i = 0; i < 16; i++) {
+            if (sections[i] != null && outdatedSections[i]) {
+                outdatedSections[i] = false;
+                // TODO: Request build
+            }
+        }
+
+        // Render each section
+        // TODO: Rendering
     }
 
     // TODO: This is really really really ugly, rewrite at some point

@@ -60,6 +60,10 @@ public class ClientWorld extends World {
             hasMoved = true;
         }
 
+        for (Chunk chunk : getChunks()) {
+            ((ClientChunk) chunk).update();
+        }
+
         int cx = (int) mapViewer.getCamera().getX() >> 4;
         int cz = (int) mapViewer.getCamera().getZ() >> 4;
         if (cx != lastChunkX || cz != lastChunkZ) {

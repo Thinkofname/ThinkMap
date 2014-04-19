@@ -160,5 +160,7 @@ public class BlockRegistry {
         register("thinkmap", "null", new BlockBuilder()
                 .renderable(false)
                 .create());
+
+        Blocks.init(this);
     }
 }

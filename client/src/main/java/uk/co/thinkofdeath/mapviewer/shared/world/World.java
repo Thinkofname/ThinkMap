@@ -18,6 +18,8 @@ package uk.co.thinkofdeath.mapviewer.shared.world;
 
 import elemental.util.Timer;
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
+import uk.co.thinkofdeath.mapviewer.shared.block.Block;
+import uk.co.thinkofdeath.mapviewer.shared.block.Blocks;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -130,6 +132,95 @@ public abstract class World {
         }
         Chunk chunk = chunks.remove(key);
         chunk.unload();
+    }
+
+    // The cache helps with the slow performance of maps in javascript
+    private int cachedChunkX;
+    private int cachedChunkZ;
+    private Chunk cachedChunk;
+
+    /**
+     * Returns the chunk at the coordinates x, z (chunk coordinates)
+     *
+     * @param x
+     *         The position of the chunk on the x axis
+     * @param z
+     *         The position of the chunk on the z axis
+     * @return The chunk or null
+     */
+    public Chunk getChunk(int x, int z) {
+        if (cachedChunk != null
+                && !cachedChunk.isUnloaded()
+                && cachedChunkX == x
+                && cachedChunkZ == z) {
+            return cachedChunk;
+        }
+        // Replace the cache
+        cachedChunkX = x;
+        cachedChunkZ = z;
+        cachedChunk = chunks.get(chunkKey(x, z));
+        return cachedChunk;
+    }
+
+    /**
+     * Returns the block at the location in the world
+     *
+     * @param x
+     *         The position of the block on the x axis
+     * @param y
+     *         The position of the block on the y axis
+     * @param z
+     *         The position of the block on the z axis
+     * @return The block at the location
+     */
+    public Block getBlock(int x, int y, int z) {
+        if (y < 0 || y > 255) {
+            return Blocks.AIR;
+        }
+        Chunk chunk = getChunk(x >> 4, z >> 4);
+        if (chunk == null) return Blocks.NULL_BLOCK;
+        return chunk.getBlock(x & 0xF, y, z & 0xF);
+    }
+
+    /**
+     * Returns the emitted light at the location in the world
+     *
+     * @param x
+     *         The position of the block on the x axis
+     * @param y
+     *         The position of the block on the y axis
+     * @param z
+     *         The position of the block on the z axis
+     * @return The emitted light at the location
+     */
+    public int getEmittedLight(int x, int y, int z) {
+        if (y < 0 || y > 255) {
+            return 0;
+        }
+        Chunk chunk = getChunk(x >> 4, z >> 4);
+        if (chunk == null) return 0;
+        return chunk.getEmittedLight(x & 0xF, y, z & 0xF);
+    }
+
+
+    /**
+     * Returns the sky light at the location in the world
+     *
+     * @param x
+     *         The position of the block on the x axis
+     * @param y
+     *         The position of the block on the y axis
+     * @param z
+     *         The position of the block on the z axis
+     * @return The sky light at the location
+     */
+    public int getSkyLight(int x, int y, int z) {
+        if (y < 0 || y > 255) {
+            return 15;
+        }
+        Chunk chunk = getChunk(x >> 4, z >> 4);
+        if (chunk == null) return 15;
+        return chunk.getSkyLight(x & 0xF, y, z & 0xF);
     }
 
     /**

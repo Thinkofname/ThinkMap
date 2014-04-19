@@ -39,6 +39,7 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
 
     @Override
     public void onModuleLoad() {
+        importScripts("../gl-matrix-min.js");
         setOnmessage(this);
         getBlockRegistry().init();
     }
@@ -116,5 +117,9 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
 
     private native void setOnmessage(EventListener eventListener)/*-{
         self.onmessage = @elemental.js.dom.JsElementalMixinBase::getHandlerFor(Lelemental/events/EventListener;)(eventListener);
+    }-*/;
+
+    private native void importScripts(String script)/*-{
+        importScripts(script);
     }-*/;
 }

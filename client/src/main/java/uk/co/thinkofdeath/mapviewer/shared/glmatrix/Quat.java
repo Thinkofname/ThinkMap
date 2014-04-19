@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.mapviewer.client.render.glmatrix;
+package uk.co.thinkofdeath.mapviewer.shared.glmatrix;
 
 import elemental.js.html.JsFloat32Array;
 
@@ -22,11 +22,23 @@ public class Quat extends JsFloat32Array {
     protected Quat() {
     }
 
-    public static native void create()/*-{
+    public static native Quat create()/*-{
         return $wnd.quat.create();
     }-*/;
 
     public final native void setAxisAngle(float rad, float x, float y, float z)/*-{
         $wnd.quat.setAxisAngle(this, axis, rad)
+    }-*/;
+
+    public final native void conjugate(Quat q)/*-{
+        $wnd.quat.conjugate(this, q);
+    }-*/;
+
+    public final native Quat multiply(Quat quat, float[] b)/*-{
+        $wnd.quat.multiply(this, quat, b);
+    }-*/;
+
+    public final native void multiply(Quat other)/*-{
+        $wnd.quat.multiply(this, other);
     }-*/;
 }

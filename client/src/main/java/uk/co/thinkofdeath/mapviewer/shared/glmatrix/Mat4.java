@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.mapviewer.client.render.glmatrix;
+package uk.co.thinkofdeath.mapviewer.shared.glmatrix;
 
 import elemental.js.html.JsFloat32Array;
 

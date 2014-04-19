@@ -18,7 +18,7 @@ package uk.co.thinkofdeath.mapviewer.client.render.shaders;
 
 import elemental.html.WebGLUniformLocation;
 import uk.co.thinkofdeath.mapviewer.client.render.ShaderProgram;
-import uk.co.thinkofdeath.mapviewer.client.render.glmatrix.Mat4;
+import uk.co.thinkofdeath.mapviewer.shared.glmatrix.Mat4;
 
 public class ChunkShader extends ShaderProgram {
 

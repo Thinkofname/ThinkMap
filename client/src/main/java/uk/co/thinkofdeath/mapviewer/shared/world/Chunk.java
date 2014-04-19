@@ -17,6 +17,7 @@
 package uk.co.thinkofdeath.mapviewer.shared.world;
 
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
+import uk.co.thinkofdeath.mapviewer.shared.block.Blocks;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +33,7 @@ public abstract class Chunk {
     protected int nextId = 1;
     private int x;
     private int z;
+    private boolean unloaded;
 
     protected Chunk(World world, int x, int z) {
         this.world = world;
@@ -39,8 +41,8 @@ public abstract class Chunk {
         this.z = z;
 
         // Always have air as the first block
-        blockIdMap.put(world.getMapViewer().getBlockRegistry().get("minecraft:air"), 0);
-        idBlockMap.put(0, world.getMapViewer().getBlockRegistry().get("minecraft:air"));
+        blockIdMap.put(Blocks.AIR, 0);
+        idBlockMap.put(0, Blocks.AIR);
     }
 
     /**
@@ -66,6 +68,77 @@ public abstract class Chunk {
      * resources.
      */
     public void unload() {
+        unloaded = true;
+    }
 
+    /**
+     * Returns whether the chunk is unloaded and shouldn't have a reference pointed to it
+     *
+     * @return Whether the chunk is unloaded
+     */
+    public boolean isUnloaded() {
+        return unloaded;
+    }
+
+    /**
+     * Returns the block at location given by the coordinates x, y, z relative to the chunk. The x
+     * and z coordinates must be between 0 and 15. The y coordinate must be between 0 and 255.
+     *
+     * @param x
+     *         The position on the x axis
+     * @param y
+     *         The position on the y axis
+     * @param z
+     *         The position on the z axis
+     * @return The block at the location
+     */
+    public Block getBlock(int x, int y, int z) {
+        ChunkSection section = sections[y >> 4];
+        if (section == null) {
+            return Blocks.AIR;
+        }
+        return idBlockMap.get(section.getBlocks().get(x | (z << 4) | ((y & 0xF) << 8)));
+    }
+
+    /**
+     * Returns the emitted light level at location given by the coordinates x, y, z relative to the
+     * chunk. The x and z coordinates must be between 0 and 15. The y coordinate must be between 0
+     * and 255.
+     *
+     * @param x
+     *         The position on the x axis
+     * @param y
+     *         The position on the y axis
+     * @param z
+     *         The position on the z axis
+     * @return The emitted light at the location
+     */
+    public int getEmittedLight(int x, int y, int z) {
+        ChunkSection section = sections[y >> 4];
+        if (section == null) {
+            return 0;
+        }
+        return section.getBlockLight().get(x | (z << 4) | ((y & 0xF) << 8));
+    }
+
+    /**
+     * Returns the sky light level at location given by the coordinates x, y, z relative to the
+     * chunk. The x and z coordinates must be between 0 and 15. The y coordinate must be between 0
+     * and 255.
+     *
+     * @param x
+     *         The position on the x axis
+     * @param y
+     *         The position on the y axis
+     * @param z
+     *         The position on the z axis
+     * @return The sky light at the location
+     */
+    public int getSkyLight(int x, int y, int z) {
+        ChunkSection section = sections[y >> 4];
+        if (section == null) {
+            return 15;
+        }
+        return section.getSkyLight().get(x | (z << 4) | ((y & 0xF) << 8));
     }
 }

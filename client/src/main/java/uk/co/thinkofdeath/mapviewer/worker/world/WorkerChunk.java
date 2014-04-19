@@ -18,6 +18,7 @@ package uk.co.thinkofdeath.mapviewer.worker.world;
 
 import elemental.html.ArrayBuffer;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
+import uk.co.thinkofdeath.mapviewer.shared.block.Blocks;
 import uk.co.thinkofdeath.mapviewer.shared.support.DataReader;
 import uk.co.thinkofdeath.mapviewer.shared.support.TUint8Array;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkLoadedMessage;
@@ -76,7 +77,7 @@ public class WorkerChunk extends Chunk {
 
                         Block block = world.getMapViewer().getBlockRegistry().get(id, dataVal);
                         if (block == null) {
-                            block = world.getMapViewer().getBlockRegistry().get("thinkmap", "missing_block");
+                            block = Blocks.MISSING_BLOCK;
                         }
 
                         if (!blockIdMap.containsKey(block)) {
