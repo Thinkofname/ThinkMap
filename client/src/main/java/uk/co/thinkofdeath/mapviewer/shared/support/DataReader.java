@@ -49,4 +49,16 @@ public class DataReader extends JavaScriptObject {
     public final native int getUint16(int offset)/*-{
         return this.getUint16(offset, false);
     }-*/;
+
+    public final native int getInt8(int offset)/*-{
+        return this.getInt8(offset);
+    }-*/;
+
+    public final native void setUint16(int offset, int val, boolean littleEndian)/*-{
+        this.setUint16(offset, val, littleEndian);
+    }-*/;
+
+    public final native void setFloat32(int offset, float val, boolean littleEndian)/*-{
+        this.setFloat32(offset, val, littleEndian);
+    }-*/;
 }
