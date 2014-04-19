@@ -40,7 +40,7 @@ public class Model {
         int emittedLight = world.getEmittedLight((int) x, (int) y, (int) z);
         int skyLight = world.getSkyLight((int) x, (int) y, (int) z);
 
-        float count = 0;
+        int count = 0;
 
         // TODO: Clean this up and fix it
         int pox = face.getOffsetX() != 0 ? (face.getOffsetX() == 1 ? 1 : 0) : 2;
@@ -63,8 +63,8 @@ public class Model {
                 }
             }
         }
-        if (count == 0) return new LightInfo((int) emittedLight, (int) skyLight);
-        return new LightInfo((int) (emittedLight / count), (int) (skyLight / count));
+        if (count == 0) return new LightInfo(emittedLight, skyLight);
+        return new LightInfo(emittedLight / count, skyLight / count);
     }
 
     private static final List<Face> rotationHelper = Arrays.asList(
