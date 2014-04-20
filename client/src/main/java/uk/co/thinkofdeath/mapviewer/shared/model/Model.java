@@ -141,8 +141,8 @@ public class Model {
             for (int oy = noy; oy < poy; oy++) {
                 for (int oz = noz; oz < poz; oz++) {
                     int bx = (int) (x + ox);
-                    int by = (int) (x + oy);
-                    int bz = (int) (x + oz);
+                    int by = (int) (y + oy);
+                    int bz = (int) (z + oz);
                     count++;
                     emittedLight += world.getEmittedLight(bx, by, bz);
                     skyLight += world.getSkyLight(bx, by, bz);
