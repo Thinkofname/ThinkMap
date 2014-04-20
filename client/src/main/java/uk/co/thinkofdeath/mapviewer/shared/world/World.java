@@ -57,7 +57,7 @@ public abstract class World {
     /**
      * Tick the world and its chunks. Should be called at most 20 times a second
      */
-    private void tick() {
+    protected void tick() {
         timeOfDay = (timeOfDay + 1) % 24000;
     }
 

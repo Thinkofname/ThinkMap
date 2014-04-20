@@ -53,6 +53,18 @@ public class ClientWorld extends World {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void tick() {
+        super.tick();
+
+        for (Chunk chunk : getChunks()) {
+            ((ClientChunk) chunk).update();
+        }
+    }
+
+    /**
      * Updates the world's state
      */
     public void update() {
@@ -60,10 +72,6 @@ public class ClientWorld extends World {
         if (firstTick) {
             firstTick = false;
             hasMoved = true;
-        }
-
-        for (Chunk chunk : getChunks()) {
-            ((ClientChunk) chunk).update();
         }
 
         int cx = (int) mapViewer.getCamera().getX() >> 4;
@@ -151,6 +159,14 @@ public class ClientWorld extends World {
     public void addChunk(Chunk chunk) {
         super.addChunk(chunk);
         loadingChunks.remove(chunkKey(chunk.getX(), chunk.getZ()));
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                Chunk c = getChunk(chunk.getX() + x, chunk.getZ() + z);
+                if (c != null) {
+                    ((ClientChunk) c).rebuild();
+                }
+            }
+        }
     }
 
     /**

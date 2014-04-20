@@ -97,6 +97,15 @@ public class ClientChunk extends Chunk {
     }
 
     /**
+     * Flags the chunk for rebuilding
+     */
+    public void rebuild() {
+        for (int i = 0; i < 16; i++) {
+            outdatedSections[i] = sections[i] != null;
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
