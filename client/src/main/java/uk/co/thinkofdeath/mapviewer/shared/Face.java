@@ -10,21 +10,21 @@ public enum Face {
      */
     BOTTOM(0, -1, 0),
     /**
-     * Right face
-     */
-    RIGHT(-1, 0, 0),
-    /**
      * Left face
      */
     LEFT(1, 0, 0),
     /**
-     * Back face
+     * Right face
      */
-    BACK(0, 0, -1),
+    RIGHT(-1, 0, 0),
     /**
      * Front face
      */
-    FRONT(0, 0, 1);
+    FRONT(0, 0, 1),
+    /**
+     * Back face
+     */
+    BACK(0, 0, -1);
 
     private final String name;
     private final int offsetX;

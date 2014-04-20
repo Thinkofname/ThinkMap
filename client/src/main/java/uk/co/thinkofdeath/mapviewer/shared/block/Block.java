@@ -163,7 +163,7 @@ public class Block implements Model.RenderChecker {
                 Face face = faces[i];
                 // TODO: Colour support
                 // TODO: Per a face texture support
-                model.addFace(new ModelFace(face, texture, 0, 0, 16, 16, (i & 1) == 0 ? 16 : 0,
+                model.addFace(new ModelFace(face, texture, 0, 0, 16, 16, ((i & 1) == 0) ? 16 : 0,
                         true));
             }
         }
