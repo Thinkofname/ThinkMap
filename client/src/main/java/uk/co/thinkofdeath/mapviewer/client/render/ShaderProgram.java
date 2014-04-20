@@ -101,8 +101,10 @@ public abstract class ShaderProgram {
         WebGLShader shader = gl.createShader(type);
         gl.shaderSource(shader, source);
         gl.compileShader(shader);
-        if (!(Boolean) gl.getShaderParameter(shader, WebGLRenderingContext.COMPILE_STATUS))
+        if (gl.getShaderParameter(shader, WebGLRenderingContext.COMPILE_STATUS).toString()
+                .equals("false")) { // Gwt's handling seems weird here
             throw new ShaderError(gl.getShaderInfoLog(shader));
+        }
         return shader;
     }
 

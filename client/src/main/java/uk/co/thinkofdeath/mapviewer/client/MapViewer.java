@@ -35,6 +35,7 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.TextureMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockRegistry;
 import uk.co.thinkofdeath.mapviewer.shared.logging.LoggerFactory;
+import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkBuildReply;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkLoadedMessage;
 import uk.co.thinkofdeath.mapviewer.shared.worker.WorkerMessage;
 
@@ -148,7 +149,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     public void onSetPosition(int x, int y, int z) {
         Camera camera = getCamera();
         camera.setX(x);
-        camera.setY(y);
+        camera.setY(y + 2);
         camera.setZ(z);
         shouldUpdateWorld = true;
     }
@@ -206,6 +207,15 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     }
 
     /**
+     * Returns the client's renderer
+     *
+     * @return The renderer
+     */
+    public Renderer getRenderer() {
+        return renderer;
+    }
+
+    /**
      * Processes a message from a worker
      *
      * @param message
@@ -216,6 +226,21 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
             case "chunk:loaded":
                 ChunkLoadedMessage chunkLoadedMessage = (ChunkLoadedMessage) message.getMessage();
                 world.addChunk(new ClientChunk(world, chunkLoadedMessage));
+                break;
+            case "null":
+                break;
+            case "chunk:build":
+                ChunkBuildReply chunkBuildReply = (ChunkBuildReply) message.getMessage();
+                ClientChunk chunk = (ClientChunk) world.getChunk(chunkBuildReply.getX(), chunkBuildReply.getZ());
+                if (chunk != null) {
+                    chunk.fillBuffer(chunkBuildReply.getBuildNumber(),
+                            chunkBuildReply.getSectionNumber(), chunkBuildReply.getData());
+                }
+                break;
+            default:
+                getLoggerFactory().getLogger("WorkerMessage").debug("Unhandled message: " +
+                        message.getType());
+                getLoggerFactory().getLogger("WorkerMessage").debug(message.getMessage());
                 break;
         }
     }

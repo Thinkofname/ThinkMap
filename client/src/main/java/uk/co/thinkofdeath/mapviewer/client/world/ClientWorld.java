@@ -32,7 +32,7 @@ import java.util.Set;
 
 public class ClientWorld extends World {
 
-    private final MapViewer mapViewer;
+    final MapViewer mapViewer;
     private boolean firstTick = true;
     private Set<String> loadingChunks = new HashSet<>();
     // Last chunk the camera was in

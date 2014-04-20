@@ -78,7 +78,7 @@ public class Model {
         IMapViewer mapViewer = chunk.getWorld().getMapViewer();
         for (ModelFace face : faces) {
             if (face.cullable) {
-                if (renderChecker.shouldRenderAgainst(chunk.getWorld().getBlock(
+                if (!renderChecker.shouldRenderAgainst(chunk.getWorld().getBlock(
                         (chunk.getX() << 4) + x + face.getFace().getOffsetX(),
                         y + face.getFace().getOffsetY(),
                         (chunk.getZ() << 4) + z + face.getFace().getOffsetZ()
@@ -320,7 +320,6 @@ public class Model {
      *
      * @return The copy
      */
-    @Override
     public Model clone() {
         return clone(NO_REPLACE_TEXTURE);
     }
@@ -346,6 +345,16 @@ public class Model {
             }
         }
         return model;
+    }
+
+    /**
+     * Adds the face to the model
+     *
+     * @param modelFace
+     *         The face to add
+     */
+    public void addFace(ModelFace modelFace) {
+        faces.add(modelFace);
     }
 
     /**

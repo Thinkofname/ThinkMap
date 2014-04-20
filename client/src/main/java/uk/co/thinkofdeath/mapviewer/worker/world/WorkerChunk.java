@@ -19,8 +19,11 @@ package uk.co.thinkofdeath.mapviewer.worker.world;
 import elemental.html.ArrayBuffer;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.Blocks;
+import uk.co.thinkofdeath.mapviewer.shared.building.ModelBuilder;
+import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.support.DataReader;
 import uk.co.thinkofdeath.mapviewer.shared.support.TUint8Array;
+import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkBuildReply;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkLoadedMessage;
 import uk.co.thinkofdeath.mapviewer.shared.worker.WorkerMessage;
 import uk.co.thinkofdeath.mapviewer.shared.world.Chunk;
@@ -107,6 +110,8 @@ public class WorkerChunk extends Chunk {
         }
         if (reply) {
             sendChunk();
+        } else {
+            ((Worker) world.getMapViewer()).postMessage(WorkerMessage.create("null", null, false));
         }
     }
 
@@ -131,6 +136,38 @@ public class WorkerChunk extends Chunk {
             message.addBlockIdMapping(e.getKey(), e.getValue());
         }
 
-        ((Worker) world.getMapViewer()).postMessage(WorkerMessage.create("chunk:loaded", message, false), new Object[0]);
+        ((Worker) world.getMapViewer()).postMessage(WorkerMessage.create("chunk:loaded", message, false));
+    }
+
+    /**
+     * Builds the chunk section for rendering and sends it back to the client
+     *
+     * @param sectionNumber
+     *         The section number of build
+     * @param buildNumber
+     *         The id for this build
+     */
+    public void build(int sectionNumber, int buildNumber) {
+        //TODO: Handle transparent blocks
+        ModelBuilder builder = new ModelBuilder();
+        for (int y = 0; y < 16; y++) {
+            for (int z = 0; z < 16; z++) {
+                for (int x = 0; x < 16; x++) {
+                    Block block = getBlock(x, (sectionNumber << 4) + y, z);
+                    if (block.isRenderable()) {
+                        if (!block.isTransparent()) {
+                            Model model = block.getModel(this, x, (sectionNumber << 4) + y, z);
+                            model.render(builder, x, (sectionNumber << 4) + y, z, this, block);
+                        } else {
+                            // TODO: Handle
+                        }
+                    }
+                }
+            }
+        }
+        TUint8Array data = builder.toTypedArray();
+        ((Worker) world.getMapViewer()).postMessage(WorkerMessage.create("chunk:build",
+                ChunkBuildReply.create(getX(), getZ(), sectionNumber, buildNumber, data),
+                false), new Object[]{data.getBuffer()});
     }
 }

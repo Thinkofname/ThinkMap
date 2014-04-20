@@ -17,12 +17,13 @@
 package uk.co.thinkofdeath.mapviewer.client.render;
 
 import elemental.client.Browser;
-import elemental.html.CanvasElement;
-import elemental.html.ImageElement;
-import elemental.html.WebGLRenderingContext;
-import elemental.html.WebGLTexture;
+import elemental.html.*;
 import uk.co.thinkofdeath.mapviewer.client.MapViewer;
+import uk.co.thinkofdeath.mapviewer.client.render.shaders.ChunkShader;
 import uk.co.thinkofdeath.mapviewer.shared.glmatrix.Mat4;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static elemental.html.WebGLRenderingContext.*;
 import static uk.co.thinkofdeath.mapviewer.client.render.RendererUtils.*;
@@ -45,6 +46,9 @@ public class Renderer implements ResizeHandler, Runnable {
 
     // Textures
     private final WebGLTexture blockTexture;
+    // Objects
+    private final ChunkShader chunkShader;
+    private final List<ChunkRenderObject> renderObjectList = new ArrayList<>();
 
     private double lastFrame;
 
@@ -77,6 +81,9 @@ public class Renderer implements ResizeHandler, Runnable {
         gl.enable(CULL_FACE);
         gl.cullFace(BACK);
         gl.frontFace(CCW);
+        chunkShader = new ChunkShader(false);
+
+        chunkShader.setup(gl);
 
         // TODO: Controls
 
@@ -93,6 +100,7 @@ public class Renderer implements ResizeHandler, Runnable {
         lastFrame = currentTime();
         mapViewer.tick(delta);
 
+        gl.viewport(0, 0, canvas.getWidth(), canvas.getHeight());
         gl.clearColor(0.0f, 1.0f, 1.0f, 1.0f); // TODO: Time of day
         gl.clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
 
@@ -103,10 +111,53 @@ public class Renderer implements ResizeHandler, Runnable {
         tempMatrix1.scale(-1, -1, 1);
         tempMatrix1.rotateX((float) (-camera.getRotationX() - Math.PI));
         tempMatrix1.rotateY((float) (camera.getRotationY() + Math.PI));
-        tempMatrix2.translate(camera.getX(), camera.getY(), camera.getZ());
+        tempMatrix2.translate(-camera.getX(), -camera.getY(), -camera.getZ());
         tempMatrix1.multiply(tempMatrix2, viewMatrix);
 
+        chunkShader.use();
+
+        chunkShader.setPerspectiveMatrix(perspectiveMatrix);
+        chunkShader.setViewMatrix(viewMatrix);
+        gl.activeTexture(TEXTURE0);
+        gl.bindTexture(TEXTURE_2D, blockTexture);
+        chunkShader.setBlockTexture(0);
+        chunkShader.setScale(1); // TODO
+        chunkShader.setFrame(0); // TODO
+
+        // TODO: Think about grouping objects from the same chunk to save setOffset calls
+        for (ChunkRenderObject renderObject : renderObjectList) {
+            if (renderObject.data != null) {
+                if (renderObject.buffer == null) {
+                    renderObject.buffer = gl.createBuffer();
+                }
+                gl.bindBuffer(ARRAY_BUFFER, renderObject.buffer);
+                gl.bufferData(ARRAY_BUFFER, (ArrayBufferView) renderObject.data, STATIC_DRAW);
+                renderObject.data = null;
+            }
+            chunkShader.setOffset(renderObject.x, renderObject.z);
+
+            gl.bindBuffer(ARRAY_BUFFER, renderObject.buffer);
+            gl.vertexAttribPointer(chunkShader.getPosition(), 3, UNSIGNED_SHORT, false, 20, 0);
+            gl.vertexAttribPointer(chunkShader.getColour(), 4, UNSIGNED_BYTE, true, 20, 6);
+            gl.vertexAttribPointer(chunkShader.getTexturePosition(), 2, UNSIGNED_SHORT, false, 20,
+                    10);
+            gl.vertexAttribPointer(chunkShader.getTextureId(), 2, UNSIGNED_SHORT, false, 20, 14);
+            gl.vertexAttribPointer(chunkShader.getLighting(), 2, UNSIGNED_BYTE, false, 20, 18);
+            gl.drawArrays(TRIANGLES, 0, renderObject.triangleCount);
+        }
+        chunkShader.disable();
+
         requestAnimationFrame(this);
+    }
+
+    public void postChunkObject(ChunkRenderObject renderObject) {
+        renderObjectList.add(renderObject);
+    }
+
+    public void removeChunkObject(ChunkRenderObject renderObject) {
+        renderObjectList.remove(renderObject);
+        gl.deleteBuffer(renderObject.buffer);
+        renderObject.buffer = null;
     }
 
     /**
@@ -155,4 +206,5 @@ public class Renderer implements ResizeHandler, Runnable {
     public Camera getCamera() {
         return camera;
     }
+
 }

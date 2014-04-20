@@ -143,4 +143,49 @@ public class ChunkShader extends ShaderProgram {
     public void setBlockTexture(int id) {
         gl.uniform1i(blockTexture, id);
     }
+
+    /**
+     * Returns the position attribute
+     *
+     * @return The position attribute
+     */
+    public int getPosition() {
+        return position;
+    }
+
+    /**
+     * Returns the colour attribute
+     *
+     * @return The colour attribute
+     */
+    public int getColour() {
+        return colour;
+    }
+
+    /**
+     * Returns the texture id attribute
+     *
+     * @return The texture id attribute
+     */
+    public int getTextureId() {
+        return textureId;
+    }
+
+    /**
+     * Returns the texture position attribute
+     *
+     * @return The texture position attribute
+     */
+    public int getTexturePosition() {
+        return texturePosition;
+    }
+
+    /**
+     * Returns the lighting attribute
+     *
+     * @return The lighting attribute
+     */
+    public int getLighting() {
+        return lighting;
+    }
 }

@@ -31,7 +31,7 @@ public class Mat4 extends JsFloat32Array {
     }-*/;
 
     public final native void perspective(float fovy, float aspect, float near, float far)/*-{
-        $wnd.mat4.perspective(fovy, aspect, near, far);
+        $wnd.mat4.perspective(this, fovy, aspect, near, far);
     }-*/;
 
     public final native void scale(float x, float y, float z)/*-{

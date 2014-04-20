@@ -64,7 +64,7 @@ public abstract class Chunk {
     }
 
     /**
-     * Called when the chunk is unloaded by the world. May be overridden to handle unloading of
+     * Called when the chunk is unloaded by the world. Should be overridden to handle unloading of
      * resources.
      */
     public void unload() {

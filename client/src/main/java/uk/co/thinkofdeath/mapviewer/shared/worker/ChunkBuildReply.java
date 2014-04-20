@@ -17,9 +17,10 @@
 package uk.co.thinkofdeath.mapviewer.shared.worker;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import uk.co.thinkofdeath.mapviewer.shared.support.TUint8Array;
 
-public class ChunkUnloadMessage extends JavaScriptObject {
-    protected ChunkUnloadMessage() {
+public class ChunkBuildReply extends JavaScriptObject {
+    protected ChunkBuildReply() {
     }
 
     /**
@@ -29,10 +30,15 @@ public class ChunkUnloadMessage extends JavaScriptObject {
      *         The x position of the chunk
      * @param z
      *         The z position of the chunk
+     * @param i
+     *         The section number
+     * @param buildNumber
+     *         The build number
      * @return The message
      */
-    public static native ChunkUnloadMessage create(int x, int z)/*-{
-        return {x: x, z: z};
+    public static native ChunkBuildReply create(int x, int z, int i, int buildNumber,
+                                                TUint8Array data)/*-{
+        return {x: x, z: z, i: i, buildNumber: buildNumber, data: data};
     }-*/;
 
     /**
@@ -51,5 +57,32 @@ public class ChunkUnloadMessage extends JavaScriptObject {
      */
     public final native int getZ()/*-{
         return this.z;
+    }-*/;
+
+    /**
+     * Returns the section number of the chunk
+     *
+     * @return The section number
+     */
+    public final native int getSectionNumber()/*-{
+        return this.i;
+    }-*/;
+
+    /**
+     * Returns this build's build number
+     *
+     * @return The build number
+     */
+    public final native int getBuildNumber()/*-{
+        return this.buildNumber;
+    }-*/;
+
+    /**
+     * Returns the data (built model)
+     *
+     * @return The data
+     */
+    public final native TUint8Array getData()/*-{
+        return this.data;
     }-*/;
 }

@@ -16,7 +16,10 @@
 
 package uk.co.thinkofdeath.mapviewer.client.world;
 
+import uk.co.thinkofdeath.mapviewer.client.render.ChunkRenderObject;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
+import uk.co.thinkofdeath.mapviewer.shared.support.TUint8Array;
+import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkBuildMessage;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkLoadedMessage;
 import uk.co.thinkofdeath.mapviewer.shared.world.Chunk;
 import uk.co.thinkofdeath.mapviewer.shared.world.ChunkSection;
@@ -26,6 +29,9 @@ public class ClientChunk extends Chunk {
     private final ClientWorld world;
     // Sections of the chunk that need (re)building
     private final boolean[] outdatedSections = new boolean[16];
+    private final int[] buildNumbers = new int[16];
+    private final ChunkRenderObject[] renderObjects = new ChunkRenderObject[16];
+    private int lastBuilderNumber = 0;
 
     /**
      * Creates a client-side chunk
@@ -41,7 +47,7 @@ public class ClientChunk extends Chunk {
 
         for (int i = 0; i < 16; i++) {
             sections[i] = extractSection(chunkLoadedMessage, i);
-            outdatedSections[i] = true;
+            outdatedSections[i] = sections[i] != null;
         }
 
         extractChunk(chunkLoadedMessage);
@@ -55,12 +61,52 @@ public class ClientChunk extends Chunk {
         for (int i = 0; i < 16; i++) {
             if (sections[i] != null && outdatedSections[i]) {
                 outdatedSections[i] = false;
-                // TODO: Request build
+                world.mapViewer.getWorkerPool().sendMessage("chunk:build",
+                        ChunkBuildMessage.create(getX(), getZ(), i, ++lastBuilderNumber),
+                        new Object[0]);
             }
         }
+    }
 
-        // Render each section
-        // TODO: Rendering
+    /**
+     * Creates and fills this chunk's WebGL buffer
+     *
+     * @param buildNumber
+     *         The build number
+     * @param sectionNumber
+     *         The section number
+     * @param data
+     *         The data
+     */
+    public void fillBuffer(int buildNumber, int sectionNumber, TUint8Array data) {
+        if (buildNumber < buildNumbers[sectionNumber]) {
+            return;
+        }
+        buildNumbers[sectionNumber] = buildNumber;
+        if (data.length() == 0) {
+            if (renderObjects[sectionNumber] != null) {
+                world.mapViewer.getRenderer().removeChunkObject(renderObjects[sectionNumber]);
+            }
+        } else {
+            if (renderObjects[sectionNumber] == null) {
+                renderObjects[sectionNumber] = new ChunkRenderObject(getX(), sectionNumber, getZ());
+                world.mapViewer.getRenderer().postChunkObject(renderObjects[sectionNumber]);
+            }
+            renderObjects[sectionNumber].load(data);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void unload() {
+        super.unload();
+        for (ChunkRenderObject renderObject : renderObjects) {
+            if (renderObject != null) {
+                world.mapViewer.getRenderer().removeChunkObject(renderObject);
+            }
+        }
     }
 
     // TODO: This is really really really ugly, rewrite at some point

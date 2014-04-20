@@ -111,6 +111,7 @@ public class WorkerPool {
 
         @Override
         public void handleEvent(Event evt) {
+            noOfTasks--;
             WorkerMessage message = (WorkerMessage) ((MessageEvent) evt).getData();
             mapViewer.handleWorkerMessage(message);
         }

@@ -53,6 +53,17 @@ public class TUint8Array extends JavaScriptObject {
     }-*/;
 
     /**
+     * Creates a copy of the other array
+     *
+     * @param other
+     *         The array to copy
+     * @return The copy
+     */
+    public static native TUint8Array create(TUint8Array other)/*-{
+        return new Uint8Array(other);
+    }-*/;
+
+    /**
      * Sets the value at the specified index in the array
      *
      * @param index

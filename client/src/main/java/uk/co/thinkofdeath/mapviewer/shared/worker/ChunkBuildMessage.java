@@ -18,8 +18,8 @@ package uk.co.thinkofdeath.mapviewer.shared.worker;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
-public class ChunkUnloadMessage extends JavaScriptObject {
-    protected ChunkUnloadMessage() {
+public class ChunkBuildMessage extends JavaScriptObject {
+    protected ChunkBuildMessage() {
     }
 
     /**
@@ -29,10 +29,14 @@ public class ChunkUnloadMessage extends JavaScriptObject {
      *         The x position of the chunk
      * @param z
      *         The z position of the chunk
+     * @param i
+     *         The section number
+     * @param buildNumber
+     *         The build number
      * @return The message
      */
-    public static native ChunkUnloadMessage create(int x, int z)/*-{
-        return {x: x, z: z};
+    public static native ChunkBuildMessage create(int x, int z, int i, int buildNumber)/*-{
+        return {x: x, z: z, i: i, buildNumber: buildNumber};
     }-*/;
 
     /**
@@ -51,5 +55,23 @@ public class ChunkUnloadMessage extends JavaScriptObject {
      */
     public final native int getZ()/*-{
         return this.z;
+    }-*/;
+
+    /**
+     * Returns the section number of the chunk
+     *
+     * @return The section number
+     */
+    public final native int getSectionNumber()/*-{
+        return this.i;
+    }-*/;
+
+    /**
+     * Returns this build's build number
+     *
+     * @return The build number
+     */
+    public final native int getBuildNumber()/*-{
+        return this.buildNumber;
     }-*/;
 }

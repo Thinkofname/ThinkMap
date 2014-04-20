@@ -16,9 +16,14 @@
 
 package uk.co.thinkofdeath.mapviewer.shared.block;
 
+import uk.co.thinkofdeath.mapviewer.shared.Face;
+import uk.co.thinkofdeath.mapviewer.shared.model.Model;
+import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
+import uk.co.thinkofdeath.mapviewer.shared.world.Chunk;
+
 import java.util.Map;
 
-public class Block {
+public class Block implements Model.RenderChecker {
 
     private final Map<String, Object> state;
     String plugin;
@@ -32,6 +37,7 @@ public class Block {
     private String texture;
     // Cache value since it doesn't change
     private String toString;
+    private Model model;
 
     protected Block(BlockFactory factory, Map<String, Object> state) {
         this.state = state;
@@ -134,5 +140,41 @@ public class Block {
             toString = builder.toString();
         }
         return toString;
+    }
+
+    /**
+     * Gets the model that should be rendered at the passed location, relative to the passed chunk
+     *
+     * @param chunk
+     *         The chunk the positions are relative too
+     * @param x
+     *         The x position
+     * @param y
+     *         The y position
+     * @param z
+     *         The z position
+     * @return The model
+     */
+    public Model getModel(Chunk chunk, int x, int y, int z) {
+        if (model == null) {
+            model = new Model();
+            Face[] faces = {Face.TOP, Face.BOTTOM, Face.LEFT, Face.RIGHT, Face.FRONT, Face.BACK};
+            for (int i = 0; i < faces.length; i++) {
+                Face face = faces[i];
+                // TODO: Colour support
+                // TODO: Per a face texture support
+                model.addFace(new ModelFace(face, texture, 0, 0, 16, 16, (i & 1) == 0 ? 16 : 0,
+                        true));
+            }
+        }
+        return model;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean shouldRenderAgainst(Block other) {
+        return !other.isSolid() && other != this; // FIXME: Missing allow self support
     }
 }
