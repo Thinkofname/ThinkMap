@@ -55,8 +55,9 @@ public class Block implements Model.RenderChecker {
      *         The state's name
      * @return The state's value or null
      */
-    public Object getState(String name) {
-        return state.get(name);
+    @SuppressWarnings("unchecked")
+    public <T> T getState(String name) {
+        return (T) state.get(name);
     }
 
     /**
