@@ -85,7 +85,7 @@ public class ModelBuilder {
     }
 
     /**
-     * Adds a texture position attribute to the buidler
+     * Adds a texture position attribute to the builder
      *
      * @param x
      *         The x position to add
@@ -96,6 +96,21 @@ public class ModelBuilder {
     public ModelBuilder texturePosition(float x, float y) {
         buffer.addUnsignedShort((int) (x * 256 + 0.5));
         buffer.addUnsignedShort((int) (y * 256 + 0.5));
+        return this;
+    }
+
+    /**
+     * Adds a lighting attribute to the builder
+     *
+     * @param emittedLight
+     *         The emitted light from this vertex
+     * @param skyLight
+     *         The sky light from this vertex
+     * @return The builder
+     */
+    public ModelBuilder lighting(int emittedLight, int skyLight) {
+        buffer.add(emittedLight & 0xFF);
+        buffer.add(skyLight & 0xFF);
         return this;
     }
 

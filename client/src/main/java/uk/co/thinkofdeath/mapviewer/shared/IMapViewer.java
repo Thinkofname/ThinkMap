@@ -34,4 +34,13 @@ public interface IMapViewer {
      * @return The logger factory
      */
     public LoggerFactory getLoggerFactory();
+
+    /**
+     * Returns the texture for the given name
+     *
+     * @param name
+     *         The name of the texture
+     * @return The requested texture or null
+     */
+    public TextureMap.Texture getTexture(String name);
 }

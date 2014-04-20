@@ -141,4 +141,13 @@ public abstract class Chunk {
         }
         return section.getSkyLight().get(x | (z << 4) | ((y & 0xF) << 8));
     }
+
+    /**
+     * Returns the world this chunk belongs to
+     *
+     * @return The world that owns this chunk
+     */
+    public World getWorld() {
+        return world;
+    }
 }

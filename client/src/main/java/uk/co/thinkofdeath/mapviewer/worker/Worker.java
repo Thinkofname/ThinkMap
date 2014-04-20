@@ -23,6 +23,7 @@ import elemental.events.EventListener;
 import elemental.events.MessageEvent;
 import elemental.html.WorkerGlobalScope;
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
+import uk.co.thinkofdeath.mapviewer.shared.TextureMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockRegistry;
 import uk.co.thinkofdeath.mapviewer.shared.logging.LoggerFactory;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkLoadMessage;
@@ -31,11 +32,14 @@ import uk.co.thinkofdeath.mapviewer.shared.worker.WorkerMessage;
 import uk.co.thinkofdeath.mapviewer.worker.world.WorkerChunk;
 import uk.co.thinkofdeath.mapviewer.worker.world.WorkerWorld;
 
+import java.util.HashMap;
+
 public class Worker implements EntryPoint, EventListener, IMapViewer {
 
     private final LoggerFactory loggerFactory = new WorkerLogger();
     private final BlockRegistry blockRegistry = new BlockRegistry(this);
     private final WorkerWorld world = new WorkerWorld(this);
+    private HashMap<String, TextureMap.Texture> textures = new HashMap<>();
 
     @Override
     public void onModuleLoad() {
@@ -63,6 +67,15 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
                 ChunkUnloadMessage chunkUnloadMessage = (ChunkUnloadMessage) message.getMessage();
                 world.unloadChunk(chunkUnloadMessage.getX(), chunkUnloadMessage.getZ());
                 break;
+            case "textures":
+                TextureMap tmap = (TextureMap) message.getMessage();
+                tmap.forEach(new TextureMap.Looper() {
+                    @Override
+                    public void forEach(String k, TextureMap.Texture v) {
+                        textures.put(k, v);
+                    }
+                });
+                break;
         }
     }
 
@@ -80,6 +93,14 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
     @Override
     public LoggerFactory getLoggerFactory() {
         return loggerFactory;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TextureMap.Texture getTexture(String name) {
+        return textures.get(name);
     }
 
     // Web worker magic

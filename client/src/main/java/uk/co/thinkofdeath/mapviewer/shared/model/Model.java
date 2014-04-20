@@ -1,9 +1,13 @@
 package uk.co.thinkofdeath.mapviewer.shared.model;
 
 import uk.co.thinkofdeath.mapviewer.shared.Face;
+import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.LightInfo;
+import uk.co.thinkofdeath.mapviewer.shared.TextureMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
+import uk.co.thinkofdeath.mapviewer.shared.building.ModelBuilder;
 import uk.co.thinkofdeath.mapviewer.shared.glmatrix.Quat;
+import uk.co.thinkofdeath.mapviewer.shared.world.Chunk;
 import uk.co.thinkofdeath.mapviewer.shared.world.World;
 
 import java.util.ArrayList;
@@ -34,7 +38,89 @@ public class Model {
 
     }
 
-    //TODO: Render method
+    /**
+     * Renders this model into the passed model builder offset by the passed x, y and z relative to
+     * the passed chunk. No culling will be performed.
+     *
+     * @param builder
+     *         The builder to render into
+     * @param x
+     *         The x offset
+     * @param y
+     *         The y offset
+     * @param z
+     *         The z offset
+     * @param chunk
+     *         The chunk this relative to
+     */
+    public void render(ModelBuilder builder, int x, int y, int z, Chunk chunk) {
+        render(builder, x, y, z, chunk, ALWAYS_RENDER);
+    }
+
+    /**
+     * Renders this model into the passed model builder offset by the passed x, y and z relative to
+     * the passed chunk. If a face is cullable then the passed render checker will be used to check
+     * whether the face should be culled or not
+     *
+     * @param builder
+     *         The builder to render into
+     * @param x
+     *         The x offset
+     * @param y
+     *         The y offset
+     * @param z
+     *         The z offset
+     * @param chunk
+     *         The chunk this relative to
+     */
+    public void render(ModelBuilder builder, int x, int y, int z, Chunk chunk,
+                       RenderChecker renderChecker) {
+        IMapViewer mapViewer = chunk.getWorld().getMapViewer();
+        for (ModelFace face : faces) {
+            if (face.cullable) {
+                if (renderChecker.shouldRenderAgainst(chunk.getWorld().getBlock(
+                        (chunk.getX() << 4) + x + face.getFace().getOffsetX(),
+                        y + face.getFace().getOffsetY(),
+                        (chunk.getZ() << 4) + z + face.getFace().getOffsetZ()
+                ))) {
+                    continue;
+                }
+            }
+            TextureMap.Texture texture = mapViewer.getTexture(face.texture);
+            if (texture == null) {
+                mapViewer.getLoggerFactory().getLogger("Model").warn("Missing texture: " + face.texture);
+                return;
+            }
+            // First triangle
+            for (int i = 0; i < 3; i++) {
+                ModelVertex vertex = face.vertices[2 - i];
+                LightInfo light = calculateLight(chunk.getWorld(),
+                        (chunk.getX() << 4) + x + vertex.getX(),
+                        y + vertex.getY(),
+                        (chunk.getZ() << 4) + z + vertex.getZ(), face.getFace());
+                builder
+                        .position(x + vertex.getX(), y + vertex.getY(), z + vertex.getZ())
+                        .colour(face.r, face.g, face.b)
+                        .texturePosition(vertex.getTextureX(), vertex.getTextureY())
+                        .textureId(texture.getStart(), texture.getEnd())
+                        .lighting(light.getEmittedLight(), light.getSkyLight());
+            }
+            // Second triangle
+            for (int i = 0; i < 3; i++) {
+                ModelVertex vertex = face.vertices[1 + i];
+                LightInfo light = calculateLight(chunk.getWorld(),
+                        (chunk.getX() << 4) + x + vertex.getX(),
+                        y + vertex.getY(),
+                        (chunk.getZ() << 4) + z + vertex.getZ(), face.getFace());
+                builder
+                        .position(x + vertex.getX(), y + vertex.getY(), z + vertex.getZ())
+                        .colour(face.r, face.g, face.b)
+                        .texturePosition(vertex.getTextureX(), vertex.getTextureY())
+                        .textureId(texture.getStart(), texture.getEnd())
+                        .lighting(light.getEmittedLight(), light.getSkyLight());
+            }
+        }
+    }
 
     private static LightInfo calculateLight(World world, float x, float y, float z, Face face) {
         int emittedLight = world.getEmittedLight((int) x, (int) y, (int) z);

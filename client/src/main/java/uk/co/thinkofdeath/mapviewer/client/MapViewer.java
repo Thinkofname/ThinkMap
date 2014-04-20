@@ -32,6 +32,7 @@ import uk.co.thinkofdeath.mapviewer.client.worker.WorkerPool;
 import uk.co.thinkofdeath.mapviewer.client.world.ClientChunk;
 import uk.co.thinkofdeath.mapviewer.client.world.ClientWorld;
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
+import uk.co.thinkofdeath.mapviewer.shared.TextureMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockRegistry;
 import uk.co.thinkofdeath.mapviewer.shared.logging.LoggerFactory;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkLoadedMessage;
@@ -88,6 +89,8 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
                 textures.put(k, v);
             }
         });
+        // Sync to workers
+        getWorkerPool().sendMessage("textures", tmap, new Object[0], true);
 
         getBlockRegistry().init();
 
@@ -173,6 +176,14 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     @Override
     public LoggerFactory getLoggerFactory() {
         return loggerFactory;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TextureMap.Texture getTexture(String name) {
+        return textures.get(name);
     }
 
     /**

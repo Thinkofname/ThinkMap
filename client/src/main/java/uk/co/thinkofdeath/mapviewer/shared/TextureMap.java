@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.mapviewer.client;
+package uk.co.thinkofdeath.mapviewer.shared;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
@@ -25,9 +25,9 @@ public class TextureMap extends JavaScriptObject {
     public final native void forEach(Looper looper)/*-{
         for (key in this) {
             if (this.hasOwnProperty(key)) {
-                looper.@uk.co.thinkofdeath.mapviewer.client.TextureMap.Looper::forEach(Ljava/lang/String;Luk/co/thinkofdeath/mapviewer/client/TextureMap$Texture;)(
+                looper.@uk.co.thinkofdeath.mapviewer.shared.TextureMap.Looper::forEach(Ljava/lang/String;Luk/co/thinkofdeath/mapviewer/shared/TextureMap$Texture;)(
                     key,
-                    new @uk.co.thinkofdeath.mapviewer.client.TextureMap.Texture::new(II)(this[key][0], this[key][1]));
+                    new @uk.co.thinkofdeath.mapviewer.shared.TextureMap.Texture::new(II)(this[key][0], this[key][1]));
             }
         }
     }-*/;
@@ -44,6 +44,24 @@ public class TextureMap extends JavaScriptObject {
         public Texture(int start, int end) {
             this.start = start;
             this.end = end;
+        }
+
+        /**
+         * Returns the start position of the texture
+         *
+         * @return The start position
+         */
+        public int getStart() {
+            return start;
+        }
+
+        /**
+         * Returns the end position of the texture
+         *
+         * @return The end position
+         */
+        public int getEnd() {
+            return end;
         }
     }
 }
