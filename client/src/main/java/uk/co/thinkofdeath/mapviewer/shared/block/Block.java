@@ -98,9 +98,11 @@ public class Block implements Model.RenderChecker {
     /**
      * Returns the texture used by this block (if it has one)
      *
+     * @param face
+     *         The face to get the texture of
      * @return The texture or null
      */
-    public String getTexture() {
+    public String getTexture(Face face) {
         return texture;
     }
 
@@ -162,8 +164,8 @@ public class Block implements Model.RenderChecker {
             for (int i = 0; i < faces.length; i++) {
                 Face face = faces[i];
                 // TODO: Colour support
-                // TODO: Per a face texture support
-                model.addFace(new ModelFace(face, getTexture(), 0, 0, 16, 16, ((i & 1) == 0) ? 16 : 0,
+                model.addFace(new ModelFace(face, getTexture(face), 0, 0, 16, 16,
+                        ((i & 1) == 0) ? 16 : 0,
                         true));
             }
         }
