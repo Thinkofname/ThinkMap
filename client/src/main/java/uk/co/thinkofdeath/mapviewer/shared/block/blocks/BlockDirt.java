@@ -16,6 +16,7 @@
 
 package uk.co.thinkofdeath.mapviewer.shared.block.blocks;
 
+import uk.co.thinkofdeath.mapviewer.shared.Face;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
@@ -27,7 +28,7 @@ public class BlockDirt extends BlockFactory {
     public static final String VARIENT = "varient";
 
     public BlockDirt() {
-        states.put(BlockDirt.VARIENT, new EnumState(BlockDirt.Variants.class));
+        states.put(BlockDirt.VARIENT, new EnumState(Variant.class));
     }
 
     /**
@@ -38,7 +39,7 @@ public class BlockDirt extends BlockFactory {
         return new BlockImpl(this, states);
     }
 
-    public static enum Variants {
+    public static enum Variant {
         DEFAULT,
         GRASSLESS,
         PODZOL;
@@ -52,7 +53,7 @@ public class BlockDirt extends BlockFactory {
         }
     }
 
-    public static class BlockImpl extends Block {
+    private static class BlockImpl extends Block {
 
         BlockImpl(BlockFactory factory, Map<String, Object> state) {
             super(factory, state);
@@ -60,7 +61,23 @@ public class BlockDirt extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            return ((Variants) getState(VARIENT)).ordinal();
+            return this.<Variant>getState(VARIENT).ordinal();
+        }
+
+        @Override
+        public String getTexture(Face face) {
+            if (getState(VARIENT) == Variant.PODZOL) {
+                switch (face) {
+                    case TOP:
+                        return "dirt_podzol_top";
+                    case BOTTOM:
+                        return "dirt";
+                    default:
+                        return "dirt_podzol_side";
+                }
+            } else {
+                return "dirt";
+            }
         }
     }
 }
