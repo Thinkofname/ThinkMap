@@ -25,10 +25,10 @@ import java.util.Map;
 
 public class BlockDirt extends BlockFactory {
 
-    public static final String VARIENT = "varient";
+    public static final String VARIANT = "variant";
 
     public BlockDirt() {
-        states.put(BlockDirt.VARIENT, new EnumState(Variant.class));
+        states.put(BlockDirt.VARIANT, new EnumState(Variant.class));
     }
 
     /**
@@ -61,12 +61,12 @@ public class BlockDirt extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            return this.<Variant>getState(VARIENT).ordinal();
+            return this.<Variant>getState(VARIANT).ordinal();
         }
 
         @Override
         public String getTexture(Face face) {
-            if (getState(VARIENT) == Variant.PODZOL) {
+            if (getState(VARIANT) == Variant.PODZOL) {
                 switch (face) {
                     case TOP:
                         return "dirt_podzol_top";
