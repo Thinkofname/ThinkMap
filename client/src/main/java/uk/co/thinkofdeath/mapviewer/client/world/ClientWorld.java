@@ -27,6 +27,8 @@ import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkUnloadMessage;
 import uk.co.thinkofdeath.mapviewer.shared.world.Chunk;
 import uk.co.thinkofdeath.mapviewer.shared.world.World;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -71,10 +73,15 @@ public class ClientWorld extends World {
         }
 
         if (hasMoved) {
+            ArrayList<int[]> toLoad = new ArrayList<>();
             for (int x = -MapViewer.VIEW_DISTANCE; x < MapViewer.VIEW_DISTANCE; x++) {
                 for (int z = -MapViewer.VIEW_DISTANCE; z < MapViewer.VIEW_DISTANCE; z++) {
-                    loadChunk(cx + x, cz + z);
+                    toLoad.add(new int[]{cx + x, cz + z});
                 }
+            }
+            Collections.sort(toLoad, new ChunkArraySorter(mapViewer.getCamera()));
+            for (int[] pos : toLoad) {
+                loadChunk(pos[0], pos[1]);
             }
 
             for (Chunk chunk : getChunks()) {
@@ -121,7 +128,7 @@ public class ClientWorld extends World {
                     // catch the error before the browser does.
                     // TODO: Support errors better end the sending
                     // format changes
-                    if (data.getByteLength() == 15) {
+                    if (data.getByteLength() <= 15) {
                         loadingChunks.remove(key);
                     }
                     mapViewer.getWorkerPool().sendMessage("chunk:load",
