@@ -138,6 +138,7 @@ public class ClientWorld extends World {
                     // format changes
                     if (data.getByteLength() <= 15) {
                         loadingChunks.remove(key);
+                        return;
                     }
                     mapViewer.getWorkerPool().sendMessage("chunk:load",
                             ChunkLoadMessage.create(x, z, data), new Object[0], true);
