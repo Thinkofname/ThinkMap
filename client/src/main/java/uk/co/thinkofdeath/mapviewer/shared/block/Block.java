@@ -108,6 +108,17 @@ public class Block implements Model.RenderChecker {
     }
 
     /**
+     * Returns the colour of this block.
+     *
+     * @param face
+     *         The face to get the colour of
+     * @return The colour as 0xRRGGBB
+     */
+    public int getColour(Face face) {
+        return 0xFFFFFF;
+    }
+
+    /**
      * Returns the old style data value
      *
      * @return The data value
@@ -164,10 +175,11 @@ public class Block implements Model.RenderChecker {
             Face[] faces = {Face.TOP, Face.BOTTOM, Face.LEFT, Face.RIGHT, Face.FRONT, Face.BACK};
             for (int i = 0; i < faces.length; i++) {
                 Face face = faces[i];
-                // TODO: Colour support
+                int colour = getColour(face);
                 model.addFace(new ModelFace(face, getTexture(face), 0, 0, 16, 16,
                         ((i & 1) == 0) ? 16 : 0,
-                        true));
+                        true)
+                        .colour((colour >> 16) & 0xFF, (colour >> 8) & 0xFF, colour & 0xFF));
             }
         }
         return model;
