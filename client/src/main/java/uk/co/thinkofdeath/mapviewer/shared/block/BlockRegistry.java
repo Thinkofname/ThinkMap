@@ -19,6 +19,7 @@ package uk.co.thinkofdeath.mapviewer.shared.block;
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.block.blocks.BlockDirt;
 import uk.co.thinkofdeath.mapviewer.shared.block.blocks.BlockGrass;
+import uk.co.thinkofdeath.mapviewer.shared.block.blocks.BlockPlanks;
 import uk.co.thinkofdeath.mapviewer.shared.logging.Logger;
 
 import java.util.HashMap;
@@ -152,6 +153,8 @@ public class BlockRegistry {
         register("minecraft", "cobblestone", new BlockBuilder()
                 .texture("cobblestone")
                 .create(), 4);
+        register("minecraft", "planks", new BlockBuilder(new BlockPlanks())
+                .create(), 5);
 
 
         // ThinkMap blocks
