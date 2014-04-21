@@ -59,6 +59,7 @@
     </dependencies>
 
     <build>
+        <finalName>ThinkMap-Client-${project.version}-${build.number}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
