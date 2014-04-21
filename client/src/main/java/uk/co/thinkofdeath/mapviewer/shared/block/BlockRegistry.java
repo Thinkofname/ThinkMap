@@ -17,10 +17,7 @@
 package uk.co.thinkofdeath.mapviewer.shared.block;
 
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
-import uk.co.thinkofdeath.mapviewer.shared.block.blocks.BlockDirt;
-import uk.co.thinkofdeath.mapviewer.shared.block.blocks.BlockGrass;
-import uk.co.thinkofdeath.mapviewer.shared.block.blocks.BlockPlanks;
-import uk.co.thinkofdeath.mapviewer.shared.block.blocks.BlockSapling;
+import uk.co.thinkofdeath.mapviewer.shared.block.blocks.*;
 import uk.co.thinkofdeath.mapviewer.shared.logging.Logger;
 
 import java.util.HashMap;
@@ -163,6 +160,16 @@ public class BlockRegistry {
         register("minecraft", "bedrock", new BlockBuilder()
                 .texture("bedrock")
                 .create(), 7);
+        register("minecraft", "flowing_water", new BlockBuilder(new BlockLiquid())
+                .texture("water_flow")
+                .solid(false)
+                .transparent(false /*TODO*/)
+                .create(), 8);
+        register("minecraft", "water", new BlockBuilder(new BlockLiquid())
+                .texture("water_still")
+                .solid(false)
+                .transparent(false /*TODO*/)
+                .create(), 9);
 
 
         // ThinkMap blocks
