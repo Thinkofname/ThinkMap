@@ -28,7 +28,7 @@
 
     <artifactId>mapviewer-client</artifactId>
 
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -92,6 +92,8 @@
                             <target name="zip result">
                                 <zip destfile="${project.build.directory}/${project.build.finalName}.zip"
                                      basedir="${basedir}/build"/>
+                                <delete
+                                        file="${project.build.directory}/${project.build.finalName}.jar"/>
                             </target>
                         </configuration>
                         <goals>
