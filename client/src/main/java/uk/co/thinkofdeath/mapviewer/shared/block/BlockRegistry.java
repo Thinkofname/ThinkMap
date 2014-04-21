@@ -170,6 +170,16 @@ public class BlockRegistry {
                 .solid(false)
                 .transparent(false /*TODO*/)
                 .create(), 9);
+        register("minecraft", "flowing_lava", new BlockBuilder(new BlockLiquid())
+                .texture("lava_flow")
+                .solid(false)
+                .create(), 10);
+        register("minecraft", "lava", new BlockBuilder(new BlockLiquid())
+                .texture("lava_still")
+                .solid(false)
+                .create(), 11);
+        register("minecraft", "sand", new BlockBuilder(new BlockSand())
+                .create(), 12);
 
 
         // ThinkMap blocks
