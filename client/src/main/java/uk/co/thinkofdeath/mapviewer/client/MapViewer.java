@@ -98,15 +98,27 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
         getBlockRegistry().init();
         inputManager.hook();
 
-        // TODO: Use config
-        connection = new Connection(getLoggerFactory().getLogger("Server Connection"), "localhost:23333", this, new Runnable() {
+        String host = getConfigHost();
+        String port = getConfigPort();
+        connection = new Connection(getLoggerFactory().getLogger("Server Connection"),
+                host + ":" + port,
+                this, new Runnable() {
             @Override
             public void run() {
                 renderer = new Renderer(MapViewer.this, (CanvasElement) Browser.getDocument().getElementById("main"));
                 world = new ClientWorld(MapViewer.this);
             }
-        });
+        }
+        );
     }
+
+    private native String getConfigHost()/*-{
+        return $wnd.MapViewerConfig.hostname;
+    }-*/;
+
+    private native String getConfigPort()/*-{
+        return $wnd.MapViewerConfig.port == "%SERVERPORT%" ? "23333" : $wnd.MapViewerConfig.port;
+    }-*/;
 
     /**
      * Called every frame by the renderer
