@@ -62,10 +62,21 @@ public class InputManager {
         }
 
         Camera camera = mapViewer.getCamera();
-        camera.setRotationY(camera.getRotationY() + movementX / 300f);
-        camera.setRotationX(camera.getRotationX() + movementY / 300f);
-        if (camera.getRotationX() > Math.PI / 2) camera.setRotationX((float) (Math.PI / 2));
-        if (camera.getRotationX() < -Math.PI / 2) camera.setRotationX((float) (-Math.PI / 2));
+        camera.setRotationY(camera.getRotationY() + (movementX * 0.0025f));
+        camera.setRotationX(camera.getRotationX() + (movementY * 0.0025f));
+        if (camera.getRotationX() > Math.PI / 2) {
+            camera.setRotationX((float) (Math.PI / 2));
+        }
+        if (camera.getRotationX() < -Math.PI / 2) {
+            camera.setRotationX((float) (-Math.PI / 2));
+        }
+
+        while (camera.getRotationY() < 0) {
+            camera.setRotationY((float) (camera.getRotationY() + Math.PI * 2));
+        }
+        while (camera.getRotationY() >= Math.PI * 2) {
+            camera.setRotationY((float) (camera.getRotationY() - Math.PI * 2));
+        }
     }
 
     private void onMouseMove(int x, int y) {
@@ -125,9 +136,12 @@ public class InputManager {
             that.@uk.co.thinkofdeath.mapviewer.client.input.InputManager::onCanvasClick(II)(e.clientX, e.clientY);
         };
         $doc.onmousemove = function (e) {
+            e.preventDefault();
             var mx = (e.movementX || e.webkitMovementX || e.mozMovementX);
             var my = (e.movementY || e.webkitMovementY || e.mozMovementY);
-            if (mx == undefined || my == undefined) {
+            if (($doc.pointerLockElement
+                || $doc.webkitPointerLockElement
+                || $doc.mozPointerLockElement) === null || mx === undefined || my === undefined) {
                 that.@uk.co.thinkofdeath.mapviewer.client.input.InputManager::onMouseMove(II)(e.clientX, e.clientY);
             } else {
                 that.@uk.co.thinkofdeath.mapviewer.client.input.InputManager::onMouseLockMove(II)(mx, my);
