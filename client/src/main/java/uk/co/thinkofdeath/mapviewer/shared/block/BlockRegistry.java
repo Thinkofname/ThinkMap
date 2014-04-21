@@ -160,6 +160,9 @@ public class BlockRegistry {
                 .solid(false)
                 .collidable(false)
                 .create(), 6);
+        register("minecraft", "bedrock", new BlockBuilder()
+                .texture("bedrock")
+                .create(), 7);
 
 
         // ThinkMap blocks
