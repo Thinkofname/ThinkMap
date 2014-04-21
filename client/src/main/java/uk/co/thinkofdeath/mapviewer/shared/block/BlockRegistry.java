@@ -20,6 +20,7 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.block.blocks.BlockDirt;
 import uk.co.thinkofdeath.mapviewer.shared.block.blocks.BlockGrass;
 import uk.co.thinkofdeath.mapviewer.shared.block.blocks.BlockPlanks;
+import uk.co.thinkofdeath.mapviewer.shared.block.blocks.BlockSapling;
 import uk.co.thinkofdeath.mapviewer.shared.logging.Logger;
 
 import java.util.HashMap;
@@ -155,6 +156,10 @@ public class BlockRegistry {
                 .create(), 4);
         register("minecraft", "planks", new BlockBuilder(new BlockPlanks())
                 .create(), 5);
+        register("minecraft", "sapling", new BlockBuilder(new BlockSapling())
+                .solid(false)
+                .collidable(false)
+                .create(), 6);
 
 
         // ThinkMap blocks

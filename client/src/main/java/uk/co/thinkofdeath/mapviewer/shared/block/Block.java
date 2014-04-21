@@ -37,7 +37,7 @@ public class Block implements Model.RenderChecker {
     private String texture;
     // Cache value since it doesn't change
     private String toString;
-    private Model model;
+    protected Model model;
 
     protected Block(BlockFactory factory, Map<String, Object> state) {
         this.state = state;
