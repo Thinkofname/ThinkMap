@@ -85,8 +85,6 @@ public class Renderer implements ResizeHandler, Runnable {
 
         chunkShader.setup(gl);
 
-        // TODO: Controls
-
         run();
     }
 
@@ -103,8 +101,6 @@ public class Renderer implements ResizeHandler, Runnable {
         gl.viewport(0, 0, canvas.getWidth(), canvas.getHeight());
         gl.clearColor(0.0f, 1.0f, 1.0f, 1.0f); // TODO: Time of day
         gl.clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
-
-        camera.setRotationY(camera.getRotationY() + 0.01f);
 
         // Camera -> Matrix
         viewMatrix.identity();

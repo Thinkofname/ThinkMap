@@ -24,6 +24,7 @@ import elemental.html.CanvasElement;
 import elemental.html.ImageElement;
 import elemental.js.util.Json;
 import elemental.xml.XMLHttpRequest;
+import uk.co.thinkofdeath.mapviewer.client.input.InputManager;
 import uk.co.thinkofdeath.mapviewer.client.network.Connection;
 import uk.co.thinkofdeath.mapviewer.client.network.ConnectionHandler;
 import uk.co.thinkofdeath.mapviewer.client.render.Camera;
@@ -48,6 +49,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     private final LoggerFactory loggerFactory = new ClientLogger(ClientLogger.DEBUG);
     private final BlockRegistry blockRegistry = new BlockRegistry(this);
     private final WorkerPool workerPool = new WorkerPool(this, 4);
+    private final InputManager inputManager = new InputManager(this);
     private ImageElement texture;
     private HashMap<String, TextureMap.Texture> textures = new HashMap<>();
     private XMLHttpRequest xhr;
@@ -94,6 +96,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
         getWorkerPool().sendMessage("textures", tmap, new Object[0], true);
 
         getBlockRegistry().init();
+        inputManager.hook();
 
         // TODO: Use config
         connection = new Connection(getLoggerFactory().getLogger("Server Connection"), "localhost:23333", this, new Runnable() {
@@ -110,6 +113,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
      */
     public void tick(double delta) {
         if (shouldUpdateWorld) {
+            inputManager.update(delta);
             world.update();
         }
     }
