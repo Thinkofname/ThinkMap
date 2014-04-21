@@ -94,7 +94,7 @@ public class Renderer implements ResizeHandler, Runnable {
     @Override
     public void run() {
         double diff = currentTime() - lastFrame;
-        double delta = Math.min(diff / (1000 / 60), 3.0);
+        double delta = Math.min(diff / (1000d / 60d), 3.0);
         lastFrame = currentTime();
         mapViewer.tick(delta);
 

@@ -127,7 +127,8 @@ public class ClientChunk extends Chunk {
             if (chunkLoadedMessage.idmap.hasOwnProperty(key)) {
                 var k = parseInt(key);
                 var block = this.@uk.co.thinkofdeath.mapviewer.client.world.ClientChunk::_js_toBlock(Ljava/lang/String;)(chunkLoadedMessage.idmap[k]);
-                idmap.@java.util.Map::put(Ljava/lang/Object;Ljava/lang/Object;)(k, block)
+                idmap[k] = block;
+                idmap.$keys.push(k);
             }
         }
 
@@ -135,7 +136,7 @@ public class ClientChunk extends Chunk {
         for (var key in chunkLoadedMessage.blockmap) {
             if (chunkLoadedMessage.blockmap.hasOwnProperty(key)) {
                 var block = this.@uk.co.thinkofdeath.mapviewer.client.world.ClientChunk::_js_toBlock(Ljava/lang/String;)(key);
-                blockMap.@java.util.Map::put(Ljava/lang/Object;Ljava/lang/Object;)(block, blockMap[k])
+                blockMap.@java.util.Map::put(Ljava/lang/Object;Ljava/lang/Object;)(block, blockMap[k]);
             }
         }
     }-*/;

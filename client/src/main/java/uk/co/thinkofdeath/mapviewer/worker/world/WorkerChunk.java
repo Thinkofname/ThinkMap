@@ -16,6 +16,7 @@
 
 package uk.co.thinkofdeath.mapviewer.worker.world;
 
+import com.google.gwt.core.client.JsArrayInteger;
 import elemental.html.ArrayBuffer;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.Blocks;
@@ -128,8 +129,10 @@ public class WorkerChunk extends Chunk {
 
         message.setNextId(nextId);
 
-        for (Map.Entry<Integer, Block> e : idBlockMap.entrySet()) {
-            message.addIdBlockMapping(e.getKey(), e.getValue());
+        JsArrayInteger keys = idBlockMap.keys();
+        for (int i = 0; i < keys.length(); i++) {
+            int key = keys.get(i);
+            message.addIdBlockMapping(key, idBlockMap.get(key));
         }
 
         for (Map.Entry<Block, Integer> e : blockIdMap.entrySet()) {

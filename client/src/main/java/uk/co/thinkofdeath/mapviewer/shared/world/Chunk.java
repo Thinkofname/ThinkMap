@@ -18,6 +18,7 @@ package uk.co.thinkofdeath.mapviewer.shared.world;
 
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.Blocks;
+import uk.co.thinkofdeath.mapviewer.shared.support.IntMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,7 @@ public abstract class Chunk {
     // TODO: Fix the leaking as the blocks are never removed
     // from these maps
     protected final Map<Block, Integer> blockIdMap = new HashMap<>();
-    protected final Map<Integer, Block> idBlockMap = new HashMap<>();
+    protected final IntMap<Block> idBlockMap = IntMap.create();
     private final World world;
     protected int nextId = 1;
     private int x;
