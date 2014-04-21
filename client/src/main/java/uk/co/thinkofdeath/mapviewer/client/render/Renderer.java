@@ -51,6 +51,7 @@ public class Renderer implements ResizeHandler, Runnable {
     private final List<ChunkRenderObject> renderObjectList = new ArrayList<>();
 
     private double lastFrame;
+    private double currentFrame;
 
     /**
      * Creates a Renderer that handles almost anything that is displayed to the user
@@ -98,6 +99,11 @@ public class Renderer implements ResizeHandler, Runnable {
         lastFrame = currentTime();
         mapViewer.tick(delta);
 
+        currentFrame += (1d / 3d) * delta;
+        if (currentFrame > 0xFFFFFFF) {
+            currentFrame -= 0xFFFFFFF;
+        }
+
         gl.viewport(0, 0, canvas.getWidth(), canvas.getHeight());
         gl.clearColor(0.0f, 1.0f, 1.0f, 1.0f); // TODO: Time of day
         gl.clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
@@ -120,7 +126,7 @@ public class Renderer implements ResizeHandler, Runnable {
         gl.bindTexture(TEXTURE_2D, blockTexture);
         chunkShader.setBlockTexture(0);
         chunkShader.setScale(1); // TODO
-        chunkShader.setFrame(0); // TODO
+        chunkShader.setFrame((int) currentFrame); // TODO
 
         // TODO: Think about grouping objects from the same chunk to save setOffset calls
         for (ChunkRenderObject renderObject : renderObjectList) {
