@@ -95,7 +95,7 @@ public class WorkerChunk extends Chunk {
                         chunkSection.getSkyLight().set(idx, sky);
                         idx++;
 
-                        if (block != world.getMapViewer().getBlockRegistry().get("minecraft:air")) {
+                        if (block != Blocks.AIR) {
                             chunkSection.increaseCount();
                         }
                         if (light != 0) {
