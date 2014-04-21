@@ -118,7 +118,6 @@ public class ClientChunk extends Chunk {
         }
     }
 
-    // TODO: This is really really really ugly, rewrite at some point
     private native void extractChunk(ChunkLoadedMessage chunkLoadedMessage)/*-{
         this.@uk.co.thinkofdeath.mapviewer.shared.world.Chunk::nextId = chunkLoadedMessage.nextId;
 
