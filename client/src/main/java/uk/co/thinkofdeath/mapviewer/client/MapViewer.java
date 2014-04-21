@@ -120,6 +120,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
         return $wnd.MapViewerConfig.port == "%SERVERPORT%" ? "23333" : $wnd.MapViewerConfig.port;
     }-*/;
 
+    private int temp = 0;
     /**
      * Called every frame by the renderer
      */
@@ -128,6 +129,10 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
             inputManager.update(delta);
             world.update();
         }
+        if (temp % 60 == 0) {
+            workerPool.dump();
+        }
+        temp++;
     }
 
     /**

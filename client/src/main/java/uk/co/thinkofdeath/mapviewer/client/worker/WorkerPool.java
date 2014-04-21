@@ -81,17 +81,33 @@ public class WorkerPool {
         PooledWorker lowestWorker = workers.get(0);
         for (int i = 1; i < workers.size(); i++) {
             if (lowestWorker.noOfTasks > workers.get(i).noOfTasks) {
-                lowestWorker = workers.get(0);
+                lowestWorker = workers.get(i);
             }
         }
 
         if (all) {
             for (PooledWorker worker : workers) {
+                worker.noOfTasks++;
                 postMessage(worker.worker, WorkerMessage.create(type, msg, worker == lowestWorker), transferables);
             }
         } else {
+            lowestWorker.noOfTasks++;
             postMessage(lowestWorker.worker, WorkerMessage.create(type, msg, true), transferables);
         }
+    }
+
+    /**
+     * Dump the worker pool's state into the console. Used for debugging
+     */
+    public void dump() {
+        StringBuilder out = new StringBuilder("WorkerPool: ");
+        for (int i = 0; i < workers.size(); i++) {
+            out.append(i);
+            out.append("[");
+            out.append(workers.get(i).noOfTasks);
+            out.append("] ");
+        }
+        logger.debug(out.toString());
     }
 
     // Support for transferables

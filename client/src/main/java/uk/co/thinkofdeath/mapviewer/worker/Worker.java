@@ -67,6 +67,7 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
             case "chunk:unload":
                 ChunkUnloadMessage chunkUnloadMessage = (ChunkUnloadMessage) message.getMessage();
                 world.unloadChunk(chunkUnloadMessage.getX(), chunkUnloadMessage.getZ());
+                postMessage(WorkerMessage.create("null", null, false));
                 break;
             case "chunk:build":
                 ChunkBuildMessage chunkBuildMessage = (ChunkBuildMessage) message.getMessage();
@@ -75,6 +76,8 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
                 if (chunk != null) {
                     chunk.build(chunkBuildMessage.getSectionNumber(),
                             chunkBuildMessage.getBuildNumber());
+                } else {
+                    postMessage(WorkerMessage.create("null", null, false));
                 }
                 break;
             case "textures":
@@ -85,6 +88,7 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
                         textures.put(k, v);
                     }
                 });
+                postMessage(WorkerMessage.create("null", null, false));
                 break;
         }
     }
