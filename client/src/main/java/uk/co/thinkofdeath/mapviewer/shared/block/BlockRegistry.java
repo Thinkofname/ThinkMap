@@ -194,6 +194,9 @@ public class BlockRegistry {
                 .create(), 16);
         register("minecraft", "log", new BlockBuilder(new BlockLog())
                 .create(), 17);
+        register("minecraft", "leaves", new BlockBuilder(new BlockLeaves())
+                .solid(false)
+                .create(), 18);
 
         register("minecraft", "lapis_ore", new BlockBuilder()
                 .texture("lapis_ore")
