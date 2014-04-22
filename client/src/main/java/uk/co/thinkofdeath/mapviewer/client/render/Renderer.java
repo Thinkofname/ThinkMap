@@ -126,7 +126,7 @@ public class Renderer implements ResizeHandler, Runnable {
         gl.bindTexture(TEXTURE_2D, blockTexture);
         chunkShader.setBlockTexture(0);
         chunkShader.setScale(1); // TODO
-        chunkShader.setFrame((int) currentFrame); // TODO
+        chunkShader.setFrame((int) currentFrame);
 
         // TODO: Think about grouping objects from the same chunk to save setOffset calls
         for (ChunkRenderObject renderObject : renderObjectList) {
