@@ -180,7 +180,9 @@ public class BlockRegistry {
                 .create(), 11);
         register("minecraft", "sand", new BlockBuilder(new BlockSand())
                 .create(), 12);
-
+        register("minecraft", "gravel", new BlockBuilder()
+                .texture("gravel")
+                .create(), 13);
         register("minecraft", "gold_ore", new BlockBuilder()
                 .texture("gold_ore")
                 .create(), 14);
