@@ -98,7 +98,8 @@ public abstract class Chunk {
         if (section == null) {
             return Blocks.AIR;
         }
-        return idBlockMap.get(section.getBlocks().get(x | (z << 4) | ((y & 0xF) << 8)));
+        return idBlockMap.get(section.getBlocks().get(x | (z << 4) | ((y & 0xF) << 8)))
+                .process(world, (this.x << 4) + x, y, (this.z << 4) + z); // Get the actual block
     }
 
     /**

@@ -3,8 +3,7 @@ package uk.co.thinkofdeath.mapviewer.shared.block.blocks;
 import uk.co.thinkofdeath.mapviewer.shared.Face;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-
-import java.util.Map;
+import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 
 public class BlockGrass extends BlockFactory {
 
@@ -13,12 +12,12 @@ public class BlockGrass extends BlockFactory {
     }
 
     @Override
-    protected Block createBlock(Map<String, Object> states) {
+    protected Block createBlock(StateMap states) {
         return new BlockImpl(this, states);
     }
 
     private class BlockImpl extends Block {
-        public BlockImpl(BlockGrass factory, Map<String, Object> states) {
+        public BlockImpl(BlockGrass factory, StateMap states) {
             super(factory, states);
         }
 

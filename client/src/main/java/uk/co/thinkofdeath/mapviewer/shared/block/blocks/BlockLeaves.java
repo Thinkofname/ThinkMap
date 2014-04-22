@@ -3,10 +3,9 @@ package uk.co.thinkofdeath.mapviewer.shared.block.blocks;
 import uk.co.thinkofdeath.mapviewer.shared.Face;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
+import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
-
-import java.util.Map;
 
 public class BlockLeaves extends BlockFactory {
 
@@ -15,9 +14,9 @@ public class BlockLeaves extends BlockFactory {
     public static final String DECAYABLE = "decayable";
 
     public BlockLeaves() {
-        states.put(CHECK_DECAY, new BooleanState());
-        states.put(DECAYABLE, new BooleanState());
-        states.put(VARIANT, new EnumState(Variant.class));
+        addState(CHECK_DECAY, new BooleanState());
+        addState(DECAYABLE, new BooleanState());
+        addState(VARIANT, new EnumState(Variant.class));
     }
 
     public static enum Variant {
@@ -37,12 +36,12 @@ public class BlockLeaves extends BlockFactory {
 
 
     @Override
-    protected Block createBlock(Map<String, Object> states) {
+    protected Block createBlock(StateMap states) {
         return new BlockImpl(this, states);
     }
 
     private class BlockImpl extends Block {
-        public BlockImpl(BlockLeaves factory, Map<String, Object> states) {
+        public BlockImpl(BlockLeaves factory, StateMap states) {
             super(factory, states);
         }
 

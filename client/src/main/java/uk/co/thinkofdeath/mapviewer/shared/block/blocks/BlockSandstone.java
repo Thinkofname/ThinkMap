@@ -19,23 +19,22 @@ package uk.co.thinkofdeath.mapviewer.shared.block.blocks;
 import uk.co.thinkofdeath.mapviewer.shared.Face;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
+import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
-
-import java.util.Map;
 
 public class BlockSandstone extends BlockFactory {
 
     public static final String VARIANT = "variant";
 
     public BlockSandstone() {
-        states.put(VARIANT, new EnumState(Variant.class));
+        addState(VARIANT, new EnumState(Variant.class));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Block createBlock(Map<String, Object> states) {
+    protected Block createBlock(StateMap states) {
         return new BlockImpl(this, states);
     }
 
@@ -61,7 +60,7 @@ public class BlockSandstone extends BlockFactory {
 
     private static class BlockImpl extends Block {
 
-        BlockImpl(BlockFactory factory, Map<String, Object> state) {
+        BlockImpl(BlockFactory factory, StateMap state) {
             super(factory, state);
         }
 

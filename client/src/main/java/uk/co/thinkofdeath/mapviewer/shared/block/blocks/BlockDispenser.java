@@ -19,10 +19,9 @@ package uk.co.thinkofdeath.mapviewer.shared.block.blocks;
 import uk.co.thinkofdeath.mapviewer.shared.Face;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
+import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
-
-import java.util.Map;
 
 public class BlockDispenser extends BlockFactory {
 
@@ -33,15 +32,15 @@ public class BlockDispenser extends BlockFactory {
 
     public BlockDispenser(String textureName) {
         this.textureName = textureName;
-        states.put(FACING, new EnumState(Facing.class));
-        states.put(TRIGGERED, new BooleanState());
+        addState(FACING, new EnumState(Facing.class));
+        addState(TRIGGERED, new BooleanState());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Block createBlock(Map<String, Object> states) {
+    protected Block createBlock(StateMap states) {
         return new BlockImpl(this, states);
     }
 
@@ -66,7 +65,7 @@ public class BlockDispenser extends BlockFactory {
 
         private final String textureName;
 
-        BlockImpl(BlockFactory factory, Map<String, Object> state) {
+        BlockImpl(BlockFactory factory, StateMap state) {
             super(factory, state);
             textureName = ((BlockDispenser) factory).textureName;
         }

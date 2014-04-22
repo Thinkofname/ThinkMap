@@ -19,13 +19,14 @@ package uk.co.thinkofdeath.mapviewer.shared.block;
 import uk.co.thinkofdeath.mapviewer.shared.Face;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
-import uk.co.thinkofdeath.mapviewer.shared.world.Chunk;
+import uk.co.thinkofdeath.mapviewer.shared.world.World;
 
 import java.util.Map;
 
 public class Block implements Model.RenderChecker {
 
-    private final Map<String, Object> state;
+    protected final StateMap state;
+    private final BlockFactory factory;
     String plugin;
     String name;
     // The following should be mirrored in BlockFactory, BlockBuilder
@@ -39,7 +40,8 @@ public class Block implements Model.RenderChecker {
     private String toString;
     protected Model model;
 
-    protected Block(BlockFactory factory, Map<String, Object> state) {
+    protected Block(BlockFactory factory, StateMap state) {
+        this.factory = factory;
         this.state = state;
         renderable = factory.renderable;
         solid = factory.solid;
@@ -55,9 +57,8 @@ public class Block implements Model.RenderChecker {
      *         The state's name
      * @return The state's value or null
      */
-    @SuppressWarnings("unchecked")
     public <T> T getState(String name) {
-        return (T) state.get(name);
+        return state.get(name);
     }
 
     /**
@@ -157,19 +158,11 @@ public class Block implements Model.RenderChecker {
     }
 
     /**
-     * Gets the model that should be rendered at the passed location, relative to the passed chunk
+     * Gets the model for this block
      *
-     * @param chunk
-     *         The chunk the positions are relative too
-     * @param x
-     *         The x position
-     * @param y
-     *         The y position
-     * @param z
-     *         The z position
      * @return The model
      */
-    public Model getModel(Chunk chunk, int x, int y, int z) {
+    public Model getModel() {
         if (model == null) {
             model = new Model();
             Face[] faces = {Face.TOP, Face.BOTTOM, Face.LEFT, Face.RIGHT, Face.FRONT, Face.BACK};
@@ -183,6 +176,25 @@ public class Block implements Model.RenderChecker {
             }
         }
         return model;
+    }
+
+    /**
+     * Gets the actual block at the location.
+     * <p/>
+     * This is needed because some blocks only exist at runtime and are not saved (yet)
+     *
+     * @param world
+     *         The world of the block
+     * @param x
+     *         The x position
+     * @param y
+     *         The y position
+     * @param z
+     *         The z position
+     * @return The actual block
+     */
+    public Block process(World world, int x, int y, int z) {
+        return this;
     }
 
     /**

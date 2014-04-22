@@ -159,7 +159,7 @@ public class WorkerChunk extends Chunk {
                     Block block = getBlock(x, (sectionNumber << 4) + y, z);
                     if (block.isRenderable()) {
                         if (!block.isTransparent()) {
-                            Model model = block.getModel(this, x, (sectionNumber << 4) + y, z);
+                            Model model = block.getModel();
                             model.render(builder, x, (sectionNumber << 4) + y, z, this, block);
                         } else {
                             // TODO: Handle

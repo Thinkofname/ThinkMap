@@ -3,16 +3,15 @@ package uk.co.thinkofdeath.mapviewer.shared.block.blocks;
 import uk.co.thinkofdeath.mapviewer.shared.Face;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
+import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
-
-import java.util.Map;
 
 public class BlockSand extends BlockFactory {
 
     public static final String VARIANT = "variant";
 
     public BlockSand() {
-        states.put(VARIANT, new EnumState(Variant.class));
+        addState(VARIANT, new EnumState(Variant.class));
     }
 
     public static enum Variant {
@@ -30,12 +29,12 @@ public class BlockSand extends BlockFactory {
 
 
     @Override
-    protected Block createBlock(Map<String, Object> states) {
+    protected Block createBlock(StateMap states) {
         return new BlockImpl(this, states);
     }
 
     private class BlockImpl extends Block {
-        public BlockImpl(BlockSand factory, Map<String, Object> states) {
+        public BlockImpl(BlockSand factory, StateMap states) {
             super(factory, states);
         }
 

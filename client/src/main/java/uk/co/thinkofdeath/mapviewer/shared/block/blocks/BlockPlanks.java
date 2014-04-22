@@ -3,16 +3,15 @@ package uk.co.thinkofdeath.mapviewer.shared.block.blocks;
 import uk.co.thinkofdeath.mapviewer.shared.Face;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
+import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
-
-import java.util.Map;
 
 public class BlockPlanks extends BlockFactory {
 
     public static final String TYPE = "type";
 
     public BlockPlanks() {
-        states.put(TYPE, new EnumState(Type.class));
+        addState(TYPE, new EnumState(Type.class));
     }
 
     public static enum Type {
@@ -34,12 +33,12 @@ public class BlockPlanks extends BlockFactory {
 
 
     @Override
-    protected Block createBlock(Map<String, Object> states) {
+    protected Block createBlock(StateMap states) {
         return new BlockImpl(this, states);
     }
 
     private class BlockImpl extends Block {
-        public BlockImpl(BlockPlanks factory, Map<String, Object> states) {
+        public BlockImpl(BlockPlanks factory, StateMap states) {
             super(factory, states);
         }
 

@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class BlockFactory {
 
-    protected Map<String, BlockState> states = new HashMap<>();
+    private Map<String, BlockState> states = new HashMap<>();
     boolean renderable = true;
     boolean solid = true;
     boolean collidable = true;
@@ -36,6 +36,10 @@ public class BlockFactory {
     public BlockFactory() {
     }
 
+    protected void addState(String name, BlockState state) {
+        states.put(name, state);
+    }
+
     /**
      * Returns all possible versions of the blocks from this factory
      *
@@ -43,26 +47,26 @@ public class BlockFactory {
      */
     public Block[] getBlocks() {
         if (states.size() > 0) {
-            List<Map<String, Object>> stateList = new ArrayList<>();
-            stateList.add(new HashMap<String, Object>());
+            List<StateMap> stateList = new ArrayList<>();
+            stateList.add(new StateMap());
             for (Map.Entry<String, BlockState> state : states.entrySet()) {
-                List<Map<String, Object>> newStateList = new ArrayList<>();
+                List<StateMap> newStateList = new ArrayList<>();
                 for (Object blockState : state.getValue().getStates()) {
-                    for (Map<String, Object> stateMap : stateList) {
-                        Map<String, Object> newStateMap = new HashMap<>(stateMap);
-                        newStateMap.put(state.getKey(), blockState);
+                    for (StateMap stateMap : stateList) {
+                        StateMap newStateMap = new StateMap(stateMap);
+                        newStateMap.set(state.getKey(), blockState);
                         newStateList.add(newStateMap);
                     }
                 }
                 stateList = newStateList;
             }
             ArrayList<Block> blocks = new ArrayList<>();
-            for (Map<String, Object> stateMap : stateList) {
+            for (StateMap stateMap : stateList) {
                 blocks.add(createBlock(stateMap));
             }
             return blocks.toArray(new Block[blocks.size()]);
         } else {
-            return new Block[]{createBlock(new HashMap<String, Object>())};
+            return new Block[]{createBlock(new StateMap())};
         }
     }
 
@@ -73,7 +77,7 @@ public class BlockFactory {
      *         The block state
      * @return The created block
      */
-    protected Block createBlock(Map<String, Object> states) {
+    protected Block createBlock(StateMap states) {
         return new Block(this, states);
     }
 }

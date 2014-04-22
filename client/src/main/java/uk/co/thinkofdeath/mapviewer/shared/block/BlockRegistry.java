@@ -28,6 +28,7 @@ public class BlockRegistry {
     private final Logger logger;
     private IMapViewer mapViewer;
     private Map<String, Block> blockMap = new HashMap<>();
+    private Map<String, Map<StateMap, Block>> blockStateMap = new HashMap<>();
     private Map<Integer, Block> legacyMap = new HashMap<>();
 
     /**
@@ -54,6 +55,22 @@ public class BlockRegistry {
             return blockMap.get(name);
         }
         return get("minecraft", name);
+    }
+
+    /**
+     * Returns a block by its name.
+     *
+     * @param name
+     *         The name of the block
+     * @param state
+     *         The state of the block
+     * @return The block or null
+     */
+    public Block get(String name, StateMap state) {
+        if (blockStateMap.containsKey(name)) {
+            return blockStateMap.get(name).get(state);
+        }
+        return null;
     }
 
     /**
@@ -116,13 +133,22 @@ public class BlockRegistry {
         } else if (legacyId != -1 && !plugin.equals("minecraft")) {
             throw new IllegalArgumentException("Legacy ids must only be used for Minecraft blocks");
         }
+        String key = plugin + ":" + name;
         for (Block block : blocks.getBlocks()) {
             block.plugin = plugin;
             block.name = name;
             logger.debug(block.toString());
             blockMap.put(block.toString(), block);
+            // State lookup
+            if (!blockStateMap.containsKey(key)) {
+                blockStateMap.put(key, new HashMap<StateMap, Block>());
+            }
+            blockStateMap.get(key).put(block.state, block);
+            // Legacy support
             if (legacyId != -1) {
-                int legacyVal = (legacyId << 4) | block.getLegacyData();
+                int data = block.getLegacyData();
+                if (data == -1) continue; // Virtual block
+                int legacyVal = (legacyId << 4) | data;
                 if (legacyMap.containsKey(legacyVal)) {
                     throw new IllegalArgumentException(block.toString() + " tried to register a duplicate block id "
                             + legacyId + ":" + block.getLegacyData());
@@ -217,6 +243,10 @@ public class BlockRegistry {
         register("minecraft", "noteblock", new BlockBuilder()
                 .texture("noteblock")
                 .create(), 25);
+
+        register("minecraft", "vine", new BlockBuilder(new BlockVine())
+                .solid(false)
+                .create(), 106);
 
         register("minecraft", "emerald_ore", new BlockBuilder()
                 .texture("emerald_ore")

@@ -110,7 +110,7 @@ public class BlockBuilder {
      * @return This builder
      */
     public BlockBuilder state(String name, BlockState blockState) {
-        block.states.put(name, blockState);
+        block.addState(name, blockState);
         return this;
     }
 }
