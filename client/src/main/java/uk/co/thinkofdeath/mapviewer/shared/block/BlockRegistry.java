@@ -192,6 +192,8 @@ public class BlockRegistry {
         register("minecraft", "coal_ore", new BlockBuilder()
                 .texture("coal_ore")
                 .create(), 16);
+        register("minecraft", "log", new BlockBuilder(new BlockLog())
+                .create(), 17);
 
         register("minecraft", "lapis_ore", new BlockBuilder()
                 .texture("lapis_ore")
