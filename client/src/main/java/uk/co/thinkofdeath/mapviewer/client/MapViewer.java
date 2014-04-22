@@ -39,6 +39,7 @@ import uk.co.thinkofdeath.mapviewer.shared.logging.LoggerFactory;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkBuildReply;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkLoadedMessage;
 import uk.co.thinkofdeath.mapviewer.shared.worker.WorkerMessage;
+import uk.co.thinkofdeath.mapviewer.shared.world.World;
 
 import java.util.HashMap;
 
@@ -105,8 +106,8 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
                 this, new Runnable() {
             @Override
             public void run() {
-                renderer = new Renderer(MapViewer.this, (CanvasElement) Browser.getDocument().getElementById("main"));
                 world = new ClientWorld(MapViewer.this);
+                renderer = new Renderer(MapViewer.this, (CanvasElement) Browser.getDocument().getElementById("main"));
             }
         }
         );
@@ -259,5 +260,13 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
                 getLoggerFactory().getLogger("WorkerMessage").debug(message.getMessage());
                 break;
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public World getWorld() {
+        return world;
     }
 }

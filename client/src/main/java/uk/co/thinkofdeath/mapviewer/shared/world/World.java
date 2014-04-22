@@ -224,6 +224,15 @@ public abstract class World {
     }
 
     /**
+     * Returns the time of day for this world
+     *
+     * @return The time of day
+     */
+    public int getTimeOfDay() {
+        return timeOfDay;
+    }
+
+    /**
      * Returns this chunks map viewer
      *
      * @return The map viewer

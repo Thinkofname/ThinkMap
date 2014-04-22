@@ -104,8 +104,18 @@ public class Renderer implements ResizeHandler, Runnable {
             currentFrame -= 0xFFFFFFF;
         }
 
+        float timeScale = (mapViewer.getWorld().getTimeOfDay() - 6000f) / 12000f;
+        if (timeScale > 1) {
+            timeScale = 2 - timeScale;
+        } else if (timeScale < 0) {
+            timeScale = -timeScale;
+        }
+
         gl.viewport(0, 0, canvas.getWidth(), canvas.getHeight());
-        gl.clearColor(0.0f, 1.0f, 1.0f, 1.0f); // TODO: Time of day
+        gl.clearColor((122f / 255f) * timeScale,
+                (165f / 255f) * timeScale,
+                (247f / 255f) * timeScale,
+                1.0f);
         gl.clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
 
         // Camera -> Matrix
@@ -125,7 +135,7 @@ public class Renderer implements ResizeHandler, Runnable {
         gl.activeTexture(TEXTURE0);
         gl.bindTexture(TEXTURE_2D, blockTexture);
         chunkShader.setBlockTexture(0);
-        chunkShader.setScale(1); // TODO
+        chunkShader.setScale(timeScale);
         chunkShader.setFrame((int) currentFrame);
 
         // TODO: Think about grouping objects from the same chunk to save setOffset calls

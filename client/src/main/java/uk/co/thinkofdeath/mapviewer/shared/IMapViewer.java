@@ -18,6 +18,7 @@ package uk.co.thinkofdeath.mapviewer.shared;
 
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockRegistry;
 import uk.co.thinkofdeath.mapviewer.shared.logging.LoggerFactory;
+import uk.co.thinkofdeath.mapviewer.shared.world.World;
 
 public interface IMapViewer {
 
@@ -43,4 +44,11 @@ public interface IMapViewer {
      * @return The requested texture or null
      */
     public TextureMap.Texture getTexture(String name);
+
+    /**
+     * Returns the current world for this map viewer
+     *
+     * @return The world
+     */
+    public World getWorld();
 }

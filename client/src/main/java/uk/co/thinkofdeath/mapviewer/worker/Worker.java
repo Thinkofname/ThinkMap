@@ -30,6 +30,7 @@ import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkBuildMessage;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkLoadMessage;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkUnloadMessage;
 import uk.co.thinkofdeath.mapviewer.shared.worker.WorkerMessage;
+import uk.co.thinkofdeath.mapviewer.shared.world.World;
 import uk.co.thinkofdeath.mapviewer.worker.world.WorkerChunk;
 import uk.co.thinkofdeath.mapviewer.worker.world.WorkerWorld;
 
@@ -115,6 +116,14 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
     @Override
     public TextureMap.Texture getTexture(String name) {
         return textures.get(name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public World getWorld() {
+        return world;
     }
 
     // Web worker magic
