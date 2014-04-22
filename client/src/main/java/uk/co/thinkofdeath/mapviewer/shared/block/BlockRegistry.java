@@ -212,6 +212,11 @@ public class BlockRegistry {
                 .create(), 22);
         register("minecraft", "dispenser", new BlockBuilder(new BlockDispenser("dispenser"))
                 .create(), 23);
+        register("minecraft", "sandstone", new BlockBuilder(new BlockSandstone())
+                .create(), 24);
+        register("minecraft", "noteblock", new BlockBuilder()
+                .texture("noteblock")
+                .create(), 25);
 
         register("minecraft", "emerald_ore", new BlockBuilder()
                 .texture("emerald_ore")
