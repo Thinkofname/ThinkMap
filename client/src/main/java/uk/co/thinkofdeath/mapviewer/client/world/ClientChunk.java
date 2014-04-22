@@ -79,7 +79,7 @@ public class ClientChunk extends Chunk {
      *         The data
      */
     public void fillBuffer(int buildNumber, int sectionNumber, TUint8Array data) {
-        if (buildNumber < buildNumbers[sectionNumber]) {
+        if (buildNumber < buildNumbers[sectionNumber] || isUnloaded()) {
             return;
         }
         buildNumbers[sectionNumber] = buildNumber;
