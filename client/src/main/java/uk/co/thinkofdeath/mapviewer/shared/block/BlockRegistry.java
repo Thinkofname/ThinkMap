@@ -197,10 +197,21 @@ public class BlockRegistry {
         register("minecraft", "leaves", new BlockBuilder(new BlockLeaves())
                 .solid(false)
                 .create(), 18);
-
+        register("minecraft", "sponge", new BlockBuilder()
+                .texture("sponge")
+                .create(), 19);
+        register("minecraft", "glass", new BlockBuilder()
+                .texture("glass")
+                .solid(false)
+                .create(), 20);
         register("minecraft", "lapis_ore", new BlockBuilder()
                 .texture("lapis_ore")
                 .create(), 21);
+        register("minecraft", "lapis_block", new BlockBuilder()
+                .texture("lapis_block")
+                .create(), 22);
+        register("minecraft", "dispenser", new BlockBuilder(new BlockDispenser("dispenser"))
+                .create(), 23);
 
         register("minecraft", "emerald_ore", new BlockBuilder()
                 .texture("emerald_ore")
@@ -209,6 +220,9 @@ public class BlockRegistry {
         register("minecraft", "quartz_ore", new BlockBuilder()
                 .texture("quartz_ore")
                 .create(), 153);
+
+        register("minecraft", "dropper", new BlockBuilder(new BlockDispenser("dropper"))
+                .create(), 158);
 
         // ThinkMap blocks
         register("thinkmap", "missing_block", new BlockBuilder()

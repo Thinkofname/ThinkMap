@@ -28,7 +28,7 @@ public class BlockDirt extends BlockFactory {
     public static final String VARIANT = "variant";
 
     public BlockDirt() {
-        states.put(BlockDirt.VARIANT, new EnumState(Variant.class));
+        states.put(VARIANT, new EnumState(Variant.class));
     }
 
     /**
