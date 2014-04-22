@@ -22,24 +22,26 @@ import elemental.events.EventListener;
 import elemental.html.ArrayBuffer;
 import elemental.xml.XMLHttpRequest;
 import uk.co.thinkofdeath.mapviewer.client.MapViewer;
+import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkBuildMessage;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkLoadMessage;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkUnloadMessage;
 import uk.co.thinkofdeath.mapviewer.shared.world.Chunk;
 import uk.co.thinkofdeath.mapviewer.shared.world.World;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class ClientWorld extends World {
 
+    private static final int MAX_WORKER_TASKS = 5;
     final MapViewer mapViewer;
     private boolean firstTick = true;
     private Set<String> loadingChunks = new HashSet<>();
     // Last chunk the camera was in
     private int lastChunkX = 0;
     private int lastChunkZ = 0;
+
+    private Queue<BuildTask> taskList = new LinkedList<>();
+    private Map<String, BuildTask> taskMap = new HashMap<>();
 
     /**
      * Creates a client world
@@ -62,6 +64,57 @@ public class ClientWorld extends World {
         for (Chunk chunk : getChunks()) {
             ((ClientChunk) chunk).update();
         }
+
+        if (mapViewer.getWorkerPool().hasFreeWorker(MAX_WORKER_TASKS)) {
+            while (!taskList.isEmpty()
+                    && mapViewer.getWorkerPool().hasFreeWorker(MAX_WORKER_TASKS)) {
+                BuildTask task = taskList.remove();
+                taskMap.remove(task.getBuildKey());
+                if (task.getChunk().isUnloaded()) {
+                    continue;
+                }
+                mapViewer.getWorkerPool().sendMessage("chunk:build",
+                        ChunkBuildMessage.create(task.getChunk().getX(), task.getChunk().getZ(),
+                                task.getSectionNumber(),
+                                task.getBuildNumber()),
+                        new Object[0]
+                );
+            }
+        }
+    }
+
+    /**
+     * Requests that a section of a chunk is built as soon as possible
+     *
+     * @param chunk
+     *         The chunk that owns the section
+     * @param sectionNumber
+     *         The position of the section
+     * @param buildNumber
+     *         The build number for this build
+     */
+    void requestBuild(ClientChunk chunk, int sectionNumber, int buildNumber) {
+        if (mapViewer.getWorkerPool().hasFreeWorker(MAX_WORKER_TASKS)) {
+            // Send straight away
+            mapViewer.getWorkerPool().sendMessage("chunk:build",
+                    ChunkBuildMessage.create(chunk.getX(), chunk.getZ(), sectionNumber,
+                            buildNumber),
+                    new Object[0]
+            );
+            return;
+        }
+        // Queue for later
+        String buildKey = buildKey(chunk.getX(), chunk.getZ(), sectionNumber);
+        if (taskMap.containsKey(buildKey)) {
+            return; // Already queued
+        }
+        BuildTask task = new BuildTask(chunk, sectionNumber, buildNumber, buildKey);
+        taskMap.put(buildKey, task);
+        taskList.add(task);
+    }
+
+    private static String buildKey(int x, int z, int section) {
+        return x + ":" + z + "@" + section;
     }
 
     /**
@@ -180,5 +233,12 @@ public class ClientWorld extends World {
                 ChunkUnloadMessage.create(x, z),
                 new Object[0],
                 true);
+        for (int i = 0; i < 16; i++) {
+            String buildKey = buildKey(x, z, i);
+            if (taskMap.containsKey(buildKey)) {
+                BuildTask task = taskMap.remove(buildKey);
+                taskList.remove(task);
+            }
+        }
     }
 }

@@ -51,6 +51,21 @@ public class WorkerPool {
     }
 
     /**
+     * Returns whether a worker is 'free' (has less tasks left than maxTasks)
+     * @param maxTasks The limit on the number of tasks a worker can have before it is considered
+     *                 busy
+     * @return Whether a worker is free for processing
+     */
+    public boolean hasFreeWorker(int maxTasks) {
+        for (PooledWorker worker : workers) {
+            if (worker.noOfTasks <= maxTasks) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Alias for sendMessage(type, msg, transferables, false);
      *
      * @param type

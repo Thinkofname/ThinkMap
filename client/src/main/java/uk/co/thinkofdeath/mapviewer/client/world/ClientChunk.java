@@ -19,7 +19,6 @@ package uk.co.thinkofdeath.mapviewer.client.world;
 import uk.co.thinkofdeath.mapviewer.client.render.ChunkRenderObject;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.support.TUint8Array;
-import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkBuildMessage;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkLoadedMessage;
 import uk.co.thinkofdeath.mapviewer.shared.world.Chunk;
 import uk.co.thinkofdeath.mapviewer.shared.world.ChunkSection;
@@ -61,9 +60,12 @@ public class ClientChunk extends Chunk {
         for (int i = 0; i < 16; i++) {
             if (sections[i] != null && outdatedSections[i]) {
                 outdatedSections[i] = false;
+                /*
                 world.mapViewer.getWorkerPool().sendMessage("chunk:build",
                         ChunkBuildMessage.create(getX(), getZ(), i, ++lastBuilderNumber),
                         new Object[0]);
+                */
+                world.requestBuild(this, i, ++lastBuilderNumber);
             }
         }
     }
