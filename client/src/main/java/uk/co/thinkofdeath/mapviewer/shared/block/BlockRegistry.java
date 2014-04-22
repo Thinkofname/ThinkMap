@@ -181,6 +181,27 @@ public class BlockRegistry {
         register("minecraft", "sand", new BlockBuilder(new BlockSand())
                 .create(), 12);
 
+        register("minecraft", "gold_ore", new BlockBuilder()
+                .texture("gold_ore")
+                .create(), 14);
+        register("minecraft", "iron_ore", new BlockBuilder()
+                .texture("iron_ore")
+                .create(), 15);
+        register("minecraft", "coal_ore", new BlockBuilder()
+                .texture("coal_ore")
+                .create(), 16);
+
+        register("minecraft", "lapis_ore", new BlockBuilder()
+                .texture("lapis_ore")
+                .create(), 21);
+
+        register("minecraft", "emerald_ore", new BlockBuilder()
+                .texture("emerald_ore")
+                .create(), 129);
+
+        register("minecraft", "quartz_ore", new BlockBuilder()
+                .texture("quartz_ore")
+                .create(), 153);
 
         // ThinkMap blocks
         register("thinkmap", "missing_block", new BlockBuilder()
