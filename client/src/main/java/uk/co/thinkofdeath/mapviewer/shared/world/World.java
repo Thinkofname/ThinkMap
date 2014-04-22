@@ -224,6 +224,16 @@ public abstract class World {
     }
 
     /**
+     * Sets the time of day for this world
+     *
+     * @param timeOfDay
+     *         The time of day
+     */
+    public void setTimeOfDay(int timeOfDay) {
+        this.timeOfDay = timeOfDay;
+    }
+
+    /**
      * Returns the time of day for this world
      *
      * @return The time of day

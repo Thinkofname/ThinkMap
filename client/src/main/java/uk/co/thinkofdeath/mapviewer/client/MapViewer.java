@@ -156,7 +156,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
      */
     @Override
     public void onTimeUpdate(int currentTime) {
-        // TODO
+        getWorld().setTimeOfDay(currentTime);
     }
 
     /**

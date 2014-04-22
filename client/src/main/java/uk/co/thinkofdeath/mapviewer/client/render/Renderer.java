@@ -110,6 +110,7 @@ public class Renderer implements ResizeHandler, Runnable {
         } else if (timeScale < 0) {
             timeScale = -timeScale;
         }
+        timeScale = 1 - timeScale;
 
         gl.viewport(0, 0, canvas.getWidth(), canvas.getHeight());
         gl.clearColor((122f / 255f) * timeScale,
