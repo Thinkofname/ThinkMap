@@ -243,6 +243,9 @@ public class BlockRegistry {
         register("minecraft", "noteblock", new BlockBuilder()
                 .texture("noteblock")
                 .create(), 25);
+        register("minecraft", "bed", new BlockBuilder(new BlockBed())
+                .solid(false)
+                .create(), 26);
 
         register("minecraft", "vine", new BlockBuilder(new BlockVine())
                 .solid(false)

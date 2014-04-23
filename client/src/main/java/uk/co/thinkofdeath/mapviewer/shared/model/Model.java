@@ -217,13 +217,11 @@ public class Model {
         t1.conjugate(q);
         for (ModelFace face : faces) {
             for (ModelVertex vertex : face.vertices) {
-                float[] vec = {
-                        vertex.getX() - 0.5f,
-                        vertex.getY() - 0.5f,
-                        vertex.getZ() - 0.5f,
-                        0
-                };
-                t2.multiply(t2.multiply(t1, vec));
+
+                float vx = vertex.getX() - 0.5f;
+                float vy = vertex.getY() - 0.5f;
+                float vz = vertex.getZ() - 0.5f;
+                t2.multiply(t2.multiply(t1, vx, vy, vz), q);
                 vertex.setX((float) (t2.numberAt(0) + 0.5));
                 vertex.setY((float) (t2.numberAt(1) + 0.5));
                 vertex.setZ((float) (t2.numberAt(2) + 0.5));

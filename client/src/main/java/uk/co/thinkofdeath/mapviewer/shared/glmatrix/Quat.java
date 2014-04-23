@@ -27,18 +27,18 @@ public class Quat extends JsFloat32Array {
     }-*/;
 
     public final native void setAxisAngle(float rad, float x, float y, float z)/*-{
-        $wnd.quat.setAxisAngle(this, axis, rad)
+        $wnd.quat.setAxisAngle(this, [x, y, z], rad)
     }-*/;
 
     public final native void conjugate(Quat q)/*-{
         $wnd.quat.conjugate(this, q);
     }-*/;
 
-    public final native Quat multiply(Quat quat, float[] b)/*-{
-        $wnd.quat.multiply(this, quat, b);
+    public final native Quat multiply(Quat quat, float vx, float vy, float vz)/*-{
+        return $wnd.quat.multiply(this, quat, [vx, vy, vz, 0]);
     }-*/;
 
-    public final native void multiply(Quat other)/*-{
-        $wnd.quat.multiply(this, other);
+    public final native void multiply(Quat other, JsFloat32Array a)/*-{
+        $wnd.quat.multiply(this, other, a);
     }-*/;
 }
