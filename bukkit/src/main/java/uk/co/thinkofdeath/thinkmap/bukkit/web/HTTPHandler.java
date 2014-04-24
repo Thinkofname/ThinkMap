@@ -79,6 +79,10 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
                 && request.getUri().equals("/chunk")) {
             FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK);
             response.headers().add("Access-Control-Allow-Origin", "*");
+            response.headers().add("Access-Control-Allow-Methods", "POST");
+            if (request.getMethod() == OPTIONS) {
+                response.headers().add("Access-Control-Allow-Headers", "origin, content-type, accept");
+            }
             sendHttpResponse(context, request, response);
         }
 
