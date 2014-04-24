@@ -1,6 +1,8 @@
 package uk.co.thinkofdeath.mapviewer.shared.block.blocks;
 
 import uk.co.thinkofdeath.mapviewer.shared.Face;
+import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
+import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
 import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
@@ -10,10 +12,23 @@ public class BlockLog extends BlockFactory {
 
     public static final String VARIANT = "variant";
     public static final String AXIS = "axis";
+    private static final int BOTTOM = 0;
+    private static final int TOP = 1;
 
-    public BlockLog() {
+    private final Texture[][] textures;
+
+    public BlockLog(IMapViewer iMapViewer) {
+        super(iMapViewer);
         addState(AXIS, new EnumState(Axis.class));
         addState(VARIANT, new EnumState(Variant.class));
+
+        textures = new Texture[Variant.values().length][];
+        for (Variant variant : Variant.values()) {
+            textures[variant.ordinal()] = new Texture[]{
+                    iMapViewer.getTexture("log_" + variant),
+                    iMapViewer.getTexture("log_" + variant + "_top")
+            };
+        }
     }
 
     public static enum Axis {
@@ -73,25 +88,26 @@ public class BlockLog extends BlockFactory {
         }
 
         @Override
-        public String getTexture(Face face) {
+        public Texture getTexture(Face face) {
+            Variant variant = getState(VARIANT);
             switch (this.<Axis>getState(AXIS)) {
                 case X:
                     if (face == Face.LEFT || face == Face.RIGHT) {
-                        return "log_" + getState(VARIANT) + "_top";
+                        return textures[variant.ordinal()][TOP];
                     }
                     break;
                 case Y:
                     if (face == Face.TOP || face == Face.BOTTOM) {
-                        return "log_" + getState(VARIANT) + "_top";
+                        return textures[variant.ordinal()][TOP];
                     }
                     break;
                 case Z:
                     if (face == Face.FRONT || face == Face.BACK) {
-                        return "log_" + getState(VARIANT) + "_top";
+                        return textures[variant.ordinal()][TOP];
                     }
                     break;
             }
-            return "log_" + getState(VARIANT);
+            return textures[variant.ordinal()][BOTTOM];
         }
 
         @Override

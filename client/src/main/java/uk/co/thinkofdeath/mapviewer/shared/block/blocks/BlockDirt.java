@@ -17,6 +17,8 @@
 package uk.co.thinkofdeath.mapviewer.shared.block.blocks;
 
 import uk.co.thinkofdeath.mapviewer.shared.Face;
+import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
+import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
 import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
@@ -26,8 +28,16 @@ public class BlockDirt extends BlockFactory {
 
     public static final String VARIANT = "variant";
 
-    public BlockDirt() {
+    private final Texture dirt;
+    private final Texture dirtPodzolTop;
+    private final Texture dirtPodzolSide;
+
+    public BlockDirt(IMapViewer iMapViewer) {
+        super(iMapViewer);
         addState(VARIANT, new EnumState(Variant.class));
+        dirt = iMapViewer.getTexture("dirt");
+        dirtPodzolTop = iMapViewer.getTexture("dirt_podzol_top");
+        dirtPodzolSide = iMapViewer.getTexture("dirt_podzol_side");
     }
 
     /**
@@ -35,7 +45,7 @@ public class BlockDirt extends BlockFactory {
      */
     @Override
     protected Block createBlock(StateMap states) {
-        return new BlockImpl(this, states);
+        return new BlockImpl(states);
     }
 
     public static enum Variant {
@@ -52,10 +62,10 @@ public class BlockDirt extends BlockFactory {
         }
     }
 
-    private static class BlockImpl extends Block {
+    private class BlockImpl extends Block {
 
-        BlockImpl(BlockFactory factory, StateMap state) {
-            super(factory, state);
+        BlockImpl(StateMap state) {
+            super(BlockDirt.this, state);
         }
 
         @Override
@@ -64,18 +74,18 @@ public class BlockDirt extends BlockFactory {
         }
 
         @Override
-        public String getTexture(Face face) {
+        public Texture getTexture(Face face) {
             if (getState(VARIANT) == Variant.PODZOL) {
                 switch (face) {
                     case TOP:
-                        return "dirt_podzol_top";
+                        return dirtPodzolTop;
                     case BOTTOM:
-                        return "dirt";
+                        return dirt;
                     default:
-                        return "dirt_podzol_side";
+                        return dirtPodzolSide;
                 }
             } else {
-                return "dirt";
+                return dirt;
             }
         }
     }

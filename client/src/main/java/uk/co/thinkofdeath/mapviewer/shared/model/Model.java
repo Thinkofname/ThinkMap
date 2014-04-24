@@ -1,7 +1,6 @@
 package uk.co.thinkofdeath.mapviewer.shared.model;
 
 import uk.co.thinkofdeath.mapviewer.shared.Face;
-import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.LightInfo;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
@@ -24,7 +23,7 @@ public class Model {
     };
     private static final TextureGetter NO_REPLACE_TEXTURE = new TextureGetter() {
         @Override
-        public String getTexture(String texture) {
+        public Texture getTexture(Texture texture) {
             return texture;
         }
     };
@@ -75,7 +74,6 @@ public class Model {
      */
     public void render(ModelBuilder builder, int x, int y, int z, Chunk chunk,
                        RenderChecker renderChecker) {
-        IMapViewer mapViewer = chunk.getWorld().getMapViewer();
         for (ModelFace face : faces) {
             if (face.cullable) {
                 if (!renderChecker.shouldRenderAgainst(chunk.getWorld().getBlock(
@@ -86,11 +84,7 @@ public class Model {
                     continue;
                 }
             }
-            Texture texture = mapViewer.getTexture(face.texture);
-            if (texture == null) {
-                mapViewer.getLoggerFactory().getLogger("Model").warn("Missing texture: " + face.texture);
-                return;
-            }
+            Texture texture = face.texture;
             // First triangle
             for (int i = 0; i < 3; i++) {
                 ModelVertex vertex = face.vertices[2 - i];
@@ -381,6 +375,6 @@ public class Model {
          *         The texture to check against
          * @return The new texture
          */
-        public String getTexture(String texture);
+        public Texture getTexture(Texture texture);
     }
 }

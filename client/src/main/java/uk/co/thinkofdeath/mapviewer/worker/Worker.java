@@ -48,7 +48,6 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
     public void onModuleLoad() {
         importScripts("../gl-matrix-min.js");
         setOnmessage(this);
-        getBlockRegistry().init();
     }
 
     /**
@@ -90,6 +89,7 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
                         textures.put(k, v);
                     }
                 });
+                getBlockRegistry().init(this);
                 postMessage(WorkerMessage.create("null", null, false));
                 break;
         }
@@ -116,7 +116,11 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
      */
     @Override
     public Texture getTexture(String name) {
-        return textures.get(name);
+        Texture texture = textures.get(name);
+        if (texture == null) {
+            throw new RuntimeException("Missing texture: " + name);
+        }
+        return texture;
     }
 
     /**

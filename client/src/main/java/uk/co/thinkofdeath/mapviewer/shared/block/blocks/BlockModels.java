@@ -2,17 +2,18 @@ package uk.co.thinkofdeath.mapviewer.shared.block.blocks;
 
 import uk.co.thinkofdeath.mapviewer.shared.Face;
 import uk.co.thinkofdeath.mapviewer.shared.ForEachIterator;
+import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelVertex;
 
 class BlockModels {
 
-    public static Model createCross(String texture) {
+    public static Model createCross(Texture texture) {
         return createCross(texture, 0xFFFFFF);
     }
 
-    public static Model createCross(String texture, int colour) {
+    public static Model createCross(Texture texture, int colour) {
         Model model = new Model();
         int r = (colour >> 16) & 0xFF;
         int g = (colour >> 8) & 0xFF;

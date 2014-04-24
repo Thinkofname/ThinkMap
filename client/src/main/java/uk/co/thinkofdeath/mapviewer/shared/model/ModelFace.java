@@ -2,6 +2,7 @@ package uk.co.thinkofdeath.mapviewer.shared.model;
 
 import uk.co.thinkofdeath.mapviewer.shared.Face;
 import uk.co.thinkofdeath.mapviewer.shared.ForEachIterator;
+import uk.co.thinkofdeath.mapviewer.shared.Texture;
 
 public class ModelFace {
 
@@ -46,7 +47,7 @@ public class ModelFace {
 
     final ModelVertex[] vertices = new ModelVertex[4];
     private Face face;
-    String texture;
+    Texture texture;
     boolean cullable;
     // Colour
     int r = 255;
@@ -87,9 +88,9 @@ public class ModelFace {
      * @param offset
      *         The offset of the face (relative to its direction)
      * @see uk.co.thinkofdeath.mapviewer.shared.model.ModelFace#ModelFace(uk.co.thinkofdeath.mapviewer.shared.Face,
-     * String, float, float, float, float, float, boolean)
+     * uk.co.thinkofdeath.mapviewer.shared.Texture, float, float, float, float, float, boolean)
      */
-    public ModelFace(Face face, String texture, float x, float y, float width, float height,
+    public ModelFace(Face face, Texture texture, float x, float y, float width, float height,
                      float offset) {
         this(face, texture, x, y, width, height, offset, false);
     }
@@ -114,10 +115,8 @@ public class ModelFace {
      *         The offset of the face (relative to its direction)
      * @param cullable
      *         Whether is face it cullable or not
-     * @see uk.co.thinkofdeath.mapviewer.shared.model.ModelFace#ModelFace(uk.co.thinkofdeath.mapviewer.shared.Face,
-     * String, float, float, float, float, float, boolean)
      */
-    public ModelFace(Face face, String texture, float x, float y, float width, float height,
+    public ModelFace(Face face, Texture texture, float x, float y, float width, float height,
                      float offset, boolean cullable) {
         this(face);
         this.texture = texture;

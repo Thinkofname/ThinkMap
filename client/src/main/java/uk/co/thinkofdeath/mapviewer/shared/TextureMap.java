@@ -27,7 +27,7 @@ public class TextureMap extends JavaScriptObject {
             if (this.hasOwnProperty(key)) {
                 looper.@uk.co.thinkofdeath.mapviewer.shared.TextureMap.Looper::forEach(Ljava/lang/String;Luk/co/thinkofdeath/mapviewer/shared/Texture;)(
                     key,
-                    new @uk.co.thinkofdeath.mapviewer.shared.Texture::new(II)(this[key][0], this[key][1]));
+                    new @uk.co.thinkofdeath.mapviewer.shared.Texture::new(Ljava/lang/String;II)(key, this[key][0], this[key][1]));
             }
         }
     }-*/;

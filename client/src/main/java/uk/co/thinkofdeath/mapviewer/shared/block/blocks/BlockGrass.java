@@ -1,35 +1,45 @@
 package uk.co.thinkofdeath.mapviewer.shared.block.blocks;
 
 import uk.co.thinkofdeath.mapviewer.shared.Face;
+import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
+import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
 import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 
 public class BlockGrass extends BlockFactory {
 
-    public BlockGrass() {
+    private final Texture grassTop;
+    private final Texture grassSide;
+    private final Texture dirt;
 
+    public BlockGrass(IMapViewer iMapViewer) {
+        super(iMapViewer);
+
+        grassTop = iMapViewer.getTexture("grass_top");
+        grassSide = iMapViewer.getTexture("grass_side");
+        dirt = iMapViewer.getTexture("dirt");
     }
 
     @Override
     protected Block createBlock(StateMap states) {
-        return new BlockImpl(this, states);
+        return new BlockImpl(states);
     }
 
     private class BlockImpl extends Block {
-        public BlockImpl(BlockGrass factory, StateMap states) {
-            super(factory, states);
+        public BlockImpl(StateMap states) {
+            super(BlockGrass.this, states);
         }
 
         @Override
-        public String getTexture(Face face) {
+        public Texture getTexture(Face face) {
             switch (face) {
                 case TOP:
-                    return "grass_top";
+                    return grassTop;
                 case BOTTOM:
-                    return "dirt";
+                    return dirt;
                 default:
-                    return "grass_side";
+                    return grassSide;
             }
         }
 

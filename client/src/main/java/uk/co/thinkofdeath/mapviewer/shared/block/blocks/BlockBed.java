@@ -2,6 +2,8 @@ package uk.co.thinkofdeath.mapviewer.shared.block.blocks;
 
 import uk.co.thinkofdeath.mapviewer.shared.Face;
 import uk.co.thinkofdeath.mapviewer.shared.ForEachIterator;
+import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
+import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
 import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
@@ -17,16 +19,33 @@ public class BlockBed extends BlockFactory {
     private static final String OCCUPIED = "occupied";
     private static final String PART = "part";
 
+    private final Texture bedHeadTop;
+    private final Texture bedHeadEnd;
+    private final Texture bedHeadSide;
 
-    public BlockBed() {
+    private final Texture bedFeetTop;
+    private final Texture bedFeetEnd;
+    private final Texture bedFeetSide;
+
+
+    public BlockBed(IMapViewer iMapViewer) {
+        super(iMapViewer);
         addState(FACING, new EnumState(Facing.class));
         addState(OCCUPIED, new BooleanState());
         addState(PART, new EnumState(Part.class));
+
+        bedHeadTop = iMapViewer.getTexture("bed_head_top");
+        bedHeadEnd = iMapViewer.getTexture("bed_head_end");
+        bedHeadSide = iMapViewer.getTexture("bed_head_side");
+
+        bedFeetTop = iMapViewer.getTexture("bed_feet_top");
+        bedFeetEnd = iMapViewer.getTexture("bed_feet_end");
+        bedFeetSide = iMapViewer.getTexture("bed_feet_side");
     }
 
     @Override
     protected Block createBlock(StateMap states) {
-        return new BlockImpl(this, states);
+        return new BlockImpl(states);
     }
 
     public static enum Facing {
@@ -51,9 +70,9 @@ public class BlockBed extends BlockFactory {
         }
     }
 
-    private static class BlockImpl extends Block {
-        public BlockImpl(BlockBed blockBed, StateMap states) {
-            super(blockBed, states);
+    private class BlockImpl extends Block {
+        public BlockImpl(StateMap states) {
+            super(BlockBed.this, states);
         }
 
         @Override
@@ -61,13 +80,14 @@ public class BlockBed extends BlockFactory {
             if (model == null) {
                 model = new Model();
                 if (getState(PART) == Part.HEAD) {
-                    model.addFace(new ModelFace(Face.TOP, "bed_head_top", 0, 0, 16, 16, 9));
-                    model.addFace(new ModelFace(Face.LEFT, "bed_head_end", 0, 0, 16, 9, 16, true)
+                    model.addFace(new ModelFace(Face.TOP, bedHeadTop, 0, 0, 16, 16,
+                            9));
+                    model.addFace(new ModelFace(Face.LEFT, bedHeadEnd, 0, 0, 16, 9, 16, true)
                             .setTextureSize(0, 7, 16, 9));
-                    model.addFace(new ModelFace(Face.FRONT, "bed_head_side", 0, 0, 16, 9, 16,
+                    model.addFace(new ModelFace(Face.FRONT, bedHeadSide, 0, 0, 16, 9, 16,
                             true)
                             .setTextureSize(0, 7, 16, 9));
-                    model.addFace(new ModelFace(Face.BACK, "bed_head_side", 0, 0, 16, 9, 0, true)
+                    model.addFace(new ModelFace(Face.BACK, bedHeadSide, 0, 0, 16, 9, 0, true)
                             .setTextureSize(0, 7, 16, 9)
                             .forEach(new ForEachIterator<ModelVertex>() {
                                 @Override
@@ -77,13 +97,13 @@ public class BlockBed extends BlockFactory {
                             }));
 
                 } else {
-                    model.addFace(new ModelFace(Face.TOP, "bed_feet_top", 0, 0, 16, 16, 9));
-                    model.addFace(new ModelFace(Face.RIGHT, "bed_feet_end", 0, 0, 16, 9, 0, true)
+                    model.addFace(new ModelFace(Face.TOP, bedFeetTop, 0, 0, 16, 16, 9));
+                    model.addFace(new ModelFace(Face.RIGHT, bedFeetEnd, 0, 0, 16, 9, 0, true)
                             .setTextureSize(0, 7, 16, 9));
-                    model.addFace(new ModelFace(Face.FRONT, "bed_feet_side", 0, 0, 16, 9, 16,
+                    model.addFace(new ModelFace(Face.FRONT, bedFeetSide, 0, 0, 16, 9, 16,
                             true)
                             .setTextureSize(0, 7, 16, 9));
-                    model.addFace(new ModelFace(Face.BACK, "bed_feet_side", 0, 0, 16, 9, 0, true)
+                    model.addFace(new ModelFace(Face.BACK, bedFeetSide, 0, 0, 16, 9, 0, true)
                             .setTextureSize(0, 7, 16, 9)
                             .forEach(new ForEachIterator<ModelVertex>() {
                                 @Override

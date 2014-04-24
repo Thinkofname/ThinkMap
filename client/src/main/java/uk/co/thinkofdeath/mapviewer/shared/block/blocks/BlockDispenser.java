@@ -17,6 +17,8 @@
 package uk.co.thinkofdeath.mapviewer.shared.block.blocks;
 
 import uk.co.thinkofdeath.mapviewer.shared.Face;
+import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
+import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
 import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
@@ -28,12 +30,19 @@ public class BlockDispenser extends BlockFactory {
     public static final String FACING = "facing";
     public static final String TRIGGERED = "triggered";
 
-    private final String textureName;
+    private final Texture furnaceTop;
+    private final Texture furnaceSide;
+    private final Texture frontVertical;
+    private final Texture frontHorizontal;
 
-    public BlockDispenser(String textureName) {
-        this.textureName = textureName;
+    public BlockDispenser(IMapViewer iMapViewer, String textureName) {
+        super(iMapViewer);
         addState(FACING, new EnumState(Facing.class));
         addState(TRIGGERED, new BooleanState());
+        furnaceTop = iMapViewer.getTexture("furnace_top");
+        furnaceSide = iMapViewer.getTexture("furnace_side");
+        frontVertical = iMapViewer.getTexture(textureName + "_front_vertical");
+        frontHorizontal = iMapViewer.getTexture(textureName + "_front_horizontal");
     }
 
     /**
@@ -41,7 +50,7 @@ public class BlockDispenser extends BlockFactory {
      */
     @Override
     protected Block createBlock(StateMap states) {
-        return new BlockImpl(this, states);
+        return new BlockImpl(states);
     }
 
     public static enum Facing {
@@ -61,13 +70,10 @@ public class BlockDispenser extends BlockFactory {
         }
     }
 
-    private static class BlockImpl extends Block {
+    private class BlockImpl extends Block {
 
-        private final String textureName;
-
-        BlockImpl(BlockFactory factory, StateMap state) {
-            super(factory, state);
-            textureName = ((BlockDispenser) factory).textureName;
+        BlockImpl(StateMap state) {
+            super(BlockDispenser.this, state);
         }
 
         @Override
@@ -80,41 +86,41 @@ public class BlockDispenser extends BlockFactory {
         }
 
         @Override
-        public String getTexture(Face face) {
+        public Texture getTexture(Face face) {
             Facing facing = getState(FACING);
             switch (face) {
                 case TOP:
                     if (facing == Facing.UP) {
-                        return textureName + "_front_vertical";
+                        return frontVertical;
                     }
-                    return "furnace_top";
+                    return furnaceTop;
                 case BOTTOM:
                     if (facing == Facing.DOWN) {
-                        return textureName + "_front_vertical";
+                        return frontVertical;
                     }
-                    return "furnace_top";
+                    return furnaceTop;
                 case LEFT:
                     if (facing == Facing.EAST) {
-                        return textureName + "_front_horizontal";
+                        return frontHorizontal;
                     }
                     break;
                 case RIGHT:
                     if (facing == Facing.WEST) {
-                        return textureName + "_front_horizontal";
+                        return frontHorizontal;
                     }
                     break;
                 case FRONT:
                     if (facing == Facing.SOUTH) {
-                        return textureName + "_front_horizontal";
+                        return frontHorizontal;
                     }
                     break;
                 case BACK:
                     if (facing == Facing.NORTH) {
-                        return textureName + "_front_horizontal";
+                        return frontHorizontal;
                     }
                     break;
             }
-            return "furnace_side";
+            return furnaceSide;
         }
     }
 }

@@ -17,6 +17,8 @@
 package uk.co.thinkofdeath.mapviewer.shared.block.blocks;
 
 import uk.co.thinkofdeath.mapviewer.shared.Face;
+import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
+import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
 import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
@@ -26,8 +28,20 @@ public class BlockSandstone extends BlockFactory {
 
     public static final String VARIANT = "variant";
 
-    public BlockSandstone() {
+    private final Texture[] textures;
+    private final Texture sandstoneTop;
+    private final Texture sandstoneBottom;
+
+    public BlockSandstone(IMapViewer iMapViewer) {
+        super(iMapViewer);
         addState(VARIANT, new EnumState(Variant.class));
+
+        textures = new Texture[Variant.values().length];
+        for (Variant variant : Variant.values()) {
+            textures[variant.ordinal()] = iMapViewer.getTexture("sandstone_" + variant.texture);
+        }
+        sandstoneTop = iMapViewer.getTexture("sandstone_top");
+        sandstoneBottom = iMapViewer.getTexture("sandstone_bottom");
     }
 
     /**
@@ -35,7 +49,7 @@ public class BlockSandstone extends BlockFactory {
      */
     @Override
     protected Block createBlock(StateMap states) {
-        return new BlockImpl(this, states);
+        return new BlockImpl(states);
     }
 
     public static enum Variant {
@@ -58,10 +72,10 @@ public class BlockSandstone extends BlockFactory {
         }
     }
 
-    private static class BlockImpl extends Block {
+    private class BlockImpl extends Block {
 
-        BlockImpl(BlockFactory factory, StateMap state) {
-            super(factory, state);
+        BlockImpl(StateMap state) {
+            super(BlockSandstone.this, state);
         }
 
         @Override
@@ -70,13 +84,13 @@ public class BlockSandstone extends BlockFactory {
         }
 
         @Override
-        public String getTexture(Face face) {
+        public Texture getTexture(Face face) {
             if (face == Face.TOP) {
-                return "sandstone_top";
+                return sandstoneTop;
             } else if (face == Face.BOTTOM) {
-                return "sandstone_bottom";
+                return sandstoneBottom;
             }
-            return "sandstone_" + this.<Variant>getState(VARIANT).texture;
+            return textures[this.<Variant>getState(VARIANT).ordinal()];
         }
     }
 }

@@ -17,6 +17,8 @@
 package uk.co.thinkofdeath.mapviewer.shared.block.blocks;
 
 import uk.co.thinkofdeath.mapviewer.shared.Face;
+import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
+import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
 import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
@@ -33,12 +35,17 @@ public class BlockVine extends BlockFactory {
     public static final String UP = "up";
     public static final String WEST = "west";
 
-    public BlockVine() {
+    private final Texture texture;
+
+    public BlockVine(IMapViewer iMapViewer) {
+        super(iMapViewer);
         addState(EAST, new BooleanState());
         addState(NORTH, new BooleanState());
         addState(SOUTH, new BooleanState());
         addState(UP, new BooleanState());
         addState(WEST, new BooleanState());
+
+        texture = iMapViewer.getTexture("vine");
     }
 
     /**
@@ -46,7 +53,7 @@ public class BlockVine extends BlockFactory {
      */
     @Override
     protected Block createBlock(StateMap states) {
-        return new BlockImpl(this, states);
+        return new BlockImpl(states);
     }
 
     public static enum Variant {
@@ -63,10 +70,10 @@ public class BlockVine extends BlockFactory {
         }
     }
 
-    private static class BlockImpl extends Block {
+    private class BlockImpl extends Block {
 
-        BlockImpl(BlockFactory factory, StateMap state) {
-            super(factory, state);
+        BlockImpl(StateMap state) {
+            super(BlockVine.this, state);
         }
 
         @Override
@@ -75,37 +82,37 @@ public class BlockVine extends BlockFactory {
                 model = new Model();
 
                 if (this.<Boolean>getState(UP)) {
-                    model.addFace(new ModelFace(Face.BOTTOM, "vine", 0, 0, 16, 16, 15.9f)
+                    model.addFace(new ModelFace(Face.BOTTOM, texture, 0, 0, 16, 16, 15.9f)
                             .colour(0x87, 0xBA, 0x34));
-                    model.addFace(new ModelFace(Face.TOP, "vine", 0, 0, 16, 16, 15.9f, true)
+                    model.addFace(new ModelFace(Face.TOP, texture, 0, 0, 16, 16, 15.9f, true)
                             .colour(0x87, 0xBA, 0x34));
                 }
 
                 if (this.<Boolean>getState(SOUTH)) {
-                    model.addFace(new ModelFace(Face.BACK, "vine", 0, 0, 16, 16, 15.9f)
+                    model.addFace(new ModelFace(Face.BACK, texture, 0, 0, 16, 16, 15.9f)
                             .colour(0x87, 0xBA, 0x34));
-                    model.addFace(new ModelFace(Face.FRONT, "vine", 0, 0, 16, 16, 15.9f, true)
+                    model.addFace(new ModelFace(Face.FRONT, texture, 0, 0, 16, 16, 15.9f, true)
                             .colour(0x87, 0xBA, 0x34));
                 }
 
                 if (this.<Boolean>getState(NORTH)) {
-                    model.addFace(new ModelFace(Face.FRONT, "vine", 0, 0, 16, 16, 0.1f)
+                    model.addFace(new ModelFace(Face.FRONT, texture, 0, 0, 16, 16, 0.1f)
                             .colour(0x87, 0xBA, 0x34));
-                    model.addFace(new ModelFace(Face.BACK, "vine", 0, 0, 16, 16, 0.1f, true)
+                    model.addFace(new ModelFace(Face.BACK, texture, 0, 0, 16, 16, 0.1f, true)
                             .colour(0x87, 0xBA, 0x34));
                 }
 
                 if (this.<Boolean>getState(EAST)) {
-                    model.addFace(new ModelFace(Face.RIGHT, "vine", 0, 0, 16, 16, 15.9f)
+                    model.addFace(new ModelFace(Face.RIGHT, texture, 0, 0, 16, 16, 15.9f)
                             .colour(0x87, 0xBA, 0x34));
-                    model.addFace(new ModelFace(Face.LEFT, "vine", 0, 0, 16, 16, 15.9f, true)
+                    model.addFace(new ModelFace(Face.LEFT, texture, 0, 0, 16, 16, 15.9f, true)
                             .colour(0x87, 0xBA, 0x34));
                 }
 
                 if (this.<Boolean>getState(WEST)) {
-                    model.addFace(new ModelFace(Face.LEFT, "vine", 0, 0, 16, 16, 0.1f)
+                    model.addFace(new ModelFace(Face.LEFT, texture, 0, 0, 16, 16, 0.1f)
                             .colour(0x87, 0xBA, 0x34));
-                    model.addFace(new ModelFace(Face.RIGHT, "vine", 0, 0, 16, 16, 0.1f, true)
+                    model.addFace(new ModelFace(Face.RIGHT, texture, 0, 0, 16, 16, 0.1f, true)
                             .colour(0x87, 0xBA, 0x34));
                 }
             }

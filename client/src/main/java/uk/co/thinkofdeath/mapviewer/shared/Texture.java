@@ -2,12 +2,23 @@ package uk.co.thinkofdeath.mapviewer.shared;
 
 public class Texture {
 
-    private int start;
-    private int end;
+    private final int start;
+    private final int end;
+    private final String name;
 
-    public Texture(int start, int end) {
+    public Texture(String name, int start, int end) {
+        this.name = name;
         this.start = start;
         this.end = end;
+    }
+
+    /**
+     * Returns the name of the texture
+     *
+     * @return The texture's name
+     */
+    public String getName() {
+        return name;
     }
 
     /**

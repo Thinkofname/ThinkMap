@@ -17,6 +17,7 @@
 package uk.co.thinkofdeath.mapviewer.shared.block;
 
 import uk.co.thinkofdeath.mapviewer.shared.Face;
+import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 import uk.co.thinkofdeath.mapviewer.shared.world.World;
@@ -26,7 +27,6 @@ import java.util.Map;
 public class Block implements Model.RenderChecker {
 
     protected final StateMap state;
-    private final BlockFactory factory;
     String plugin;
     String name;
     // The following should be mirrored in BlockFactory, BlockBuilder
@@ -35,19 +35,18 @@ public class Block implements Model.RenderChecker {
     private boolean solid;
     private boolean collidable;
     private boolean transparent;
-    private String texture;
+    private Texture texture;
     // Cache value since it doesn't change
     private String toString;
     protected Model model;
 
     protected Block(BlockFactory factory, StateMap state) {
-        this.factory = factory;
         this.state = state;
         renderable = factory.renderable;
         solid = factory.solid;
         collidable = factory.collidable;
         transparent = factory.transparent;
-        texture = factory.texture;
+        texture = factory.getTexture();
     }
 
     /**
@@ -104,7 +103,7 @@ public class Block implements Model.RenderChecker {
      *         The face to get the texture of
      * @return The texture or null
      */
-    public String getTexture(Face face) {
+    public Texture getTexture(Face face) {
         return texture;
     }
 

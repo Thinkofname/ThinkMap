@@ -16,6 +16,8 @@
 
 package uk.co.thinkofdeath.mapviewer.shared.block;
 
+import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
+
 public class BlockBuilder {
 
     private BlockFactory block;
@@ -23,8 +25,8 @@ public class BlockBuilder {
     /**
      * Creates a block builder to allow chainable block creation
      */
-    public BlockBuilder() {
-        this(new BlockFactory());
+    public BlockBuilder(IMapViewer iMapViewer) {
+        this(new BlockFactory(iMapViewer));
     }
 
     public BlockBuilder(BlockFactory factory) {

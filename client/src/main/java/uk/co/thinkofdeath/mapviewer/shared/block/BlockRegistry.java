@@ -158,112 +158,113 @@ public class BlockRegistry {
     /**
      * Loads all known blocks
      */
-    public void init() {
+    public void init(IMapViewer mapViewer) {
         // Vanilla blocks
-        register("minecraft", "air", new BlockBuilder()
+        register("minecraft", "air", new BlockBuilder(mapViewer)
                 .renderable(false)
                 .collidable(false)
                 .solid(false).create(), 0);
-        register("minecraft", "stone", new BlockBuilder()
+        register("minecraft", "stone", new BlockBuilder(mapViewer)
                 .texture("stone")
                 .create(), 1);
-        register("minecraft", "grass", new BlockBuilder(new BlockGrass())
+        register("minecraft", "grass", new BlockBuilder(new BlockGrass(mapViewer))
                 .create(), 2);
-        register("minecraft", "dirt", new BlockBuilder(new BlockDirt())
+        register("minecraft", "dirt", new BlockBuilder(new BlockDirt(mapViewer))
                 .create(), 3);
-        register("minecraft", "cobblestone", new BlockBuilder()
+        register("minecraft", "cobblestone", new BlockBuilder(mapViewer)
                 .texture("cobblestone")
                 .create(), 4);
-        register("minecraft", "planks", new BlockBuilder(new BlockPlanks())
+        register("minecraft", "planks", new BlockBuilder(new BlockPlanks(mapViewer))
                 .create(), 5);
-        register("minecraft", "sapling", new BlockBuilder(new BlockSapling())
+        register("minecraft", "sapling", new BlockBuilder(new BlockSapling(mapViewer))
                 .solid(false)
                 .collidable(false)
                 .create(), 6);
-        register("minecraft", "bedrock", new BlockBuilder()
+        register("minecraft", "bedrock", new BlockBuilder(mapViewer)
                 .texture("bedrock")
                 .create(), 7);
-        register("minecraft", "flowing_water", new BlockBuilder(new BlockLiquid())
+        register("minecraft", "flowing_water", new BlockBuilder(new BlockLiquid(mapViewer))
                 .texture("water_flow")
                 .solid(false)
                 .transparent(false /*TODO*/)
                 .create(), 8);
-        register("minecraft", "water", new BlockBuilder(new BlockLiquid())
+        register("minecraft", "water", new BlockBuilder(new BlockLiquid(mapViewer))
                 .texture("water_still")
                 .solid(false)
                 .transparent(false /*TODO*/)
                 .create(), 9);
-        register("minecraft", "flowing_lava", new BlockBuilder(new BlockLiquid())
+        register("minecraft", "flowing_lava", new BlockBuilder(new BlockLiquid(mapViewer))
                 .texture("lava_flow")
                 .solid(false)
                 .create(), 10);
-        register("minecraft", "lava", new BlockBuilder(new BlockLiquid())
+        register("minecraft", "lava", new BlockBuilder(new BlockLiquid(mapViewer))
                 .texture("lava_still")
                 .solid(false)
                 .create(), 11);
-        register("minecraft", "sand", new BlockBuilder(new BlockSand())
+        register("minecraft", "sand", new BlockBuilder(new BlockSand(mapViewer))
                 .create(), 12);
-        register("minecraft", "gravel", new BlockBuilder()
+        register("minecraft", "gravel", new BlockBuilder(mapViewer)
                 .texture("gravel")
                 .create(), 13);
-        register("minecraft", "gold_ore", new BlockBuilder()
+        register("minecraft", "gold_ore", new BlockBuilder(mapViewer)
                 .texture("gold_ore")
                 .create(), 14);
-        register("minecraft", "iron_ore", new BlockBuilder()
+        register("minecraft", "iron_ore", new BlockBuilder(mapViewer)
                 .texture("iron_ore")
                 .create(), 15);
-        register("minecraft", "coal_ore", new BlockBuilder()
+        register("minecraft", "coal_ore", new BlockBuilder(mapViewer)
                 .texture("coal_ore")
                 .create(), 16);
-        register("minecraft", "log", new BlockBuilder(new BlockLog())
+        register("minecraft", "log", new BlockBuilder(new BlockLog(mapViewer))
                 .create(), 17);
-        register("minecraft", "leaves", new BlockBuilder(new BlockLeaves())
+        register("minecraft", "leaves", new BlockBuilder(new BlockLeaves(mapViewer))
                 .solid(false)
                 .create(), 18);
-        register("minecraft", "sponge", new BlockBuilder()
+        register("minecraft", "sponge", new BlockBuilder(mapViewer)
                 .texture("sponge")
                 .create(), 19);
-        register("minecraft", "glass", new BlockBuilder()
+        register("minecraft", "glass", new BlockBuilder(mapViewer)
                 .texture("glass")
                 .solid(false)
                 .create(), 20);
-        register("minecraft", "lapis_ore", new BlockBuilder()
+        register("minecraft", "lapis_ore", new BlockBuilder(mapViewer)
                 .texture("lapis_ore")
                 .create(), 21);
-        register("minecraft", "lapis_block", new BlockBuilder()
+        register("minecraft", "lapis_block", new BlockBuilder(mapViewer)
                 .texture("lapis_block")
                 .create(), 22);
-        register("minecraft", "dispenser", new BlockBuilder(new BlockDispenser("dispenser"))
+        register("minecraft", "dispenser", new BlockBuilder(new BlockDispenser(mapViewer,
+                "dispenser"))
                 .create(), 23);
-        register("minecraft", "sandstone", new BlockBuilder(new BlockSandstone())
+        register("minecraft", "sandstone", new BlockBuilder(new BlockSandstone(mapViewer))
                 .create(), 24);
-        register("minecraft", "noteblock", new BlockBuilder()
+        register("minecraft", "noteblock", new BlockBuilder(mapViewer)
                 .texture("noteblock")
                 .create(), 25);
-        register("minecraft", "bed", new BlockBuilder(new BlockBed())
+        register("minecraft", "bed", new BlockBuilder(new BlockBed(mapViewer))
                 .solid(false)
                 .create(), 26);
 
-        register("minecraft", "vine", new BlockBuilder(new BlockVine())
+        register("minecraft", "vine", new BlockBuilder(new BlockVine(mapViewer))
                 .solid(false)
                 .create(), 106);
 
-        register("minecraft", "emerald_ore", new BlockBuilder()
+        register("minecraft", "emerald_ore", new BlockBuilder(mapViewer)
                 .texture("emerald_ore")
                 .create(), 129);
 
-        register("minecraft", "quartz_ore", new BlockBuilder()
+        register("minecraft", "quartz_ore", new BlockBuilder(mapViewer)
                 .texture("quartz_ore")
                 .create(), 153);
 
-        register("minecraft", "dropper", new BlockBuilder(new BlockDispenser("dropper"))
+        register("minecraft", "dropper", new BlockBuilder(new BlockDispenser(mapViewer, "dropper"))
                 .create(), 158);
 
         // ThinkMap blocks
-        register("thinkmap", "missing_block", new BlockBuilder()
+        register("thinkmap", "missing_block", new BlockBuilder(mapViewer)
                 .texture("missing_texture")
                 .create());
-        register("thinkmap", "null", new BlockBuilder()
+        register("thinkmap", "null", new BlockBuilder(mapViewer)
                 .renderable(false)
                 .create());
 

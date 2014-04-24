@@ -1,6 +1,8 @@
 package uk.co.thinkofdeath.mapviewer.shared.block.blocks;
 
 import uk.co.thinkofdeath.mapviewer.shared.Face;
+import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
+import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
 import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
@@ -13,10 +15,18 @@ public class BlockLeaves extends BlockFactory {
     public static final String CHECK_DECAY = "check_decay";
     public static final String DECAYABLE = "decayable";
 
-    public BlockLeaves() {
+    private final Texture[] textures;
+
+    public BlockLeaves(IMapViewer iMapViewer) {
+        super(iMapViewer);
         addState(CHECK_DECAY, new BooleanState());
         addState(DECAYABLE, new BooleanState());
         addState(VARIANT, new EnumState(Variant.class));
+
+        textures = new Texture[Variant.values().length];
+        for (Variant variant : Variant.values()) {
+            textures[variant.ordinal()] = iMapViewer.getTexture("leaves_" + variant);
+        }
     }
 
     public static enum Variant {
@@ -37,17 +47,17 @@ public class BlockLeaves extends BlockFactory {
 
     @Override
     protected Block createBlock(StateMap states) {
-        return new BlockImpl(this, states);
+        return new BlockImpl(states);
     }
 
     private class BlockImpl extends Block {
-        public BlockImpl(BlockLeaves factory, StateMap states) {
-            super(factory, states);
+        public BlockImpl(StateMap states) {
+            super(BlockLeaves.this, states);
         }
 
         @Override
-        public String getTexture(Face face) {
-            return "leaves_" + getState(VARIANT);
+        public Texture getTexture(Face face) {
+            return textures[this.<Variant>getState(VARIANT).ordinal()];
         }
 
         @Override

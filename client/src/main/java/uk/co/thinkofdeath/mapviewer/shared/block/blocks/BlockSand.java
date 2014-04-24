@@ -1,6 +1,8 @@
 package uk.co.thinkofdeath.mapviewer.shared.block.blocks;
 
 import uk.co.thinkofdeath.mapviewer.shared.Face;
+import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
+import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
 import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
@@ -10,8 +12,14 @@ public class BlockSand extends BlockFactory {
 
     public static final String VARIANT = "variant";
 
-    public BlockSand() {
+    private final Texture sand;
+    private final Texture redSand;
+
+    public BlockSand(IMapViewer iMapViewer) {
+        super(iMapViewer);
         addState(VARIANT, new EnumState(Variant.class));
+        sand = iMapViewer.getTexture("sand");
+        redSand = iMapViewer.getTexture("red_sand");
     }
 
     public static enum Variant {
@@ -30,17 +38,17 @@ public class BlockSand extends BlockFactory {
 
     @Override
     protected Block createBlock(StateMap states) {
-        return new BlockImpl(this, states);
+        return new BlockImpl(states);
     }
 
     private class BlockImpl extends Block {
-        public BlockImpl(BlockSand factory, StateMap states) {
-            super(factory, states);
+        public BlockImpl(StateMap states) {
+            super(BlockSand.this, states);
         }
 
         @Override
-        public String getTexture(Face face) {
-            return getState(VARIANT) == Variant.RED ? "red_sand" : "sand";
+        public Texture getTexture(Face face) {
+            return getState(VARIANT) == Variant.RED ? redSand : sand;
         }
 
         @Override

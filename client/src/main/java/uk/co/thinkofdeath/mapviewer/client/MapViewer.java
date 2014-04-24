@@ -101,7 +101,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
         // Sync to workers
         getWorkerPool().sendMessage("textures", tmap, new Object[0], true);
 
-        getBlockRegistry().init();
+        getBlockRegistry().init(this);
         inputManager.hook();
 
         String host = getConfigHost();

@@ -16,6 +16,9 @@
 
 package uk.co.thinkofdeath.mapviewer.shared.block;
 
+import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
+import uk.co.thinkofdeath.mapviewer.shared.Texture;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,11 +32,13 @@ public class BlockFactory {
     boolean collidable = true;
     boolean transparent = false;
     String texture;
+    protected IMapViewer mapViewer;
 
     /**
      * Creates a block factory
      */
-    public BlockFactory() {
+    public BlockFactory(IMapViewer mapViewer) {
+        this.mapViewer = mapViewer;
     }
 
     protected void addState(String name, BlockState state) {
@@ -79,5 +84,9 @@ public class BlockFactory {
      */
     protected Block createBlock(StateMap states) {
         return new Block(this, states);
+    }
+
+    public Texture getTexture() {
+        return texture == null ? null : mapViewer.getTexture(texture);
     }
 }
