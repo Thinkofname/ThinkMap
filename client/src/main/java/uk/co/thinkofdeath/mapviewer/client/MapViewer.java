@@ -45,6 +45,9 @@ import java.util.HashMap;
 
 public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, IMapViewer {
 
+    /**
+     * The max distance (in chunks) the client can see
+     */
     public final static int VIEW_DISTANCE = 4;
     private static final int NUMBER_OF_WORKERS = 4;
 
