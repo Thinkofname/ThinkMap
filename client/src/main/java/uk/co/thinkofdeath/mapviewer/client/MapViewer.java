@@ -46,10 +46,11 @@ import java.util.HashMap;
 public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, IMapViewer {
 
     public final static int VIEW_DISTANCE = 4;
+    private static final int NUMBER_OF_WORKERS = 4;
 
     private final LoggerFactory loggerFactory = new ClientLogger(ClientLogger.DEBUG);
     private final BlockRegistry blockRegistry = new BlockRegistry(this);
-    private final WorkerPool workerPool = new WorkerPool(this, 4);
+    private final WorkerPool workerPool = new WorkerPool(this, NUMBER_OF_WORKERS);
     private final InputManager inputManager = new InputManager(this);
     private ImageElement texture;
     private HashMap<String, TextureMap.Texture> textures = new HashMap<>();
