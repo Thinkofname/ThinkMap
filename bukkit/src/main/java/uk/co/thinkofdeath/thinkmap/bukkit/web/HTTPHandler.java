@@ -40,8 +40,7 @@ import java.util.logging.Logger;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpHeaders.isKeepAlive;
 import static io.netty.handler.codec.http.HttpHeaders.setContentLength;
-import static io.netty.handler.codec.http.HttpMethod.GET;
-import static io.netty.handler.codec.http.HttpMethod.POST;
+import static io.netty.handler.codec.http.HttpMethod.*;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
@@ -74,6 +73,13 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         if (request.getUri().equals("/server")) {
             context.fireChannelRead(request);
             return;
+        }
+
+        if ((request.getMethod() == OPTIONS || request.getMethod() == HEAD)
+                && request.getUri().equals("/chunk")) {
+            FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK);
+            response.headers().add("Access-Control-Allow-Origin", "*");
+            sendHttpResponse(context, request, response);
         }
 
         if (request.getMethod() == POST && request.getUri().equals("/chunk")) {
