@@ -3,7 +3,7 @@ package uk.co.thinkofdeath.mapviewer.shared.model;
 import uk.co.thinkofdeath.mapviewer.shared.Face;
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.LightInfo;
-import uk.co.thinkofdeath.mapviewer.shared.TextureMap;
+import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.building.ModelBuilder;
 import uk.co.thinkofdeath.mapviewer.shared.glmatrix.Quat;
@@ -86,7 +86,7 @@ public class Model {
                     continue;
                 }
             }
-            TextureMap.Texture texture = mapViewer.getTexture(face.texture);
+            Texture texture = mapViewer.getTexture(face.texture);
             if (texture == null) {
                 mapViewer.getLoggerFactory().getLogger("Model").warn("Missing texture: " + face.texture);
                 return;

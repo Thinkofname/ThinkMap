@@ -33,6 +33,7 @@ import uk.co.thinkofdeath.mapviewer.client.worker.WorkerPool;
 import uk.co.thinkofdeath.mapviewer.client.world.ClientChunk;
 import uk.co.thinkofdeath.mapviewer.client.world.ClientWorld;
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
+import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.TextureMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockRegistry;
 import uk.co.thinkofdeath.mapviewer.shared.logging.LoggerFactory;
@@ -56,7 +57,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     private final WorkerPool workerPool = new WorkerPool(this, NUMBER_OF_WORKERS);
     private final InputManager inputManager = new InputManager(this);
     private ImageElement texture;
-    private HashMap<String, TextureMap.Texture> textures = new HashMap<>();
+    private HashMap<String, Texture> textures = new HashMap<>();
     private XMLHttpRequest xhr;
     private int loaded = 0;
     private Connection connection;
@@ -93,7 +94,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
         TextureMap tmap = Json.parse((String) xhr.getResponse());
         tmap.forEach(new TextureMap.Looper() {
             @Override
-            public void forEach(String k, TextureMap.Texture v) {
+            public void forEach(String k, Texture v) {
                 textures.put(k, v);
             }
         });
@@ -204,7 +205,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
      * {@inheritDoc}
      */
     @Override
-    public TextureMap.Texture getTexture(String name) {
+    public Texture getTexture(String name) {
         return textures.get(name);
     }
 
