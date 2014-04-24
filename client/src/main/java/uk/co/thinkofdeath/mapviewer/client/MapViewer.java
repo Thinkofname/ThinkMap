@@ -67,7 +67,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
         // Texture
         texture = (ImageElement) Browser.getDocument().createElement("img");
         texture.setOnload(this);
-        texture.setSrc("../block_images/blocks.png");
+        texture.setSrc("./block_images/blocks.png");
         // Atlas to look up position of textures in the above image
         xhr = Browser.getWindow().newXMLHttpRequest();
         xhr.open("GET", "../block_images/blocks.json", true);
