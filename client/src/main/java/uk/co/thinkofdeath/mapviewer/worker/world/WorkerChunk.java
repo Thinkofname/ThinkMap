@@ -31,6 +31,7 @@ import uk.co.thinkofdeath.mapviewer.shared.world.Chunk;
 import uk.co.thinkofdeath.mapviewer.shared.world.ChunkSection;
 import uk.co.thinkofdeath.mapviewer.worker.Worker;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class WorkerChunk extends Chunk {
@@ -119,11 +120,13 @@ public class WorkerChunk extends Chunk {
     // Sends the chunk back to the requester
     private void sendChunk() {
         ChunkLoadedMessage message = ChunkLoadedMessage.create(getX(), getZ());
-
+        ArrayList<Object> buffers = new ArrayList<>();
         // Copy sections
         for (int i = 0; i < 16; i++) {
             if (sections[i] != null) {
-                message.setSection(i, sections[i].getCount(), sections[i].getBuffer());
+                TUint8Array data = TUint8Array.create(sections[i].getBuffer());
+                buffers.add(data.getBuffer());
+                message.setSection(i, sections[i].getCount(), data);
             }
         }
 
@@ -139,7 +142,9 @@ public class WorkerChunk extends Chunk {
             message.addBlockIdMapping(e.getKey(), e.getValue());
         }
 
-        ((Worker) world.getMapViewer()).postMessage(WorkerMessage.create("chunk:loaded", message, false));
+        ((Worker) world.getMapViewer()).postMessage(
+                WorkerMessage.create("chunk:loaded", message, false),
+                buffers.toArray(new Object[buffers.size()]));
     }
 
     /**
