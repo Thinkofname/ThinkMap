@@ -19,6 +19,7 @@ package uk.co.thinkofdeath.mapviewer.shared.block;
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.block.blocks.*;
 import uk.co.thinkofdeath.mapviewer.shared.logging.Logger;
+import uk.co.thinkofdeath.mapviewer.shared.support.IntMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +30,7 @@ public class BlockRegistry {
     private IMapViewer mapViewer;
     private Map<String, Block> blockMap = new HashMap<>();
     private Map<String, Map<StateMap, Block>> blockStateMap = new HashMap<>();
-    private Map<Integer, Block> legacyMap = new HashMap<>();
+    private IntMap<Block> legacyMap = IntMap.create();
 
     /**
      * Creates a block registry which contains all the known blocks
@@ -149,7 +150,7 @@ public class BlockRegistry {
                 int data = block.getLegacyData();
                 if (data == -1) continue; // Virtual block
                 int legacyVal = (legacyId << 4) | data;
-                if (legacyMap.containsKey(legacyVal)) {
+                if (legacyMap.get(legacyVal) != null) {
                     throw new IllegalArgumentException(block.toString() + " tried to register a duplicate block id "
                             + legacyId + ":" + block.getLegacyData());
                 }
