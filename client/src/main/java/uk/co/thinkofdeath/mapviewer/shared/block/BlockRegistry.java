@@ -44,18 +44,14 @@ public class BlockRegistry {
     }
 
     /**
-     * Returns a block by its name. If the 'plugin:' prefix is omitted then it is assumed to be
-     * minecraft
+     * Returns a block by its name.
      *
      * @param name
      *         The name of the block
      * @return The block or null
      */
     public Block get(String name) {
-        if (name.contains(":")) {
-            return blockMap.get(name);
-        }
-        return get("minecraft", name);
+        return blockMap.get(name);
     }
 
     /**
