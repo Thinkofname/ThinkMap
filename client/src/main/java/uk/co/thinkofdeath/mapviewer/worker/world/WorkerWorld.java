@@ -21,6 +21,8 @@ import uk.co.thinkofdeath.mapviewer.worker.Worker;
 
 public class WorkerWorld extends World {
 
+    final Worker worker;
+
     /**
      * Creates a world designed to run on workers
      *
@@ -29,5 +31,6 @@ public class WorkerWorld extends World {
      */
     public WorkerWorld(Worker worker) {
         super(worker);
+        this.worker = worker;
     }
 }

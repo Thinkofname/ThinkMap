@@ -19,6 +19,7 @@ package uk.co.thinkofdeath.mapviewer.worker.world;
 import com.google.gwt.core.client.JsArrayInteger;
 import elemental.html.ArrayBuffer;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
+import uk.co.thinkofdeath.mapviewer.shared.block.BlockRegistry;
 import uk.co.thinkofdeath.mapviewer.shared.block.Blocks;
 import uk.co.thinkofdeath.mapviewer.shared.building.ModelBuilder;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
@@ -29,7 +30,6 @@ import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkLoadedMessage;
 import uk.co.thinkofdeath.mapviewer.shared.worker.WorkerMessage;
 import uk.co.thinkofdeath.mapviewer.shared.world.Chunk;
 import uk.co.thinkofdeath.mapviewer.shared.world.ChunkSection;
-import uk.co.thinkofdeath.mapviewer.worker.Worker;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -49,6 +49,7 @@ public class WorkerChunk extends Chunk {
     public WorkerChunk(WorkerWorld world, int x, int z, ArrayBuffer data, boolean reply) {
         super(world, x, z);
         this.world = world;
+        BlockRegistry blockRegistry = world.getMapViewer().getBlockRegistry();
 
         TUint8Array byteData = TUint8Array.create(data, 0, data.getByteLength());
         DataReader dataReader = DataReader.create(data);
@@ -80,7 +81,7 @@ public class WorkerChunk extends Chunk {
                         int sky = byteData.get(offset + 4);
                         offset += 5;
 
-                        Block block = world.getMapViewer().getBlockRegistry().get(id, dataVal);
+                        Block block = blockRegistry.get(id, dataVal);
                         if (block == null) {
                             block = Blocks.MISSING_BLOCK;
                         }
@@ -113,7 +114,7 @@ public class WorkerChunk extends Chunk {
         if (reply) {
             sendChunk();
         } else {
-            ((Worker) world.getMapViewer()).postMessage(WorkerMessage.create("null", null, false));
+            world.worker.postMessage(WorkerMessage.create("null", null, false));
         }
     }
 
@@ -142,7 +143,7 @@ public class WorkerChunk extends Chunk {
             message.addBlockIdMapping(e.getKey(), e.getValue());
         }
 
-        ((Worker) world.getMapViewer()).postMessage(
+        world.worker.postMessage(
                 WorkerMessage.create("chunk:loaded", message, false),
                 buffers.toArray(new Object[buffers.size()]));
     }
@@ -174,7 +175,7 @@ public class WorkerChunk extends Chunk {
             }
         }
         TUint8Array data = builder.toTypedArray();
-        ((Worker) world.getMapViewer()).postMessage(WorkerMessage.create("chunk:build",
+        world.worker.postMessage(WorkerMessage.create("chunk:build",
                 ChunkBuildReply.create(getX(), getZ(), sectionNumber, buildNumber, data),
                 false), new Object[]{data.getBuffer()});
     }
