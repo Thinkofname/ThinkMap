@@ -266,8 +266,11 @@ public class BlockRegistry {
                 .solid(false)
                 .collidable(false)
                 .create(), 31);
-
-
+        register("minecraft", "deadbush", new BlockBuilder(mapViewer)
+                .model(BlockModels.createCross(mapViewer.getTexture("deadbush")))
+                .solid(false)
+                .collidable(false)
+                .create(), 32);
         register("minecraft", "piston", new BlockBuilder(new BlockPiston(mapViewer, "normal"))
                 .solid(false)
                 .create(), 33);
