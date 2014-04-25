@@ -244,6 +244,22 @@ public class BlockRegistry {
         register("minecraft", "bed", new BlockBuilder(new BlockBed(mapViewer))
                 .solid(false)
                 .create(), 26);
+        register("minecraft", "golden_rail", new BlockBuilder(new BlockPoweredRail(mapViewer,
+                "rail_golden"))
+                .solid(false)
+                .collidable(false)
+                .create(), 27);
+        register("minecraft", "detector_rail", new BlockBuilder(new BlockPoweredRail(mapViewer,
+                "rail_detector"))
+                .solid(false)
+                .collidable(false)
+                .create(), 28);
+
+        register("minecraft", "rail", new BlockBuilder(new BlockRail(mapViewer))
+                .texture("rail_normal")
+                .solid(false)
+                .collidable(false)
+                .create(), 66);
 
         register("minecraft", "vine", new BlockBuilder(new BlockVine(mapViewer))
                 .solid(false)
@@ -257,6 +273,11 @@ public class BlockRegistry {
                 .texture("quartz_ore")
                 .create(), 153);
 
+        register("minecraft", "activator_rail", new BlockBuilder(new BlockPoweredRail(mapViewer,
+                "rail_activator"))
+                .solid(false)
+                .collidable(false)
+                .create(), 157);
         register("minecraft", "dropper", new BlockBuilder(new BlockDispenser(mapViewer, "dropper"))
                 .create(), 158);
 
