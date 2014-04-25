@@ -147,7 +147,7 @@ public class Model {
         return new LightInfo(emittedLight / count, skyLight / count);
     }
 
-    private static final List<Face> rotationHelper = Arrays.asList(
+    private static final List<Face> rotationHelperY = Arrays.asList(
             Face.LEFT,
             Face.FRONT,
             Face.RIGHT,
@@ -164,17 +164,25 @@ public class Model {
     public Model rotateY(float deg) {
         rotate(deg, 0, 1, 0);
         for (ModelFace face : faces) {
-            int idx = rotationHelper.indexOf(face.getFace());
+            int idx = rotationHelperY.indexOf(face.getFace());
             if (idx != -1) {
-                int nIDX = (idx + Math.round(deg / 90)) % rotationHelper.size();
-                face.setFace(rotationHelper.get(nIDX));
-                if (idx == (nIDX + 2) % rotationHelper.size()) {
+                int nIDX = (idx + Math.round(deg / 90)) % rotationHelperY.size();
+                face.setFace(rotationHelperY.get(nIDX));
+                if (idx == (nIDX + 2) % rotationHelperY.size()) {
                     face.offset = 16 - face.offset;
                 }
             }
         }
         return this;
     }
+
+    // TODO: Check
+    private static final List<Face> rotationHelperX = Arrays.asList(
+            Face.FRONT,
+            Face.TOP,
+            Face.BACK,
+            Face.BOTTOM
+    );
 
 
     /**
@@ -186,8 +194,26 @@ public class Model {
      */
     public Model rotateX(float deg) {
         rotate(deg, 1, 0, 0);
+        for (ModelFace face : faces) {
+            int idx = rotationHelperX.indexOf(face.getFace());
+            if (idx != -1) {
+                int nIDX = (idx + Math.round(deg / 90)) % rotationHelperX.size();
+                face.setFace(rotationHelperX.get(nIDX));
+                if (idx == (nIDX + 2) % rotationHelperX.size()) {
+                    face.offset = 16 - face.offset;
+                }
+            }
+        }
         return this;
     }
+
+    // TODO: Check
+    private static final List<Face> rotationHelperZ = Arrays.asList(
+            Face.LEFT,
+            Face.TOP,
+            Face.RIGHT,
+            Face.BOTTOM
+    );
 
 
     /**
@@ -199,6 +225,16 @@ public class Model {
      */
     public Model rotateZ(float deg) {
         rotate(deg, 0, 0, 1);
+        for (ModelFace face : faces) {
+            int idx = rotationHelperZ.indexOf(face.getFace());
+            if (idx != -1) {
+                int nIDX = (idx + Math.round(deg / 90)) % rotationHelperZ.size();
+                face.setFace(rotationHelperZ.get(nIDX));
+                if (idx == (nIDX + 2) % rotationHelperZ.size()) {
+                    face.offset = 16 - face.offset;
+                }
+            }
+        }
         return this;
     }
 

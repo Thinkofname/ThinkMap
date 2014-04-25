@@ -254,6 +254,13 @@ public class BlockRegistry {
                 .solid(false)
                 .collidable(false)
                 .create(), 28);
+        register("minecraft", "sticky_piston", new BlockBuilder(new BlockPiston(mapViewer, "sticky"))
+                .solid(false)
+                .create(), 29);
+
+        register("minecraft", "piston", new BlockBuilder(new BlockPiston(mapViewer, "normal"))
+                .solid(false)
+                .create(), 33);
 
         register("minecraft", "rail", new BlockBuilder(new BlockRail(mapViewer))
                 .texture("rail_normal")
