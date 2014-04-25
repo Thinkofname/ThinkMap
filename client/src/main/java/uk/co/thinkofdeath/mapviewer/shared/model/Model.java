@@ -178,10 +178,10 @@ public class Model {
 
     // TODO: Check
     private static final List<Face> rotationHelperX = Arrays.asList(
-            Face.FRONT,
-            Face.TOP,
             Face.BACK,
-            Face.BOTTOM
+            Face.BOTTOM,
+            Face.FRONT,
+            Face.TOP
     );
 
 
