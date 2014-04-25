@@ -277,6 +277,8 @@ public class BlockRegistry {
         register("minecraft", "piston_head", new BlockBuilder(new BlockPistonHead(mapViewer))
                 .solid(false)
                 .create(), 34);
+        register("minecraft", "wool", new BlockBuilder(new BlockWool(mapViewer))
+                .create(), 35);
 
         register("minecraft", "rail", new BlockBuilder(new BlockRail(mapViewer))
                 .texture("rail_normal")
