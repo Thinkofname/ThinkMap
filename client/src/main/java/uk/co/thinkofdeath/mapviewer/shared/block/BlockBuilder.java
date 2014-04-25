@@ -17,6 +17,7 @@
 package uk.co.thinkofdeath.mapviewer.shared.block;
 
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
+import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 
 public class BlockBuilder {
 
@@ -113,6 +114,11 @@ public class BlockBuilder {
      */
     public BlockBuilder state(String name, BlockState blockState) {
         block.addState(name, blockState);
+        return this;
+    }
+
+    public BlockBuilder model(Model model) {
+        block.model = model;
         return this;
     }
 }

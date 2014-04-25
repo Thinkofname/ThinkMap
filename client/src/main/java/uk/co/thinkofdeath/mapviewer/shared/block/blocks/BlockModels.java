@@ -7,7 +7,7 @@ import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelVertex;
 
-class BlockModels {
+public class BlockModels {
 
     public static Model createCross(Texture texture) {
         return createCross(texture, 0xFFFFFF);

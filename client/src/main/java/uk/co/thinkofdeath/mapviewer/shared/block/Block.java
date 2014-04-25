@@ -47,6 +47,7 @@ public class Block implements Model.RenderChecker {
         collidable = factory.collidable;
         transparent = factory.transparent;
         texture = factory.getTexture();
+        model = factory.model;
     }
 
     /**

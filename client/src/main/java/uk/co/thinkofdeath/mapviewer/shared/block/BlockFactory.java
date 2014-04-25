@@ -18,6 +18,7 @@ package uk.co.thinkofdeath.mapviewer.shared.block;
 
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
+import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ public class BlockFactory {
     boolean collidable = true;
     boolean transparent = false;
     String texture;
+    Model model;
     protected IMapViewer mapViewer;
 
     /**
