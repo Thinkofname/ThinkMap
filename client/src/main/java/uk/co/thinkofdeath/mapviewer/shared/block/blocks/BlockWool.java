@@ -29,7 +29,7 @@ public class BlockWool extends BlockFactory {
         WHITE,
         ORANGE,
         MAGENTA,
-        LIGHTBLUE("lightBlue", "light_blue"), // Because keeping a single standard is hard
+        LIGHT_BLUE("lightBlue", "light_blue"), // Because keeping a single standard is hard
         YELLOW,
         LIME,
         PINK,
