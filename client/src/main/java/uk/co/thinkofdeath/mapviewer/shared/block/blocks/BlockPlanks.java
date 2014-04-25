@@ -20,7 +20,7 @@ public class BlockPlanks extends BlockFactory {
 
         textures = new Texture[Type.values().length];
         for (Type type : Type.values()) {
-            textures[type.ordinal()] = iMapViewer.getTexture("leaves_" + type);
+            textures[type.ordinal()] = iMapViewer.getTexture("planks_" + type);
         }
     }
 
