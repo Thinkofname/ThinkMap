@@ -262,6 +262,10 @@ public class BlockRegistry {
                 .solid(false)
                 .collidable(false)
                 .create(), 30);
+        register("minecraft", "tallgrass", new BlockBuilder(new BlockTallGrass(mapViewer))
+                .solid(false)
+                .collidable(false)
+                .create(), 31);
 
 
         register("minecraft", "piston", new BlockBuilder(new BlockPiston(mapViewer, "normal"))
