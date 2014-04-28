@@ -41,4 +41,12 @@ public interface Logger {
      *         The object to log
      */
     public void warn(Object o);
+
+    /**
+     * Logs a message with the log level of err
+     *
+     * @param o
+     *         The object to log
+     */
+    public void error(Object o);
 }

@@ -206,6 +206,9 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
      */
     @Override
     public Texture getTexture(String name) {
+        if (!textures.containsKey(name)) {
+            loggerFactory.getLogger("textures").error("Texture not found: " + name);
+        }
         return textures.get(name);
     }
 

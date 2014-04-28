@@ -279,6 +279,80 @@ public class BlockRegistry {
                 .create(), 34);
         register("minecraft", "wool", new BlockBuilder(new BlockWool(mapViewer))
                 .create(), 35);
+        register("minecraft", "piston_extension", new BlockBuilder(mapViewer)
+                .renderable(false)
+                .solid(false)
+                .collidable(false)
+                .create(), 36);
+        register("minecraft", "yellow_flower", new BlockBuilder(mapViewer)
+                .model(BlockModels.createCross(mapViewer.getTexture("flower_dandelion")))
+                .solid(false)
+                .collidable(false)
+                .create(), 37);
+
+        // TODO: red_flower
+
+        register("minecraft", "brown_mushroom", new BlockBuilder(mapViewer)
+                .model(BlockModels.createCross(mapViewer.getTexture("mushroom_brown")))
+                .solid(false)
+                .collidable(false)
+                .create(), 39);
+        register("minecraft", "red_mushroom", new BlockBuilder(mapViewer)
+                .model(BlockModels.createCross(mapViewer.getTexture("mushroom_red")))
+                .solid(false)
+                .collidable(false)
+                .create(), 40);
+        register("minecraft", "gold_block", new BlockBuilder(mapViewer)
+                .texture("gold_block")
+                .create(), 41);
+        register("minecraft", "iron_block", new BlockBuilder(mapViewer)
+                .texture("iron_block")
+                .create(), 42);
+
+        // TODO: double_stone_slab
+        // TODO: stone_slab
+
+        register("minecraft", "brick_block", new BlockBuilder(mapViewer)
+                .texture("brick")
+                .create(), 45);
+
+        // TODO: tnt
+        // TODO: bookshelf
+
+        register("minecraft", "mossy_cobblestone", new BlockBuilder(mapViewer)
+                .texture("cobblestone_mossy")
+                .create(), 48);
+        register("minecraft", "obsidian", new BlockBuilder(mapViewer)
+                .texture("obsidian")
+                .create(), 49);
+
+        // TODO: torch
+        // TODO: fire
+
+        register("minecraft", "mob_spawner", new BlockBuilder(mapViewer)
+                .texture("mob_spawner")
+                .solid(false)
+                .create(), 52);
+
+        // TODO: oak_stairs
+        // TODO: chest
+        // TODO: redstone_wire
+
+        register("minecraft", "diamond_ore", new BlockBuilder(mapViewer)
+                .texture("diamond_ore")
+                .create(), 56);
+        register("minecraft", "diamond_block", new BlockBuilder(mapViewer)
+                .texture("diamond_block")
+                .create(), 57);
+
+        // TODO: crafting_table
+        // TODO: wheat
+        // TODO: farmland
+        // TODO: furnace
+        // TODO: lit_furnace
+        // TODO: standing_sign
+        // TODO: wooden_door
+        // TODO: ladder
 
         register("minecraft", "rail", new BlockBuilder(new BlockRail(mapViewer))
                 .texture("rail_normal")
@@ -286,17 +360,160 @@ public class BlockRegistry {
                 .collidable(false)
                 .create(), 66);
 
+        // TODO: stone_stairs
+        // TODO: wall_sign
+        // TODO: lever
+        // TODO: stone_pressure_plate
+        // TODO: iron_door
+        // TODO: wooden_pressure_plate
+
+        register("minecraft", "redstone_ore", new BlockBuilder(mapViewer)
+                .texture("redstone_ore")
+                .create(), 73);
+        register("minecraft", "lit_redstone_ore", new BlockBuilder(mapViewer)
+                .texture("redstone_ore")
+                .create(), 74);
+
+        // TODO: unlit_redstone_torch
+        // TODO: redstone_torch
+        // TODO: stone_button
+        // TODO: snow_layer
+
+
+        register("minecraft", "ice", new BlockBuilder(mapViewer)
+                .texture("ice")
+                .solid(false)
+                .transparent(false /*TODO*/)
+                .create(), 79);
+        register("minecraft", "snow", new BlockBuilder(mapViewer)
+                .texture("snow")
+                .create(), 80);
+
+        // TODO: cactus
+
+        register("minecraft", "clay", new BlockBuilder(mapViewer)
+                .texture("clay")
+                .create(), 82);
+
+        // TODO: reeds
+        // TODO: jukebox
+        // TODO: fence
+        // TODO: pumpkin
+
+        register("minecraft", "netherrack", new BlockBuilder(mapViewer)
+                .texture("netherrack")
+                .create(), 87);
+        register("minecraft", "soul_sand", new BlockBuilder(mapViewer)
+                .texture("soul_sand")
+                .create(), 88);
+        register("minecraft", "glowstone", new BlockBuilder(mapViewer)
+                .texture("glowstone")
+                .create(), 89);
+
+        // TODO: portal
+        // TODO: lit_pumpkin
+        // TODO: cake
+        // TODO: unpowered_repeater
+        // TODO: powered_repeater
+        // TODO: stained_glass
+        // TODO: trapdoor
+        // TODO: monster_egg
+        // TODO: stonebrick
+        // TODO: brown_mushroom_block
+        // TODO: red_mushroom_block
+        // TODO: iron_bars
+        // TODO: glass_pane
+        // TODO: melon_block
+        // TODO: pumpkin_stem
+        // TODO: melon_stem
+
         register("minecraft", "vine", new BlockBuilder(new BlockVine(mapViewer))
                 .solid(false)
                 .create(), 106);
+
+        // TODO: fence_gate
+        // TODO: brick_stairs
+        // TODO: stone_brick_stairs
+        // TODO: mycelium
+        // TODO: waterlily
+
+        register("minecraft", "nether_brick", new BlockBuilder(mapViewer)
+                .texture("nether_brick")
+                .create(), 112);
+
+        // TODO: nether_brick_fence
+        // TODO: nether_brick_stairs
+        // TODO: nether_wart
+        // TODO: enchanting_table
+        // TODO: brewing_stand
+        // TODO: cauldron
+        // TODO: end_portal
+        // TODO: end_portal_frame
+
+        register("minecraft", "end_stone", new BlockBuilder(mapViewer)
+                .texture("end_stone")
+                .create(), 121);
+
+        // TODO: dragon_egg
+
+        register("minecraft", "redstone_lamp", new BlockBuilder(mapViewer)
+                .texture("redstone_lamp_off")
+                .create(), 123);
+        register("minecraft", "lit_redstone_lamp", new BlockBuilder(mapViewer)
+                .texture("redstone_lamp_on")
+                .create(), 124);
+
+        // TODO: double_wooden_slab
+        // TODO: wooden_slab
+        // TODO: cocoa
+        // TODO: sandstone_stair
 
         register("minecraft", "emerald_ore", new BlockBuilder(mapViewer)
                 .texture("emerald_ore")
                 .create(), 129);
 
+        // TODO: ender_chest
+        // TODO: tripwire_hook
+        // TODO: tripwire
+
+        register("minecraft", "emerald_block", new BlockBuilder(mapViewer)
+                .texture("emerald_block")
+                .create(), 133);
+
+        // TODO: spruce_stairs
+        // TODO: birch_stairs
+        // TODO: jungle_stairs
+
+
+        register("minecraft", "command_block", new BlockBuilder(mapViewer)
+                .texture("command_block")
+                .create(), 137);
+
+        // TODO: beacon
+        // TODO: cobblestone_wall
+        // TODO: flower_pot
+        // TODO: carrots
+        // TODO: potatoes
+        // TODO: wooden_button
+        // TODO: skull
+        // TODO: anvil
+        // TODO: trapped_chest
+        // TODO: light_weighted_pressure_plate
+        // TODO: heavy_weighted_pressure_plate
+        // TODO: unpowered_comparator
+        // TODO: powered_comparator
+        // TODO: daylight_detector
+
+        register("minecraft", "redstone_block", new BlockBuilder(mapViewer)
+                .texture("redstone_block")
+                .create(), 152);
         register("minecraft", "quartz_ore", new BlockBuilder(mapViewer)
                 .texture("quartz_ore")
                 .create(), 153);
+
+        // TODO: hopper
+        // TODO: quartz_block
+        // TODO: quartz_stairs
 
         register("minecraft", "activator_rail", new BlockBuilder(new BlockPoweredRail(mapViewer,
                 "rail_activator"))
@@ -305,6 +522,19 @@ public class BlockRegistry {
                 .create(), 157);
         register("minecraft", "dropper", new BlockBuilder(new BlockDispenser(mapViewer, "dropper"))
                 .create(), 158);
+
+        // TODO: stained_hardened_clay
+        // TODO: stained_glass_pane
+        // TODO: leaves2
+        // TODO: log2
+        // TODO: acacia_stairs
+        // TODO: dark_oak_stairs
+        // TODO: hay_block
+        // TODO: carpet
+        // TODO: hardened_clay
+        // TODO: coal_block
+        // TODO: packed_ice
+        // TODO: double_plant
 
         // ThinkMap blocks
         register("thinkmap", "missing_block", new BlockBuilder(mapViewer)
@@ -315,5 +545,8 @@ public class BlockRegistry {
                 .create());
 
         Blocks.init(this);
+
+        logger.info("Blocks registered: " + blockMap.size() + " (" + blockStateMap.size() +
+                " excluding states)");
     }
 }

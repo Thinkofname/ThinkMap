@@ -37,6 +37,11 @@ public class WorkerLogger implements LoggerFactory {
         public void warn(Object o) {
 
         }
+
+        @Override
+        public void error(Object o) {
+
+        }
     };
 
     /**

@@ -28,6 +28,7 @@ public class ClientLogger implements LoggerFactory {
     public static final int DEBUG = 0;
     public static final int INFO = 1;
     public static final int WARN = 2;
+    public static final int ERROR = 3;
 
     private final int logLevel;
     private final Map<String, Logger> loggers = new HashMap<>();
@@ -84,6 +85,16 @@ public class ClientLogger implements LoggerFactory {
         public void warn(Object o) {
             if (logLevel <= WARN) {
                 Browser.getWindow().getConsole().warn(o);
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void error(Object o) {
+            if (logLevel <= ERROR) {
+                Browser.getWindow().getConsole().error(o);
             }
         }
     }
