@@ -165,10 +165,22 @@ public class Renderer implements ResizeHandler, Runnable {
         requestAnimationFrame(this);
     }
 
+    /**
+     * Adds a chunk object to the renderer
+     *
+     * @param renderObject
+     *         The object to render
+     */
     public void postChunkObject(ChunkRenderObject renderObject) {
         renderObjectList.add(renderObject);
     }
 
+    /**
+     * Removes a chunk object from the renderer
+     *
+     * @param renderObject
+     *         The object to remove
+     */
     public void removeChunkObject(ChunkRenderObject renderObject) {
         renderObjectList.remove(renderObject);
         gl.deleteBuffer(renderObject.buffer);
