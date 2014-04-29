@@ -277,7 +277,7 @@ public class BlockRegistry {
         register("minecraft", "piston_head", new BlockBuilder(new BlockPistonHead(mapViewer))
                 .solid(false)
                 .create(), 34);
-        register("minecraft", "wool", new BlockBuilder(new BlockWool(mapViewer))
+        register("minecraft", "wool", new BlockBuilder(new BlockColoured(mapViewer, "wool_colored_"))
                 .create(), 35);
         register("minecraft", "piston_extension", new BlockBuilder(mapViewer)
                 .renderable(false)
@@ -415,7 +415,14 @@ public class BlockRegistry {
         // TODO: cake
         // TODO: unpowered_repeater
         // TODO: powered_repeater
-        // TODO: stained_glass
+
+        register("minecraft", "stained_glass",
+                new BlockBuilder(new BlockColoured(mapViewer, "glass_"))
+                        .solid(false)
+                        .transparent(false /*TODO*/)
+                        .create(), 95
+        );
+
         // TODO: trapdoor
         // TODO: monster_egg
         // TODO: stonebrick

@@ -8,20 +8,20 @@ import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
 import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
 
-public class BlockWool extends BlockFactory {
+public class BlockColoured extends BlockFactory {
 
     public static final String COLOUR = "color";
 
     private final Texture[] textures;
 
-    public BlockWool(IMapViewer mapViewer) {
+    public BlockColoured(IMapViewer mapViewer, String prefix) {
         super(mapViewer);
 
         addState(COLOUR, new EnumState(Colour.class));
 
         textures = new Texture[Colour.values().length];
         for (Colour colour : Colour.values()) {
-            textures[colour.ordinal()] = mapViewer.getTexture("wool_colored_" + colour.texture);
+            textures[colour.ordinal()] = mapViewer.getTexture(prefix + colour.texture);
         }
     }
 
@@ -69,7 +69,7 @@ public class BlockWool extends BlockFactory {
 
     private class BlockImpl extends Block {
         public BlockImpl(StateMap states) {
-            super(BlockWool.this, states);
+            super(BlockColoured.this, states);
         }
 
         @Override
