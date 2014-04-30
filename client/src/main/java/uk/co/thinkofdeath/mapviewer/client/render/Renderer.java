@@ -46,6 +46,7 @@ public class Renderer implements ResizeHandler, Runnable {
 
     private final Camera camera = new Camera();
     private int cx = Integer.MAX_VALUE;
+    private int cy = Integer.MAX_VALUE;
     private int cz = Integer.MAX_VALUE;
 
     // Matrices
@@ -192,11 +193,13 @@ public class Renderer implements ResizeHandler, Runnable {
         Collections.sort(sortableRenderObjects, new SortableSorter(camera));
 
         int nx = (int) camera.getX();
+        int ny = (int) camera.getY();
         int nz = (int) camera.getZ();
 
         boolean moved = false;
-        if (cx != nx || cz != nz) {
+        if (cx != nx || cy != ny || cz != nz) {
             cx = nx;
+            cy = ny;
             cz = nz;
             moved = true;
         }
