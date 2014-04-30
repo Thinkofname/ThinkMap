@@ -71,6 +71,8 @@ public class Model {
      *         The z offset
      * @param chunk
      *         The chunk this relative to
+     * @param renderChecker
+     *         The RenderChecker to use for culling
      */
     public void render(ModelBuilder builder, int x, int y, int z, Chunk chunk,
                        RenderChecker renderChecker) {
@@ -116,7 +118,7 @@ public class Model {
         }
     }
 
-    private static LightInfo calculateLight(World world, float x, float y, float z, Face face) {
+    public static LightInfo calculateLight(World world, float x, float y, float z, Face face) {
         int emittedLight = world.getEmittedLight((int) x, (int) y, (int) z);
         int skyLight = world.getSkyLight((int) x, (int) y, (int) z);
 
@@ -384,6 +386,7 @@ public class Model {
     public void addFace(ModelFace modelFace) {
         faces.add(modelFace);
     }
+
 
     /**
      * Used for checking whether this model can render against certain blocks

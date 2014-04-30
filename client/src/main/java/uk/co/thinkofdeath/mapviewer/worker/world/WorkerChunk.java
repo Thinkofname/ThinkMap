@@ -23,6 +23,7 @@ import uk.co.thinkofdeath.mapviewer.shared.block.BlockRegistry;
 import uk.co.thinkofdeath.mapviewer.shared.block.Blocks;
 import uk.co.thinkofdeath.mapviewer.shared.building.ModelBuilder;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
+import uk.co.thinkofdeath.mapviewer.shared.model.SendableModel;
 import uk.co.thinkofdeath.mapviewer.shared.support.DataReader;
 import uk.co.thinkofdeath.mapviewer.shared.support.TUint8Array;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkBuildReply;
@@ -157,26 +158,33 @@ public class WorkerChunk extends Chunk {
      *         The id for this build
      */
     public void build(int sectionNumber, int buildNumber) {
-        //TODO: Handle transparent blocks
         ModelBuilder builder = new ModelBuilder();
+        ArrayList<SendableModel> models = new ArrayList<>();
         for (int y = 0; y < 16; y++) {
             for (int z = 0; z < 16; z++) {
                 for (int x = 0; x < 16; x++) {
                     Block block = getBlock(x, (sectionNumber << 4) + y, z);
                     if (block.isRenderable()) {
+                        Model model = block.getModel();
                         if (!block.isTransparent()) {
-                            Model model = block.getModel();
                             model.render(builder, x, (sectionNumber << 4) + y, z, this, block);
                         } else {
-                            // TODO: Handle
+                            models.add(
+                                    SendableModel.create(model, x, (sectionNumber << 4) + y, z, block)
+                            );
                         }
                     }
                 }
             }
         }
+        if (models.size() == 0) {
+            models = null;
+        }
         TUint8Array data = builder.toTypedArray();
         world.worker.postMessage(WorkerMessage.create("chunk:build",
-                ChunkBuildReply.create(getX(), getZ(), sectionNumber, buildNumber, data),
-                false), new Object[]{data.getBuffer()});
+                ChunkBuildReply.create(getX(), getZ(), sectionNumber, buildNumber, data,
+                        models),
+                false
+        ), new Object[]{data.getBuffer()});
     }
 }

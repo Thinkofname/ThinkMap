@@ -258,8 +258,17 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
                 ChunkBuildReply chunkBuildReply = (ChunkBuildReply) message.getMessage();
                 ClientChunk chunk = (ClientChunk) world.getChunk(chunkBuildReply.getX(), chunkBuildReply.getZ());
                 if (chunk != null) {
-                    chunk.fillBuffer(chunkBuildReply.getBuildNumber(),
-                            chunkBuildReply.getSectionNumber(), chunkBuildReply.getData());
+                    if (chunk.checkAndSetBuildNumber(chunkBuildReply.getBuildNumber(),
+                            chunkBuildReply.getSectionNumber())) {
+                        chunk.fillBuffer(
+                                chunkBuildReply.getSectionNumber(), chunkBuildReply.getData());
+                        if (chunkBuildReply.getTransparentData() != null) {
+                            chunk.setTransparentModels(chunkBuildReply.getTransparentData(),
+                                    chunkBuildReply.getSectionNumber());
+                        } else {
+                            chunk.setTransparentModels(null, chunkBuildReply.getSectionNumber());
+                        }
+                    }
                 }
                 break;
             default:

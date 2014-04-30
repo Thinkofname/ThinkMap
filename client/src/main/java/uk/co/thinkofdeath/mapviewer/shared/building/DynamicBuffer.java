@@ -77,6 +77,13 @@ public class DynamicBuffer {
     }
 
     /**
+     * Resets the buffer for reused
+     */
+    public void reset() {
+        offset = 0;
+    }
+
+    /**
      * Returns a view into the buffer sized at the final size of the buffer
      *
      * @return The view into the array

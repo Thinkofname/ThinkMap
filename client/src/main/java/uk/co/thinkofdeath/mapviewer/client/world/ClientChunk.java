@@ -16,12 +16,18 @@
 
 package uk.co.thinkofdeath.mapviewer.client.world;
 
+import com.google.gwt.core.client.JsArray;
 import uk.co.thinkofdeath.mapviewer.client.render.ChunkRenderObject;
+import uk.co.thinkofdeath.mapviewer.client.render.SortableRenderObject;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
+import uk.co.thinkofdeath.mapviewer.shared.model.SendableModel;
 import uk.co.thinkofdeath.mapviewer.shared.support.TUint8Array;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkLoadedMessage;
 import uk.co.thinkofdeath.mapviewer.shared.world.Chunk;
 import uk.co.thinkofdeath.mapviewer.shared.world.ChunkSection;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientChunk extends Chunk {
 
@@ -30,7 +36,8 @@ public class ClientChunk extends Chunk {
     private final boolean[] outdatedSections = new boolean[16];
     private final int[] buildNumbers = new int[16];
     private final ChunkRenderObject[] renderObjects = new ChunkRenderObject[16];
-    private int lastBuilderNumber = 0;
+    private int lastBuildNumber = 0;
+    private SortableRenderObject[] sortableRenderObjects = new SortableRenderObject[16];
 
     /**
      * Creates a client-side chunk
@@ -60,31 +67,69 @@ public class ClientChunk extends Chunk {
         for (int i = 0; i < 16; i++) {
             if (sections[i] != null && outdatedSections[i]) {
                 outdatedSections[i] = false;
-                /*
-                world.mapViewer.getWorkerPool().sendMessage("chunk:build",
-                        ChunkBuildMessage.create(getX(), getZ(), i, ++lastBuilderNumber),
-                        new Object[0]);
-                */
-                world.requestBuild(this, i, ++lastBuilderNumber);
+                world.requestBuild(this, i, ++lastBuildNumber);
             }
+        }
+    }
+
+    public boolean checkAndSetBuildNumber(int buildNumber, int sectionNumber) {
+        if (buildNumber < buildNumbers[sectionNumber] || isUnloaded()) {
+            return false;
+        }
+        buildNumbers[sectionNumber] = buildNumber;
+        return true;
+    }
+
+    /**
+     * Sets the BSPTree that contains the transparent objects in this chunk
+     *
+     * @param models
+     *         The BSPTree
+     */
+    public void setTransparentModels(final JsArray<SendableModel> models, final int i) {
+
+        if (sortableRenderObjects[i] != null) {
+            world.mapViewer.getRenderer().removeSortable(sortableRenderObjects[i]);
+        }
+        if (models != null) {
+            final ArrayList<SendableModel> mdls = new ArrayList<>();
+            for (int j = 0; j < models.length(); j++) {
+                mdls.add(models.get(j));
+            }
+            sortableRenderObjects[i] = new SortableRenderObject() {
+                @Override
+                public List<SendableModel> getModels() {
+                    return mdls;
+                }
+
+                @Override
+                public int getX() {
+                    return ClientChunk.this.getX();
+                }
+
+                @Override
+                public int getY() {
+                    return i;
+                }
+
+                @Override
+                public int getZ() {
+                    return ClientChunk.this.getZ();
+                }
+            };
+            world.mapViewer.getRenderer().postSortable(sortableRenderObjects[i]);
         }
     }
 
     /**
      * Creates and fills this chunk's WebGL buffer
      *
-     * @param buildNumber
-     *         The build number
      * @param sectionNumber
      *         The section number
      * @param data
      *         The data
      */
-    public void fillBuffer(int buildNumber, int sectionNumber, TUint8Array data) {
-        if (buildNumber < buildNumbers[sectionNumber] || isUnloaded()) {
-            return;
-        }
-        buildNumbers[sectionNumber] = buildNumber;
+    public void fillBuffer(int sectionNumber, TUint8Array data) {
         if (data.length() == 0) {
             if (renderObjects[sectionNumber] != null) {
                 world.mapViewer.getRenderer().removeChunkObject(renderObjects[sectionNumber]);
@@ -116,6 +161,11 @@ public class ClientChunk extends Chunk {
         for (ChunkRenderObject renderObject : renderObjects) {
             if (renderObject != null) {
                 world.mapViewer.getRenderer().removeChunkObject(renderObject);
+            }
+        }
+        for (SortableRenderObject sortableRenderObject : sortableRenderObjects) {
+            if (sortableRenderObject != null) {
+                world.mapViewer.getRenderer().removeSortable(sortableRenderObject);
             }
         }
     }

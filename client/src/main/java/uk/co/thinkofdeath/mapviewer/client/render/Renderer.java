@@ -20,9 +20,18 @@ import elemental.client.Browser;
 import elemental.html.*;
 import uk.co.thinkofdeath.mapviewer.client.MapViewer;
 import uk.co.thinkofdeath.mapviewer.client.render.shaders.ChunkShader;
+import uk.co.thinkofdeath.mapviewer.shared.LightInfo;
+import uk.co.thinkofdeath.mapviewer.shared.Texture;
+import uk.co.thinkofdeath.mapviewer.shared.block.Block;
+import uk.co.thinkofdeath.mapviewer.shared.building.ModelBuilder;
 import uk.co.thinkofdeath.mapviewer.shared.glmatrix.Mat4;
+import uk.co.thinkofdeath.mapviewer.shared.model.Model;
+import uk.co.thinkofdeath.mapviewer.shared.model.ModelVertex;
+import uk.co.thinkofdeath.mapviewer.shared.model.SendableModel;
+import uk.co.thinkofdeath.mapviewer.shared.support.TUint8Array;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static elemental.html.WebGLRenderingContext.*;
@@ -36,6 +45,8 @@ public class Renderer implements ResizeHandler, Runnable {
     private final WebGLRenderingContext gl;
 
     private final Camera camera = new Camera();
+    private int cx = Integer.MAX_VALUE;
+    private int cz = Integer.MAX_VALUE;
 
     // Matrices
     private final Mat4 perspectiveMatrix = Mat4.create();
@@ -48,7 +59,11 @@ public class Renderer implements ResizeHandler, Runnable {
     private final WebGLTexture blockTexture;
     // Objects
     private final ChunkShader chunkShader;
+    private final ChunkShader chunkShaderAlpha;
     private final List<ChunkRenderObject> renderObjectList = new ArrayList<>();
+
+    private final List<SortableRenderObject> sortableRenderObjects = new ArrayList<>();
+    private final ModelBuilder transparentBuilder = new ModelBuilder();
 
     private double lastFrame;
     private double currentFrame;
@@ -83,8 +98,10 @@ public class Renderer implements ResizeHandler, Runnable {
         gl.cullFace(BACK);
         gl.frontFace(CCW);
         chunkShader = new ChunkShader(false);
+        chunkShaderAlpha = new ChunkShader(true);
 
         chunkShader.setup(gl);
+        chunkShaderAlpha.setup(gl);
 
         run();
     }
@@ -140,6 +157,7 @@ public class Renderer implements ResizeHandler, Runnable {
         chunkShader.setFrame((int) currentFrame);
 
         // TODO: Think about grouping objects from the same chunk to save setOffset calls
+        Collections.sort(renderObjectList, new ChunkSorter(camera));
         for (ChunkRenderObject renderObject : renderObjectList) {
             if (renderObject.data != null) {
                 if (renderObject.buffer == null) {
@@ -162,7 +180,151 @@ public class Renderer implements ResizeHandler, Runnable {
         }
         chunkShader.disable();
 
+        gl.enable(BLEND);
+        gl.blendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
+        chunkShaderAlpha.use();
+        chunkShaderAlpha.setPerspectiveMatrix(perspectiveMatrix);
+        chunkShaderAlpha.setViewMatrix(viewMatrix);
+        chunkShaderAlpha.setBlockTexture(0);
+        chunkShaderAlpha.setScale(timeScale);
+        chunkShaderAlpha.setFrame((int) currentFrame);
+
+        Collections.sort(sortableRenderObjects, new SortableSorter(camera));
+
+        int nx = (int) camera.getX();
+        int nz = (int) camera.getZ();
+
+        boolean moved = false;
+        if (cx != nx || cz != nz) {
+            cx = nx;
+            cz = nz;
+            moved = true;
+        }
+        int updates = 0;
+
+        for (SortableRenderObject sortableRenderObject : sortableRenderObjects) {
+            chunkShaderAlpha.setOffset(sortableRenderObject.getX(), sortableRenderObject.getZ());
+
+            if (moved) {
+                sortableRenderObject.needResort = true;
+            }
+            boolean update = sortableRenderObject.needResort && updates < 5;
+
+            if (sortableRenderObject.buffer == null && updates < 5) {
+                sortableRenderObject.buffer = gl.createBuffer();
+                update = true;
+            }
+
+            if (sortableRenderObject.buffer == null) continue;
+
+            gl.bindBuffer(ARRAY_BUFFER, sortableRenderObject.buffer);
+
+            if (update) {
+                updates++;
+                sortableRenderObject.needResort = false;
+                transparentBuilder.reset();
+
+                List<SendableModel> models = sortableRenderObject.getModels();
+                Collections.sort(models, new ModelSorter(
+                        sortableRenderObject.getX(),
+                        sortableRenderObject.getZ(),
+                        camera));
+
+                for (SendableModel model : models) {
+                    render(transparentBuilder, model,
+                            sortableRenderObject.getX(),
+                            sortableRenderObject.getZ());
+                }
+
+                TUint8Array data = transparentBuilder.toTypedArray();
+                gl.bufferData(ARRAY_BUFFER, (ArrayBufferView) data,
+                        DYNAMIC_DRAW);
+                sortableRenderObject.count = data.length() / 20;
+            }
+
+            gl.vertexAttribPointer(chunkShader.getPosition(), 3, UNSIGNED_SHORT, false, 20, 0);
+            gl.vertexAttribPointer(chunkShader.getColour(), 4, UNSIGNED_BYTE, true, 20, 6);
+            gl.vertexAttribPointer(chunkShader.getTexturePosition(), 2, UNSIGNED_SHORT, false, 20,
+                    10);
+            gl.vertexAttribPointer(chunkShader.getTextureId(), 2, UNSIGNED_SHORT, false, 20, 14);
+            gl.vertexAttribPointer(chunkShader.getLighting(), 2, UNSIGNED_BYTE, false, 20, 18);
+            gl.drawArrays(TRIANGLES, 0, sortableRenderObject.count);
+        }
+        chunkShaderAlpha.disable();
+        gl.disable(BLEND);
+
         requestAnimationFrame(this);
+    }
+
+    private void render(ModelBuilder builder, SendableModel model, int cx, int cz) {
+        Block owner = model.getOwner(mapViewer);
+        int x = model.getX();
+        int y = model.getY();
+        int z = model.getZ();
+        int len = model.getFaces().length();
+        for (int fi = 0; fi < len; fi++) {
+            SendableModel.Face face = model.getFaces().get(fi);
+            if (face.getCullable()) {
+                if (!owner.shouldRenderAgainst(mapViewer.getWorld().getBlock(
+                        (cx << 4) + x + face.getFace().getOffsetX(),
+                        y + face.getFace().getOffsetY(),
+                        (cz << 4) + z + face.getFace().getOffsetZ()
+                ))) {
+                    continue;
+                }
+            }
+
+            Texture texture = face.getTexture(mapViewer);
+            // First triangle
+            for (int i = 0; i < 3; i++) {
+                ModelVertex vertex = face.getVertices().get(2 - i);
+                LightInfo light = Model.calculateLight(mapViewer.getWorld(),
+                        (cx << 4) + x + vertex.getX(),
+                        y + vertex.getY(),
+                        (cz << 4) + z + vertex.getZ(), face.getFace());
+                builder
+                        .position(x + vertex.getX(), y + vertex.getY(), z + vertex.getZ())
+                        .colour(face.getRed(), face.getGreen(), face.getBlue())
+                        .texturePosition(vertex.getTextureX(), vertex.getTextureY())
+                        .textureId(texture.getStart(), texture.getEnd())
+                        .lighting(light.getEmittedLight(), light.getSkyLight());
+            }
+            // Second triangle
+            for (int i = 0; i < 3; i++) {
+                ModelVertex vertex = face.getVertices().get(1 + i);
+                LightInfo light = Model.calculateLight(mapViewer.getWorld(),
+                        (cx << 4) + x + vertex.getX(),
+                        y + vertex.getY(),
+                        (cz << 4) + z + vertex.getZ(), face.getFace());
+                builder
+                        .position(x + vertex.getX(), y + vertex.getY(), z + vertex.getZ())
+                        .colour(face.getRed(), face.getGreen(), face.getBlue())
+                        .texturePosition(vertex.getTextureX(), vertex.getTextureY())
+                        .textureId(texture.getStart(), texture.getEnd())
+                        .lighting(light.getEmittedLight(), light.getSkyLight());
+            }
+        }
+    }
+
+    /**
+     * Adds a sortable object to the renderer
+     *
+     * @param sortableRenderObject
+     *         The object to render
+     */
+    public void postSortable(SortableRenderObject sortableRenderObject) {
+        sortableRenderObjects.add(sortableRenderObject);
+    }
+
+    /**
+     * Removes a sortable object from the renderer
+     *
+     * @param sortableRenderObject
+     *         The object to remove
+     */
+    public void removeSortable(SortableRenderObject sortableRenderObject) {
+        sortableRenderObjects.remove(sortableRenderObject);
+        gl.deleteBuffer(sortableRenderObject.buffer);
     }
 
     /**

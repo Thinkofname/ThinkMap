@@ -17,7 +17,11 @@
 package uk.co.thinkofdeath.mapviewer.shared.worker;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
+import uk.co.thinkofdeath.mapviewer.shared.model.SendableModel;
 import uk.co.thinkofdeath.mapviewer.shared.support.TUint8Array;
+
+import java.util.List;
 
 public class ChunkBuildReply extends JavaScriptObject {
     protected ChunkBuildReply() {
@@ -34,11 +38,24 @@ public class ChunkBuildReply extends JavaScriptObject {
      *         The section number
      * @param buildNumber
      *         The build number
+     * @param models
+     *         The transparent models for this section
      * @return The message
      */
     public static native ChunkBuildReply create(int x, int z, int i, int buildNumber,
-                                                TUint8Array data)/*-{
-        return {x: x, z: z, i: i, buildNumber: buildNumber, data: data};
+                                                TUint8Array data, List<SendableModel> models)/*-{
+        var jms = null;
+        if (models != null) {
+            jms = [];
+            var size = models.@java.util.List::size()();
+            for (var j = 0; j < size; j++) {
+                var m = models.@java.util.List::get(I)(j);
+                if (m != null) {
+                    jms.push(m);
+                }
+            }
+        }
+        return {x: x, z: z, i: i, buildNumber: buildNumber, data: data, trans: jms};
     }-*/;
 
     /**
@@ -84,5 +101,14 @@ public class ChunkBuildReply extends JavaScriptObject {
      */
     public final native TUint8Array getData()/*-{
         return this.data;
+    }-*/;
+
+    /**
+     * Returns the internal data structure of a bsp tree containing the transparent blocks
+     *
+     * @return The BSPData for transparent blocks
+     */
+    public final native JsArray<SendableModel> getTransparentData()/*-{
+        return this.trans;
     }-*/;
 }

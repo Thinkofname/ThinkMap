@@ -186,12 +186,12 @@ public class BlockRegistry {
         register("minecraft", "flowing_water", new BlockBuilder(new BlockLiquid(mapViewer))
                 .texture("water_flow")
                 .solid(false)
-                .transparent(false /*TODO*/)
+                .transparent(true)
                 .create(), 8);
         register("minecraft", "water", new BlockBuilder(new BlockLiquid(mapViewer))
                 .texture("water_still")
                 .solid(false)
-                .transparent(false /*TODO*/)
+                .transparent(true)
                 .create(), 9);
         register("minecraft", "flowing_lava", new BlockBuilder(new BlockLiquid(mapViewer))
                 .texture("lava_flow")
@@ -383,7 +383,7 @@ public class BlockRegistry {
         register("minecraft", "ice", new BlockBuilder(mapViewer)
                 .texture("ice")
                 .solid(false)
-                .transparent(false /*TODO*/)
+                .transparent(true)
                 .create(), 79);
         register("minecraft", "snow", new BlockBuilder(mapViewer)
                 .texture("snow")
@@ -419,7 +419,7 @@ public class BlockRegistry {
         register("minecraft", "stained_glass",
                 new BlockBuilder(new BlockColoured(mapViewer, "glass_"))
                         .solid(false)
-                        .transparent(false /*TODO*/)
+                        .transparent(true)
                         .create(), 95
         );
 

@@ -34,7 +34,7 @@ public abstract class Chunk {
     protected int nextId = 1;
     private int x;
     private int z;
-    private boolean unloaded;
+    private boolean unloaded = false;
 
     protected Chunk(World world, int x, int z) {
         this.world = world;

@@ -115,6 +115,13 @@ public class ModelBuilder {
     }
 
     /**
+     * Resets the builder so that it can be reused
+     */
+    public void reset() {
+        buffer.reset();
+    }
+
+    /**
      * Returns the backing typed array to be uploaded to a buffer
      *
      * @return The typed array
