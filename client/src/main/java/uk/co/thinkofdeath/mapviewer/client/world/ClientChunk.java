@@ -27,7 +27,6 @@ import uk.co.thinkofdeath.mapviewer.shared.world.Chunk;
 import uk.co.thinkofdeath.mapviewer.shared.world.ChunkSection;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ClientChunk extends Chunk {
 
@@ -88,36 +87,20 @@ public class ClientChunk extends Chunk {
      */
     public void setTransparentModels(final JsArray<SendableModel> models, final int i) {
 
-        if (sortableRenderObjects[i] != null) {
+        if (sortableRenderObjects[i] != null && models == null) {
             world.mapViewer.getRenderer().removeSortable(sortableRenderObjects[i]);
+            return;
         }
         if (models != null) {
             final ArrayList<SendableModel> mdls = new ArrayList<>();
             for (int j = 0; j < models.length(); j++) {
                 mdls.add(models.get(j));
             }
-            sortableRenderObjects[i] = new SortableRenderObject() {
-                @Override
-                public List<SendableModel> getModels() {
-                    return mdls;
-                }
-
-                @Override
-                public int getX() {
-                    return ClientChunk.this.getX();
-                }
-
-                @Override
-                public int getY() {
-                    return i;
-                }
-
-                @Override
-                public int getZ() {
-                    return ClientChunk.this.getZ();
-                }
-            };
-            world.mapViewer.getRenderer().postSortable(sortableRenderObjects[i]);
+            if (sortableRenderObjects[i] == null) {
+                sortableRenderObjects[i] = new SortableRenderObject(getX(), i, getZ());
+                world.mapViewer.getRenderer().postSortable(sortableRenderObjects[i]);
+            }
+            sortableRenderObjects[i].setModels(mdls);
         }
     }
 

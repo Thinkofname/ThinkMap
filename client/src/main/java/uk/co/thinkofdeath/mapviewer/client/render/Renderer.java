@@ -208,14 +208,13 @@ public class Renderer implements ResizeHandler, Runnable {
             if (moved) {
                 sortableRenderObject.needResort = true;
             }
-            boolean update = sortableRenderObject.needResort && updates < 5;
 
-            if (sortableRenderObject.buffer == null && updates < 5) {
+            if (sortableRenderObject.buffer == null) {
                 sortableRenderObject.buffer = gl.createBuffer();
-                update = true;
+                sortableRenderObject.needResort = true;
             }
 
-            if (sortableRenderObject.buffer == null) continue;
+            boolean update = sortableRenderObject.needResort && updates < 5;
 
             gl.bindBuffer(ARRAY_BUFFER, sortableRenderObject.buffer);
 
@@ -241,13 +240,14 @@ public class Renderer implements ResizeHandler, Runnable {
                         DYNAMIC_DRAW);
                 sortableRenderObject.count = data.length() / 20;
             }
+            if (sortableRenderObject.count == 0) continue;
 
-            gl.vertexAttribPointer(chunkShader.getPosition(), 3, UNSIGNED_SHORT, false, 20, 0);
-            gl.vertexAttribPointer(chunkShader.getColour(), 4, UNSIGNED_BYTE, true, 20, 6);
-            gl.vertexAttribPointer(chunkShader.getTexturePosition(), 2, UNSIGNED_SHORT, false, 20,
+            gl.vertexAttribPointer(chunkShaderAlpha.getPosition(), 3, UNSIGNED_SHORT, false, 20, 0);
+            gl.vertexAttribPointer(chunkShaderAlpha.getColour(), 4, UNSIGNED_BYTE, true, 20, 6);
+            gl.vertexAttribPointer(chunkShaderAlpha.getTexturePosition(), 2, UNSIGNED_SHORT, false, 20,
                     10);
-            gl.vertexAttribPointer(chunkShader.getTextureId(), 2, UNSIGNED_SHORT, false, 20, 14);
-            gl.vertexAttribPointer(chunkShader.getLighting(), 2, UNSIGNED_BYTE, false, 20, 18);
+            gl.vertexAttribPointer(chunkShaderAlpha.getTextureId(), 2, UNSIGNED_SHORT, false, 20, 14);
+            gl.vertexAttribPointer(chunkShaderAlpha.getLighting(), 2, UNSIGNED_BYTE, false, 20, 18);
             gl.drawArrays(TRIANGLES, 0, sortableRenderObject.count);
         }
         chunkShaderAlpha.disable();
