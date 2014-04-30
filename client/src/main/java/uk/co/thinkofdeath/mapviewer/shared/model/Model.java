@@ -124,18 +124,54 @@ public class Model {
 
         int count = 0;
 
-        // TODO: Clean this up and fix it
-        int pox = face.getOffsetX() != 0 ? (face.getOffsetX() == 1 ? 1 : 0) : 2;
-        int poy = face.getOffsetY() != 0 ? (face.getOffsetY() == 1 ? 1 : 0) : 2;
-        int poz = face.getOffsetZ() != 0 ? (face.getOffsetZ() == 1 ? 1 : 0) : 2;
-        // Note: I think the issue is in the following 3 lines
-        int nox = face.getOffsetX() != 0 ? (face.getOffsetX() == 1 ? 0 : -1) : -1;
-        int noy = face.getOffsetY() != 0 ? (face.getOffsetY() == 1 ? 0 : -1) : -1;
-        int noz = face.getOffsetZ() != 0 ? (face.getOffsetZ() == 1 ? 0 : -1) : -1;
+        int pox = 0;
+        int poy = 0;
+        int poz = 0;
+        int nox = 0;
+        int noy = 0;
+        int noz = 0;
 
-        for (int ox = nox; ox < pox; ox++) {
-            for (int oy = noy; oy < poy; oy++) {
-                for (int oz = noz; oz < poz; oz++) {
+        switch (face) {
+            case TOP:
+                poz = pox = 0;
+                noz = nox = -1;
+                poy = 1;
+                noy = 0;
+                break;
+            case BOTTOM:
+                poz = pox = 0;
+                noz = nox = -1;
+                poy = -1;
+                noy = -2;
+                break;
+            case LEFT:
+                poz = poy = 0;
+                noz = noy = -1;
+                pox = 1;
+                nox = 0;
+                break;
+            case RIGHT:
+                poz = poy = 0;
+                noz = noy = -1;
+                pox = -1;
+                nox = -2;
+                break;
+            case FRONT:
+                poy = pox = 0;
+                noy = nox = -1;
+                poz = 1;
+                noz = 0;
+                break;
+            case BACK:
+                poy = pox = 0;
+                noy = nox = -1;
+                poz = -1;
+                noz = -2;
+                break;
+        }
+        for (int ox = nox; ox <= pox; ox++) {
+            for (int oy = noy; oy <= poy; oy++) {
+                for (int oz = noz; oz <= poz; oz++) {
                     int bx = (int) (x + ox);
                     int by = (int) (y + oy);
                     int bz = (int) (z + oz);
