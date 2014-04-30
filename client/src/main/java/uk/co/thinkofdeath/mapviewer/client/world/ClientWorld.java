@@ -170,7 +170,7 @@ public class ClientWorld extends World {
      */
     private void loadChunk(final int x, final int z) {
         final String key = chunkKey(x, z);
-        if (loadingChunks.contains(key) || isLoaded(key)) {
+        if (loadingChunks.contains(key) || isLoaded(x, z)) {
             return;
         }
         final XMLHttpRequest xmlHttpRequest = Browser.getWindow().newXMLHttpRequest();

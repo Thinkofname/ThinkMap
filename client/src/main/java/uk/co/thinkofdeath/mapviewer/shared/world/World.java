@@ -20,16 +20,15 @@ import elemental.util.Timer;
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.Blocks;
+import uk.co.thinkofdeath.mapviewer.shared.support.ChunkMap;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public abstract class World {
 
     private final IMapViewer mapViewer;
     private int timeOfDay = 6000;
-    private HashMap<String, Chunk> chunks = new HashMap<>();
+    private ChunkMap<Chunk> chunks = ChunkMap.create();
 
     protected World(IMapViewer mapViewer) {
         this.mapViewer = mapViewer;
@@ -68,11 +67,10 @@ public abstract class World {
      *         The chunk to add
      */
     public void addChunk(Chunk chunk) {
-        String key = chunkKey(chunk.getX(), chunk.getZ());
-        if (chunks.containsKey(key)) {
+        if (chunks.contains(chunk.getX(), chunk.getZ())) {
             return;
         }
-        chunks.put(key, chunk);
+        chunks.put(chunk.getX(), chunk.getZ(), chunk);
     }
 
     /**
@@ -90,7 +88,7 @@ public abstract class World {
      * @return Every chunk in the world
      */
     public List<Chunk> getChunks() {
-        return new ArrayList<>(chunks.values());
+        return chunks.values();
     }
 
     /**
@@ -103,18 +101,7 @@ public abstract class World {
      * @return Whether the chunk is loaded
      */
     public boolean isLoaded(int x, int z) {
-        return isLoaded(chunkKey(x, z));
-    }
-
-    /**
-     * Version of isLoaded(int, int) which doesn't create a new chunk key
-     *
-     * @param key
-     *         The chunk key to use
-     * @return Whether the chunk is loaded
-     */
-    protected boolean isLoaded(String key) {
-        return chunks.containsKey(key);
+        return chunks.contains(x, z);
     }
 
     /**
@@ -126,11 +113,10 @@ public abstract class World {
      *         The position of the chunk on the z axis
      */
     public void unloadChunk(int x, int z) {
-        String key = chunkKey(x, z);
-        if (!isLoaded(key)) {
+        if (!isLoaded(x, z)) {
             return;
         }
-        Chunk chunk = chunks.remove(key);
+        Chunk chunk = chunks.remove(x, z);
         chunk.unload();
     }
 
@@ -158,8 +144,7 @@ public abstract class World {
         // Replace the cache
         cachedChunkX = x;
         cachedChunkZ = z;
-        cachedChunk = chunks.get(chunkKey(x, z));
-        return cachedChunk;
+        return cachedChunk = chunks.get(x, z);
     }
 
     /**
