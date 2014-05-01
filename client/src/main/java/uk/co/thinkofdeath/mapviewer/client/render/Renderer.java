@@ -247,7 +247,7 @@ public class Renderer implements ResizeHandler, Runnable {
         }
         Collections.reverse(sortableRenderObjects);
         for (SortableRenderObject sortableRenderObject : sortableRenderObjects) {
-            if (sortableRenderObject.count == 0) continue;
+            if (sortableRenderObject.count == 0 || sortableRenderObject.buffer == null) continue;
             gl.bindBuffer(ARRAY_BUFFER, sortableRenderObject.buffer);
             chunkShaderAlpha.setOffset(sortableRenderObject.getX(), sortableRenderObject.getZ());
             gl.vertexAttribPointer(chunkShaderAlpha.getPosition(), 3, UNSIGNED_SHORT, false, 20, 0);
