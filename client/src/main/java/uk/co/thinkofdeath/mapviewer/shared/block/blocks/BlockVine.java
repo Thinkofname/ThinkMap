@@ -125,13 +125,12 @@ public class BlockVine extends BlockFactory {
         }
 
         @Override
-        public Block process(World world, int x, int y, int z) {
+        public Block update(World world, int x, int y, int z) {
+            StateMap state = new StateMap(this.state);
             if (!shouldRenderAgainst(world.getBlock(x, y + 1, z))) {
-                StateMap state = new StateMap(this.state);
                 state.set(UP, true);
-                return world.getMapViewer().getBlockRegistry().get("minecraft:vine", state);
             }
-            return this;
+            return world.getMapViewer().getBlockRegistry().get("minecraft:vine", state);
         }
 
         @Override

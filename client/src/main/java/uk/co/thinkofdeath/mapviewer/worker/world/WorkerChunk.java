@@ -112,6 +112,18 @@ public class WorkerChunk extends Chunk {
                 }
             }
         }
+        for (int i = 0; i < 16; i++) {
+            if ((sectionMask & (1 << i)) == 0) {
+                continue;
+            }
+            for (int oy = 0; oy < 16; oy++) {
+                for (int oz = -1; oz < 17; oz++) {
+                    for (int ox = -1; ox < 17; ox++) {
+                        world.updateBlock((getX() << 4) + ox, oy, oz);
+                    }
+                }
+            }
+        }
         if (reply) {
             sendChunk();
         } else {

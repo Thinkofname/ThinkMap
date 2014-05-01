@@ -82,6 +82,27 @@ public abstract class Chunk {
     }
 
     /**
+     * Updates the block at the location
+     *
+     * @param x
+     *         The position on the x axis
+     * @param y
+     *         The position on the y axis
+     * @param z
+     *         The position on the z axis
+     * @return Whether a update was preformed
+     */
+    public boolean updateBlock(int x, int y, int z) {
+        Block b1 = getBlock(x, y, z);
+        Block b2 = b1.update(world, x, y, z);
+        if (b1 != b2) {
+            setBlock(x, y, z, b2);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Returns the block at location given by the coordinates x, y, z relative to the chunk. The x
      * and z coordinates must be between 0 and 15. The y coordinate must be between 0 and 255.
      *
@@ -98,8 +119,25 @@ public abstract class Chunk {
         if (section == null) {
             return Blocks.AIR;
         }
-        return idBlockMap.get(section.getBlocks().get(x | (z << 4) | ((y & 0xF) << 8)))
-                .process(world, (this.x << 4) + x, y, (this.z << 4) + z); // Get the actual block
+        return idBlockMap.get(section.getBlocks().get(x | (z << 4) | ((y & 0xF) << 8)));
+    }
+
+    // TODO: Make public once fully tested/ready
+    private void setBlock(int x, int y, int z, Block block) {
+        ChunkSection section = sections[y >> 4];
+        if (section == null) {
+            if (block == Blocks.AIR) {
+                return;
+            }
+            section = sections[y >> 4] = new ChunkSection();
+        }
+        if (!blockIdMap.containsKey(block)) {
+            int id = nextId++;
+            idBlockMap.put(id, block);
+            blockIdMap.put(block, id);
+        }
+        int id = blockIdMap.get(block);
+        section.getBlocks().set(x | (z << 4) | ((y & 0xF) << 8), id);
     }
 
     /**

@@ -148,6 +148,25 @@ public abstract class World {
     }
 
     /**
+     * Updates the block at the location in the world
+     *
+     * @param x
+     *         The position of the block on the x axis
+     * @param y
+     *         The position of the block on the y axis
+     * @param z
+     *         The position of the block on the z axis
+     */
+    public void updateBlock(int x, int y, int z) {
+        if (y < 0 || y > 255) {
+            return;
+        }
+        Chunk chunk = getChunk(x >> 4, z >> 4);
+        if (chunk == null) return;
+        chunk.updateBlock(x & 0xF, y, z & 0xF);
+    }
+
+    /**
      * Returns the block at the location in the world
      *
      * @param x

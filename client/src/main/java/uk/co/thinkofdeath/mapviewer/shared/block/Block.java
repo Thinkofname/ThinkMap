@@ -179,9 +179,7 @@ public class Block implements Model.RenderChecker {
     }
 
     /**
-     * Gets the actual block at the location.
-     * <p/>
-     * This is needed because some blocks only exist at runtime and are not saved (yet)
+     * Updates block at the location.
      *
      * @param world
      *         The world of the block
@@ -191,11 +189,12 @@ public class Block implements Model.RenderChecker {
      *         The y position
      * @param z
      *         The z position
-     * @return The actual block
+     * @return The updated block
      */
-    public Block process(World world, int x, int y, int z) {
+    public Block update(World world, int x, int y, int z) {
         return this;
     }
+
 
     /**
      * {@inheritDoc}
