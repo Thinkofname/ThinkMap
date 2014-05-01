@@ -17,7 +17,7 @@ public class ChunkMap<T extends Chunk> extends JavaScriptObject {
     }-*/;
 
     public final native int size()/*-{
-        return this.values.length;
+        return this.values.@java.util.ArrayList::size()();
     }-*/;
 
     public final native boolean contains(int x, int z)/*-{
