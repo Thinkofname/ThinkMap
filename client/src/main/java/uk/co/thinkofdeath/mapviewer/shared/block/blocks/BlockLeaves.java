@@ -74,7 +74,7 @@ public class BlockLeaves extends BlockFactory {
 
         @Override
         public int getColour(Face face) {
-            return 0xA7D389;
+            return 0x52941C;
         }
     }
 }

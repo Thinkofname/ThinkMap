@@ -117,6 +117,11 @@ public class BlockBuilder {
         return this;
     }
 
+    public BlockBuilder allowSelf(boolean allowSelf) {
+        block.allowSelf = allowSelf;
+        return this;
+    }
+
     public BlockBuilder model(Model model) {
         block.model = model;
         return this;

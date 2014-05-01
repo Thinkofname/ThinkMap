@@ -219,6 +219,7 @@ public class BlockRegistry {
                 .create(), 17);
         register("minecraft", "leaves", new BlockBuilder(new BlockLeaves(mapViewer))
                 .solid(false)
+                .allowSelf(true)
                 .create(), 18);
         register("minecraft", "sponge", new BlockBuilder(mapViewer)
                 .texture("sponge")

@@ -36,9 +36,10 @@ public class Block implements Model.RenderChecker {
     private boolean collidable;
     private boolean transparent;
     private Texture texture;
+    private boolean allowSelf;
+    protected Model model;
     // Cache value since it doesn't change
     private String toString;
-    protected Model model;
 
     protected Block(BlockFactory factory, StateMap state) {
         this.state = state;
@@ -47,6 +48,7 @@ public class Block implements Model.RenderChecker {
         collidable = factory.collidable;
         transparent = factory.transparent;
         texture = factory.getTexture();
+        allowSelf = factory.allowSelf;
         model = factory.model;
     }
 
@@ -201,6 +203,6 @@ public class Block implements Model.RenderChecker {
      */
     @Override
     public boolean shouldRenderAgainst(Block other) {
-        return !other.isSolid() && other != this; // FIXME: Missing allow self support
+        return !other.isSolid() && (allowSelf || other != this);
     }
 }
