@@ -190,8 +190,6 @@ public class Renderer implements ResizeHandler, Runnable {
         chunkShaderAlpha.setScale(timeScale);
         chunkShaderAlpha.setFrame((int) currentFrame);
 
-        Collections.sort(sortableRenderObjects, new SortableSorter(camera));
-
         int nx = (int) camera.getX();
         int ny = (int) camera.getY();
         int nz = (int) camera.getZ();
@@ -205,8 +203,8 @@ public class Renderer implements ResizeHandler, Runnable {
         }
         int updates = 0;
 
+        Collections.sort(sortableRenderObjects, new SortableSorter(camera));
         for (SortableRenderObject sortableRenderObject : sortableRenderObjects) {
-            chunkShaderAlpha.setOffset(sortableRenderObject.getX(), sortableRenderObject.getZ());
 
             if (moved) {
                 sortableRenderObject.needResort = true;
@@ -218,8 +216,6 @@ public class Renderer implements ResizeHandler, Runnable {
             }
 
             boolean update = sortableRenderObject.needResort && updates < 5;
-
-            gl.bindBuffer(ARRAY_BUFFER, sortableRenderObject.buffer);
 
             if (update) {
                 updates++;
@@ -239,12 +235,21 @@ public class Renderer implements ResizeHandler, Runnable {
                 }
 
                 TUint8Array data = transparentBuilder.toTypedArray();
+                gl.bindBuffer(ARRAY_BUFFER, sortableRenderObject.buffer);
                 gl.bufferData(ARRAY_BUFFER, (ArrayBufferView) data,
                         DYNAMIC_DRAW);
                 sortableRenderObject.count = data.length() / 20;
             }
-            if (sortableRenderObject.count == 0) continue;
 
+            if (updates >= 5 && !moved) {
+                break;
+            }
+        }
+        Collections.reverse(sortableRenderObjects);
+        for (SortableRenderObject sortableRenderObject : sortableRenderObjects) {
+            if (sortableRenderObject.count == 0) continue;
+            gl.bindBuffer(ARRAY_BUFFER, sortableRenderObject.buffer);
+            chunkShaderAlpha.setOffset(sortableRenderObject.getX(), sortableRenderObject.getZ());
             gl.vertexAttribPointer(chunkShaderAlpha.getPosition(), 3, UNSIGNED_SHORT, false, 20, 0);
             gl.vertexAttribPointer(chunkShaderAlpha.getColour(), 4, UNSIGNED_BYTE, true, 20, 6);
             gl.vertexAttribPointer(chunkShaderAlpha.getTexturePosition(), 2, UNSIGNED_SHORT, false, 20,
@@ -253,6 +258,7 @@ public class Renderer implements ResizeHandler, Runnable {
             gl.vertexAttribPointer(chunkShaderAlpha.getLighting(), 2, UNSIGNED_BYTE, false, 20, 18);
             gl.drawArrays(TRIANGLES, 0, sortableRenderObject.count);
         }
+
         chunkShaderAlpha.disable();
         gl.disable(BLEND);
 

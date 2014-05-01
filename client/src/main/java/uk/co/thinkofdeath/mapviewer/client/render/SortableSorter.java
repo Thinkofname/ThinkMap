@@ -18,6 +18,6 @@ class SortableSorter implements Comparator<SortableRenderObject> {
         int bx = (b.getX() << 4) + 8 - (int) camera.getX();
         int by = (b.getY() << 4) + 8 - (int) camera.getY();
         int bz = (b.getZ() << 4) + 8 - (int) camera.getZ();
-        return (bx * bx + by * by + bz * bz) - (ax * ax + ay * ay + az * az);
+        return (ax * ax + ay * ay + az * az) - (bx * bx + by * by + bz * bz);
     }
 }
