@@ -39,6 +39,8 @@ import static uk.co.thinkofdeath.mapviewer.client.render.RendererUtils.*;
 
 public class Renderer implements ResizeHandler, Runnable {
 
+    private static final int TRANSPARENT_UPDATES_LIMIT = 1;
+
     private final MapViewer mapViewer;
 
     private final CanvasElement canvas;
@@ -215,7 +217,7 @@ public class Renderer implements ResizeHandler, Runnable {
                 sortableRenderObject.needResort = true;
             }
 
-            boolean update = sortableRenderObject.needResort && updates < 5;
+            boolean update = sortableRenderObject.needResort && updates < TRANSPARENT_UPDATES_LIMIT;
 
             if (update) {
                 updates++;
@@ -241,7 +243,7 @@ public class Renderer implements ResizeHandler, Runnable {
                 sortableRenderObject.count = data.length() / 20;
             }
 
-            if (updates >= 5 && !moved) {
+            if (updates >= TRANSPARENT_UPDATES_LIMIT && !moved) {
                 break;
             }
         }
