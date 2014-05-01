@@ -113,11 +113,10 @@ public abstract class World {
      *         The position of the chunk on the z axis
      */
     public void unloadChunk(int x, int z) {
-        if (!isLoaded(x, z)) {
-            return;
-        }
         Chunk chunk = chunks.remove(x, z);
-        chunk.unload();
+        if (chunk != null) {
+            chunk.unload();
+        }
     }
 
     // The cache helps with the slow performance of maps in javascript
