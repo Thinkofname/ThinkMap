@@ -17,47 +17,6 @@
 body {
     margin: 0;
     overflow: hidden;
-    font-family: "Minecraft";
-    font-size: 16px;
-    color: #FFF;
-    text-shadow: #000 2px 2px 0;
-}
-
-div.user-interface {
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-}
-
-div.ui-position {
-    position: absolute;
-    left: 5px;
-    top: 5px;
-}
-
-div.ui-fps {
-    position: absolute;
-    right: 5px;
-    top: 5px;
-    text-align: right;
-}
-
-div.ui-chat {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    padding: 5px;
-    background-color: rgba(0, 0, 0, 0.1);
-    width: 500px;
-    height: 180px;
-    vertical-align: bottom;
-    line-height: 15px;
-    overflow-y: hidden;
-    pointer-events: all;
-    font-size: 13px;
 }
 
 @font-face {
@@ -69,6 +28,8 @@ div.ui-chat {
 }
 
 div.link-back {
+    font-family: "Minecraft", monospace;
+    color: #FFF;
     position: absolute;
     right: 2px;
     bottom: 2px;
