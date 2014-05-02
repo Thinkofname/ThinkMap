@@ -337,7 +337,11 @@ public class BlockRegistry {
                 .create(), 52);
 
         // TODO: oak_stairs
-        // TODO: chest
+
+        register("minecraft", "chest", new BlockBuilder(new BlockChest(mapViewer))
+                .solid(false)
+                .create(), 54);
+
         // TODO: redstone_wire
 
         register("minecraft", "diamond_ore", new BlockBuilder(mapViewer)
