@@ -333,6 +333,7 @@ public class BlockRegistry {
         register("minecraft", "mob_spawner", new BlockBuilder(mapViewer)
                 .texture("mob_spawner")
                 .solid(false)
+                .allowSelf(true)
                 .create(), 52);
 
         // TODO: oak_stairs
