@@ -28,11 +28,11 @@ import uk.co.thinkofdeath.mapviewer.shared.glmatrix.Mat4;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelVertex;
 import uk.co.thinkofdeath.mapviewer.shared.model.SendableModel;
+import uk.co.thinkofdeath.mapviewer.shared.support.JsUtils;
 import uk.co.thinkofdeath.mapviewer.shared.support.TUint8Array;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import static elemental.html.WebGLRenderingContext.*;
 import static uk.co.thinkofdeath.mapviewer.client.render.RendererUtils.*;
@@ -63,9 +63,9 @@ public class Renderer implements ResizeHandler, Runnable {
     // Objects
     private final ChunkShader chunkShader;
     private final ChunkShader chunkShaderAlpha;
-    private final List<ChunkRenderObject> renderObjectList = new ArrayList<>();
+    private final ArrayList<ChunkRenderObject> renderObjectList = new ArrayList<>();
 
-    private final List<SortableRenderObject> sortableRenderObjects = new ArrayList<>();
+    private final ArrayList<SortableRenderObject> sortableRenderObjects = new ArrayList<>();
     private final ModelBuilder transparentBuilder = new ModelBuilder();
 
     private double lastFrame;
@@ -160,7 +160,7 @@ public class Renderer implements ResizeHandler, Runnable {
         chunkShader.setFrame((int) currentFrame);
 
         // TODO: Think about grouping objects from the same chunk to save setOffset calls
-        Collections.sort(renderObjectList, new ChunkSorter(camera));
+        JsUtils.sort(renderObjectList, new ChunkSorter(camera));
         for (ChunkRenderObject renderObject : renderObjectList) {
             if (renderObject.data != null) {
                 if (renderObject.buffer == null) {
@@ -205,7 +205,7 @@ public class Renderer implements ResizeHandler, Runnable {
         }
         int updates = 0;
 
-        Collections.sort(sortableRenderObjects, new SortableSorter(camera));
+        JsUtils.sort(sortableRenderObjects, new SortableSorter(camera));
         for (SortableRenderObject sortableRenderObject : sortableRenderObjects) {
 
             if (moved) {
@@ -224,8 +224,8 @@ public class Renderer implements ResizeHandler, Runnable {
                 sortableRenderObject.needResort = false;
                 transparentBuilder.reset();
 
-                List<SendableModel> models = sortableRenderObject.getModels();
-                Collections.sort(models, new ModelSorter(
+                ArrayList<SendableModel> models = sortableRenderObject.getModels();
+                JsUtils.sort(models, new ModelSorter(
                         sortableRenderObject.getX(),
                         sortableRenderObject.getZ(),
                         camera));
