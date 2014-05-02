@@ -49,5 +49,10 @@ public class BlockLiquid extends BlockFactory {
             return this.<Integer>getState(LEVEL)
                     | (this.<Boolean>getState(FALLING) ? 8 : 0);
         }
+
+        @Override
+        public boolean shouldRenderAgainst(Block other) {
+            return super.shouldRenderAgainst(other) && !(other instanceof BlockImpl);
+        }
     }
 }
