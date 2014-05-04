@@ -525,7 +525,10 @@ public class BlockRegistry {
                 .create(), 153);
 
         // TODO: hopper
-        // TODO: quartz_block
+
+        register("minecraft", "quartz_block", new BlockBuilder(new BlockQuartz(mapViewer))
+                .create(), 155);
+
         // TODO: quartz_stairs
 
         register("minecraft", "activator_rail", new BlockBuilder(new BlockPoweredRail(mapViewer,
