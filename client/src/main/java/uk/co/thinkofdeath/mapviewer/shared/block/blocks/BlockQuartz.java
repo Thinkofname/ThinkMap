@@ -22,19 +22,31 @@ import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
 import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
 
 public class BlockQuartz extends BlockFactory {
+
+    public static final String VARIANT = "variant";
 
     private final Texture quartzTop;
     private final Texture quartzSide;
     private final Texture quartzBottom;
+    private final Texture quartzChiseledTop;
+    private final Texture quartzChiseledSide;
+    private final Texture quartzPillarTop;
+    private final Texture quartzPillarSide;
+
 
     public BlockQuartz(IMapViewer iMapViewer) {
         super(iMapViewer);
-
+        addState(VARIANT, new EnumState(Variant.class));
         quartzTop = iMapViewer.getTexture("quartz_block_top");
         quartzSide = iMapViewer.getTexture("quartz_block_side");
         quartzBottom = iMapViewer.getTexture("quartz_block_bottom");
+        quartzChiseledTop = iMapViewer.getTexture("quartz_block_chiseled_top");
+        quartzChiseledSide = iMapViewer.getTexture("quartz_block_chiseled");
+        quartzPillarTop = iMapViewer.getTexture("quartz_block_lines_top");
+        quartzPillarSide = iMapViewer.getTexture("quartz_block_lines");
     }
 
     @Override
@@ -42,20 +54,58 @@ public class BlockQuartz extends BlockFactory {
         return new BlockImpl(states);
     }
 
+    public static enum Variant {
+        DEFAULT,
+        CHISELED,
+        PILLAR;
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return super.toString().toLowerCase();
+        }
+    }
+
     private class BlockImpl extends Block {
-        public BlockImpl(StateMap states) {
-            super(BlockQuartz.this, states);
+
+        public BlockImpl(StateMap state) {
+            super(BlockQuartz.this, state);
+        }
+
+        @Override
+        public int getLegacyData() {
+            return this.<Variant>getState(VARIANT).ordinal();
         }
 
         @Override
         public Texture getTexture(Face face) {
-            switch (face) {
-                case TOP:
-                    return quartzTop;
-                case BOTTOM:
-                    return quartzBottom;
-                default:
-                    return quartzSide;
+            if (getState(VARIANT) == Variant.CHISELED) {
+                switch (face) {
+                    case TOP:
+                    case BOTTOM:
+                        return quartzChiseledTop;
+                    default:
+                        return quartzChiseledSide;
+                }
+            } else if (getState(VARIANT) == Variant.PILLAR) {
+                switch (face) {
+                    case TOP:
+                    case BOTTOM:
+                        return quartzPillarTop;
+                    default:
+                        return quartzPillarSide;
+                }
+            } else {
+                switch (face) {
+                    case TOP:
+                        return quartzTop;
+                    case BOTTOM:
+                        return quartzBottom;
+                    default:
+                        return quartzSide;
+                }
             }
         }
     }
