@@ -525,7 +525,10 @@ public class BlockRegistry {
                 .create(), 153);
 
         // TODO: hopper
-        // TODO: quartz_block
+
+        register("minecraft", "quartz_block", new BlockBuilder(new BlockQuartz(mapViewer))
+                .create(), 155);
+
         // TODO: quartz_stairs
 
         register("minecraft", "activator_rail", new BlockBuilder(new BlockPoweredRail(mapViewer,
@@ -535,8 +538,9 @@ public class BlockRegistry {
                 .create(), 157);
         register("minecraft", "dropper", new BlockBuilder(new BlockDispenser(mapViewer, "dropper"))
                 .create(), 158);
+        register("minecraft", "stained_hardened_clay", new BlockBuilder(new BlockColoured(mapViewer, "hardened_clay_stained_"))
+                .create(), 159);
 
-        // TODO: stained_hardened_clay
         // TODO: stained_glass_pane
         // TODO: leaves2
         // TODO: log2
@@ -544,9 +548,19 @@ public class BlockRegistry {
         // TODO: dark_oak_stairs
         // TODO: hay_block
         // TODO: carpet
-        // TODO: hardened_clay
-        // TODO: coal_block
-        // TODO: packed_ice
+
+        register("minecraft", "hardened_clay", new BlockBuilder(mapViewer)
+                .texture("hardened_clay")
+                .create(), 172);
+
+        register("minecraft", "coal_block", new BlockBuilder(mapViewer)
+                .texture("coal_block")
+                .create(), 173);
+
+        register("minecraft", "packed_ice", new BlockBuilder(mapViewer)
+                .texture("ice_packed")
+                .create(), 174);
+
         // TODO: double_plant
 
         // ThinkMap blocks
