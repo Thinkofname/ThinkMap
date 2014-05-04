@@ -538,8 +538,9 @@ public class BlockRegistry {
                 .create(), 157);
         register("minecraft", "dropper", new BlockBuilder(new BlockDispenser(mapViewer, "dropper"))
                 .create(), 158);
+        register("minecraft", "stained_hardened_clay", new BlockBuilder(new BlockColoured(mapViewer, "hardened_clay_stained_"))
+                .create(), 159);
 
-        // TODO: stained_hardened_clay
         // TODO: stained_glass_pane
         // TODO: leaves2
         // TODO: log2
