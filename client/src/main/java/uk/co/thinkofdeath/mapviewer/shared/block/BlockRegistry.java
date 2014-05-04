@@ -553,7 +553,10 @@ public class BlockRegistry {
                 .texture("coal_block")
                 .create(), 173);
 
-        // TODO: packed_ice
+        register("minecraft", "packed_ice", new BlockBuilder(mapViewer)
+                .texture("ice_packed")
+                .create(), 174);
+
         // TODO: double_plant
 
         // ThinkMap blocks
