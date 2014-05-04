@@ -545,7 +545,11 @@ public class BlockRegistry {
         // TODO: hay_block
         // TODO: carpet
         // TODO: hardened_clay
-        // TODO: coal_block
+
+        register("minecraft", "coal_block", new BlockBuilder(mapViewer)
+                .texture("coal_block")
+                .create(), 173);
+
         // TODO: packed_ice
         // TODO: double_plant
 
