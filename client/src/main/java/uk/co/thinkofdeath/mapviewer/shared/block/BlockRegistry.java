@@ -547,7 +547,10 @@ public class BlockRegistry {
         // TODO: dark_oak_stairs
         // TODO: hay_block
         // TODO: carpet
-        // TODO: hardened_clay
+
+        register("minecraft", "hardened_clay", new BlockBuilder(mapViewer)
+                .texture("hardened_clay")
+                .create(), 172);
 
         register("minecraft", "coal_block", new BlockBuilder(mapViewer)
                 .texture("coal_block")
