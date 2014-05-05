@@ -552,11 +552,9 @@ public class BlockRegistry {
         register("minecraft", "hardened_clay", new BlockBuilder(mapViewer)
                 .texture("hardened_clay")
                 .create(), 172);
-
         register("minecraft", "coal_block", new BlockBuilder(mapViewer)
                 .texture("coal_block")
                 .create(), 173);
-
         register("minecraft", "packed_ice", new BlockBuilder(mapViewer)
                 .texture("ice_packed")
                 .create(), 174);

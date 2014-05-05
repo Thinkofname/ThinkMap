@@ -36,7 +36,6 @@ public class BlockQuartz extends BlockFactory {
     private final Texture quartzPillarTop;
     private final Texture quartzPillarSide;
 
-
     public BlockQuartz(IMapViewer iMapViewer) {
         super(iMapViewer);
         addState(VARIANT, new EnumState(Variant.class));
