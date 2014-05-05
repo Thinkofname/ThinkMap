@@ -487,7 +487,7 @@ public class BlockRegistry {
                 .create(), 126);
 
         // TODO: cocoa
-        // TODO: sandstone_stair
+        // TODO: sandstone_stairs
 
         register("minecraft", "emerald_ore", new BlockBuilder(mapViewer)
                 .texture("emerald_ore")
