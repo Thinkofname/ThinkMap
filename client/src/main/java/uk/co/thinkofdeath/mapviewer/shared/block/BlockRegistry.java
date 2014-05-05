@@ -523,9 +523,9 @@ public class BlockRegistry {
         register("minecraft", "quartz_ore", new BlockBuilder(mapViewer)
                 .texture("quartz_ore")
                 .create(), 153);
-
-        // TODO: hopper
-
+        register("minecraft", "hopper", new BlockBuilder(new BlockHopper(mapViewer))
+                .solid(false)
+                .create(), 154);
         register("minecraft", "quartz_block", new BlockBuilder(new BlockQuartz(mapViewer))
                 .create(), 155);
 
