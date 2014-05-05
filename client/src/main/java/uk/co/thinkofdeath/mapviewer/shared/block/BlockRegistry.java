@@ -311,8 +311,11 @@ public class BlockRegistry {
                 .create(), 42);
 
         // TODO: double_stone_slab
-        // TODO: stone_slab
 
+        register("minecraft", "stone_slab", new BlockBuilder(new BlockSlab(mapViewer,
+                BlockSlab.StoneSlab.class))
+                .solid(false)
+                .create(), 44);
         register("minecraft", "brick_block", new BlockBuilder(mapViewer)
                 .texture("brick")
                 .create(), 45);
@@ -477,7 +480,12 @@ public class BlockRegistry {
                 .create(), 124);
 
         // TODO: double_wooden_slab
-        // TODO: wooden_slab
+
+        register("minecraft", "wooden_slab", new BlockBuilder(new BlockSlab(mapViewer,
+                BlockSlab.WoodenSlab.class))
+                .solid(false)
+                .create(), 126);
+
         // TODO: cocoa
         // TODO: sandstone_stair
 
