@@ -26,11 +26,13 @@ import java.util.Map;
 
 public class BlockRegistry {
 
+    private static final boolean BUILD_BLOCK_LIST = false;
     private final Logger logger;
     private IMapViewer mapViewer;
     private Map<String, Block> blockMap = new HashMap<>();
     private Map<String, Map<StateMap, Block>> blockStateMap = new HashMap<>();
     private IntMap<Block> legacyMap = IntMap.create();
+    private StringBuilder blockListBuilder = new StringBuilder();
 
     /**
      * Creates a block registry which contains all the known blocks
@@ -135,6 +137,10 @@ public class BlockRegistry {
             block.plugin = plugin;
             block.name = name;
             logger.debug(block.toString());
+            if (BUILD_BLOCK_LIST) {
+                block.htmlFormat(blockListBuilder);
+                blockListBuilder.append("\n");
+            }
             blockMap.put(block.toString(), block);
             // State lookup
             if (!blockStateMap.containsKey(key)) {
@@ -581,5 +587,8 @@ public class BlockRegistry {
 
         logger.info("Blocks registered: " + blockMap.size() + " (" + blockStateMap.size() +
                 " excluding states)");
+        if (BUILD_BLOCK_LIST) {
+            logger.debug(blockListBuilder.toString());
+        }
     }
 }

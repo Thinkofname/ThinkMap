@@ -205,4 +205,37 @@ public class Block implements Model.RenderChecker {
     public boolean shouldRenderAgainst(Block other) {
         return !other.isSolid() && (allowSelf || other != this);
     }
+
+    /**
+     * Used to produce the block list at http://thinkofdeath.co.uk/thinkmap/blocklist.html
+     *
+     * @param builder
+     *         The builder to output to
+     */
+    public void htmlFormat(StringBuilder builder) {
+        builder.append("<span class=\"bl-pl\">")
+                .append(plugin)
+                .append("</span>:")
+                .append("<span class=\"bl-na\">")
+                .append(name)
+                .append("</span>");
+        if (state.size() > 0) {
+            builder.append("<span class=\"bl-st\">[");
+            int i = 0;
+            for (Map.Entry<String, Object> s : state.entrySet()) {
+                builder.append("<span class=\"bl-sn\">")
+                        .append(s.getKey())
+                        .append("</span>")
+                        .append('=')
+                        .append("<span class=\"bl-sv\">")
+                        .append(s.getValue())
+                        .append("</span>");
+                i++;
+                if (i != state.size()) {
+                    builder.append(',');
+                }
+            }
+            builder.append("]</span>");
+        }
+    }
 }
