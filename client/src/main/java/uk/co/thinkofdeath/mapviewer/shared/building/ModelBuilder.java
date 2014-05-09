@@ -42,9 +42,9 @@ public class ModelBuilder {
      * @return This builder
      */
     public ModelBuilder position(float x, float y, float z) {
-        buffer.addUnsignedShort((int) (x * 256 + 0.5 + 256));
-        buffer.addUnsignedShort((int) (y * 256 + 0.5 + 256));
-        buffer.addUnsignedShort((int) (z * 256 + 0.5 + 256));
+        buffer.addUnsignedShort((int) (x * 256 + 0.5 + 128));
+        buffer.addUnsignedShort((int) (y * 256 + 0.5 + 128));
+        buffer.addUnsignedShort((int) (z * 256 + 0.5 + 128));
         return this;
     }
 

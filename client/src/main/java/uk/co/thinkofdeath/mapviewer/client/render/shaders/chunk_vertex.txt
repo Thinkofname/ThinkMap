@@ -22,7 +22,8 @@ const float invIdScale = 1.0 / 32.0;
 
 void main(void) {
     vec3 pos = position;
-    gl_Position = pMatrix * uMatrix * vec4((pos * invPosScale) - 1.0 + vec3(offset.x * 16.0, 0.0, offset.y * 16.0), 1.0);
+    gl_Position = pMatrix * uMatrix * vec4((pos * invPosScale) - 0.5 + vec3(offset.x * 16.0, 0.0,
+     offset.y * 16.0), 1.0);
     vColour = colour;
 
     vec2 tPos = texturePos * invPosScale;
