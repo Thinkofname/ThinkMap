@@ -46,7 +46,7 @@ public class WorkerPool {
         this.mapViewer = mapViewer;
         logger = mapViewer.getLoggerFactory().getLogger("WorkerPool");
         for (int i = 0; i < limit; i++) {
-            workers.add(new PooledWorker(Browser.getWindow().newWorker("../mapviewerworker/mapviewerworker.js")));
+            workers.add(new PooledWorker(Browser.getWindow().newWorker("./mapviewerworker/mapviewerworker.js")));
         }
     }
 
