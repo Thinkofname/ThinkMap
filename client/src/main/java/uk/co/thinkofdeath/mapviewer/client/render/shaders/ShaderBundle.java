@@ -24,9 +24,9 @@ public interface ShaderBundle extends ClientBundle {
 
     public static final ShaderBundle INSTANCE = GWT.create(ShaderBundle.class);
 
-    @Source("chunk_vertex.txt")
+    @Source("chunk_vertex.glsl")
     public TextResource chunkVertexShader();
 
-    @Source("chunk_fragment.txt")
+    @Source("chunk_fragment.glsl")
     public TextResource chunkFragmentShader();
 }
