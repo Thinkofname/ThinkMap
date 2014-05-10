@@ -34,6 +34,6 @@ class ChunkSorter implements Comparator<ChunkRenderObject> {
         int bx = (b.x << 4) + 8 - (int) camera.getX();
         int by = (b.y << 4) + 8 - (int) camera.getY();
         int bz = (b.z << 4) + 8 - (int) camera.getZ();
-        return (bx * bx + by * by + bz * bz) - (ax * ax + ay * ay + az * az);
+        return (ax * ax + ay * ay + az * az) - (bx * bx + by * by + bz * bz);
     }
 }
