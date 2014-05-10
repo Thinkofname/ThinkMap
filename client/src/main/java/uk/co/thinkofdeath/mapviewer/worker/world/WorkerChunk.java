@@ -38,6 +38,7 @@ import java.util.Map;
 public class WorkerChunk extends Chunk {
 
     private final WorkerWorld world;
+    private final boolean reply;
 
     /**
      * Creates a chunk at the passed position
@@ -112,14 +113,21 @@ public class WorkerChunk extends Chunk {
                 }
             }
         }
+        this.reply = reply;
+    }
+
+    /**
+     * Called after the chunk is added to the world
+     */
+    public void postAdd() {
         for (int i = 0; i < 16; i++) {
-            if ((sectionMask & (1 << i)) == 0) {
+            if (sections[i] == null) {
                 continue;
             }
             for (int oy = 0; oy < 16; oy++) {
                 for (int oz = -1; oz < 17; oz++) {
                     for (int ox = -1; ox < 17; ox++) {
-                        world.updateBlock((getX() << 4) + ox, oy, oz);
+                        world.updateBlock((getX() << 4) + ox, (i << 4) + oy, (getZ() << 4) + oz);
                     }
                 }
             }

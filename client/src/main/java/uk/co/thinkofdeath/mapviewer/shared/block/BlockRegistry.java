@@ -136,7 +136,7 @@ public class BlockRegistry {
         for (Block block : blocks.getBlocks()) {
             block.plugin = plugin;
             block.name = name;
-            logger.debug(block.toString());
+            logger.debug(block.toString() + "/" + block.getLegacyData());
             if (BUILD_BLOCK_LIST) {
                 block.htmlFormat(blockListBuilder);
                 blockListBuilder.append("\n");
@@ -345,7 +345,10 @@ public class BlockRegistry {
                 .allowSelf(true)
                 .create(), 52);
 
-        // TODO: oak_stairs
+        register("minecraft", "oak_stairs", new BlockBuilder(new BlockStairs(mapViewer))
+                .texture("planks_oak")
+                .solid(false)
+                .create(), 53);
 
         register("minecraft", "chest", new BlockBuilder(new BlockChest(mapViewer))
                 .solid(false)
@@ -374,8 +377,11 @@ public class BlockRegistry {
                 .solid(false)
                 .collidable(false)
                 .create(), 66);
+        register("minecraft", "stone_stairs", new BlockBuilder(new BlockStairs(mapViewer))
+                .texture("cobblestone")
+                .solid(false)
+                .create(), 67);
 
-        // TODO: stone_stairs
         // TODO: wall_sign
         // TODO: lever
         // TODO: stone_pressure_plate
@@ -454,8 +460,16 @@ public class BlockRegistry {
                 .create(), 106);
 
         // TODO: fence_gate
-        // TODO: brick_stairs
-        // TODO: stone_brick_stairs
+
+        register("minecraft", "brick_stairs", new BlockBuilder(new BlockStairs(mapViewer))
+                .texture("brick")
+                .solid(false)
+                .create(), 108);
+        register("minecraft", "stone_brick_stairs", new BlockBuilder(new BlockStairs(mapViewer))
+                .texture("stonebrick")
+                .solid(false)
+                .create(), 109);
+
         // TODO: mycelium
         // TODO: waterlily
 
@@ -464,7 +478,12 @@ public class BlockRegistry {
                 .create(), 112);
 
         // TODO: nether_brick_fence
-        // TODO: nether_brick_stairs
+
+        register("minecraft", "nether_brick_stairs", new BlockBuilder(new BlockStairs(mapViewer))
+                .texture("nether_brick")
+                .solid(false)
+                .create(), 114);
+
         // TODO: nether_wart
         // TODO: enchanting_table
         // TODO: brewing_stand
@@ -493,7 +512,11 @@ public class BlockRegistry {
                 .create(), 126);
 
         // TODO: cocoa
-        // TODO: sandstone_stairs
+
+        register("minecraft", "sandstone_stairs", new BlockBuilder(new BlockStairs(mapViewer))
+                .texture("sandstone_normal")
+                .solid(false)
+                .create(), 128);
 
         register("minecraft", "emerald_ore", new BlockBuilder(mapViewer)
                 .texture("emerald_ore")
@@ -506,12 +529,18 @@ public class BlockRegistry {
         register("minecraft", "emerald_block", new BlockBuilder(mapViewer)
                 .texture("emerald_block")
                 .create(), 133);
-
-        // TODO: spruce_stairs
-        // TODO: birch_stairs
-        // TODO: jungle_stairs
-
-
+        register("minecraft", "spruce_stairs", new BlockBuilder(new BlockStairs(mapViewer))
+                .texture("planks_spruce")
+                .solid(false)
+                .create(), 134);
+        register("minecraft", "birch_stairs", new BlockBuilder(new BlockStairs(mapViewer))
+                .texture("planks_birch")
+                .solid(false)
+                .create(), 135);
+        register("minecraft", "jungle_stairs", new BlockBuilder(new BlockStairs(mapViewer))
+                .texture("planks_jungle")
+                .solid(false)
+                .create(), 136);
         register("minecraft", "command_block", new BlockBuilder(mapViewer)
                 .texture("command_block")
                 .create(), 137);
@@ -542,9 +571,10 @@ public class BlockRegistry {
                 .create(), 154);
         register("minecraft", "quartz_block", new BlockBuilder(new BlockQuartz(mapViewer))
                 .create(), 155);
-
-        // TODO: quartz_stairs
-
+        register("minecraft", "quartz_stairs", new BlockBuilder(new BlockStairs(mapViewer))
+                .texture("quartz_block_top")
+                .solid(false)
+                .create(), 156);
         register("minecraft", "activator_rail", new BlockBuilder(new BlockPoweredRail(mapViewer,
                 "rail_activator"))
                 .solid(false)
@@ -558,8 +588,16 @@ public class BlockRegistry {
         // TODO: stained_glass_pane
         // TODO: leaves2
         // TODO: log2
-        // TODO: acacia_stairs
-        // TODO: dark_oak_stairs
+
+        register("minecraft", "acacia_stairs", new BlockBuilder(new BlockStairs(mapViewer))
+                .texture("planks_acacia")
+                .solid(false)
+                .create(), 163);
+        register("minecraft", "dark_oak_stairs", new BlockBuilder(new BlockStairs(mapViewer))
+                .texture("planks_big_oak")
+                .solid(false)
+                .create(), 164);
+
         // TODO: hay_block
         // TODO: carpet
 

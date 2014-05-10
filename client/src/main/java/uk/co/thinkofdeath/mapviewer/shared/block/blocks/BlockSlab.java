@@ -82,7 +82,9 @@ public class BlockSlab extends BlockFactory {
             }
         },
         WOODEN("planks_oak"),
+        COBBLESTONE("cobblestone"),
         BRICK("brick"),
+        STONE_BRICK("stonebrick"),
         NETHER_BRICK("nether_brick"),
         QUARTZ("") {
             @Override

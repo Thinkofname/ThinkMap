@@ -131,7 +131,7 @@ public class ClientChunk extends Chunk {
      */
     public void rebuild() {
         for (int i = 0; i < 16; i++) {
-            outdatedSections[i] = sections[i] != null;
+            outdatedSections[i] = true;
         }
     }
 

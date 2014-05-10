@@ -61,9 +61,11 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
         switch (message.getType()) {
             case "chunk:load":
                 ChunkLoadMessage chunkLoadMessage = (ChunkLoadMessage) message.getMessage();
-                world.addChunk(new WorkerChunk(world,
+                WorkerChunk c = new WorkerChunk(world,
                         chunkLoadMessage.getX(), chunkLoadMessage.getZ(),
-                        chunkLoadMessage.getData(), message.getReturn()));
+                        chunkLoadMessage.getData(), message.getReturn());
+                world.addChunk(c);
+                c.postAdd();
                 break;
             case "chunk:unload":
                 ChunkUnloadMessage chunkUnloadMessage = (ChunkUnloadMessage) message.getMessage();

@@ -27,8 +27,8 @@ import java.util.Map;
 public class Block implements Model.RenderChecker {
 
     protected final StateMap state;
-    String plugin;
-    String name;
+    protected String plugin;
+    protected String name;
     // The following should be mirrored in BlockFactory, BlockBuilder
     // and the constructor
     private boolean renderable;

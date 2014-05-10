@@ -94,7 +94,7 @@ public abstract class Chunk {
      */
     public boolean updateBlock(int x, int y, int z) {
         Block b1 = getBlock(x, y, z);
-        Block b2 = b1.update(world, x, y, z);
+        Block b2 = b1.update(world, (this.x << 4) + x, y, (this.z << 4) + z);
         if (b1 != b2) {
             setBlock(x, y, z, b2);
             return true;
