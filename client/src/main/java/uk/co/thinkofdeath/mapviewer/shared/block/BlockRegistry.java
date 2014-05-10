@@ -296,9 +296,10 @@ public class BlockRegistry {
                 .solid(false)
                 .collidable(false)
                 .create(), 37);
-
-        // TODO: red_flower
-
+        register("minecraft", "red_flower", new BlockBuilder(new BlockFlowers(mapViewer))
+                .solid(false)
+                .collidable(false)
+                .create(), 38);
         register("minecraft", "brown_mushroom", new BlockBuilder(mapViewer)
                 .model(BlockModels.createCross(mapViewer.getTexture("mushroom_brown")))
                 .solid(false)
@@ -325,18 +326,23 @@ public class BlockRegistry {
         register("minecraft", "brick_block", new BlockBuilder(mapViewer)
                 .texture("brick")
                 .create(), 45);
-
-        // TODO: tnt
-        // TODO: bookshelf
-
+        register("minecraft", "tnt", new BlockBuilder(new BlockMultiSide(mapViewer, "tnt_top",
+                "tnt_bottom", "tnt_side", "tnt_side", "tnt_side", "tnt_side"))
+                .create(), 46);
+        register("minecraft", "bookshelf", new BlockBuilder(new BlockMultiSide(mapViewer,
+                "planks_oak", "planks_oak", "bookshelf", "bookshelf", "bookshelf", "bookshelf"))
+                .create(), 47);
         register("minecraft", "mossy_cobblestone", new BlockBuilder(mapViewer)
                 .texture("cobblestone_mossy")
                 .create(), 48);
         register("minecraft", "obsidian", new BlockBuilder(mapViewer)
                 .texture("obsidian")
                 .create(), 49);
+        register("minecraft", "torch", new BlockBuilder(new BlockTorch(mapViewer, "torch_on"))
+                .solid(false)
+                .collidable(false)
+                .create(), 50);
 
-        // TODO: torch
         // TODO: fire
 
         register("minecraft", "mob_spawner", new BlockBuilder(mapViewer)
@@ -402,9 +408,17 @@ public class BlockRegistry {
         register("minecraft", "lit_redstone_ore", new BlockBuilder(mapViewer)
                 .texture("redstone_ore")
                 .create(), 74);
+        register("minecraft", "unlit_redstone_torch", new BlockBuilder(new BlockTorch(mapViewer,
+                "redstone_torch_off"))
+                .solid(false)
+                .collidable(false)
+                .create(), 75);
+        register("minecraft", "redstone_torch", new BlockBuilder(new BlockTorch(mapViewer,
+                "redstone_torch_on"))
+                .solid(false)
+                .collidable(false)
+                .create(), 76);
 
-        // TODO: unlit_redstone_torch
-        // TODO: redstone_torch
         // TODO: stone_button
         // TODO: snow_layer
 
@@ -477,8 +491,8 @@ public class BlockRegistry {
                 .texture("stonebrick")
                 .solid(false)
                 .create(), 109);
-
-        // TODO: mycelium
+        register("minecraft", "mycelium", new BlockBuilder(new BlockMycelium(mapViewer))
+                .create(), 110);
         // TODO: waterlily
 
         register("minecraft", "nether_brick", new BlockBuilder(mapViewer)

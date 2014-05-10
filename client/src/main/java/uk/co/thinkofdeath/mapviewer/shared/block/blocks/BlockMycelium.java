@@ -23,41 +23,40 @@ import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
 import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 
-public class BlockMultiSide extends BlockFactory {
+public class BlockMycelium extends BlockFactory {
 
-    private final Texture[] textures = new Texture[Face.values().length];
+    private final Texture top;
+    private final Texture side;
+    private final Texture dirt;
 
-    public BlockMultiSide(IMapViewer iMapViewer,
-                          String top, String bottom,
-                          String left, String right,
-                          String front, String back) {
+    public BlockMycelium(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        textures[Face.TOP.ordinal()] = mapViewer.getTexture(top);
-        textures[Face.BOTTOM.ordinal()] = mapViewer.getTexture(bottom);
-        textures[Face.LEFT.ordinal()] = mapViewer.getTexture(left);
-        textures[Face.RIGHT.ordinal()] = mapViewer.getTexture(right);
-        textures[Face.FRONT.ordinal()] = mapViewer.getTexture(front);
-        textures[Face.BACK.ordinal()] = mapViewer.getTexture(back);
+        top = iMapViewer.getTexture("mycelium_top");
+        side = iMapViewer.getTexture("mycelium_side");
+        dirt = iMapViewer.getTexture("dirt");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Block createBlock(StateMap states) {
         return new BlockImpl(states);
     }
 
     private class BlockImpl extends Block {
-
-        BlockImpl(StateMap state) {
-            super(BlockMultiSide.this, state);
+        public BlockImpl(StateMap states) {
+            super(BlockMycelium.this, states);
         }
 
         @Override
         public Texture getTexture(Face face) {
-            return textures[face.ordinal()];
+            switch (face) {
+                case TOP:
+                    return top;
+                case BOTTOM:
+                    return dirt;
+                default:
+                    return side;
+            }
         }
     }
 }
