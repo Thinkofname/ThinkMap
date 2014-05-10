@@ -368,7 +368,12 @@ public class BlockRegistry {
         // TODO: farmland
         // TODO: furnace
         // TODO: lit_furnace
-        // TODO: standing_sign
+
+        register("minecraft", "standing_sign", new BlockBuilder(new BlockFloorSign(mapViewer))
+                .solid(false)
+                .collidable(false)
+                .create(), 63);
+
         // TODO: wooden_door
         // TODO: ladder
 
@@ -381,8 +386,11 @@ public class BlockRegistry {
                 .texture("cobblestone")
                 .solid(false)
                 .create(), 67);
+        register("minecraft", "wall_sign", new BlockBuilder(new BlockSign(mapViewer))
+                .solid(false)
+                .collidable(false)
+                .create(), 68);
 
-        // TODO: wall_sign
         // TODO: lever
         // TODO: stone_pressure_plate
         // TODO: iron_door
