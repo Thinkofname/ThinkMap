@@ -51,7 +51,7 @@ public class BufferedTexture implements Texture {
 
     @Override
     public int[] getPixels(int x, int y, int w, int h) {
-        return image.getRGB(0, 0, w, h, null, 0, w);
+        return image.getRGB(x, y, w, h, null, 0, w);
     }
 
     @Override

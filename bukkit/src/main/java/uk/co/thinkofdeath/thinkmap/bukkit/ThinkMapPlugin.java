@@ -51,7 +51,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     public static final String MINECRAFT_VERSION = "1.7.9";
-    public static final String RESOURCE_VERSION = "1";
+    public static final String RESOURCE_VERSION = "2";
 
     public final Map<Integer, SocketChannel> activeConnections = Collections.synchronizedMap(new HashMap<Integer, SocketChannel>());
     private final Map<String, ChunkManager> chunkManagers = new HashMap<String, ChunkManager>();
