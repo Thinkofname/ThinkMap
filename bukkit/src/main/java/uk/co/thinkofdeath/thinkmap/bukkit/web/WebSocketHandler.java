@@ -39,7 +39,7 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<BinaryWebSocke
 
     @Override
     protected void messageReceived(final ChannelHandlerContext ctx, BinaryWebSocketFrame msg) throws Exception {
-        if (!firstMessage) {
+        if (firstMessage) {
             firstMessage = false;
             plugin.getWebHandler().getChannelGroup().add(ctx.channel());
         }
