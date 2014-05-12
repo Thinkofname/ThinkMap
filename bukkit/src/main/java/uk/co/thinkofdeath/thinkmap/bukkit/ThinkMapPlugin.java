@@ -18,7 +18,6 @@ package uk.co.thinkofdeath.thinkmap.bukkit;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.World;
@@ -42,20 +41,15 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     public static final String MINECRAFT_VERSION = "1.7.9";
     public static final String RESOURCE_VERSION = "2";
 
-    public final Map<Integer, SocketChannel> activeConnections = Collections.synchronizedMap(new HashMap<Integer, SocketChannel>());
     private final Map<String, ChunkManager> chunkManagers = new HashMap<String, ChunkManager>();
-    public AtomicInteger lastConnectionId = new AtomicInteger();
     private WebHandler webHandler;
     private World targetWorld;
 
@@ -78,6 +72,7 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
         config.addDefault("webserver.bind-address", "0.0.0.0");
         saveConfig();
 
+        // Resource loading
         final File blockTextures = new File(
                 new File(getDataFolder(), "resources/" + MINECRAFT_VERSION + "-" + RESOURCE_VERSION),
                 "blocks.png");
@@ -169,19 +164,7 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
     }
 
     public void sendAll(BinaryWebSocketFrame frame) {
-        synchronized (activeConnections) {
-            Iterator<SocketChannel> it = activeConnections.values().iterator();
-            while (it.hasNext()) {
-                SocketChannel channel = it.next();
-                if (!channel.isActive() || !channel.isOpen()) {
-                    it.remove();
-                    continue;
-                }
-                frame.retain();
-                channel.writeAndFlush(frame);
-            }
-        }
-        frame.release();
+        getWebHandler().getChannelGroup().writeAndFlush(frame);
     }
 
 

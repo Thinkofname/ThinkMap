@@ -57,11 +57,9 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     }
 
     private final ThinkMapPlugin plugin;
-    private final int id;
 
-    public HTTPHandler(ThinkMapPlugin plugin, int id) {
+    public HTTPHandler(ThinkMapPlugin plugin) {
         this.plugin = plugin;
-        this.id = id;
     }
 
     @Override

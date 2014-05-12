@@ -19,8 +19,11 @@ package uk.co.thinkofdeath.thinkmap.bukkit.web;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.util.concurrent.GlobalEventExecutor;
 import uk.co.thinkofdeath.thinkmap.bukkit.ThinkMapPlugin;
 
 public class WebHandler extends Thread {
@@ -30,6 +33,11 @@ public class WebHandler extends Thread {
     public WebHandler(ThinkMapPlugin plugin) {
         this.plugin = plugin;
     }
+
+    // Connections
+    private final ChannelGroup channels = new DefaultChannelGroup("ThinkMap Connections",
+            GlobalEventExecutor.INSTANCE);
+    //
 
     @Override
     public void run() {
@@ -53,5 +61,9 @@ public class WebHandler extends Thread {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
+    }
+
+    public ChannelGroup getChannelGroup() {
+        return channels;
     }
 }

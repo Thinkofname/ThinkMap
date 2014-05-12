@@ -30,16 +30,19 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<BinaryWebSocke
     private final static Logger logger = Logger.getLogger(WebSocketHandler.class.getName());
 
     private final ThinkMapPlugin plugin;
-    private final int id;
+    private boolean firstMessage = true;
 
-    public WebSocketHandler(ThinkMapPlugin plugin, int id) {
+    public WebSocketHandler(ThinkMapPlugin plugin) {
         super(false);
         this.plugin = plugin;
-        this.id = id;
     }
 
     @Override
     protected void messageReceived(final ChannelHandlerContext ctx, BinaryWebSocketFrame msg) throws Exception {
+        if (!firstMessage) {
+            firstMessage = false;
+            plugin.getWebHandler().getChannelGroup().add(ctx.channel());
+        }
         ByteBuf data = msg.content();
         switch (data.readUnsignedByte()) {
             case 0: // Start
