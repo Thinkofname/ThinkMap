@@ -32,6 +32,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import uk.co.thinkofdeath.thinkmap.bukkit.ThinkMapPlugin;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -112,7 +114,19 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
             request.setUri("/index.html");
         }
 
-        InputStream stream = this.getClass().getClassLoader().getResourceAsStream("www" + request.getUri());
+        InputStream stream = null;
+        if (request.getUri().startsWith("/resources/")) {
+            File file = new File(
+                    new File(plugin.getDataFolder(), "resources/" +
+                            ThinkMapPlugin.MINECRAFT_VERSION + "-" + ThinkMapPlugin.RESOURCE_VERSION),
+                    request.getUri().substring("/resources/".length())
+            );
+            stream = new FileInputStream(file);
+        } else {
+            stream = this.getClass().getClassLoader()
+                    .getResourceAsStream("www" +
+                            request.getUri());
+        }
         if (stream == null) {
             sendHttpResponse(context, request, new DefaultFullHttpResponse(HTTP_1_1, NOT_FOUND));
             return;
@@ -126,10 +140,14 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         if (request.getUri().equals("/index.html")) {
             String page = buffer.toString(Charsets.UTF_8);
             page = page.replaceAll("%SERVERPORT%", Integer.toString(plugin.getConfig().getInt("webserver.port")));
+            buffer.release();
             buffer = Unpooled.wrappedBuffer(page.getBytes(Charsets.UTF_8));
         }
 
         FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, buffer);
+        if (request.getUri().startsWith("/resources/")) {
+            response.headers().add("Access-Control-Allow-Origin", "*");
+        }
 
         String ext = request.getUri().substring(request.getUri().lastIndexOf('.') + 1);
         String type = mimeTypes.containsKey(ext) ? mimeTypes.get(ext) : "text/plain";

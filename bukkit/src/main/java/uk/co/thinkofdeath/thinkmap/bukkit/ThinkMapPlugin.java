@@ -16,18 +16,33 @@
 
 package uk.co.thinkofdeath.thinkmap.bukkit;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import lombok.Getter;
+import org.apache.commons.io.FileUtils;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import uk.co.thinkofdeath.thinkmap.bukkit.textures.BufferedTexture;
+import uk.co.thinkofdeath.thinkmap.bukkit.textures.BufferedTextureFactory;
+import uk.co.thinkofdeath.thinkmap.bukkit.textures.TextureDetailsSerializer;
 import uk.co.thinkofdeath.thinkmap.bukkit.web.Packets;
 import uk.co.thinkofdeath.thinkmap.bukkit.web.WebHandler;
 import uk.co.thinkofdeath.thinkmap.bukkit.world.ChunkManager;
+import uk.co.thinkofdeath.thinkmap.textures.StitchResult;
+import uk.co.thinkofdeath.thinkmap.textures.TextureDetails;
+import uk.co.thinkofdeath.thinkmap.textures.TextureFactory;
+import uk.co.thinkofdeath.thinkmap.textures.TextureStitcher;
+import uk.co.thinkofdeath.thinkmap.textures.mojang.MojangTextureProvider;
 
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,6 +50,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThinkMapPlugin extends JavaPlugin implements Runnable {
+
+    public static final String MINECRAFT_VERSION = "1.7.9";
+    public static final String RESOURCE_VERSION = "1";
 
     public final Map<Integer, SocketChannel> activeConnections = Collections.synchronizedMap(new HashMap<Integer, SocketChannel>());
     private final Map<String, ChunkManager> chunkManagers = new HashMap<String, ChunkManager>();
@@ -57,7 +75,7 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
             if (targetWorld == null) {
                 targetWorld = world;
                 getChunkManager(world);
-                break; // Support multiple worlds
+                break; // TODO: Support multiple worlds
             }
         }
 
@@ -67,8 +85,58 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
         config.addDefault("webserver.bind-address", "0.0.0.0");
         saveConfig();
 
-        webHandler = new WebHandler(this);
-        webHandler.start();
+        final File blockTextures = new File(
+                new File(getDataFolder(), "resources/" + MINECRAFT_VERSION + "-" + RESOURCE_VERSION),
+                "blocks.png");
+        if (blockTextures.exists()) {
+            webHandler = new WebHandler(this);
+            webHandler.start();
+        } else {
+            getServer().getScheduler().runTaskAsynchronously(this, new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        blockTextures.getParentFile().mkdirs();
+                        TextureFactory textureFactory = new BufferedTextureFactory();
+                        getLogger().info("Downloading textures. This may take some time");
+                        MojangTextureProvider textureProvider =
+                                new MojangTextureProvider(MINECRAFT_VERSION, textureFactory);
+                        try (InputStream in =
+                                     getClassLoader().getResourceAsStream("textures/missing_texture.png")) {
+                            textureProvider.addTexture("missing_texture",
+                                    textureFactory.fromInputStream(in));
+                        }
+                        TextureStitcher stitcher = new TextureStitcher(textureProvider, textureFactory);
+                        getLogger().info("Stitching textures. The mapviewer will start after this " +
+                                "completes");
+                        long start = System.currentTimeMillis();
+                        StitchResult result = stitcher.stitch();
+                        // Save the result
+                        Gson gson = new GsonBuilder()
+                                .registerTypeAdapter(TextureDetails.class,
+                                        new TextureDetailsSerializer())
+                                .create();
+                        FileUtils.writeStringToFile(
+                                new File(
+                                        new File(getDataFolder(), "resources/"
+                                                + MINECRAFT_VERSION + "-" + RESOURCE_VERSION),
+                                        "blocks.json"
+                                ),
+                                gson.toJson(result.getDetails())
+                        );
+                        ImageIO.write(((BufferedTexture) result.getOutput()).getImage(), "PNG",
+                                blockTextures);
+                        getLogger().info("Stitching complete in " + (System.currentTimeMillis() -
+                                start) + "ms");
+
+                        webHandler = new WebHandler(ThinkMapPlugin.this);
+                        webHandler.start();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+        }
     }
 
     @Override

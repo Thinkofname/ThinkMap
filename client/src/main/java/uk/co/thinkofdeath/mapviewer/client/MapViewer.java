@@ -69,13 +69,16 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
      * Entry point to the program
      */
     public void onModuleLoad() {
+        String host = getConfigHost();
+        String port = getConfigPort();
         // Texture
         texture = (ImageElement) Browser.getDocument().createElement("img");
         texture.setOnload(this);
-        texture.setSrc("./block_images/blocks.png");
+        texture.setCrossOrigin("anonymous");
+        texture.setSrc("http://" + host + ":" + port + "/resources/blocks.png");
         // Atlas to look up position of textures in the above image
         xhr = Browser.getWindow().newXMLHttpRequest();
-        xhr.open("GET", "./block_images/blocks.json", true);
+        xhr.open("GET", "http://" + host + ":" + port + "/resources/blocks.json", true);
         xhr.setOnload(this);
         xhr.send();
     }
@@ -208,6 +211,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     public Texture getTexture(String name) {
         if (!textures.containsKey(name)) {
             loggerFactory.getLogger("textures").error("Texture not found: " + name);
+            return textures.get("missing_texture");
         }
         return textures.get(name);
     }

@@ -120,7 +120,8 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
     public Texture getTexture(String name) {
         Texture texture = textures.get(name);
         if (texture == null) {
-            throw new RuntimeException("Missing texture: " + name);
+            //FIXME: throw new RuntimeException("Missing texture: " + name);
+            return textures.get("missing_texture");
         }
         return texture;
     }
