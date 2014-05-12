@@ -25,6 +25,9 @@
     <packaging>pom</packaging>
     <version>0.8</version>
     <modules>
+        <module>html</module>
+        <module>shared</module>
+        <module>worker</module>
         <module>client</module>
         <module>textures</module>
         <module>bukkit</module>
@@ -34,5 +37,71 @@
         <build.number>SNAPSHOT</build.number>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
+        <gwt.version>2.7.0-SNAPSHOT</gwt.version>
+        <fast.build>false</fast.build>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>gwt-oss-sonatype</id>
+            <name>oss-sonatype</name>
+            <url>https://oss.sonatype.org/content/repositories/google-snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>gwt-oss-sonatype</id>
+            <name>oss-sonatype</name>
+            <url>https://oss.sonatype.org/content/repositories/google-snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>gwt-maven-plugin</artifactId>
+                    <version>2.6.1-rc2</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.google.gwt</groupId>
+                            <artifactId>gwt-user</artifactId>
+                            <version>${gwt.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>com.google.gwt</groupId>
+                            <artifactId>gwt-dev</artifactId>
+                            <version>${gwt.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>com.google.gwt</groupId>
+                            <artifactId>gwt-codeserver</artifactId>
+                            <version>${gwt.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <webappDirectory>target</webappDirectory>
+                        <optimizationLevel>9</optimizationLevel>
+                        <draftCompile>${fast.build}</draftCompile>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>compile</goal>
+                                <goal>generateAsync</goal>
+                                <goal>test</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>
