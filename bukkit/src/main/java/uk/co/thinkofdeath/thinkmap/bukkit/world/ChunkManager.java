@@ -21,7 +21,6 @@ import gnu.trove.set.hash.TLongHashSet;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
-import lombok.Cleanup;
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
@@ -72,61 +71,62 @@ public class ChunkManager implements Runnable {
                     gzipChunk(snapshot, data);
                     File worldFolder = new File(plugin.getDataFolder(), world.getName());
                     worldFolder.mkdirs();
-                    @Cleanup RandomAccessFile region = new RandomAccessFile(new File(worldFolder,
+                    try (RandomAccessFile region = new RandomAccessFile(new File(worldFolder,
                             String.format("region_%d-%d.dat", snapshot.getX() >> 5, snapshot.getZ() >> 5)
-                    ), "rw");
-                    if (region.length() < 4096 * 3) {
-                        // Init header
-                        region.seek(4096 * 3);
-                        region.writeByte(0);
-                    }
-                    int id = ((snapshot.getX() & 0x1F) | ((snapshot.getZ() & 0x1F) << 5));
-                    region.seek(8 * id);
-                    int offset = region.readInt();
-                    int size = region.readInt();
-                    if (offset != 0) {
-                        if (data.readableBytes() < ((size / 4096) + 1) * 4096) {
-                            size = data.readableBytes();
-                            region.seek(8 * id);
-                            region.writeInt(offset);
-                            region.writeInt(size);
-                            region.seek(offset * 4096);
-                            region.write(data.array());
-                            return;
+                    ), "rw")) {
+                        if (region.length() < 4096 * 3) {
+                            // Init header
+                            region.seek(4096 * 3);
+                            region.writeByte(0);
                         }
-                    }
-                    boolean[] usedSpace = new boolean[(int) ((region.length() / 4096) + 1)];
-                    usedSpace[0] = usedSpace[1] = usedSpace[2] = true;
-                    for (int i = 0; i < 32 * 32; i++) {
-                        if (i == id) continue;
-                        region.seek(8 * i);
-                        int oo = region.readInt();
-                        int os = region.readInt();
-                        for (int j = oo; j < oo + ((os / 4096) + 1); j++) {
-                            usedSpace[j] = true;
-                        }
-                    }
-                    offset = usedSpace.length;
-                    size = data.readableBytes();
-                    search:
-                    for (int i = 2; i < usedSpace.length; i++) {
-                        if (!usedSpace[i]) {
-                            for (int j = i + 1; j < i + ((size / 4096) + 1); j++) {
-                                if (j >= usedSpace.length || usedSpace[j]) {
-                                    i += ((size / 4096) + 1);
-                                    continue search;
-                                }
+                        int id = ((snapshot.getX() & 0x1F) | ((snapshot.getZ() & 0x1F) << 5));
+                        region.seek(8 * id);
+                        int offset = region.readInt();
+                        int size = region.readInt();
+                        if (offset != 0) {
+                            if (data.readableBytes() < ((size / 4096) + 1) * 4096) {
+                                size = data.readableBytes();
+                                region.seek(8 * id);
+                                region.writeInt(offset);
+                                region.writeInt(size);
+                                region.seek(offset * 4096);
+                                region.write(data.array());
+                                return;
                             }
-                            offset = i;
-                            break;
                         }
+                        boolean[] usedSpace = new boolean[(int) ((region.length() / 4096) + 1)];
+                        usedSpace[0] = usedSpace[1] = usedSpace[2] = true;
+                        for (int i = 0; i < 32 * 32; i++) {
+                            if (i == id) continue;
+                            region.seek(8 * i);
+                            int oo = region.readInt();
+                            int os = region.readInt();
+                            for (int j = oo; j < oo + ((os / 4096) + 1); j++) {
+                                usedSpace[j] = true;
+                            }
+                        }
+                        offset = usedSpace.length;
+                        size = data.readableBytes();
+                        search:
+                        for (int i = 2; i < usedSpace.length; i++) {
+                            if (!usedSpace[i]) {
+                                for (int j = i + 1; j < i + ((size / 4096) + 1); j++) {
+                                    if (j >= usedSpace.length || usedSpace[j]) {
+                                        i += ((size / 4096) + 1);
+                                        continue search;
+                                    }
+                                }
+                                offset = i;
+                                break;
+                            }
+                        }
+                        region.seek(offset * 4096);
+                        region.write(data.array());
+                        region.seek(8 * id);
+                        region.writeInt(offset);
+                        region.writeInt(size);
+                        data.release();
                     }
-                    region.seek(offset * 4096);
-                    region.write(data.array());
-                    region.seek(8 * id);
-                    region.writeInt(offset);
-                    region.writeInt(size);
-                    data.release();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -140,21 +140,22 @@ public class ChunkManager implements Runnable {
             public ByteBuf call() throws Exception {
                 try {
                     File worldFolder = new File(plugin.getDataFolder(), world.getName());
-                    @Cleanup RandomAccessFile region = new RandomAccessFile(new File(worldFolder,
+                    try (RandomAccessFile region = new RandomAccessFile(new File(worldFolder,
                             String.format("region_%d-%d.dat", x >> 5, z >> 5)
-                    ), "r");
-                    if (region.length() < 4096 * 3) return null;
-                    int id = ((x & 0x1F) | ((z & 0x1F) << 5));
-                    region.seek(8 * id);
-                    int offset = region.readInt();
-                    int size = region.readInt();
-                    if (offset == 0) {
-                        return null;
+                    ), "r")) {
+                        if (region.length() < 4096 * 3) return null;
+                        int id = ((x & 0x1F) | ((z & 0x1F) << 5));
+                        region.seek(8 * id);
+                        int offset = region.readInt();
+                        int size = region.readInt();
+                        if (offset == 0) {
+                            return null;
+                        }
+                        region.seek(offset * 4096);
+                        byte[] data = new byte[size];
+                        region.read(data);
+                        return Unpooled.wrappedBuffer(data);
                     }
-                    region.seek(offset * 4096);
-                    byte[] data = new byte[size];
-                    region.read(data);
-                    return Unpooled.wrappedBuffer(data);
                 } catch (Exception e) {
                     return null;
                 }
