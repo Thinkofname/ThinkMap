@@ -39,7 +39,7 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<BinaryWebSocke
     }
 
     @Override
-    protected void channelRead0(final ChannelHandlerContext ctx, BinaryWebSocketFrame msg) throws Exception {
+    protected void messageReceived(final ChannelHandlerContext ctx, BinaryWebSocketFrame msg) throws Exception {
         ByteBuf data = msg.content();
         switch (data.readUnsignedByte()) {
             case 0: // Start

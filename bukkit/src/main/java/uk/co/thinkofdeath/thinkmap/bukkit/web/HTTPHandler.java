@@ -65,8 +65,9 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext context, FullHttpRequest msg) throws Exception {
-        httpRequest(context, msg);
+    protected void messageReceived(ChannelHandlerContext ctx, FullHttpRequest msg)
+            throws Exception {
+        httpRequest(ctx, msg);
     }
 
     public void httpRequest(ChannelHandlerContext context, FullHttpRequest request) throws IOException {
@@ -74,7 +75,6 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
             sendHttpResponse(context, request, new DefaultFullHttpResponse(HTTP_1_1, BAD_REQUEST));
             return;
         }
-
         if (request.getUri().equals("/server")) {
             context.fireChannelRead(request);
             return;
