@@ -17,7 +17,6 @@
 package uk.co.thinkofdeath.thinkmap.bukkit;
 
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -27,10 +26,13 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import uk.co.thinkofdeath.thinkmap.bukkit.web.Packets;
 
-@RequiredArgsConstructor
 public class Events implements Listener {
 
     private final ThinkMapPlugin plugin;
+
+    public Events(ThinkMapPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onWorldLoad(WorldLoadEvent event) {

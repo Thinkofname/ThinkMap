@@ -22,13 +22,15 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
-import lombok.RequiredArgsConstructor;
 import uk.co.thinkofdeath.thinkmap.bukkit.ThinkMapPlugin;
 
-@RequiredArgsConstructor
 public class ServerHandler extends ChannelInitializer<SocketChannel> {
 
     private final ThinkMapPlugin plugin;
+
+    public ServerHandler(ThinkMapPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     @Override
     protected void initChannel(SocketChannel socketChannel) throws Exception {

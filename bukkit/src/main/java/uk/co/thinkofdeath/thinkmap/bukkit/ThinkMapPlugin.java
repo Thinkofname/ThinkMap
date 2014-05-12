@@ -20,7 +20,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
-import lombok.Getter;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -57,12 +56,6 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
     public final Map<Integer, SocketChannel> activeConnections = Collections.synchronizedMap(new HashMap<Integer, SocketChannel>());
     private final Map<String, ChunkManager> chunkManagers = new HashMap<String, ChunkManager>();
     public AtomicInteger lastConnectionId = new AtomicInteger();
-    /**
-     * Returns the plugin's web handler
-     *
-     * @return the web handler
-     */
-    @Getter
     private WebHandler webHandler;
     private World targetWorld;
 
@@ -201,5 +194,9 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     public void setTargetWorld(World targetWorld) {
         this.targetWorld = targetWorld;
+    }
+
+    public WebHandler getWebHandler() {
+        return this.webHandler;
     }
 }

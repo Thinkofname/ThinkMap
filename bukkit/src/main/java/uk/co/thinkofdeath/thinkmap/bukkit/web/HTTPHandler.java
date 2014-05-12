@@ -28,7 +28,6 @@ import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.util.CharsetUtil;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import uk.co.thinkofdeath.thinkmap.bukkit.ThinkMapPlugin;
 
@@ -46,7 +45,6 @@ import static io.netty.handler.codec.http.HttpMethod.*;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
-@RequiredArgsConstructor
 public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     private final static Logger logger = Logger.getLogger(HTTPHandler.class.getName());
@@ -60,6 +58,11 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     private final ThinkMapPlugin plugin;
     private final int id;
+
+    public HTTPHandler(ThinkMapPlugin plugin, int id) {
+        this.plugin = plugin;
+        this.id = id;
+    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext context, FullHttpRequest msg) throws Exception {
