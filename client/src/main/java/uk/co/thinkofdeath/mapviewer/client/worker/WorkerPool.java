@@ -46,14 +46,17 @@ public class WorkerPool {
         this.mapViewer = mapViewer;
         logger = mapViewer.getLoggerFactory().getLogger("WorkerPool");
         for (int i = 0; i < limit; i++) {
-            workers.add(new PooledWorker(Browser.getWindow().newWorker("./mapviewerworker/mapviewerworker.js")));
+            workers.add(new PooledWorker(Browser.getWindow().newWorker(
+                    "./mapviewerworker/mapviewerworker.nocache.js"
+            )));
         }
     }
 
     /**
      * Returns whether a worker is 'free' (has less tasks left than maxTasks)
-     * @param maxTasks The limit on the number of tasks a worker can have before it is considered
-     *                 busy
+     *
+     * @param maxTasks
+     *         The limit on the number of tasks a worker can have before it is considered busy
      * @return Whether a worker is free for processing
      */
     public boolean hasFreeWorker(int maxTasks) {

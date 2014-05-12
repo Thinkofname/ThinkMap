@@ -19,45 +19,34 @@ package uk.co.thinkofdeath.mapviewer.linker;
 import com.google.gwt.core.ext.LinkerContext;
 import com.google.gwt.core.ext.TreeLogger;
 import com.google.gwt.core.ext.UnableToCompleteException;
-import com.google.gwt.core.ext.linker.AbstractLinker;
-import com.google.gwt.core.ext.linker.ArtifactSet;
-import com.google.gwt.core.ext.linker.CompilationResult;
 import com.google.gwt.core.ext.linker.LinkerOrder;
-import com.google.gwt.dev.util.DefaultTextOutput;
-
-import java.util.Set;
+import com.google.gwt.core.ext.linker.impl.SelectionScriptLinker;
 
 
 @LinkerOrder(LinkerOrder.Order.PRIMARY)
-public class WorkerLinker extends AbstractLinker {
+public class WorkerLinker extends SelectionScriptLinker {
     @Override
-    public String getDescription() {
-        return "ThinkMap - WebWorker";
+    protected String getCompilationExtension(TreeLogger treeLogger, LinkerContext linkerContext) throws UnableToCompleteException {
+        return ".worker.js";
     }
 
     @Override
-    public ArtifactSet link(TreeLogger logger, LinkerContext context, ArtifactSet artifacts)
-            throws UnableToCompleteException {
-        ArtifactSet set = new ArtifactSet(artifacts);
-        DefaultTextOutput output = new DefaultTextOutput(true);
+    protected String getModulePrefix(TreeLogger treeLogger, LinkerContext linkerContext, String s) throws UnableToCompleteException {
+        return "";
+    }
 
-        Set<CompilationResult> results = artifacts.find(CompilationResult.class);
-        CompilationResult result = results.iterator().next();
+    @Override
+    protected String getModuleSuffix2(TreeLogger logger, LinkerContext context, String strongName) throws UnableToCompleteException {
+        return "";
+    }
 
-        output.print("(function() {");
-        output.indentOut();
-        output.newline();
-        output.print("var $wnd = self, window = self, $doc = {compatMode:false}," +
-                "$stats = function(){}, $sessionId = function(){};");
-        output.newline();
-        output.print(result.getJavaScript()[0]);
-        output.newline();
-        output.print("gwtOnLoad(null, '" + context.getModuleName() + "', null);");
-        output.indentIn();
-        output.newline();
-        output.print("})();");
+    @Override
+    protected String getSelectionScriptTemplate(TreeLogger treeLogger, LinkerContext linkerContext) throws UnableToCompleteException {
+        return "uk/co/thinkofdeath/mapviewer/linker/Template.js";
+    }
 
-        set.add(emitString(logger, output.toString(), context.getModuleName() + ".js"));
-        return set;
+    @Override
+    public String getDescription() {
+        return "ThinkMap - WebWorker";
     }
 }
