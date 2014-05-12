@@ -26,8 +26,8 @@
     <version>0.8</version>
     <modules>
         <module>client</module>
-        <module>bukkit</module>
         <module>textures</module>
+        <module>bukkit</module>
     </modules>
 
     <properties>
