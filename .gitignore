@@ -8,8 +8,8 @@ target
 packages
 /frontend/build
 *.hxproj
-/client/out
-/client/build/mapviewer
-/client/build/mapviewerworker
-/client/build/WEB-INF
+/web-client/out
+/web-client/build/mapviewer
+/web-client/build/mapviewerworker
+/web-client/build/WEB-INF
 gwt-unitCache

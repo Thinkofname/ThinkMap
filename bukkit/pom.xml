@@ -80,7 +80,7 @@
                 <targetPath>./</targetPath>
             </resource>
             <resource>
-                <directory>../client/build/</directory>
+                <directory>../web-client/build/</directory>
                 <targetPath>./www</targetPath>
             </resource>
         </resources>
