@@ -43,6 +43,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
@@ -52,6 +55,8 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
     private final Map<String, ChunkManager> chunkManagers = new HashMap<String, ChunkManager>();
     private WebHandler webHandler;
     private World targetWorld;
+
+    private final ExecutorService chunkExecutor = Executors.newFixedThreadPool(4);
 
     private File resourceDir;
     private File worldDir;
@@ -135,12 +140,22 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
     @Override
     public void onDisable() {
         webHandler.interrupt();
-        for (ChunkManager chunkManager : chunkManagers.values()) chunkManager.cleanup();
+        chunkExecutor.shutdown();
+        try {
+            chunkExecutor.awaitTermination(5, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        chunkExecutor.shutdownNow();
     }
 
     @Override
     public boolean onCommand(final CommandSender sender, Command command, String label, String[] args) {
         return true;
+    }
+
+    public ExecutorService getChunkExecutor() {
+        return chunkExecutor;
     }
 
     public File getWorldDir() {

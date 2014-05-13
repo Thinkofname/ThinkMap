@@ -29,22 +29,25 @@ import uk.co.thinkofdeath.thinkmap.bukkit.ThinkMapPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.zip.GZIPOutputStream;
 
-public class ChunkManager implements Runnable {
+public class ChunkManager {
 
     private final ThinkMapPlugin plugin;
     private final World world;
     private final TLongSet activeChunks = new TLongHashSet();
-    private final LinkedTransferQueue<FutureTask> jobQueue = new LinkedTransferQueue<FutureTask>();
-    private final Thread chunkThread;
+    private final ReadWriteLock worldLock = new ReentrantReadWriteLock();
 
     public ChunkManager(ThinkMapPlugin plugin, World world) {
         this.plugin = plugin;
         this.world = world;
-        chunkThread = new Thread(this);
-        chunkThread.start();
     }
 
     private static long chunkKey(int x, int z) {
@@ -62,7 +65,7 @@ public class ChunkManager implements Runnable {
             activeChunks.remove(chunkKey(chunk.getX(), chunk.getZ()));
         }
         final ChunkSnapshot snapshot = chunk.getChunkSnapshot();
-        jobQueue.add(new FutureTask<Void>(new Runnable() {
+        plugin.getChunkExecutor().execute(new FutureTask<Void>(new Runnable() {
 
             @Override
             public void run() {
@@ -71,6 +74,10 @@ public class ChunkManager implements Runnable {
                     gzipChunk(snapshot, data);
                     File worldFolder = new File(plugin.getWorldDir(), world.getName());
                     worldFolder.mkdirs();
+
+                    // Lock the world for writing
+                    Lock lock = worldLock.writeLock();
+
                     try (RandomAccessFile region = new RandomAccessFile(new File(worldFolder,
                             String.format("region_%d-%d.dat", snapshot.getX() >> 5, snapshot.getZ() >> 5)
                     ), "rw")) {
@@ -126,6 +133,8 @@ public class ChunkManager implements Runnable {
                         region.writeInt(offset);
                         region.writeInt(size);
                         data.release();
+                    } finally {
+                        lock.unlock();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -138,6 +147,7 @@ public class ChunkManager implements Runnable {
         FutureTask<ByteBuf> task = new FutureTask<ByteBuf>(new Callable<ByteBuf>() {
             @Override
             public ByteBuf call() throws Exception {
+                Lock lock = worldLock.readLock();
                 try {
                     File worldFolder = new File(plugin.getWorldDir(), world.getName());
                     try (RandomAccessFile region = new RandomAccessFile(new File(worldFolder,
@@ -158,15 +168,13 @@ public class ChunkManager implements Runnable {
                     }
                 } catch (Exception e) {
                     return null;
+                } finally {
+                    lock.unlock();
                 }
             }
         });
-        jobQueue.add(task);
+        plugin.getChunkExecutor().execute(task);
         return task;
-    }
-
-    public void cleanup() {
-        chunkThread.interrupt();
     }
 
     public boolean getChunkBytes(final int x, final int z, ByteBuf out) {
@@ -244,22 +252,5 @@ public class ChunkManager implements Runnable {
             e.printStackTrace();
         }
         data.release();
-    }
-
-    @Override
-    public void run() {
-        while (true) {
-            if (Thread.interrupted()) {
-                Thread.currentThread().interrupt();
-                return;
-            }
-            try {
-                FutureTask job = jobQueue.take();
-                job.run();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return;
-            }
-        }
     }
 }
