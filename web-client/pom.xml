@@ -65,7 +65,7 @@
                         <configuration>
                             <target name="zip result">
                                 <copy todir="${basedir}/build/mapviewerworker/">
-                                    <fileset dir="${basedir}/../worker/target/mapviewerworker"/>
+                                    <fileset dir="${basedir}/../web-worker/target/mapviewerworker"/>
                                 </copy>
                                 <copy todir="${basedir}/build/mapviewer/">
                                     <fileset dir="${project.build.directory}/mapviewer"/>
