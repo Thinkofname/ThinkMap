@@ -147,9 +147,9 @@ public class ChunkManager {
         FutureTask<ByteBuf> task = new FutureTask<ByteBuf>(new Callable<ByteBuf>() {
             @Override
             public ByteBuf call() throws Exception {
-                Lock lock = worldLock.readLock();
                 try {
                     File worldFolder = new File(plugin.getWorldDir(), world.getName());
+                    Lock lock = worldLock.readLock();
                     try (RandomAccessFile region = new RandomAccessFile(new File(worldFolder,
                             String.format("region_%d-%d.dat", x >> 5, z >> 5)
                     ), "r")) {
@@ -165,11 +165,11 @@ public class ChunkManager {
                         byte[] data = new byte[size];
                         region.read(data);
                         return Unpooled.wrappedBuffer(data);
+                    } finally {
+                        lock.unlock();
                     }
                 } catch (Exception e) {
                     return null;
-                } finally {
-                    lock.unlock();
                 }
             }
         });
