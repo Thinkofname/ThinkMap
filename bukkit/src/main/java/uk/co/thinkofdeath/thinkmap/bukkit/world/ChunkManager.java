@@ -69,7 +69,7 @@ public class ChunkManager implements Runnable {
                 try {
                     ByteBuf data = Unpooled.buffer();
                     gzipChunk(snapshot, data);
-                    File worldFolder = new File(plugin.getDataFolder(), world.getName());
+                    File worldFolder = new File(plugin.getWorldDir(), world.getName());
                     worldFolder.mkdirs();
                     try (RandomAccessFile region = new RandomAccessFile(new File(worldFolder,
                             String.format("region_%d-%d.dat", snapshot.getX() >> 5, snapshot.getZ() >> 5)
@@ -139,7 +139,7 @@ public class ChunkManager implements Runnable {
             @Override
             public ByteBuf call() throws Exception {
                 try {
-                    File worldFolder = new File(plugin.getDataFolder(), world.getName());
+                    File worldFolder = new File(plugin.getWorldDir(), world.getName());
                     try (RandomAccessFile region = new RandomAccessFile(new File(worldFolder,
                             String.format("region_%d-%d.dat", x >> 5, z >> 5)
                     ), "r")) {

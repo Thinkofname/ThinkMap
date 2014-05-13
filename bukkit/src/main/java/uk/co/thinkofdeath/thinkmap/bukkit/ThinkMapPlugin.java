@@ -53,8 +53,14 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
     private WebHandler webHandler;
     private World targetWorld;
 
+    private File resourceDir;
+    private File worldDir;
+
     @Override
     public void onEnable() {
+        resourceDir = new File(getDataFolder(),
+                "resources/" + MINECRAFT_VERSION + "-" + RESOURCE_VERSION);
+        worldDir = new File(getDataFolder(), "worlds");
         getServer().getPluginManager().registerEvents(new Events(this), this);
         getServer().getScheduler().runTaskTimer(this, this, 20l, 20 * 2l);
 
@@ -74,7 +80,7 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
         // Resource loading
         final File blockTextures = new File(
-                new File(getDataFolder(), "resources/" + MINECRAFT_VERSION + "-" + RESOURCE_VERSION),
+                resourceDir,
                 "blocks.png");
         if (blockTextures.exists()) {
             webHandler = new WebHandler(this);
@@ -106,8 +112,7 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
                                 .create();
                         FileUtils.writeStringToFile(
                                 new File(
-                                        new File(getDataFolder(), "resources/"
-                                                + MINECRAFT_VERSION + "-" + RESOURCE_VERSION),
+                                        resourceDir,
                                         "blocks.json"
                                 ),
                                 gson.toJson(result.getDetails())
@@ -136,6 +141,10 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
     @Override
     public boolean onCommand(final CommandSender sender, Command command, String label, String[] args) {
         return true;
+    }
+
+    public File getWorldDir() {
+        return worldDir;
     }
 
     public ChunkManager getChunkManager(World world) {
