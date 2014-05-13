@@ -49,7 +49,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     /**
      * The max distance (in chunks) the client can see
      */
-    public final static int VIEW_DISTANCE = 4;
+    public final static int VIEW_DISTANCE = 8;
     private static final int NUMBER_OF_WORKERS = 4;
 
     private final LoggerFactory loggerFactory = new ClientLogger(ClientLogger.DEBUG);
