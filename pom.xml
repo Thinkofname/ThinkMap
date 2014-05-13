@@ -27,8 +27,8 @@
     <modules>
         <module>html</module>
         <module>shared</module>
-        <module>worker</module>
-        <module>client</module>
+        <module>web-worker</module>
+        <module>web-client</module>
         <module>textures</module>
         <module>bukkit</module>
     </modules>
