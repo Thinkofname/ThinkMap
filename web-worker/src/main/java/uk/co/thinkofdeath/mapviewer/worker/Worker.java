@@ -22,11 +22,11 @@ import elemental.events.Event;
 import elemental.events.EventListener;
 import elemental.events.MessageEvent;
 import elemental.html.WorkerGlobalScope;
+import uk.co.thinkofdeath.html.lib.NativeLib;
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.TextureMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockRegistry;
-import uk.co.thinkofdeath.mapviewer.shared.logging.LoggerFactory;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkBuildMessage;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkLoadMessage;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkUnloadMessage;
@@ -39,13 +39,14 @@ import java.util.HashMap;
 
 public class Worker implements EntryPoint, EventListener, IMapViewer {
 
-    private final LoggerFactory loggerFactory = new WorkerLogger();
     private final BlockRegistry blockRegistry = new BlockRegistry(this);
     private final WorkerWorld world = new WorkerWorld(this);
     private HashMap<String, Texture> textures = new HashMap<>();
 
     @Override
     public void onModuleLoad() {
+        NativeLib.init();
+
         importScripts("../gl-matrix-min.js");
         setOnmessage(this);
     }
@@ -91,7 +92,7 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
                         textures.put(k, v);
                     }
                 });
-                getBlockRegistry().init(this);
+                getBlockRegistry().init();
                 postMessage(WorkerMessage.create("null", null, false));
                 break;
         }
@@ -109,18 +110,10 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
      * {@inheritDoc}
      */
     @Override
-    public LoggerFactory getLoggerFactory() {
-        return loggerFactory;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Texture getTexture(String name) {
         Texture texture = textures.get(name);
         if (texture == null) {
-            //FIXME: throw new RuntimeException("Missing texture: " + name);
+            System.err.println("Missing texture: " + name);
             return textures.get("missing_texture");
         }
         return texture;

@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.mapviewer.shared.logging;
+package uk.co.thinkofdeath.html.lib;
 
-public interface LoggerFactory {
+public class NativeLib {
+
+    private NativeLib() {
+
+    }
 
     /**
-     * Returns or creates a logger for the given name
-     *
-     * @param name
-     *         The name of the logger
-     * @return The logger
+     * Sets up the native lib overrides and features
      */
-    public Logger getLogger(String name);
+    public static void init() {
+        System.setOut(new JavascriptConsolePrinter(false));
+        System.setErr(new JavascriptConsolePrinter(true));
+    }
 }

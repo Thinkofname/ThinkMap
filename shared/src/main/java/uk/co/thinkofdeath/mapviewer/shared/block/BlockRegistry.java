@@ -18,7 +18,6 @@ package uk.co.thinkofdeath.mapviewer.shared.block;
 
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.block.blocks.*;
-import uk.co.thinkofdeath.mapviewer.shared.logging.Logger;
 import uk.co.thinkofdeath.mapviewer.shared.support.IntMap;
 
 import java.util.HashMap;
@@ -27,7 +26,7 @@ import java.util.Map;
 public class BlockRegistry {
 
     private static final boolean BUILD_BLOCK_LIST = false;
-    private final Logger logger;
+
     private IMapViewer mapViewer;
     private Map<String, Block> blockMap = new HashMap<>();
     private Map<String, Map<StateMap, Block>> blockStateMap = new HashMap<>();
@@ -42,7 +41,6 @@ public class BlockRegistry {
      */
     public BlockRegistry(IMapViewer mapViewer) {
         this.mapViewer = mapViewer;
-        logger = mapViewer.getLoggerFactory().getLogger("BlockRegistry");
     }
 
     /**
@@ -136,7 +134,7 @@ public class BlockRegistry {
         for (Block block : blocks.getBlocks()) {
             block.plugin = plugin;
             block.name = name;
-            logger.debug(block.toString() + "/" + block.getLegacyData());
+            System.out.println(block.toString() + "/" + block.getLegacyData());
             if (BUILD_BLOCK_LIST) {
                 block.htmlFormat(blockListBuilder);
                 blockListBuilder.append("\n");
@@ -164,7 +162,7 @@ public class BlockRegistry {
     /**
      * Loads all known blocks
      */
-    public void init(IMapViewer mapViewer) {
+    public void init() {
         // Vanilla blocks
         register("minecraft", "air", new BlockBuilder(mapViewer)
                 .renderable(false)
@@ -645,10 +643,10 @@ public class BlockRegistry {
 
         Blocks.init(this);
 
-        logger.info("Blocks registered: " + blockMap.size() + " (" + blockStateMap.size() +
-                " excluding states)");
+        System.out.println("Blocks registered: " + blockMap.size() + " (" + blockStateMap.size()
+                + " excluding states)");
         if (BUILD_BLOCK_LIST) {
-            logger.debug(blockListBuilder.toString());
+            System.out.println(blockListBuilder.toString());
         }
     }
 }

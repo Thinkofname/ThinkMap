@@ -24,6 +24,7 @@ import elemental.html.CanvasElement;
 import elemental.html.ImageElement;
 import elemental.js.util.Json;
 import elemental.xml.XMLHttpRequest;
+import uk.co.thinkofdeath.html.lib.NativeLib;
 import uk.co.thinkofdeath.mapviewer.client.input.InputManager;
 import uk.co.thinkofdeath.mapviewer.client.network.Connection;
 import uk.co.thinkofdeath.mapviewer.client.network.ConnectionHandler;
@@ -36,7 +37,6 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.TextureMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockRegistry;
-import uk.co.thinkofdeath.mapviewer.shared.logging.LoggerFactory;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkBuildReply;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkLoadedMessage;
 import uk.co.thinkofdeath.mapviewer.shared.worker.WorkerMessage;
@@ -52,7 +52,6 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     public final static int VIEW_DISTANCE = 4;
     private static final int NUMBER_OF_WORKERS = 4;
 
-    private final LoggerFactory loggerFactory = new ClientLogger(ClientLogger.DEBUG);
     private final BlockRegistry blockRegistry = new BlockRegistry(this);
     private final WorkerPool workerPool = new WorkerPool(this, NUMBER_OF_WORKERS);
     private final InputManager inputManager = new InputManager(this);
@@ -69,6 +68,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
      * Entry point to the program
      */
     public void onModuleLoad() {
+        NativeLib.init();
         // Texture
         texture = (ImageElement) Browser.getDocument().createElement("img");
         texture.setOnload(this);
@@ -102,10 +102,10 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
         // Sync to workers
         getWorkerPool().sendMessage("textures", tmap, new Object[0], true);
 
-        getBlockRegistry().init(this);
+        getBlockRegistry().init();
         inputManager.hook();
 
-        connection = new Connection(getLoggerFactory().getLogger("Server Connection"),
+        connection = new Connection(
                 getConfigAdddress(),
                 this, new Runnable() {
             @Override
@@ -193,13 +193,6 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
         return blockRegistry;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public LoggerFactory getLoggerFactory() {
-        return loggerFactory;
-    }
 
     /**
      * {@inheritDoc}
@@ -207,7 +200,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     @Override
     public Texture getTexture(String name) {
         if (!textures.containsKey(name)) {
-            loggerFactory.getLogger("textures").error("Texture not found: " + name);
+            System.err.println("Texture not found: " + name);
             return textures.get("missing_texture");
         }
         return textures.get(name);
@@ -273,9 +266,8 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
                 }
                 break;
             default:
-                getLoggerFactory().getLogger("WorkerMessage").debug("Unhandled message: " +
-                        message.getType());
-                getLoggerFactory().getLogger("WorkerMessage").debug(message.getMessage());
+                System.err.println("Unhandled message: " + message.getType());
+                System.err.println(message.getMessage());
                 break;
         }
     }

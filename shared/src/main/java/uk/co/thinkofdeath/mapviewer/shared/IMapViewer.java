@@ -17,7 +17,6 @@
 package uk.co.thinkofdeath.mapviewer.shared;
 
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockRegistry;
-import uk.co.thinkofdeath.mapviewer.shared.logging.LoggerFactory;
 import uk.co.thinkofdeath.mapviewer.shared.world.World;
 
 public interface IMapViewer {
@@ -28,13 +27,6 @@ public interface IMapViewer {
      * @return The block registry
      */
     public BlockRegistry getBlockRegistry();
-
-    /**
-     * Returns the logger factory used by this map viewer
-     *
-     * @return The logger factory
-     */
-    public LoggerFactory getLoggerFactory();
 
     /**
      * Returns the texture for the given name

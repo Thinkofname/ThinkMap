@@ -22,14 +22,12 @@ import elemental.events.EventListener;
 import elemental.events.MessageEvent;
 import elemental.html.Worker;
 import uk.co.thinkofdeath.mapviewer.client.MapViewer;
-import uk.co.thinkofdeath.mapviewer.shared.logging.Logger;
 import uk.co.thinkofdeath.mapviewer.shared.worker.WorkerMessage;
 
 import java.util.ArrayList;
 
 public class WorkerPool {
 
-    private final Logger logger;
     private final MapViewer mapViewer;
 
     private ArrayList<PooledWorker> workers = new ArrayList<>();
@@ -44,7 +42,6 @@ public class WorkerPool {
      */
     public WorkerPool(MapViewer mapViewer, int limit) {
         this.mapViewer = mapViewer;
-        logger = mapViewer.getLoggerFactory().getLogger("WorkerPool");
         for (int i = 0; i < limit; i++) {
             workers.add(new PooledWorker(Browser.getWindow().newWorker(
                     "./mapviewerworker/mapviewerworker.nocache.js"
@@ -125,7 +122,7 @@ public class WorkerPool {
             out.append(workers.get(i).noOfTasks);
             out.append("] ");
         }
-        logger.debug(out.toString());
+        System.out.println(out.toString());
     }
 
     // Support for transferables
