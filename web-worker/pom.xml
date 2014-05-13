@@ -25,7 +25,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>mapviewer-web-worker</artifactId>
+    <artifactId>web-worker</artifactId>
 
     <dependencies>
         <dependency>

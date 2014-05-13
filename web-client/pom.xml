@@ -26,7 +26,7 @@
         <version>0.8</version>
     </parent>
 
-    <artifactId>mapviewer-web-client</artifactId>
+    <artifactId>web-client</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
