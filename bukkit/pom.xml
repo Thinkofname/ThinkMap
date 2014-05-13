@@ -37,7 +37,7 @@
     <dependencies>
         <dependency>
             <groupId>uk.co.thinkofdeath.thinkmap</groupId>
-            <artifactId>mapviewer-textures</artifactId>
+            <artifactId>textures</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
