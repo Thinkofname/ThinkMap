@@ -24,10 +24,9 @@
             // %SERVERPORT% is replaced with the web server's port if this
             // is running through the plugin's internal server. Replace
             // this with the port if you are hosting on a different server.
-            port: "%SERVERPORT%",
-            // Replace location.hostname with the address of your server
-            // (quoted) if this running on a different server to the plugin
-            hostname: location.hostname
+            // If using a reverse proxy then this part should be replaced
+            // the full address (minus the protocol)
+            serverAddress: location.hostname + ":%SERVERPORT%"
         };
     </script>
 </head>

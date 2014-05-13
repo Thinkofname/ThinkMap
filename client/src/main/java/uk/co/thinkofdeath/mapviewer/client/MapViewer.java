@@ -69,16 +69,14 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
      * Entry point to the program
      */
     public void onModuleLoad() {
-        String host = getConfigHost();
-        String port = getConfigPort();
         // Texture
         texture = (ImageElement) Browser.getDocument().createElement("img");
         texture.setOnload(this);
         texture.setCrossOrigin("anonymous");
-        texture.setSrc("http://" + host + ":" + port + "/resources/blocks.png");
+        texture.setSrc("http://" + getConfigAdddress() + "/resources/blocks.png");
         // Atlas to look up position of textures in the above image
         xhr = Browser.getWindow().newXMLHttpRequest();
-        xhr.open("GET", "http://" + host + ":" + port + "/resources/blocks.json", true);
+        xhr.open("GET", "http://" + getConfigAdddress() + "/resources/blocks.json", true);
         xhr.setOnload(this);
         xhr.send();
     }
@@ -107,10 +105,8 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
         getBlockRegistry().init(this);
         inputManager.hook();
 
-        String host = getConfigHost();
-        String port = getConfigPort();
         connection = new Connection(getLoggerFactory().getLogger("Server Connection"),
-                host + ":" + port,
+                getConfigAdddress(),
                 this, new Runnable() {
             @Override
             public void run() {
@@ -121,12 +117,13 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
         );
     }
 
-    private native String getConfigHost()/*-{
-        return $wnd.MapViewerConfig.hostname;
-    }-*/;
-
-    private native String getConfigPort()/*-{
-        return $wnd.MapViewerConfig.port == "%SERVERPORT%" ? "23333" : $wnd.MapViewerConfig.port;
+    private native String getConfigAdddress()/*-{
+        if ($wnd.MapViewerConfig.serverAddress.indexOf("%SERVERPORT%") != -1) {
+            // Running on a custom server but haven't changed the config
+            $wnd.MapViewerConfig.serverAddress =
+                $wnd.MapViewerConfig.serverAddress.replace("%SERVERPORT%", "23333");
+        }
+        return $wnd.MapViewerConfig.serverAddress;
     }-*/;
 
     /**
