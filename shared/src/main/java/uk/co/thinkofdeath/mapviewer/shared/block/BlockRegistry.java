@@ -339,9 +339,10 @@ public class BlockRegistry {
                 .solid(false)
                 .collidable(false)
                 .create(), 50);
-
-        // TODO: fire
-
+        register("minecraft", "fire", new BlockBuilder(new BlockFire(mapViewer))
+                .solid(false)
+                .collidable(false)
+                .create(), 51);
         register("minecraft", "mob_spawner", new BlockBuilder(mapViewer)
                 .texture("mob_spawner")
                 .solid(false)
