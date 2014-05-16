@@ -354,7 +354,7 @@ public class BlockRegistry {
                 .solid(false)
                 .create(), 53);
 
-        register("minecraft", "chest", new BlockBuilder(new BlockChest(mapViewer))
+        register("minecraft", "chest", new BlockBuilder(new BlockChest(mapViewer, "normal"))
                 .solid(false)
                 .create(), 54);
         register("minecraft", "redstone_wire", new BlockBuilder(new BlockRedstone(mapViewer))
@@ -542,8 +542,10 @@ public class BlockRegistry {
         register("minecraft", "emerald_ore", new BlockBuilder(mapViewer)
                 .texture("emerald_ore")
                 .create(), 129);
+        register("minecraft", "ender_chest", new BlockBuilder(new BlockChest(mapViewer, "ender"))
+                .solid(false)
+                .create(), 130);
 
-        // TODO: ender_chest
         // TODO: tripwire_hook
         // TODO: tripwire
 
@@ -574,7 +576,11 @@ public class BlockRegistry {
         // TODO: wooden_button
         // TODO: skull
         // TODO: anvil
-        // TODO: trapped_chest
+
+        register("minecraft", "trapped_chest", new BlockBuilder(new BlockChest(mapViewer, "trapped"))
+                .solid(false)
+                .create(), 146);
+
         // TODO: light_weighted_pressure_plate
         // TODO: heavy_weighted_pressure_plate
         // TODO: unpowered_comparator

@@ -48,6 +48,8 @@ public class MojangTextureProvider implements TextureProvider {
 
     private HashMap<String, String> whitelistedTextures = new HashMap<String, String>() {{
         put("assets/minecraft/textures/entity/chest/normal.png", "chest_normal");
+        put("assets/minecraft/textures/entity/chest/ender.png", "chest_ender");
+        put("assets/minecraft/textures/entity/chest/trapped.png", "chest_trapped");
     }};
 
     public MojangTextureProvider(String version, TextureFactory factory) {

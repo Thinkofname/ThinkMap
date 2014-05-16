@@ -34,11 +34,11 @@ public class BlockChest extends BlockFactory {
 
     private final Texture chest;
 
-    public BlockChest(IMapViewer iMapViewer) {
+    public BlockChest(IMapViewer iMapViewer, String type) {
         super(iMapViewer);
         addState(FACING, new EnumState(Facing.class));
 
-        chest = iMapViewer.getTexture("chest_normal");
+        chest = iMapViewer.getTexture("chest_" + type);
     }
 
     public static enum Facing {

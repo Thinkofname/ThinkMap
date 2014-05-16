@@ -47,7 +47,7 @@ import java.util.concurrent.TimeUnit;
 public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     public static final String MINECRAFT_VERSION = "1.7.9";
-    public static final String RESOURCE_VERSION = "4";
+    public static final String RESOURCE_VERSION = "5";
 
     private final Map<String, ChunkManager> chunkManagers = new HashMap<String, ChunkManager>();
     private WebHandler webHandler;
