@@ -48,9 +48,6 @@ public class BlockVine extends BlockFactory {
         texture = iMapViewer.getTexture("vine");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Block createBlock(StateMap states) {
         return new BlockImpl(states);
@@ -61,9 +58,6 @@ public class BlockVine extends BlockFactory {
         GRASSLESS,
         PODZOL;
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return super.toString().toLowerCase();

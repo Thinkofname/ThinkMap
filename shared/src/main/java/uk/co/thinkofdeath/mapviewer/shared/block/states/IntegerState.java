@@ -36,9 +36,6 @@ public class IntegerState implements BlockState {
         this.max = max;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Object[] getStates() {
         Object[] states = new Object[max - min];

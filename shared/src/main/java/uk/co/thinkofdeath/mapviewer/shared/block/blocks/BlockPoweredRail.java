@@ -54,18 +54,12 @@ public class BlockPoweredRail extends BlockFactory {
         ASCENDING_NORTH,
         ASCENDING_SOUTH;
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return super.toString().toLowerCase();
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Block createBlock(StateMap states) {
         return new BlockImpl(states);

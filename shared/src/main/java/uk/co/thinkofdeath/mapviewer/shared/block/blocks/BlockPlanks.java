@@ -48,9 +48,6 @@ public class BlockPlanks extends BlockFactory {
         ACACIA,
         BIG_OAK;
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return super.toString().toLowerCase();

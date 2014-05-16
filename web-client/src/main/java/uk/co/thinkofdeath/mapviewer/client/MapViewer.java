@@ -156,17 +156,11 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
         return renderer.getCamera();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onTimeUpdate(int currentTime) {
         getWorld().setTimeOfDay(currentTime);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onSetPosition(int x, int y, int z) {
         Camera camera = getCamera();
@@ -176,27 +170,17 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
         shouldUpdateWorld = true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onMessage(String message) {
         System.out.println("Message: " + message);
         // TODO
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public BlockRegistry getBlockRegistry() {
         return blockRegistry;
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Texture getTexture(String name) {
         if (!textures.containsKey(name)) {
@@ -272,9 +256,6 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public World getWorld() {
         return world;

@@ -26,9 +26,6 @@ public class BooleanState implements BlockState {
     public BooleanState() {
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Object[] getStates() {
         return new Object[]{true, false};

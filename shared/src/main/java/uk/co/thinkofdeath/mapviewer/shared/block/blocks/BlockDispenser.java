@@ -45,9 +45,6 @@ public class BlockDispenser extends BlockFactory {
         frontHorizontal = iMapViewer.getTexture(textureName + "_front_horizontal");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Block createBlock(StateMap states) {
         return new BlockImpl(states);
@@ -61,9 +58,6 @@ public class BlockDispenser extends BlockFactory {
         WEST,
         EAST;
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return super.toString().toLowerCase();

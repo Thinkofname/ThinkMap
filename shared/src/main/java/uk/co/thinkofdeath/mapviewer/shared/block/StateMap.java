@@ -83,9 +83,6 @@ public class StateMap {
         return state.entrySet();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -97,9 +94,6 @@ public class StateMap {
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         return state.hashCode();

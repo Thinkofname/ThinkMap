@@ -41,9 +41,6 @@ public class BlockStairs extends BlockFactory {
         addState(SHAPE, new EnumState(Shape.class));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Block createBlock(StateMap states) {
         return new BlockImpl(states);
@@ -71,9 +68,6 @@ public class BlockStairs extends BlockFactory {
             this.blockZ = blockZ;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return super.toString().toLowerCase();
@@ -88,9 +82,6 @@ public class BlockStairs extends BlockFactory {
         OUTER_LEFT,
         OUTER_RIGHT;
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return super.toString().toLowerCase();

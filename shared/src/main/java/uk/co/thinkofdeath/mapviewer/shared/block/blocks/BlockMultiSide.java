@@ -41,9 +41,6 @@ public class BlockMultiSide extends BlockFactory {
         textures[Face.BACK.ordinal()] = mapViewer.getTexture(back);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Block createBlock(StateMap states) {
         return new BlockImpl(states);

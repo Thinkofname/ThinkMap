@@ -42,9 +42,6 @@ public class BlockSand extends BlockFactory {
         DEFAULT,
         RED;
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return super.toString().toLowerCase();

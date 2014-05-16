@@ -135,9 +135,6 @@ public class ClientChunk extends Chunk {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void unload() {
         super.unload();

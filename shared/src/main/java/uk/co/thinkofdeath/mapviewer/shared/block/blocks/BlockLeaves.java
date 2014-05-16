@@ -51,9 +51,6 @@ public class BlockLeaves extends BlockFactory {
         BIRCH,
         JUNGLE;
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return super.toString().toLowerCase();

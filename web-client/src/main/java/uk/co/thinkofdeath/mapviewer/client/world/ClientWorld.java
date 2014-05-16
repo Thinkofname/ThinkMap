@@ -54,9 +54,6 @@ public class ClientWorld extends World {
         this.mapViewer = mapViewer;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void tick() {
         super.tick();
@@ -206,9 +203,6 @@ public class ClientWorld extends World {
         xmlHttpRequest.send(key);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void addChunk(Chunk chunk) {
         super.addChunk(chunk);
@@ -223,9 +217,6 @@ public class ClientWorld extends World {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void unloadChunk(int x, int z) {
         super.unloadChunk(x, z);

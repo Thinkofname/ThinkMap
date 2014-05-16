@@ -62,9 +62,6 @@ public class BlockSapling extends BlockFactory {
             this.name = name;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return name;

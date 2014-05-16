@@ -38,33 +38,21 @@ public class ChunkShader extends ShaderProgram {
     // Flags
     private boolean alpha;
 
-    /**
-     * {@inheritDoc}
-     */
     public ChunkShader(boolean alpha) {
         super();
         this.alpha = alpha;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String getVertexShader() {
         return ShaderBundle.INSTANCE.chunkVertexShader().getText();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String getFragmentShader() {
         return (alpha ? "#define alpha\n" : "") + ShaderBundle.INSTANCE.chunkFragmentShader().getText();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void init() {
         // Uniforms

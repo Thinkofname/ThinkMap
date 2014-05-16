@@ -59,9 +59,6 @@ public class BlockLog extends BlockFactory {
             this.legacy = legacy;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return super.toString().toLowerCase();
@@ -83,9 +80,6 @@ public class BlockLog extends BlockFactory {
         BIRCH,
         JUNGLE;
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return super.toString().toLowerCase();

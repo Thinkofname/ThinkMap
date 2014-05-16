@@ -40,9 +40,6 @@ public class BlockDirt extends BlockFactory {
         dirtPodzolSide = iMapViewer.getTexture("dirt_podzol_side");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Block createBlock(StateMap states) {
         return new BlockImpl(states);
@@ -53,9 +50,6 @@ public class BlockDirt extends BlockFactory {
         GRASSLESS,
         PODZOL;
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return super.toString().toLowerCase();

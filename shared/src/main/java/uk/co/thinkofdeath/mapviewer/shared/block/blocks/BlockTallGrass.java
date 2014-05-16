@@ -46,10 +46,6 @@ public class BlockTallGrass extends BlockFactory {
         TALLGRASS,
         FERN;
 
-
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return name().toLowerCase();

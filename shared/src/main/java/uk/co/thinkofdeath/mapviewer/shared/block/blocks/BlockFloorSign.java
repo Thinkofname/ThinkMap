@@ -41,9 +41,6 @@ public class BlockFloorSign extends BlockFactory {
         post = mapViewer.getTexture("log_oak");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Block createBlock(StateMap states) {
         return new BlockImpl(states);

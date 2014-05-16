@@ -58,9 +58,6 @@ public class BlockQuartz extends BlockFactory {
         CHISELED,
         PILLAR;
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return super.toString().toLowerCase();

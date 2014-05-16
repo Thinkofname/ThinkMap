@@ -50,9 +50,6 @@ public class BlockSlab extends BlockFactory {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Block createBlock(StateMap states) {
         return new BlockImpl(states);
@@ -106,9 +103,6 @@ public class BlockSlab extends BlockFactory {
             return texture;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return super.toString().toLowerCase();
@@ -134,9 +128,6 @@ public class BlockSlab extends BlockFactory {
             return texture;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return super.toString().toLowerCase();

@@ -52,10 +52,6 @@ public class BlockFlowers extends BlockFactory {
         TULIP_PINK,
         OXEYE_DAISY;
 
-
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return name().toLowerCase();

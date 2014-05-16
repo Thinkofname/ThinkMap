@@ -109,9 +109,6 @@ public class Renderer implements ResizeHandler, Runnable {
         run();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void run() {
         double diff = currentTime() - lastFrame;
@@ -383,9 +380,6 @@ public class Renderer implements ResizeHandler, Runnable {
         return texture;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onResize() {
         // Fill the window

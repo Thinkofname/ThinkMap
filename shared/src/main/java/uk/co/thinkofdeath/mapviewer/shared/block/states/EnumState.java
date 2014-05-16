@@ -29,9 +29,6 @@ public class EnumState implements BlockState {
         this.e = e;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Object[] getStates() {
         return e.getEnumConstants();

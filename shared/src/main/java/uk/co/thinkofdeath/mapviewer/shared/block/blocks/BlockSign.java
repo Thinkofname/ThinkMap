@@ -51,9 +51,6 @@ public class BlockSign extends BlockFactory {
             this.rotation = rotation;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return super.toString().toLowerCase();
@@ -77,9 +74,6 @@ public class BlockSign extends BlockFactory {
         return model;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Block createBlock(StateMap states) {
         return new BlockImpl(states);

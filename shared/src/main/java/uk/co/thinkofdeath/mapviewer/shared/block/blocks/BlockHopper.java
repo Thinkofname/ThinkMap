@@ -46,9 +46,6 @@ public class BlockHopper extends BlockFactory {
         hopperOutside = iMapViewer.getTexture("hopper_outside");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Block createBlock(StateMap states) {
         return new BlockImpl(states);
@@ -72,9 +69,6 @@ public class BlockHopper extends BlockFactory {
             this.rotation = rotation;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return super.toString().toLowerCase();

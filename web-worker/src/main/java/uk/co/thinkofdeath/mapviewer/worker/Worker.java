@@ -51,9 +51,6 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
         setOnmessage(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void handleEvent(Event evt) {
         MessageEvent event = (MessageEvent) evt;
@@ -98,17 +95,11 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public BlockRegistry getBlockRegistry() {
         return blockRegistry;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Texture getTexture(String name) {
         Texture texture = textures.get(name);
@@ -119,9 +110,6 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
         return texture;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public World getWorld() {
         return world;

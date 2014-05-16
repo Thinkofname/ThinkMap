@@ -130,9 +130,6 @@ public class Block implements Model.RenderChecker {
         return 0;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         if (toString == null) {
@@ -197,10 +194,6 @@ public class Block implements Model.RenderChecker {
         return this;
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean shouldRenderAgainst(Block other) {
         return !other.isSolid() && (allowSelf || other != this);
