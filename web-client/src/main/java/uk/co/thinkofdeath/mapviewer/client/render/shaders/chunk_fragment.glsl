@@ -22,7 +22,7 @@ void main(void) {
         colour = texture2D(textures[2], pos);
     } else if (tid == 3) {
         colour = texture2D(textures[3], pos);
-    } else if (tid == 1) {
+    } else if (tid == 4) {
         colour = texture2D(textures[4], pos);
     }
     colour *= vColour;
