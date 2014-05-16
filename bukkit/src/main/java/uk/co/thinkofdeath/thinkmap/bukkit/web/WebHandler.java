@@ -34,10 +34,8 @@ public class WebHandler extends Thread {
         this.plugin = plugin;
     }
 
-    // Connections
     private final ChannelGroup channels = new DefaultChannelGroup("ThinkMap Connections",
             GlobalEventExecutor.INSTANCE);
-    //
 
     @Override
     public void run() {

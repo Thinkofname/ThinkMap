@@ -55,8 +55,9 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     private final BlockRegistry blockRegistry = new BlockRegistry(this);
     private final WorkerPool workerPool = new WorkerPool(this, NUMBER_OF_WORKERS);
     private final InputManager inputManager = new InputManager(this);
-    private ImageElement texture;
+
     private HashMap<String, Texture> textures = new HashMap<>();
+    private ImageElement[] textureImages;
     private XMLHttpRequest xhr;
     private int loaded = 0;
     private Connection connection;
@@ -69,12 +70,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
      */
     public void onModuleLoad() {
         NativeLib.init();
-        // Texture
-        texture = (ImageElement) Browser.getDocument().createElement("img");
-        texture.setOnload(this);
-        texture.setCrossOrigin("anonymous");
-        texture.setSrc("http://" + getConfigAdddress() + "/resources/blocks.png");
-        // Atlas to look up position of textures in the above image
+        // Atlas to look up position of textures
         xhr = Browser.getWindow().newXMLHttpRequest();
         xhr.open("GET", "http://" + getConfigAdddress() + "/resources/blocks.json", true);
         xhr.setOnload(this);
@@ -90,31 +86,44 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     @Override
     public void handleEvent(Event event) {
         loaded++;
-        if (loaded != 2) return;
+        if (loaded == 1) {
+            TextureMap tmap = Json.parse((String) xhr.getResponse());
+            tmap.forEach(new TextureMap.Looper() {
+                @Override
+                public void forEach(String k, Texture v) {
+                    textures.put(k, v);
+                }
+            });
+            // Sync to workers
+            getWorkerPool().sendMessage("textures", tmap, new Object[0], true);
 
-        TextureMap tmap = Json.parse((String) xhr.getResponse());
-        tmap.forEach(new TextureMap.Looper() {
-            @Override
-            public void forEach(String k, Texture v) {
-                textures.put(k, v);
+            textureImages = new ImageElement[tmap.getNumberOfImages()];
+            for (int i = 0; i < tmap.getNumberOfImages(); i++) {
+                ImageElement texture = (ImageElement) Browser.getDocument().createElement("img");
+                texture.setOnload(this);
+                texture.setCrossOrigin("anonymous");
+                texture.setSrc("http://" + getConfigAdddress() + "/resources/blocks_" + i + ".png");
+                textureImages[i] = texture;
             }
-        });
-        // Sync to workers
-        getWorkerPool().sendMessage("textures", tmap, new Object[0], true);
+        } else if (loaded == textureImages.length + 1) {
+            getBlockRegistry().init();
+            inputManager.hook();
 
-        getBlockRegistry().init();
-        inputManager.hook();
-
-        connection = new Connection(
-                getConfigAdddress(),
-                this, new Runnable() {
-            @Override
-            public void run() {
-                world = new ClientWorld(MapViewer.this);
-                renderer = new Renderer(MapViewer.this, (CanvasElement) Browser.getDocument().getElementById("main"));
+            connection = new Connection(
+                    getConfigAdddress(),
+                    this, new Runnable() {
+                @Override
+                public void run() {
+                    world = new ClientWorld(MapViewer.this);
+                    renderer = new Renderer(MapViewer.this, (CanvasElement) Browser.getDocument().getElementById("main"));
+                }
             }
+            );
         }
-        );
+    }
+
+    public ImageElement[] getTextureImages() {
+        return textureImages;
     }
 
     private native String getConfigAdddress()/*-{
@@ -135,16 +144,6 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
             world.update();
         }
     }
-
-    /**
-     * Returns the ImageElement containing the texture for blocks
-     *
-     * @return The block texture element
-     */
-    public ImageElement getBlockTexture() {
-        return texture;
-    }
-
 
     /**
      * Returns the camera used by the renderer

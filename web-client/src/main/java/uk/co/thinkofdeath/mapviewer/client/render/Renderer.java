@@ -59,7 +59,7 @@ public class Renderer implements ResizeHandler, Runnable {
     private final Mat4 tempMatrix2 = Mat4.create();
 
     // Textures
-    private final WebGLTexture blockTexture;
+    private final WebGLTexture[] blockTextures;
     // Objects
     private final ChunkShader chunkShader;
     private final ChunkShader chunkShaderAlpha;
@@ -94,7 +94,11 @@ public class Renderer implements ResizeHandler, Runnable {
 
         onResize(); // Setup canvas
 
-        blockTexture = loadTexture(mapViewer.getBlockTexture());
+        ImageElement[] imageElements = mapViewer.getTextureImages();
+        blockTextures = new WebGLTexture[imageElements.length];
+        for (int i = 0; i < blockTextures.length; i++) {
+            blockTextures[i] = loadTexture(imageElements[i]);
+        }
 
         gl.enable(DEPTH_TEST);
         gl.enable(CULL_FACE);
@@ -150,9 +154,11 @@ public class Renderer implements ResizeHandler, Runnable {
 
         chunkShader.setPerspectiveMatrix(perspectiveMatrix);
         chunkShader.setViewMatrix(viewMatrix);
-        gl.activeTexture(TEXTURE0);
-        gl.bindTexture(TEXTURE_2D, blockTexture);
-        chunkShader.setBlockTexture(0);
+        for (int i = 0; i < blockTextures.length; i++) {
+            gl.activeTexture(TEXTURE0 + i);
+            gl.bindTexture(TEXTURE_2D, blockTextures[i]);
+            chunkShader.setBlockTexture(i, i);
+        }
         chunkShader.setScale(timeScale);
         chunkShader.setFrame((int) currentFrame);
 
@@ -170,12 +176,12 @@ public class Renderer implements ResizeHandler, Runnable {
             chunkShader.setOffset(renderObject.x, renderObject.z);
 
             gl.bindBuffer(ARRAY_BUFFER, renderObject.buffer);
-            gl.vertexAttribPointer(chunkShader.getPosition(), 3, UNSIGNED_SHORT, false, 20, 0);
-            gl.vertexAttribPointer(chunkShader.getColour(), 4, UNSIGNED_BYTE, true, 20, 6);
-            gl.vertexAttribPointer(chunkShader.getTexturePosition(), 2, UNSIGNED_SHORT, false, 20,
-                    10);
-            gl.vertexAttribPointer(chunkShader.getTextureId(), 2, UNSIGNED_SHORT, false, 20, 14);
-            gl.vertexAttribPointer(chunkShader.getLighting(), 2, UNSIGNED_BYTE, false, 20, 18);
+            gl.vertexAttribPointer(chunkShader.getPosition(), 3, UNSIGNED_SHORT, false, 26, 0);
+            gl.vertexAttribPointer(chunkShader.getColour(), 4, UNSIGNED_BYTE, true, 26, 6);
+            gl.vertexAttribPointer(chunkShader.getTexturePosition(), 2, UNSIGNED_SHORT, false, 26, 10);
+            gl.vertexAttribPointer(chunkShader.getTextureDetails(), 4, UNSIGNED_SHORT, false, 26, 14);
+            gl.vertexAttribPointer(chunkShader.getTextureFrames(), 1, UNSIGNED_SHORT, false, 26, 22);
+            gl.vertexAttribPointer(chunkShader.getLighting(), 2, UNSIGNED_BYTE, false, 26, 24);
             gl.drawArrays(TRIANGLES, 0, renderObject.triangleCount);
         }
         chunkShader.disable();
@@ -185,7 +191,9 @@ public class Renderer implements ResizeHandler, Runnable {
         chunkShaderAlpha.use();
         chunkShaderAlpha.setPerspectiveMatrix(perspectiveMatrix);
         chunkShaderAlpha.setViewMatrix(viewMatrix);
-        chunkShaderAlpha.setBlockTexture(0);
+        for (int i = 0; i < blockTextures.length; i++) {
+            chunkShaderAlpha.setBlockTexture(i, i);
+        }
         chunkShaderAlpha.setScale(timeScale);
         chunkShaderAlpha.setFrame((int) currentFrame);
 
@@ -237,7 +245,7 @@ public class Renderer implements ResizeHandler, Runnable {
                 gl.bindBuffer(ARRAY_BUFFER, sortableRenderObject.buffer);
                 gl.bufferData(ARRAY_BUFFER, (ArrayBufferView) data,
                         DYNAMIC_DRAW);
-                sortableRenderObject.count = data.length() / 20;
+                sortableRenderObject.count = data.length() / 26;
             }
 
             if (updates >= TRANSPARENT_UPDATES_LIMIT && !moved) {
@@ -249,12 +257,12 @@ public class Renderer implements ResizeHandler, Runnable {
             if (sortableRenderObject.count == 0 || sortableRenderObject.buffer == null) continue;
             gl.bindBuffer(ARRAY_BUFFER, sortableRenderObject.buffer);
             chunkShaderAlpha.setOffset(sortableRenderObject.getX(), sortableRenderObject.getZ());
-            gl.vertexAttribPointer(chunkShaderAlpha.getPosition(), 3, UNSIGNED_SHORT, false, 20, 0);
-            gl.vertexAttribPointer(chunkShaderAlpha.getColour(), 4, UNSIGNED_BYTE, true, 20, 6);
-            gl.vertexAttribPointer(chunkShaderAlpha.getTexturePosition(), 2, UNSIGNED_SHORT, false, 20,
-                    10);
-            gl.vertexAttribPointer(chunkShaderAlpha.getTextureId(), 2, UNSIGNED_SHORT, false, 20, 14);
-            gl.vertexAttribPointer(chunkShaderAlpha.getLighting(), 2, UNSIGNED_BYTE, false, 20, 18);
+            gl.vertexAttribPointer(chunkShaderAlpha.getPosition(), 3, UNSIGNED_SHORT, false, 26, 0);
+            gl.vertexAttribPointer(chunkShaderAlpha.getColour(), 4, UNSIGNED_BYTE, true, 26, 6);
+            gl.vertexAttribPointer(chunkShaderAlpha.getTexturePosition(), 2, UNSIGNED_SHORT, false, 26, 10);
+            gl.vertexAttribPointer(chunkShaderAlpha.getTextureDetails(), 4, UNSIGNED_SHORT, false, 26, 14);
+            gl.vertexAttribPointer(chunkShaderAlpha.getTextureFrames(), 1, UNSIGNED_SHORT, false, 26, 22);
+            gl.vertexAttribPointer(chunkShaderAlpha.getLighting(), 2, UNSIGNED_BYTE, false, 26, 24);
             gl.drawArrays(TRIANGLES, 0, sortableRenderObject.count);
         }
 
@@ -283,6 +291,7 @@ public class Renderer implements ResizeHandler, Runnable {
             }
 
             Texture texture = face.getTexture(mapViewer);
+
             // First triangle
             for (int i = 0; i < 3; i++) {
                 ModelVertex vertex = face.getVertices().get(2 - i);
@@ -294,7 +303,8 @@ public class Renderer implements ResizeHandler, Runnable {
                         .position(x + vertex.getX(), y + vertex.getY(), z + vertex.getZ())
                         .colour(face.getRed(), face.getGreen(), face.getBlue())
                         .texturePosition(vertex.getTextureX(), vertex.getTextureY())
-                        .textureId(texture.getStart(), texture.getEnd())
+                        .textureDetails(texture.getPosX(), texture.getPosY(), texture.getSize(),
+                                texture.getWidth(), texture.getFrames())
                         .lighting(light.getEmittedLight(), light.getSkyLight());
             }
             // Second triangle
@@ -308,7 +318,8 @@ public class Renderer implements ResizeHandler, Runnable {
                         .position(x + vertex.getX(), y + vertex.getY(), z + vertex.getZ())
                         .colour(face.getRed(), face.getGreen(), face.getBlue())
                         .texturePosition(vertex.getTextureX(), vertex.getTextureY())
-                        .textureId(texture.getStart(), texture.getEnd())
+                        .textureDetails(texture.getPosX(), texture.getPosY(), texture.getSize(),
+                                texture.getWidth(), texture.getFrames())
                         .lighting(light.getEmittedLight(), light.getSkyLight());
             }
         }

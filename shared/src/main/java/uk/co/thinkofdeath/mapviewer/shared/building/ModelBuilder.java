@@ -86,17 +86,17 @@ public class ModelBuilder {
     }
 
     /**
-     * Adds a texture id attribute to the builder
+     * Adds a texture details attribute to the builder
      *
-     * @param start
-     *         The start id of the texture
-     * @param end
-     *         The end id of the texture
      * @return This builder
      */
-    public ModelBuilder textureId(int start, int end) {
-        buffer.addUnsignedShort(start);
-        buffer.addUnsignedShort(end);
+    public ModelBuilder textureDetails(int posX, int posY, int size, int width, int frames) {
+        buffer.addUnsignedShort(posX);
+        buffer.addUnsignedShort(posY);
+        buffer.addUnsignedShort(size);
+        buffer.addUnsignedShort(width);
+        buffer.add(frames);
+        buffer.add(0); // Padding
         return this;
     }
 

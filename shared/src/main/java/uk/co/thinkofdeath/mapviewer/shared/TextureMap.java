@@ -22,12 +22,24 @@ public class TextureMap extends JavaScriptObject {
     protected TextureMap() {
     }
 
+    public final native int getNumberOfImages()/*-{
+        return this.textureImages;
+    }-*/;
+
     public final native void forEach(Looper looper)/*-{
-        for (key in this) {
-            if (this.hasOwnProperty(key)) {
+        for (key in this.textures) {
+            if (this.textures.hasOwnProperty(key)) {
+                var texture = this.textures[key];
                 looper.@uk.co.thinkofdeath.mapviewer.shared.TextureMap.Looper::forEach(Ljava/lang/String;Luk/co/thinkofdeath/mapviewer/shared/Texture;)(
                     key,
-                    new @uk.co.thinkofdeath.mapviewer.shared.Texture::new(Ljava/lang/String;II)(key, this[key][0], this[key][1]));
+                    new @uk.co.thinkofdeath.mapviewer.shared.Texture::new(Ljava/lang/String;IIIII)(
+                        key,
+                        texture.posX,
+                        texture.posY,
+                        texture.size,
+                        texture.width,
+                        texture.frames
+                    ));
             }
         }
     }-*/;

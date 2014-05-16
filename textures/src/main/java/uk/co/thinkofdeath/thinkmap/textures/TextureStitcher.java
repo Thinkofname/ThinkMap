@@ -16,10 +16,15 @@
 
 package uk.co.thinkofdeath.thinkmap.textures;
 
+import java.util.ArrayList;
+
 public class TextureStitcher {
+
+    private static final int TEXTURE_SIZE = 512;
 
     private final TextureProvider provider;
     private final TextureFactory textureFactory;
+    private final ArrayList<StitchedTexture> textures = new ArrayList<>();
 
     public TextureStitcher(TextureProvider provider, TextureFactory textureFactory) {
         this.provider = provider;
@@ -29,14 +34,9 @@ public class TextureStitcher {
     public StitchResult stitch() {
         StitchResult result = new StitchResult();
 
-        Texture output = textureFactory.create(512, 512);
-        result.output = output;
-        int currentTextureId = 0;
-
         for (String name : provider.getTextures()) {
             Texture texture = provider.getTexture(name);
-
-            if (texture.getWidth() != 16 || texture.getHeight() != 16) {
+            if (provider.getMetadata(name) != null) {
                 TextureMetadata metadata = provider.getMetadata(name);
 
                 int[] frames = metadata.getFrames();
@@ -47,26 +47,163 @@ public class TextureStitcher {
                         frames[i] = i;
                     }
                 }
-                int start = currentTextureId;
-                for (int frame : frames) {
-                    for (int i = 0; i < metadata.getFrameTime(); i++) {
-                        int[] data = texture.getPixels(0, 16 * frame, 16, 16);
-                        output.setPixels(data, (currentTextureId % 32) * 16, (currentTextureId / 32) * 16,
-                                16, 16);
-                        currentTextureId++;
+                int frameTime = metadata.getFrameTime();
+                int size = texture.getWidth();
+
+                Position position = null;
+                TextureDetails details = null;
+                int columns = 0;
+
+                main:
+                for (int t = 0; t <= 1; t++) {
+                    for (columns = (frames.length * frameTime); columns > 0; columns--) {
+                        int width = columns * size;
+                        if (width > TEXTURE_SIZE) {
+                            continue;
+                        }
+                        int height = (int) Math.ceil((float) (frames.length * frameTime) / columns)
+                                * size;
+                        if (height > TEXTURE_SIZE) {
+                            break;
+                        }
+                        position = getFree(width, height, t == 1);
+                        if (position != null) {
+                            details = new TextureDetails(name, position.x, position.y, size,
+                                    width, frames.length * frameTime);
+                            break main;
+                        }
                     }
                 }
-                result.details.put(name, new TextureDetails(name, start, currentTextureId - 1));
+
+                if (position == null) {
+                    System.out.println("Failed to place texture: " + name);
+                    continue;
+                }
+                int i = 0;
+                for (int frame : frames) {
+                    for (int n = 0; n < frameTime; n++) {
+                        int[] data = texture.getPixels(0, size * frame, size, size);
+                        putTexture(new Position(position.x + (i % columns) * size,
+                                        position.y + (i / columns) * size),
+                                data, size,
+                                size
+                        );
+                        i++;
+                    }
+                }
+                result.details.put(name, details);
                 continue;
             }
-
-            int[] data = texture.getPixels(0, 0, 16, 16);
-            output.setPixels(data, (currentTextureId % 32) * 16, (currentTextureId / 32) * 16,
-                    16, 16);
-            result.details.put(name, new TextureDetails(name, currentTextureId, currentTextureId));
-            currentTextureId++;
+            Position position = getFree(texture.getWidth(), texture.getHeight(), true);
+            if (position == null) {
+                System.out.println("Failed to place texture: " + name);
+                continue;
+            }
+            putTexture(position, texture);
+            result.details.put(name, new TextureDetails(name, position.x, position.y,
+                    texture.getWidth(), texture.getWidth(), 1));
         }
 
+        result.output = new Texture[textures.size()];
+        for (int i = 0; i < textures.size(); i++) {
+            result.output[i] = textures.get(i).texture;
+        }
         return result;
+    }
+
+    private void putTexture(Position position, Texture t) {
+        putTexture(position, t.getPixels(0, 0, t.getWidth(), t.getHeight()),
+                t.getWidth(), t.getHeight());
+    }
+
+    private void putTexture(Position position, int[] data, int width, int height) {
+        int tid = position.y / TEXTURE_SIZE;
+        StitchedTexture texture = textures.get(tid);
+        texture.putTexture(new Position(position.x, position.y - tid * TEXTURE_SIZE), data,
+                width, height);
+    }
+
+    private Position getFree(int width, int height, boolean createNew) {
+        if (width > TEXTURE_SIZE || height > TEXTURE_SIZE) {
+            throw new IllegalArgumentException("Texture too big");
+        }
+        Position position = null;
+        int i = 0;
+        for (StitchedTexture texture : textures) {
+            position = texture.getFree(width, height);
+            if (position != null) {
+                position = new Position(position.x, position.y + i * TEXTURE_SIZE);
+                break;
+            }
+            i++;
+        }
+        if (position == null && createNew) {
+            StitchedTexture texture = new StitchedTexture(textureFactory.create(
+                    TEXTURE_SIZE, TEXTURE_SIZE));
+            position = texture.getFree(width, height);
+            position = new Position(position.x, position.y + textures.size() * TEXTURE_SIZE);
+            textures.add(texture);
+        }
+        return position;
+    }
+
+    private class StitchedTexture {
+
+        private final Texture texture;
+
+        private final boolean[] usedPixels;
+
+        public StitchedTexture(Texture texture) {
+            this.texture = texture;
+            usedPixels = new boolean[texture.getWidth() * texture.getHeight()];
+        }
+
+        public Position getFree(int width, int height) {
+            for (int x = 0; x < texture.getWidth(); x++) {
+                main:
+                for (int y = 0; y < texture.getHeight(); y++) {
+                    if (!usedPixels[x + y * texture.getWidth()]) {
+                        for (int x2 = 0; x2 < width; x2++) {
+                            for (int y2 = 0; y2 < height; y2++) {
+                                if ((x + x2) >= TEXTURE_SIZE
+                                        || (y + y2) >= TEXTURE_SIZE
+                                        || usedPixels[(x + x2) + (y + y2) * texture.getWidth()]) {
+                                    continue main;
+                                }
+                            }
+                        }
+                        return new Position(x, y);
+                    }
+                }
+            }
+            return null;
+        }
+
+        public void putTexture(Position position, int[] data, int width, int height) {
+            texture.setPixels(data, position.x, position.y, width, height);
+            for (int x = position.x; x < position.x + width; x++) {
+                for (int y = position.y; y < position.y + height; y++) {
+                    if (usedPixels[x + y * texture.getWidth()]) {
+                        throw new RuntimeException("Double used location (" + x + "," + y + ")");
+                    }
+                    usedPixels[x + y * texture.getWidth()] = true;
+                }
+            }
+        }
+    }
+
+    private static class Position {
+        private final int x;
+        private final int y;
+
+        public Position(final int x, final int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + x + "," + y + ")";
+        }
     }
 }

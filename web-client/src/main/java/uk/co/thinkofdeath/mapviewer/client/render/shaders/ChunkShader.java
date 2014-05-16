@@ -28,11 +28,12 @@ public class ChunkShader extends ShaderProgram {
     private WebGLUniformLocation offset;
     private WebGLUniformLocation frame;
     private WebGLUniformLocation scale;
-    private WebGLUniformLocation blockTexture;
+    private WebGLUniformLocation[] blockTextures = new WebGLUniformLocation[5];
     // Attributes
     private int position;
     private int colour;
-    private int textureId;
+    private int textureDetails;
+    private int textureFrames;
     private int texturePosition;
     private int lighting;
     // Flags
@@ -61,11 +62,14 @@ public class ChunkShader extends ShaderProgram {
         offset = getUniform("offset");
         frame = getUniform("frame");
         scale = getUniform("scale");
-        blockTexture = getUniform("texture");
+        for (int i = 0; i < blockTextures.length; i++) {
+            blockTextures[i] = getUniform("texture[" + i + "]");
+        }
         // Attributes
         position = getAttribute("position");
         colour = getAttribute("colour");
-        textureId = getAttribute("textureId");
+        textureDetails = getAttribute("textureDetails");
+        textureFrames = getAttribute("textureFrames");
         texturePosition = getAttribute("texturePos");
         lighting = getAttribute("lighting");
     }
@@ -128,8 +132,8 @@ public class ChunkShader extends ShaderProgram {
      * @param id
      *         The id/position of the texture
      */
-    public void setBlockTexture(int id) {
-        gl.uniform1i(blockTexture, id);
+    public void setBlockTexture(int idx, int id) {
+        gl.uniform1i(blockTextures[idx], id);
     }
 
     /**
@@ -155,8 +159,12 @@ public class ChunkShader extends ShaderProgram {
      *
      * @return The texture id attribute
      */
-    public int getTextureId() {
-        return textureId;
+    public int getTextureDetails() {
+        return textureDetails;
+    }
+
+    public int getTextureFrames() {
+        return textureFrames;
     }
 
     /**

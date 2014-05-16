@@ -21,10 +21,10 @@ import java.util.Map;
 
 public class StitchResult {
 
-    Texture output;
+    Texture[] output;
     Map<String, TextureDetails> details = new HashMap<>();
 
-    public Texture getOutput() {
+    public Texture[] getOutput() {
         return output;
     }
 

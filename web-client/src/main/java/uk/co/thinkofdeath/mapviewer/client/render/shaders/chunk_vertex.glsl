@@ -3,7 +3,8 @@ precision mediump float;
 attribute vec3 position;
 attribute vec4 colour;
 attribute vec2 texturePos;
-attribute vec2 textureId;
+attribute vec4 textureDetails;
+attribute float textureFrames;
 attribute vec2 lighting;
 
 uniform mat4 pMatrix;
@@ -16,9 +17,12 @@ varying vec4 vColour;
 varying vec2 vTexturePos;
 varying vec2 vTextureOffset;
 varying float vLighting;
+varying float vTextureSize;
+varying float texture;
 
 const float invPosScale = 1.0 / 256.0;
 const float invIdScale = 1.0 / 32.0;
+const float invTextureSize = 1.0 / 512.0;
 
 void main(void) {
     vec3 pos = position;
@@ -26,12 +30,15 @@ void main(void) {
      offset.y * 16.0), 1.0);
     vColour = colour;
 
-    vec2 tPos = texturePos * invPosScale;
-    float id = floor(textureId.x + 0.5);
-    id = id + floor(mod(frame, floor((textureId.y - textureId.x) + 0.5) + 1.0));
-	vTexturePos = vec2(floor(mod(id, 32.0)) * 0.03125,
-		floor(id * invIdScale) * 0.03125);
-	vTextureOffset = tPos;
+    vTextureSize = textureDetails[2] * invTextureSize;
+    float currentFrame = mod(frame, textureFrames);
+    float totalPosition = currentFrame * textureDetails.z;
+    float posX = textureDetails[0] + mod(totalPosition, textureDetails[3]);
+    float posY = textureDetails[1] + floor(totalPosition / textureDetails[3]) * textureDetails[2];
+    texture = floor(posY / 512.0);
+    posY = posY - texture * 512.0;
+    vTexturePos = vec2(posX, posY) * invTextureSize;
+    vTextureOffset = texturePos * invPosScale;
 
     float light = max(lighting.x, lighting.y * scale);
     float val = pow(0.9, 16.0 - light) * 2.0;

@@ -31,10 +31,7 @@ import uk.co.thinkofdeath.thinkmap.bukkit.textures.TextureDetailsSerializer;
 import uk.co.thinkofdeath.thinkmap.bukkit.web.Packets;
 import uk.co.thinkofdeath.thinkmap.bukkit.web.WebHandler;
 import uk.co.thinkofdeath.thinkmap.bukkit.world.ChunkManager;
-import uk.co.thinkofdeath.thinkmap.textures.StitchResult;
-import uk.co.thinkofdeath.thinkmap.textures.TextureDetails;
-import uk.co.thinkofdeath.thinkmap.textures.TextureFactory;
-import uk.co.thinkofdeath.thinkmap.textures.TextureStitcher;
+import uk.co.thinkofdeath.thinkmap.textures.*;
 import uk.co.thinkofdeath.thinkmap.textures.mojang.MojangTextureProvider;
 
 import javax.imageio.ImageIO;
@@ -50,7 +47,7 @@ import java.util.concurrent.TimeUnit;
 public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     public static final String MINECRAFT_VERSION = "1.7.9";
-    public static final String RESOURCE_VERSION = "2";
+    public static final String RESOURCE_VERSION = "3";
 
     private final Map<String, ChunkManager> chunkManagers = new HashMap<String, ChunkManager>();
     private WebHandler webHandler;
@@ -84,10 +81,10 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
         saveConfig();
 
         // Resource loading
-        final File blockTextures = new File(
+        final File blockInfo = new File(
                 resourceDir,
-                "blocks.png");
-        if (blockTextures.exists()) {
+                "blocks.json");
+        if (blockInfo.exists()) {
             webHandler = new WebHandler(this);
             webHandler.start();
         } else {
@@ -95,7 +92,7 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
                 @Override
                 public void run() {
                     try {
-                        blockTextures.getParentFile().mkdirs();
+                        blockInfo.getParentFile().mkdirs();
                         TextureFactory textureFactory = new BufferedTextureFactory();
                         getLogger().info("Downloading textures. This may take some time");
                         MojangTextureProvider textureProvider =
@@ -115,15 +112,18 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
                                 .registerTypeAdapter(TextureDetails.class,
                                         new TextureDetailsSerializer())
                                 .create();
+                        HashMap<String, Object> info = new HashMap<String, Object>();
+                        info.put("textures", result.getDetails());
+                        info.put("textureImages", result.getOutput().length);
                         FileUtils.writeStringToFile(
-                                new File(
-                                        resourceDir,
-                                        "blocks.json"
-                                ),
-                                gson.toJson(result.getDetails())
+                                blockInfo,
+                                gson.toJson(info)
                         );
-                        ImageIO.write(((BufferedTexture) result.getOutput()).getImage(), "PNG",
-                                blockTextures);
+                        int i = 0;
+                        for (Texture texture : result.getOutput()) {
+                            ImageIO.write(((BufferedTexture) texture).getImage(), "PNG",
+                                    new File(resourceDir, "blocks_" + (i++) + ".png"));
+                        }
                         getLogger().info("Stitching complete in " + (System.currentTimeMillis() -
                                 start) + "ms");
 
@@ -188,6 +188,9 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
     }
 
     public void sendAll(BinaryWebSocketFrame frame) {
+        if (getWebHandler() == null) {
+            return;
+        }
         getWebHandler().getChannelGroup().writeAndFlush(frame);
     }
 

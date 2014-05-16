@@ -16,7 +16,10 @@
 
 package uk.co.thinkofdeath.thinkmap.bukkit.textures;
 
-import com.google.gson.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import uk.co.thinkofdeath.thinkmap.textures.TextureDetails;
 
 import java.lang.reflect.Type;
@@ -24,9 +27,12 @@ import java.lang.reflect.Type;
 public class TextureDetailsSerializer implements JsonSerializer<TextureDetails> {
     @Override
     public JsonElement serialize(TextureDetails src, Type typeOfSrc, JsonSerializationContext context) {
-        JsonArray array = new JsonArray();
-        array.add(new JsonPrimitive(src.getStart()));
-        array.add(new JsonPrimitive(src.getEnd()));
-        return array;
+        JsonObject obj = new JsonObject();
+        obj.addProperty("posX", src.getPosX());
+        obj.addProperty("posY", src.getPosY());
+        obj.addProperty("size", src.getSize());
+        obj.addProperty("width", src.getWidth());
+        obj.addProperty("frames", src.getFrames());
+        return obj;
     }
 }

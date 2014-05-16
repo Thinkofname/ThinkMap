@@ -22,29 +22,42 @@ package uk.co.thinkofdeath.thinkmap.textures;
 public class TextureDetails {
 
     private final String name;
-    private final int start;
-    private final int end;
+    private final int posX;
+    private final int posY;
+    private final int size;
+    private final int width;
+    private final int frames;
 
-    public TextureDetails(String name, int start, int end) {
+    public TextureDetails(String name, int posX, int posY, int size, int width, int frames) {
         this.name = name;
-        this.start = start;
-        this.end = end;
+        this.posX = posX;
+        this.posY = posY;
+        this.size = size;
+        this.width = width;
+        this.frames = frames;
     }
 
     public String getName() {
         return name;
     }
 
-    public int getStart() {
-        return start;
+    public int getPosX() {
+        return posX;
     }
 
-    public int getEnd() {
-        return end;
+    public int getPosY() {
+        return posY;
     }
 
-    @Override
-    public String toString() {
-        return "{start=" + start + ",end=" + end + "}";
+    public int getSize() {
+        return size;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getFrames() {
+        return frames;
     }
 }
