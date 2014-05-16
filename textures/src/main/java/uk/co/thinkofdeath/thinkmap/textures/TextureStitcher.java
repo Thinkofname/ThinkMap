@@ -17,6 +17,8 @@
 package uk.co.thinkofdeath.thinkmap.textures;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class TextureStitcher {
 
@@ -34,7 +36,22 @@ public class TextureStitcher {
     public StitchResult stitch() {
         StitchResult result = new StitchResult();
 
-        for (String name : provider.getTextures()) {
+        String[] textureNames = provider.getTextures();
+        Arrays.sort(textureNames, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                boolean o1m = provider.getMetadata(o1) != null;
+                boolean o2m = provider.getMetadata(o2) != null;
+                if (o1m && !o2m) {
+                    return -1;
+                } else if (!o1m && o2m) {
+                    return 1;
+                }
+                return 0;
+            }
+        });
+
+        for (String name : textureNames) {
             Texture texture = provider.getTexture(name);
             if (provider.getMetadata(name) != null) {
                 TextureMetadata metadata = provider.getMetadata(name);

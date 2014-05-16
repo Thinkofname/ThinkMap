@@ -47,7 +47,7 @@ import java.util.concurrent.TimeUnit;
 public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     public static final String MINECRAFT_VERSION = "1.7.9";
-    public static final String RESOURCE_VERSION = "3";
+    public static final String RESOURCE_VERSION = "4";
 
     private final Map<String, ChunkManager> chunkManagers = new HashMap<String, ChunkManager>();
     private WebHandler webHandler;
@@ -97,11 +97,13 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
                         getLogger().info("Downloading textures. This may take some time");
                         MojangTextureProvider textureProvider =
                                 new MojangTextureProvider(MINECRAFT_VERSION, textureFactory);
+
                         try (InputStream in =
                                      getClassLoader().getResourceAsStream("textures/missing_texture.png")) {
                             textureProvider.addTexture("missing_texture",
                                     textureFactory.fromInputStream(in));
                         }
+
                         TextureStitcher stitcher = new TextureStitcher(textureProvider, textureFactory);
                         getLogger().info("Stitching textures. The mapviewer will start after this " +
                                 "completes");

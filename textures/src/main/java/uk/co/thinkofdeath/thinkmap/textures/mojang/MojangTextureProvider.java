@@ -46,6 +46,10 @@ public class MojangTextureProvider implements TextureProvider {
             .registerTypeAdapter(MojangMetadataAnimation.class, new MojangMetadataAnimationDeserializer())
             .create();
 
+    private HashMap<String, String> whitelistedTextures = new HashMap<String, String>() {{
+        put("assets/minecraft/textures/entity/chest/normal.png", "chest_normal");
+    }};
+
     public MojangTextureProvider(String version, TextureFactory factory) {
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(
@@ -55,6 +59,11 @@ public class MojangTextureProvider implements TextureProvider {
                 ZipEntry entry;
                 while ((entry = in.getNextEntry()) != null) {
                     if (!entry.getName().startsWith("assets/minecraft/textures/blocks/")) {
+                        if (whitelistedTextures.containsKey(entry.getName())) {
+                            String name = whitelistedTextures.get(entry.getName());
+                            textureNames.add(name);
+                            textures.put(name, factory.fromInputStream(new NoCloseStream(in)));
+                        }
                         continue;
                     }
                     if (entry.getName().endsWith(".png")) {

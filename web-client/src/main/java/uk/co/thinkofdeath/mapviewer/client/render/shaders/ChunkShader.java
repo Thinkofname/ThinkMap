@@ -63,7 +63,7 @@ public class ChunkShader extends ShaderProgram {
         frame = getUniform("frame");
         scale = getUniform("scale");
         for (int i = 0; i < blockTextures.length; i++) {
-            blockTextures[i] = getUniform("texture[" + i + "]");
+            blockTextures[i] = getUniform("textures[" + i + "]");
         }
         // Attributes
         position = getAttribute("position");
