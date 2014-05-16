@@ -134,7 +134,6 @@ public class BlockRegistry {
         for (Block block : blocks.getBlocks()) {
             block.plugin = plugin;
             block.name = name;
-            System.out.println(block.toString() + "/" + block.getLegacyData());
             if (BUILD_BLOCK_LIST) {
                 block.htmlFormat(blockListBuilder);
                 blockListBuilder.append("\n");
@@ -357,9 +356,10 @@ public class BlockRegistry {
         register("minecraft", "chest", new BlockBuilder(new BlockChest(mapViewer))
                 .solid(false)
                 .create(), 54);
-
-        // TODO: redstone_wire
-
+        register("minecraft", "redstone_wire", new BlockBuilder(new BlockRedstone(mapViewer))
+                .solid(false)
+                .collidable(false)
+                .create(), 55);
         register("minecraft", "diamond_ore", new BlockBuilder(mapViewer)
                 .texture("diamond_ore")
                 .create(), 56);
