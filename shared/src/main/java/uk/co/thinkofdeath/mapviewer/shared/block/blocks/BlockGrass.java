@@ -61,7 +61,7 @@ public class BlockGrass extends BlockFactory {
 
         @Override
         public int getColour(Face face) {
-            return face == Face.TOP ? 0xA7D389 : 0xFFFFFF;
+            return face == Face.TOP ? 0x86AF53 : 0xFFFFFF;
         }
     }
 }
