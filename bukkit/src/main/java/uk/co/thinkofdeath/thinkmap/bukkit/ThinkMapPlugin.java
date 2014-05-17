@@ -167,7 +167,9 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     @Override
     public void onDisable() {
-        webHandler.interrupt();
+        if (webHandler != null) {
+            webHandler.interrupt();
+        }
         chunkExecutor.shutdown();
         try {
             chunkExecutor.awaitTermination(5, TimeUnit.SECONDS);
