@@ -31,8 +31,8 @@ void main(void) {
     vColour = colour;
 
     vTextureSize = textureDetails[2] * invTextureSize;
-    float currentFrame = mod(frame, textureFrames);
-    float totalPosition = currentFrame * textureDetails.z;
+    float currentFrame = floor(mod(frame, textureFrames));
+    float totalPosition = currentFrame * textureDetails[2];
     float posX = textureDetails[0] + mod(totalPosition, textureDetails[3]);
     float posY = textureDetails[1] + floor(totalPosition / textureDetails[3]) * textureDetails[2];
     texture = floor(posY / 1024.0);
