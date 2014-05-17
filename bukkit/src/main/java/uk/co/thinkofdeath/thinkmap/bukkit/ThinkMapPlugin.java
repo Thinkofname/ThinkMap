@@ -181,12 +181,7 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
         final BinaryWebSocketFrame frame = new BinaryWebSocketFrame(
                 Packets.writeTimeUpdate((int) targetWorld.getTime())
         );
-        getServer().getScheduler().runTaskAsynchronously(this, new Runnable() {
-            @Override
-            public void run() {
-                sendAll(frame);
-            }
-        });
+        sendAll(frame);
     }
 
     public void sendAll(BinaryWebSocketFrame frame) {
