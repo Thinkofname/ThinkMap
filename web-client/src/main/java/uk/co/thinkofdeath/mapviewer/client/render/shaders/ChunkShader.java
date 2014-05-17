@@ -16,6 +16,7 @@
 
 package uk.co.thinkofdeath.mapviewer.client.render.shaders;
 
+import elemental.html.Int32Array;
 import elemental.html.WebGLUniformLocation;
 import uk.co.thinkofdeath.mapviewer.client.render.ShaderProgram;
 import uk.co.thinkofdeath.mapviewer.shared.glmatrix.Mat4;
@@ -28,7 +29,7 @@ public class ChunkShader extends ShaderProgram {
     private WebGLUniformLocation offset;
     private WebGLUniformLocation frame;
     private WebGLUniformLocation scale;
-    private WebGLUniformLocation[] blockTextures = new WebGLUniformLocation[5];
+    private WebGLUniformLocation blockTextures;
     // Attributes
     private int position;
     private int colour;
@@ -62,9 +63,7 @@ public class ChunkShader extends ShaderProgram {
         offset = getUniform("offset");
         frame = getUniform("frame");
         scale = getUniform("scale");
-        for (int i = 0; i < blockTextures.length; i++) {
-            blockTextures[i] = getUniform("textures[" + i + "]");
-        }
+        blockTextures = getUniform("textures");
         // Attributes
         position = getAttribute("position");
         colour = getAttribute("colour");
@@ -126,14 +125,8 @@ public class ChunkShader extends ShaderProgram {
         gl.uniform1f(scale, i);
     }
 
-    /**
-     * Sets the id/position of the block texture
-     *
-     * @param id
-     *         The id/position of the texture
-     */
-    public void setBlockTexture(int idx, int id) {
-        gl.uniform1i(blockTextures[idx], id);
+    public void setBlockTexture(Int32Array data) {
+        gl.uniform1iv(blockTextures, data);
     }
 
     /**

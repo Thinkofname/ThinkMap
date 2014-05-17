@@ -60,6 +60,7 @@ public class Renderer implements ResizeHandler, Runnable {
 
     // Textures
     private final WebGLTexture[] blockTextures;
+    private final Int32Array textureLocations = createInt32(new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
     // Objects
     private final ChunkShader chunkShader;
     private final ChunkShader chunkShaderAlpha;
@@ -157,8 +158,8 @@ public class Renderer implements ResizeHandler, Runnable {
         for (int i = 0; i < blockTextures.length; i++) {
             gl.activeTexture(TEXTURE0 + i);
             gl.bindTexture(TEXTURE_2D, blockTextures[i]);
-            chunkShader.setBlockTexture(i, i);
         }
+        chunkShader.setBlockTexture(textureLocations);
         chunkShader.setScale(timeScale);
         chunkShader.setFrame((int) currentFrame);
 
@@ -191,9 +192,7 @@ public class Renderer implements ResizeHandler, Runnable {
         chunkShaderAlpha.use();
         chunkShaderAlpha.setPerspectiveMatrix(perspectiveMatrix);
         chunkShaderAlpha.setViewMatrix(viewMatrix);
-        for (int i = 0; i < blockTextures.length; i++) {
-            chunkShaderAlpha.setBlockTexture(i, i);
-        }
+        chunkShaderAlpha.setBlockTexture(textureLocations);
         chunkShaderAlpha.setScale(timeScale);
         chunkShaderAlpha.setFrame((int) currentFrame);
 

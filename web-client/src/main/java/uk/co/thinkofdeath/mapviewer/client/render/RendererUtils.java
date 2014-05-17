@@ -17,6 +17,7 @@
 package uk.co.thinkofdeath.mapviewer.client.render;
 
 import elemental.html.CanvasElement;
+import elemental.html.Int32Array;
 import elemental.html.WebGLRenderingContext;
 
 public class RendererUtils {
@@ -55,6 +56,10 @@ public class RendererUtils {
         $wnd.requestAnimationFrame(function () {
             runnable.@java.lang.Runnable::run()();
         });
+    }-*/;
+
+    static native Int32Array createInt32(int[] ints)/*-{
+        return new Int32Array(ints);
     }-*/;
 
     /**

@@ -1,6 +1,8 @@
 precision mediump float;
 
-uniform sampler2D textures[5];
+const int MAX_TEXTURES = 10;
+
+uniform sampler2D textures[MAX_TEXTURES];
 
 varying vec4 vColour;
 varying vec2 vTexturePos;
@@ -14,16 +16,10 @@ void main(void) {
     vec2 pos = vTexturePos + fract(vTextureOffset) * vTextureSize;
     // I hate GLSL
     int tid = int(texture);
-    if (tid == 0) {
-        colour = texture2D(textures[0], pos);
-    } else if (tid == 1) {
-        colour = texture2D(textures[1], pos);
-    } else if (tid == 2) {
-        colour = texture2D(textures[2], pos);
-    } else if (tid == 3) {
-        colour = texture2D(textures[3], pos);
-    } else if (tid == 4) {
-        colour = texture2D(textures[4], pos);
+    for (int i = 0; i < MAX_TEXTURES; i++) {
+        if (tid == i) {
+            colour = texture2D(textures[i], pos);
+        }
     }
     colour *= vColour;
     colour.rgb *= vLighting;
