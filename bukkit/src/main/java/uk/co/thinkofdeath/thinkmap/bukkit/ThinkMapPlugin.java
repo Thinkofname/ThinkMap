@@ -33,9 +33,11 @@ import uk.co.thinkofdeath.thinkmap.bukkit.web.WebHandler;
 import uk.co.thinkofdeath.thinkmap.bukkit.world.ChunkManager;
 import uk.co.thinkofdeath.thinkmap.textures.*;
 import uk.co.thinkofdeath.thinkmap.textures.mojang.MojangTextureProvider;
+import uk.co.thinkofdeath.thinkmap.textures.mojang.ZipTextureProvider;
 
 import javax.imageio.ImageIO;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -43,11 +45,12 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     public static final String MINECRAFT_VERSION = "1.7.9";
-    public static final String RESOURCE_VERSION = "5";
+    public static final String RESOURCE_VERSION = "6";
 
     private final Map<String, ChunkManager> chunkManagers = new HashMap<String, ChunkManager>();
     private WebHandler webHandler;
@@ -60,8 +63,6 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     @Override
     public void onEnable() {
-        resourceDir = new File(getDataFolder(),
-                "resources/" + MINECRAFT_VERSION + "-" + RESOURCE_VERSION);
         worldDir = new File(getDataFolder(), "worlds");
         getServer().getPluginManager().registerEvents(new Events(this), this);
         getServer().getScheduler().runTaskTimer(this, this, 20l, 20 * 2l);
@@ -74,11 +75,19 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
             }
         }
 
-        FileConfiguration config = getConfig();
+        final FileConfiguration config = getConfig();
         config.options().copyDefaults(true);
         config.addDefault("webserver.port", 23333);
         config.addDefault("webserver.bind-address", "0.0.0.0");
+        config.addDefault("resources.pack-name", "");
         saveConfig();
+
+
+        resourceDir = new File(getDataFolder(),
+                "resources/" + MINECRAFT_VERSION + "-" + RESOURCE_VERSION
+                        + (config.getString("resources.pack-name").length() == 0 ? "" : "-" +
+                        config.getString("resources.pack-name"))
+        );
 
         // Resource loading
         final File blockInfo = new File(
@@ -88,6 +97,14 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
             webHandler = new WebHandler(this);
             webHandler.start();
         } else {
+            String resourcePack = config.getString("resources.pack-name");
+            final File resourceFile = new File(getDataFolder(), resourcePack + ".zip");
+            if (!resourceFile.exists()) {
+                getLogger().log(Level.SEVERE, "Unable to find the resource pack "
+                        + config.getString("resources.pack-name"));
+                resourcePack = "";
+            }
+            final String finalResourcePack = resourcePack;
             getServer().getScheduler().runTaskAsynchronously(this, new Runnable() {
                 @Override
                 public void run() {
@@ -95,13 +112,22 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
                         blockInfo.getParentFile().mkdirs();
                         TextureFactory textureFactory = new BufferedTextureFactory();
                         getLogger().info("Downloading textures. This may take some time");
-                        MojangTextureProvider textureProvider =
+                        TextureProvider textureProvider =
                                 new MojangTextureProvider(MINECRAFT_VERSION, textureFactory);
 
                         try (InputStream in =
                                      getClassLoader().getResourceAsStream("textures/missing_texture.png")) {
-                            textureProvider.addTexture("missing_texture",
+                            ((MojangTextureProvider) textureProvider).addTexture("missing_texture",
                                     textureFactory.fromInputStream(in));
+                        }
+
+                        if (finalResourcePack.length() > 0) {
+                            textureProvider = new JoinedProvider(
+                                    new ZipTextureProvider(
+                                            new FileInputStream(resourceFile), textureFactory
+                                    ),
+                                    textureProvider
+                            );
                         }
 
                         TextureStitcher stitcher = new TextureStitcher(textureProvider, textureFactory);
@@ -205,5 +231,9 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     public WebHandler getWebHandler() {
         return this.webHandler;
+    }
+
+    public File getResourceDir() {
+        return resourceDir;
     }
 }

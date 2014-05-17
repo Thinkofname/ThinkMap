@@ -22,7 +22,7 @@ varying float texture;
 
 const float invPosScale = 1.0 / 256.0;
 const float invIdScale = 1.0 / 32.0;
-const float invTextureSize = 1.0 / 512.0;
+const float invTextureSize = 1.0 / 1024.0;
 
 void main(void) {
     vec3 pos = position;
@@ -35,8 +35,8 @@ void main(void) {
     float totalPosition = currentFrame * textureDetails.z;
     float posX = textureDetails[0] + mod(totalPosition, textureDetails[3]);
     float posY = textureDetails[1] + floor(totalPosition / textureDetails[3]) * textureDetails[2];
-    texture = floor(posY / 512.0);
-    posY = posY - texture * 512.0;
+    texture = floor(posY / 1024.0);
+    posY = posY - texture * 1024.0;
     vTexturePos = vec2(posX, posY) * invTextureSize;
     vTextureOffset = texturePos * invPosScale;
 

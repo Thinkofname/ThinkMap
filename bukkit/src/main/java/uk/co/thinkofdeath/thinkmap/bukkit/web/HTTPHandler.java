@@ -118,8 +118,7 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         InputStream stream = null;
         if (request.getUri().startsWith("/resources/")) {
             File file = new File(
-                    new File(plugin.getDataFolder(), "resources/" +
-                            ThinkMapPlugin.MINECRAFT_VERSION + "-" + ThinkMapPlugin.RESOURCE_VERSION),
+                    plugin.getResourceDir(),
                     request.getUri().substring("/resources/".length())
             );
             stream = new FileInputStream(file);
