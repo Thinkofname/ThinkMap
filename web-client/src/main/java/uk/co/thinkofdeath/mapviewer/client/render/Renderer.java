@@ -95,11 +95,7 @@ public class Renderer implements ResizeHandler, Runnable {
 
         onResize(); // Setup canvas
 
-        ImageElement[] imageElements = mapViewer.getTextureImages();
-        blockTextures = new WebGLTexture[imageElements.length];
-        for (int i = 0; i < blockTextures.length; i++) {
-            blockTextures[i] = loadTexture(imageElements[i]);
-        }
+        blockTextures = new WebGLTexture[mapViewer.getNumberOfTextures()];
 
         gl.enable(DEPTH_TEST);
         gl.enable(CULL_FACE);
@@ -367,6 +363,10 @@ public class Renderer implements ResizeHandler, Runnable {
         renderObject.buffer = null;
     }
 
+    public void loadBlockTexture(int id, ImageElement imageElement) {
+        blockTextures[id] = loadTexture(imageElement);
+    }
+
     /**
      * Creates a WebGL texture from an ImageElement
      *
@@ -410,5 +410,4 @@ public class Renderer implements ResizeHandler, Runnable {
     public Camera getCamera() {
         return camera;
     }
-
 }

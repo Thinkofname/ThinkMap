@@ -42,6 +42,7 @@ import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkLoadedMessage;
 import uk.co.thinkofdeath.mapviewer.shared.worker.WorkerMessage;
 import uk.co.thinkofdeath.mapviewer.shared.world.World;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, IMapViewer {
@@ -57,13 +58,15 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     private final InputManager inputManager = new InputManager(this);
 
     private HashMap<String, Texture> textures = new HashMap<>();
-    private ImageElement[] textureImages;
     private XMLHttpRequest xhr;
     private int loaded = 0;
     private Connection connection;
     private Renderer renderer;
     private ClientWorld world;
     private boolean shouldUpdateWorld = false;
+
+    private int noTextures;
+    ArrayList<TextureLoadHandler> earlyTextures = new ArrayList<>();
 
     /**
      * Entry point to the program
@@ -96,16 +99,13 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
             });
             // Sync to workers
             getWorkerPool().sendMessage("textures", tmap, new Object[0], true);
-
-            textureImages = new ImageElement[tmap.getNumberOfImages()];
+            noTextures = tmap.getNumberOfImages();
             for (int i = 0; i < tmap.getNumberOfImages(); i++) {
                 ImageElement texture = (ImageElement) Browser.getDocument().createElement("img");
-                texture.setOnload(this);
+                texture.setOnload(new TextureLoadHandler(this, i, texture));
                 texture.setCrossOrigin("anonymous");
                 texture.setSrc("http://" + getConfigAdddress() + "/resources/blocks_" + i + ".png");
-                textureImages[i] = texture;
             }
-        } else if (loaded == textureImages.length + 1) {
             getBlockRegistry().init();
             inputManager.hook();
 
@@ -116,14 +116,17 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
                 public void run() {
                     world = new ClientWorld(MapViewer.this);
                     renderer = new Renderer(MapViewer.this, (CanvasElement) Browser.getDocument().getElementById("main"));
+                    for (TextureLoadHandler handler : earlyTextures) {
+                        handler.load();
+                    }
                 }
             }
             );
         }
     }
 
-    public ImageElement[] getTextureImages() {
-        return textureImages;
+    public int getNumberOfTextures() {
+        return noTextures;
     }
 
     private native String getConfigAdddress()/*-{
