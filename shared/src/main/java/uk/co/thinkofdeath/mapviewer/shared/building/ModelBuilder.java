@@ -145,4 +145,8 @@ public class ModelBuilder {
     public TUint8Array toTypedArray() {
         return buffer.getArray();
     }
+
+    public int getOffset() {
+        return buffer.getOffset();
+    }
 }

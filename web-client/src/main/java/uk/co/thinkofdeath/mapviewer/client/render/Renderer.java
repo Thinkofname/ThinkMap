@@ -20,8 +20,8 @@ import elemental.client.Browser;
 import elemental.html.*;
 import uk.co.thinkofdeath.mapviewer.client.MapViewer;
 import uk.co.thinkofdeath.mapviewer.client.render.shaders.ChunkShader;
-import uk.co.thinkofdeath.mapviewer.shared.building.ModelBuilder;
 import uk.co.thinkofdeath.mapviewer.shared.glmatrix.Mat4;
+import uk.co.thinkofdeath.mapviewer.shared.model.PositionedModel;
 import uk.co.thinkofdeath.mapviewer.shared.support.JsUtils;
 import uk.co.thinkofdeath.mapviewer.shared.support.TUint8Array;
 
@@ -61,7 +61,6 @@ public class Renderer implements ResizeHandler, Runnable {
     private final ArrayList<ChunkRenderObject> renderObjectList = new ArrayList<>();
 
     private final ArrayList<SortableRenderObject> sortableRenderObjects = new ArrayList<>();
-    private final ModelBuilder transparentBuilder = new ModelBuilder();
 
     private double lastFrame;
     private double currentFrame;
@@ -216,28 +215,26 @@ public class Renderer implements ResizeHandler, Runnable {
             if (update) {
                 updates++;
                 sortableRenderObject.needResort = false;
-                transparentBuilder.reset();
 
-                PositionedModel[] models = sortableRenderObject.getModels();
+                ArrayList<PositionedModel> models = sortableRenderObject.getModels();
                 JsUtils.sort(models, new ModelSorter(
                         sortableRenderObject.getX(),
                         sortableRenderObject.getZ(),
                         camera));
 
+                int offset = 0;
+                TUint8Array temp = sortableRenderObject.tempArray;
+                TUint8Array data = sortableRenderObject.getData();
                 for (PositionedModel model : models) {
-                    model.getModel().render(transparentBuilder,
-                            model.getX(),
-                            model.getY(),
-                            model.getZ(),
-                            model.getChunk(),
-                            model.getBlock());
+                    temp.set(offset, data.subarray(model.getStart(),
+                            model.getStart() + model.getLength()));
+                    offset += model.getLength();
                 }
 
-                TUint8Array data = transparentBuilder.toTypedArray();
                 gl.bindBuffer(ARRAY_BUFFER, sortableRenderObject.buffer);
-                gl.bufferData(ARRAY_BUFFER, (ArrayBufferView) data,
+                gl.bufferData(ARRAY_BUFFER, (ArrayBufferView) temp,
                         DYNAMIC_DRAW);
-                sortableRenderObject.count = data.length() / 26;
+                sortableRenderObject.count = temp.length() / 26;
             }
 
             if (updates >= TRANSPARENT_UPDATES_LIMIT && !moved) {

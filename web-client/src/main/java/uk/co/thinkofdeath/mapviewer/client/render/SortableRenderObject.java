@@ -17,32 +17,23 @@
 package uk.co.thinkofdeath.mapviewer.client.render;
 
 import elemental.html.WebGLBuffer;
+import uk.co.thinkofdeath.mapviewer.shared.model.PositionedModel;
+import uk.co.thinkofdeath.mapviewer.shared.support.TUint8Array;
+
+import java.util.ArrayList;
 
 public class SortableRenderObject {
 
-    private PositionedModel[] models;
     private final int x;
     private final int y;
     private final int z;
+    private final ArrayList<PositionedModel> models = new ArrayList<>();
+    private TUint8Array data;
 
     public SortableRenderObject(int x, int y, int z) {
         this.x = x;
         this.y = y;
         this.z = z;
-    }
-
-    public PositionedModel[] getModels() {
-        return models;
-    }
-
-    /**
-     * Changes the models for this object
-     *
-     * @param models
-     */
-    public void setModels(PositionedModel[] models) {
-        this.models = models;
-        needResort = true;
     }
 
     /**
@@ -72,7 +63,21 @@ public class SortableRenderObject {
         return z;
     }
 
+    public ArrayList<PositionedModel> getModels() {
+        return models;
+    }
+
+    public void setData(TUint8Array data) {
+        this.data = data;
+        tempArray = TUint8Array.create(data.length());
+    }
+
+    public TUint8Array getData() {
+        return data;
+    }
+
     WebGLBuffer buffer;
+    TUint8Array tempArray;
     int count = 0;
     boolean needResort = true;
 }

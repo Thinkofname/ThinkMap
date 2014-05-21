@@ -112,4 +112,8 @@ public class DynamicBuffer {
     private static native ArrayBuffer createEndianTestBuffer()/*-{
         return new Uint16Array([1]).buffer;
     }-*/;
+
+    public int getOffset() {
+        return offset;
+    }
 }

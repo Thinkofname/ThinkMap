@@ -16,6 +16,7 @@
 
 package uk.co.thinkofdeath.mapviewer.worker.world;
 
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayInteger;
 import elemental.html.ArrayBuffer;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
@@ -23,7 +24,7 @@ import uk.co.thinkofdeath.mapviewer.shared.block.BlockRegistry;
 import uk.co.thinkofdeath.mapviewer.shared.block.Blocks;
 import uk.co.thinkofdeath.mapviewer.shared.building.ModelBuilder;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
-import uk.co.thinkofdeath.mapviewer.shared.model.SendableModel;
+import uk.co.thinkofdeath.mapviewer.shared.model.PositionedModel;
 import uk.co.thinkofdeath.mapviewer.shared.support.DataReader;
 import uk.co.thinkofdeath.mapviewer.shared.support.TUint8Array;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkBuildReply;
@@ -179,7 +180,8 @@ public class WorkerChunk extends Chunk {
      */
     public void build(int sectionNumber, int buildNumber) {
         ModelBuilder builder = new ModelBuilder();
-        ArrayList<SendableModel> models = new ArrayList<>();
+        ModelBuilder transBuilder = new ModelBuilder();
+        JsArray<PositionedModel> modelJsArray = (JsArray<PositionedModel>) JsArray.createArray();
         for (int y = 0; y < 16; y++) {
             for (int z = 0; z < 16; z++) {
                 for (int x = 0; x < 16; x++) {
@@ -189,22 +191,27 @@ public class WorkerChunk extends Chunk {
                         if (!block.isTransparent()) {
                             model.render(builder, x, (sectionNumber << 4) + y, z, this, block);
                         } else {
-                            models.add(
-                                    SendableModel.create(model, x, (sectionNumber << 4) + y, z, block)
-                            );
+                            int start = transBuilder.getOffset();
+                            model.render(transBuilder, x, (sectionNumber << 4) + y, z, this, block);
+                            int length = transBuilder.getOffset() - start;
+                            if (length > 0) {
+                                modelJsArray.push(PositionedModel.create(
+                                                x, (sectionNumber << 4) + y, z, start,
+                                                length)
+                                );
+                            }
                         }
                     }
                 }
             }
         }
-        if (models.size() == 0) {
-            models = null;
-        }
+
         TUint8Array data = builder.toTypedArray();
+        TUint8Array transData = transBuilder.toTypedArray();
         world.worker.postMessage(WorkerMessage.create("chunk:build",
                 ChunkBuildReply.create(getX(), getZ(), sectionNumber, buildNumber, data,
-                        models),
+                        transData, modelJsArray),
                 false
-        ), new Object[]{data.getBuffer()});
+        ), new Object[]{data.getBuffer(), transData.getBuffer()});
     }
 }

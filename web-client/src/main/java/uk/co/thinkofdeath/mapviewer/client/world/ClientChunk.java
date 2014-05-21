@@ -18,10 +18,9 @@ package uk.co.thinkofdeath.mapviewer.client.world;
 
 import com.google.gwt.core.client.JsArray;
 import uk.co.thinkofdeath.mapviewer.client.render.ChunkRenderObject;
-import uk.co.thinkofdeath.mapviewer.client.render.PositionedModel;
 import uk.co.thinkofdeath.mapviewer.client.render.SortableRenderObject;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
-import uk.co.thinkofdeath.mapviewer.shared.model.SendableModel;
+import uk.co.thinkofdeath.mapviewer.shared.model.PositionedModel;
 import uk.co.thinkofdeath.mapviewer.shared.support.TUint8Array;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkLoadedMessage;
 import uk.co.thinkofdeath.mapviewer.shared.world.Chunk;
@@ -80,28 +79,23 @@ public class ClientChunk extends Chunk {
         return true;
     }
 
-    /**
-     * Sets the BSPTree that contains the transparent objects in this chunk
-     *
-     * @param models
-     *         The BSPTree
-     */
-    public void setTransparentModels(final JsArray<SendableModel> models, final int i) {
+    public void setTransparentModels(int i, JsArray<PositionedModel> trans, TUint8Array transData) {
 
-        if (sortableRenderObjects[i] != null && models == null) {
+        if (sortableRenderObjects[i] != null && trans.length() == 0) {
             world.mapViewer.getRenderer().removeSortable(sortableRenderObjects[i]);
             return;
         }
-        if (models != null) {
-            final ArrayList<PositionedModel> mdls = new ArrayList<>();
-            for (int j = 0; j < models.length(); j++) {
-                mdls.add(new PositionedModel(world.mapViewer, this, models.get(j)));
-            }
+        if (trans.length() > 0) {
             if (sortableRenderObjects[i] == null) {
                 sortableRenderObjects[i] = new SortableRenderObject(getX(), i, getZ());
                 world.mapViewer.getRenderer().postSortable(sortableRenderObjects[i]);
             }
-            sortableRenderObjects[i].setModels(mdls.toArray(new PositionedModel[mdls.size()]));
+            ArrayList<PositionedModel> models = sortableRenderObjects[i].getModels();
+            models.clear();
+            for (int j = 0; j < trans.length(); j++) {
+                models.add(trans.get(j));
+            }
+            sortableRenderObjects[i].setData(transData);
         }
     }
 

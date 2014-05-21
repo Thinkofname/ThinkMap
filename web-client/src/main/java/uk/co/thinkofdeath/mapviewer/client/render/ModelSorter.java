@@ -16,6 +16,8 @@
 
 package uk.co.thinkofdeath.mapviewer.client.render;
 
+import uk.co.thinkofdeath.mapviewer.shared.model.PositionedModel;
+
 import java.util.Comparator;
 
 class ModelSorter implements Comparator<PositionedModel> {

@@ -242,12 +242,8 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
                             chunkBuildReply.getSectionNumber())) {
                         chunk.fillBuffer(
                                 chunkBuildReply.getSectionNumber(), chunkBuildReply.getData());
-                        if (chunkBuildReply.getTransparentData() != null) {
-                            chunk.setTransparentModels(chunkBuildReply.getTransparentData(),
-                                    chunkBuildReply.getSectionNumber());
-                        } else {
-                            chunk.setTransparentModels(null, chunkBuildReply.getSectionNumber());
-                        }
+                        chunk.setTransparentModels(chunkBuildReply.getSectionNumber(),
+                                chunkBuildReply.getTrans(), chunkBuildReply.getTransData());
                     }
                 }
                 break;
