@@ -33,7 +33,7 @@ import static uk.co.thinkofdeath.mapviewer.client.render.RendererUtils.*;
 
 public class Renderer implements ResizeHandler, Runnable {
 
-    private static final int TRANSPARENT_UPDATES_LIMIT = 1;
+    private static final int TRANSPARENT_UPDATES_LIMIT = 5;
 
     private final MapViewer mapViewer;
 
