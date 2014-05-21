@@ -28,6 +28,7 @@ import org.bukkit.World;
 import uk.co.thinkofdeath.thinkmap.bukkit.ThinkMapPlugin;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.concurrent.Callable;
@@ -167,6 +168,8 @@ public class ChunkManager {
                     byte[] data = new byte[size];
                     region.read(data);
                     return Unpooled.wrappedBuffer(data);
+                } catch (FileNotFoundException e) {
+                    return null;
                 } finally {
                     lock.unlock();
                 }
