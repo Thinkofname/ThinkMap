@@ -78,6 +78,7 @@ public class ChunkManager {
 
                     // Lock the world for writing
                     Lock lock = worldLock.writeLock();
+                    lock.lock();
 
                     try (RandomAccessFile region = new RandomAccessFile(new File(worldFolder,
                             String.format("region_%d-%d.dat", snapshot.getX() >> 5, snapshot.getZ() >> 5)
@@ -150,6 +151,7 @@ public class ChunkManager {
             public ByteBuf call() throws Exception {
                 File worldFolder = new File(plugin.getWorldDir(), world.getName());
                 Lock lock = worldLock.readLock();
+                lock.lock();
                 try (RandomAccessFile region = new RandomAccessFile(new File(worldFolder,
                         String.format("region_%d-%d.dat", x >> 5, z >> 5)
                 ), "r")) {
