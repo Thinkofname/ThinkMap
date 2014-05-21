@@ -18,6 +18,7 @@ package uk.co.thinkofdeath.mapviewer.client.world;
 
 import com.google.gwt.core.client.JsArray;
 import uk.co.thinkofdeath.mapviewer.client.render.ChunkRenderObject;
+import uk.co.thinkofdeath.mapviewer.client.render.PositionedModel;
 import uk.co.thinkofdeath.mapviewer.client.render.SortableRenderObject;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.model.SendableModel;
@@ -92,15 +93,15 @@ public class ClientChunk extends Chunk {
             return;
         }
         if (models != null) {
-            final ArrayList<SendableModel> mdls = new ArrayList<>();
+            final ArrayList<PositionedModel> mdls = new ArrayList<>();
             for (int j = 0; j < models.length(); j++) {
-                mdls.add(models.get(j));
+                mdls.add(new PositionedModel(world.mapViewer, this, models.get(j)));
             }
             if (sortableRenderObjects[i] == null) {
                 sortableRenderObjects[i] = new SortableRenderObject(getX(), i, getZ());
                 world.mapViewer.getRenderer().postSortable(sortableRenderObjects[i]);
             }
-            sortableRenderObjects[i].setModels(mdls);
+            sortableRenderObjects[i].setModels(mdls.toArray(new PositionedModel[mdls.size()]));
         }
     }
 

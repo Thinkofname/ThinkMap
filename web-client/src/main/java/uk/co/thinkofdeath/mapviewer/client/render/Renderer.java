@@ -20,14 +20,8 @@ import elemental.client.Browser;
 import elemental.html.*;
 import uk.co.thinkofdeath.mapviewer.client.MapViewer;
 import uk.co.thinkofdeath.mapviewer.client.render.shaders.ChunkShader;
-import uk.co.thinkofdeath.mapviewer.shared.LightInfo;
-import uk.co.thinkofdeath.mapviewer.shared.Texture;
-import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.building.ModelBuilder;
 import uk.co.thinkofdeath.mapviewer.shared.glmatrix.Mat4;
-import uk.co.thinkofdeath.mapviewer.shared.model.Model;
-import uk.co.thinkofdeath.mapviewer.shared.model.ModelVertex;
-import uk.co.thinkofdeath.mapviewer.shared.model.SendableModel;
 import uk.co.thinkofdeath.mapviewer.shared.support.JsUtils;
 import uk.co.thinkofdeath.mapviewer.shared.support.TUint8Array;
 
@@ -224,16 +218,19 @@ public class Renderer implements ResizeHandler, Runnable {
                 sortableRenderObject.needResort = false;
                 transparentBuilder.reset();
 
-                ArrayList<SendableModel> models = sortableRenderObject.getModels();
+                PositionedModel[] models = sortableRenderObject.getModels();
                 JsUtils.sort(models, new ModelSorter(
                         sortableRenderObject.getX(),
                         sortableRenderObject.getZ(),
                         camera));
 
-                for (SendableModel model : models) {
-                    render(transparentBuilder, model,
-                            sortableRenderObject.getX(),
-                            sortableRenderObject.getZ());
+                for (PositionedModel model : models) {
+                    model.getModel().render(transparentBuilder,
+                            model.getX(),
+                            model.getY(),
+                            model.getZ(),
+                            model.getChunk(),
+                            model.getBlock());
                 }
 
                 TUint8Array data = transparentBuilder.toTypedArray();
@@ -265,59 +262,6 @@ public class Renderer implements ResizeHandler, Runnable {
         gl.disable(BLEND);
 
         requestAnimationFrame(this);
-    }
-
-    private void render(ModelBuilder builder, SendableModel model, int cx, int cz) {
-        Block owner = model.getOwner(mapViewer);
-        int x = model.getX();
-        int y = model.getY();
-        int z = model.getZ();
-        int len = model.getFaces().length();
-        for (int fi = 0; fi < len; fi++) {
-            SendableModel.Face face = model.getFaces().get(fi);
-            if (face.getCullable()) {
-                if (!owner.shouldRenderAgainst(mapViewer.getWorld().getBlock(
-                        (cx << 4) + x + face.getFace().getOffsetX(),
-                        y + face.getFace().getOffsetY(),
-                        (cz << 4) + z + face.getFace().getOffsetZ()
-                ))) {
-                    continue;
-                }
-            }
-
-            Texture texture = face.getTexture(mapViewer);
-
-            // First triangle
-            for (int i = 0; i < 3; i++) {
-                ModelVertex vertex = face.getVertices().get(2 - i);
-                LightInfo light = Model.calculateLight(mapViewer.getWorld(),
-                        (cx << 4) + x + vertex.getX(),
-                        y + vertex.getY(),
-                        (cz << 4) + z + vertex.getZ(), face.getFace());
-                builder
-                        .position(x + vertex.getX(), y + vertex.getY(), z + vertex.getZ())
-                        .colour(face.getRed(), face.getGreen(), face.getBlue())
-                        .texturePosition(vertex.getTextureX(), vertex.getTextureY())
-                        .textureDetails(texture.getPosX(), texture.getPosY(), texture.getSize(),
-                                texture.getWidth(), texture.getFrames())
-                        .lighting(light.getEmittedLight(), light.getSkyLight());
-            }
-            // Second triangle
-            for (int i = 0; i < 3; i++) {
-                ModelVertex vertex = face.getVertices().get(1 + i);
-                LightInfo light = Model.calculateLight(mapViewer.getWorld(),
-                        (cx << 4) + x + vertex.getX(),
-                        y + vertex.getY(),
-                        (cz << 4) + z + vertex.getZ(), face.getFace());
-                builder
-                        .position(x + vertex.getX(), y + vertex.getY(), z + vertex.getZ())
-                        .colour(face.getRed(), face.getGreen(), face.getBlue())
-                        .texturePosition(vertex.getTextureX(), vertex.getTextureY())
-                        .textureDetails(texture.getPosX(), texture.getPosY(), texture.getSize(),
-                                texture.getWidth(), texture.getFrames())
-                        .lighting(light.getEmittedLight(), light.getSkyLight());
-            }
-        }
     }
 
     /**

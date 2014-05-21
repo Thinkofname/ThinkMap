@@ -17,6 +17,7 @@
 package uk.co.thinkofdeath.mapviewer.shared.model;
 
 import uk.co.thinkofdeath.mapviewer.shared.Face;
+import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.LightInfo;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
@@ -51,6 +52,14 @@ public class Model {
      */
     public Model() {
 
+    }
+
+    public Model(SendableModel model, IMapViewer mapViewer) {
+        for (int i = 0; i < model.getFaces().length(); i++) {
+            SendableModel.Face face = model.getFaces().get(i);
+            ModelFace modelFace = new ModelFace(face, mapViewer);
+            addFace(modelFace);
+        }
     }
 
     /**

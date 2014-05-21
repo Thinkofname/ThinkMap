@@ -16,11 +16,9 @@
 
 package uk.co.thinkofdeath.mapviewer.client.render;
 
-import uk.co.thinkofdeath.mapviewer.shared.model.SendableModel;
-
 import java.util.Comparator;
 
-class ModelSorter implements Comparator<SendableModel> {
+class ModelSorter implements Comparator<PositionedModel> {
 
     private final Camera camera;
     private final int cx;
@@ -33,7 +31,7 @@ class ModelSorter implements Comparator<SendableModel> {
     }
 
     @Override
-    public int compare(SendableModel a, SendableModel b) {
+    public int compare(PositionedModel a, PositionedModel b) {
         double ax = (cx << 4) + a.getX() + 0.5 - camera.getX();
         double ay = a.getY() + 0.5 - camera.getY();
         double az = (cz << 4) + a.getZ() + 0.5 - camera.getZ();

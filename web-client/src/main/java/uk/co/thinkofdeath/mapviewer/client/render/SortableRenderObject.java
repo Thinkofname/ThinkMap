@@ -17,13 +17,10 @@
 package uk.co.thinkofdeath.mapviewer.client.render;
 
 import elemental.html.WebGLBuffer;
-import uk.co.thinkofdeath.mapviewer.shared.model.SendableModel;
-
-import java.util.ArrayList;
 
 public class SortableRenderObject {
 
-    private ArrayList<SendableModel> models;
+    private PositionedModel[] models;
     private final int x;
     private final int y;
     private final int z;
@@ -34,12 +31,7 @@ public class SortableRenderObject {
         this.z = z;
     }
 
-    /**
-     * Gets the BSPTree for this object
-     *
-     * @return The BSPTree
-     */
-    public ArrayList<SendableModel> getModels() {
+    public PositionedModel[] getModels() {
         return models;
     }
 
@@ -48,7 +40,7 @@ public class SortableRenderObject {
      *
      * @param models
      */
-    public void setModels(ArrayList<SendableModel> models) {
+    public void setModels(PositionedModel[] models) {
         this.models = models;
         needResort = true;
     }

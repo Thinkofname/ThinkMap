@@ -18,6 +18,7 @@ package uk.co.thinkofdeath.mapviewer.shared.model;
 
 import uk.co.thinkofdeath.mapviewer.shared.Face;
 import uk.co.thinkofdeath.mapviewer.shared.ForEachIterator;
+import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 
 public class ModelFace {
@@ -143,6 +144,19 @@ public class ModelFace {
         }
         setOffset(offset);
         setSize(x, y, width, height);
+    }
+
+    public ModelFace(SendableModel.Face face, IMapViewer mapViewer) {
+        this(face.getFace());
+        r = face.getRed();
+        g = face.getGreen();
+        b = face.getBlue();
+        cullable = face.getCullable();
+        texture = face.getTexture(mapViewer);
+
+        for (int i = 0; i < 4; i++) {
+            vertices[i] = face.getVertices().get(i);
+        }
     }
 
     /**
