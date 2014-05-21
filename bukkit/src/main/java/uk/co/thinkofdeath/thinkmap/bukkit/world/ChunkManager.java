@@ -21,6 +21,7 @@ import gnu.trove.set.hash.TLongHashSet;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
+import io.netty.util.ReferenceCountUtil;
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
@@ -132,9 +133,9 @@ public class ChunkManager {
                         region.seek(8 * id);
                         region.writeInt(offset);
                         region.writeInt(size);
-                        data.release();
                     } finally {
                         lock.unlock();
+                        ReferenceCountUtil.release(data);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
