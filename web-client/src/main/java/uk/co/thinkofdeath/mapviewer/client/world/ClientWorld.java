@@ -184,7 +184,7 @@ public class ClientWorld extends World {
                     // Hacky way of detecting a missing chunk. A 404
                     // error was used in the past but you can't always
                     // catch the error before the browser does.
-                    // TODO: Support errors better end the sending
+                    // TODO: Support errors better when the sending
                     // format changes
                     if (data.getByteLength() <= 15) {
                         loadingChunks.remove(key);

@@ -145,32 +145,28 @@ public class ChunkManager {
     }
 
     private Future<ByteBuf> getChunkData(final int x, final int z) {
-        FutureTask<ByteBuf> task = new FutureTask<ByteBuf>(new Callable<ByteBuf>() {
+        FutureTask<ByteBuf> task = new FutureTask<>(new Callable<ByteBuf>() {
             @Override
             public ByteBuf call() throws Exception {
-                try {
-                    File worldFolder = new File(plugin.getWorldDir(), world.getName());
-                    Lock lock = worldLock.readLock();
-                    try (RandomAccessFile region = new RandomAccessFile(new File(worldFolder,
-                            String.format("region_%d-%d.dat", x >> 5, z >> 5)
-                    ), "r")) {
-                        if (region.length() < 4096 * 3) return null;
-                        int id = ((x & 0x1F) | ((z & 0x1F) << 5));
-                        region.seek(8 * id);
-                        int offset = region.readInt();
-                        int size = region.readInt();
-                        if (offset == 0) {
-                            return null;
-                        }
-                        region.seek(offset * 4096);
-                        byte[] data = new byte[size];
-                        region.read(data);
-                        return Unpooled.wrappedBuffer(data);
-                    } finally {
-                        lock.unlock();
+                File worldFolder = new File(plugin.getWorldDir(), world.getName());
+                Lock lock = worldLock.readLock();
+                try (RandomAccessFile region = new RandomAccessFile(new File(worldFolder,
+                        String.format("region_%d-%d.dat", x >> 5, z >> 5)
+                ), "r")) {
+                    if (region.length() < 4096 * 3) return null;
+                    int id = ((x & 0x1F) | ((z & 0x1F) << 5));
+                    region.seek(8 * id);
+                    int offset = region.readInt();
+                    int size = region.readInt();
+                    if (offset == 0) {
+                        return null;
                     }
-                } catch (Exception e) {
-                    return null;
+                    region.seek(offset * 4096);
+                    byte[] data = new byte[size];
+                    region.read(data);
+                    return Unpooled.wrappedBuffer(data);
+                } finally {
+                    lock.unlock();
                 }
             }
         });
