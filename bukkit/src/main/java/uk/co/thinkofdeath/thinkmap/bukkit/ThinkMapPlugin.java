@@ -50,7 +50,7 @@ import java.util.logging.Level;
 public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     public static final String MINECRAFT_VERSION = "1.7.9";
-    public static final String RESOURCE_VERSION = "6";
+    public static final String RESOURCE_VERSION = "7";
 
     private final Map<String, ChunkManager> chunkManagers = new HashMap<String, ChunkManager>();
     private WebHandler webHandler;
