@@ -175,10 +175,6 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
             response.headers().add("Access-Control-Allow-Origin", "*");
         }
 
-        if (isKeepAlive(request)) {
-            response.headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
-        }
-
         response.headers().set(DATE, format.format(new Date()));
         response.headers().set(LAST_MODIFIED, format.format(plugin.getStartUpDate()));
 
@@ -201,8 +197,12 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         }
         setContentLength(response, response.content().readableBytes());
 
-        ChannelFuture future = context.channel().writeAndFlush(response);
-        if (!isKeepAlive(request)) {
+        if (isKeepAlive(request)) {
+            response.headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
+        }
+
+        ChannelFuture future = context.writeAndFlush(response);
+        if (!isKeepAlive(request) || response.getStatus().code() != 200) {
             future.addListener(ChannelFutureListener.CLOSE);
         }
     }
