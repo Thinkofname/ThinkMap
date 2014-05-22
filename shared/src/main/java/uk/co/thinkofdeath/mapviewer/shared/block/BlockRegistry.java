@@ -381,10 +381,10 @@ public class BlockRegistry {
         register("minecraft", "farmland", new BlockBuilder(new BlockFarmland(mapViewer))
                 .solid(false)
                 .create(), 60);
-
-        // TODO: furnace
-        // TODO: lit_furnace
-
+        register("minecraft", "furnace", new BlockBuilder(new BlockFurnace(mapViewer, false))
+                .create(), 61);
+        register("minecraft", "lit_furnace", new BlockBuilder(new BlockFurnace(mapViewer, true))
+                .create(), 62);
         register("minecraft", "standing_sign", new BlockBuilder(new BlockFloorSign(mapViewer))
                 .solid(false)
                 .collidable(false)
