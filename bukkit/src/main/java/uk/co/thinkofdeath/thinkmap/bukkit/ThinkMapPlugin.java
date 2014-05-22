@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -60,6 +61,7 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     private File resourceDir;
     private File worldDir;
+    private Date startUpDate = new Date((System.currentTimeMillis() / 1000) * 1000);
 
     @Override
     public void onEnable() {
@@ -237,5 +239,9 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     public File getResourceDir() {
         return resourceDir;
+    }
+
+    public Date getStartUpDate() {
+        return startUpDate;
     }
 }

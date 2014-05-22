@@ -27,6 +27,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.util.CharsetUtil;
 import org.apache.commons.io.IOUtils;
 import uk.co.thinkofdeath.thinkmap.bukkit.ThinkMapPlugin;
@@ -35,10 +36,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.logging.Logger;
 
-import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
+import static io.netty.handler.codec.http.HttpHeaders.Names.*;
 import static io.netty.handler.codec.http.HttpHeaders.isKeepAlive;
 import static io.netty.handler.codec.http.HttpHeaders.setContentLength;
 import static io.netty.handler.codec.http.HttpMethod.*;
@@ -49,6 +54,11 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     private final static Logger logger = Logger.getLogger(HTTPHandler.class.getName());
     private final static HashMap<String, String> mimeTypes = new HashMap<String, String>();
+
+    public static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
+    public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
+
+    private final SimpleDateFormat format = new SimpleDateFormat(HTTP_DATE_FORMAT, Locale.US);
 
     static {
         mimeTypes.put("html", "text/html");
@@ -68,7 +78,7 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         httpRequest(ctx, msg);
     }
 
-    public void httpRequest(ChannelHandlerContext context, FullHttpRequest request) throws IOException {
+    public void httpRequest(ChannelHandlerContext context, FullHttpRequest request) throws IOException, ParseException {
         if (!request.getDecoderResult().isSuccess()) {
             sendHttpResponse(context, request, new DefaultFullHttpResponse(HTTP_1_1, BAD_REQUEST));
             return;
@@ -115,12 +125,28 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
             request.setUri("/index.html");
         }
 
-        InputStream stream = null;
+        // Cache
+        String modified = request.headers().get(IF_MODIFIED_SINCE);
+        if (modified != null && !modified.isEmpty()) {
+            Date modifiedDate = format.parse(modified);
+
+            if (modifiedDate.equals(plugin.getStartUpDate())) {
+                sendHttpResponse(context, request, new DefaultFullHttpResponse(HTTP_1_1, NOT_MODIFIED));
+                return;
+            }
+        }
+
+        InputStream stream;
         if (request.getUri().startsWith("/resources/")) {
             File file = new File(
                     plugin.getResourceDir(),
                     request.getUri().substring("/resources/".length())
             );
+            if (!file.toPath().normalize().startsWith(
+                    plugin.getResourceDir().toPath().normalize())) {
+                sendHttpResponse(context, request, new DefaultFullHttpResponse(HTTP_1_1, NOT_FOUND));
+                return;
+            }
             stream = new FileInputStream(file);
         } else {
             stream = this.getClass().getClassLoader()
@@ -149,6 +175,13 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
             response.headers().add("Access-Control-Allow-Origin", "*");
         }
 
+        if (isKeepAlive(request)) {
+            response.headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
+        }
+
+        response.headers().set(DATE, format.format(new Date()));
+        response.headers().set(LAST_MODIFIED, format.format(plugin.getStartUpDate()));
+
         String ext = request.getUri().substring(request.getUri().lastIndexOf('.') + 1);
         String type = mimeTypes.containsKey(ext) ? mimeTypes.get(ext) : "text/plain";
         if (type.startsWith("text/")) {
@@ -169,7 +202,7 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         setContentLength(response, response.content().readableBytes());
 
         ChannelFuture future = context.channel().writeAndFlush(response);
-        if (!isKeepAlive(request) || response.getStatus().code() != 200) {
+        if (!isKeepAlive(request)) {
             future.addListener(ChannelFutureListener.CLOSE);
         }
     }
