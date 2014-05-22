@@ -19,7 +19,6 @@
 <module rename-to="mapviewer">
     <inherits name="com.google.gwt.core.Core"/>
     <inherits name="elemental.Elemental"/>
-    <inherits name="com.google.gwt.logging.Logging"/>
     <inherits name="com.google.gwt.resources.Resources"/>
 
     <inherits name="uk.co.thinkofdeath.mapviewer.Shared"/>
@@ -28,13 +27,6 @@
 
     <source path="client"/>
 
-    <!--
-    <add-linker name="xsiframe"/>
-    <set-configuration-property name="devModeRedirectEnabled" value="true"/>-->
-
     <set-property name="user.agent" value="safari"/>
     <set-property name="compiler.useSourceMaps" value="true"/>
-
-    <set-property name='gwt.logging.consoleHandler' value='ENABLED'/>
-    <set-property name='gwt.logging.popupHandler' value='DISABLED'/>
 </module>
