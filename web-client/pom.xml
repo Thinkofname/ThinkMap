@@ -64,6 +64,8 @@
                         <phase>install</phase>
                         <configuration>
                             <target name="zip result">
+                                <delete dir="${basedir}/build/mapviewerworker/"/>
+                                <delete dir="${basedir}/build/mapviewer/"/>
                                 <copy todir="${basedir}/build/mapviewerworker/">
                                     <fileset dir="${basedir}/../web-worker/target/mapviewerworker"/>
                                 </copy>

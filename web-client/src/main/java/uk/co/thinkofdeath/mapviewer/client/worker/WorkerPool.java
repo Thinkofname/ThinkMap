@@ -44,7 +44,7 @@ public class WorkerPool {
         this.mapViewer = mapViewer;
         for (int i = 0; i < limit; i++) {
             workers.add(new PooledWorker(Browser.getWindow().newWorker(
-                    "./mapviewerworker/mapviewerworker.nocache.js"
+                    "./mapviewerworker/mapviewerworker.worker.js"
             )));
         }
     }

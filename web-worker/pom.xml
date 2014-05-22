@@ -30,7 +30,7 @@
     <dependencies>
         <dependency>
             <groupId>uk.co.thinkofdeath.thinkmap</groupId>
-            <artifactId>mapviewer-html-worker-linker</artifactId>
+            <artifactId>html-worker-linker</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

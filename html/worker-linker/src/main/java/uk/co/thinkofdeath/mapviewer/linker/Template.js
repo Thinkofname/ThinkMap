@@ -25,6 +25,3 @@ var strongName;
 // __PERMUTATIONS_BEGIN__
 
 // __PERMUTATIONS_END__
-
-importScripts(strongName + ".worker.js");
-gwtOnLoad(null, "__MODULE_NAME__", null);
