@@ -367,10 +367,21 @@ public class BlockRegistry {
         register("minecraft", "diamond_block", new BlockBuilder(mapViewer)
                 .texture("diamond_block")
                 .create(), 57);
+        register("minecraft", "crafting_table", new BlockBuilder(new BlockMultiSide(
+                mapViewer,
+                "crafting_table_top", "planks_oak",
+                "crafting_table_side", "crafting_table_side",
+                "crafting_table_front", "crafting_table_front"
+        ))
+                .create(), 58);
+        register("minecraft", "wheat", new BlockBuilder(new BlockCrop(mapViewer, "wheat", true))
+                .solid(false)
+                .collidable(false)
+                .create(), 59);
+        register("minecraft", "farmland", new BlockBuilder(new BlockFarmland(mapViewer))
+                .solid(false)
+                .create(), 60);
 
-        // TODO: crafting_table
-        // TODO: wheat
-        // TODO: farmland
         // TODO: furnace
         // TODO: lit_furnace
 
@@ -571,8 +582,16 @@ public class BlockRegistry {
         // TODO: beacon
         // TODO: cobblestone_wall
         // TODO: flower_pot
-        // TODO: carrots
-        // TODO: potatoes
+
+        register("minecraft", "carrots", new BlockBuilder(new BlockCrop(mapViewer, "carrots", false))
+                .solid(false)
+                .collidable(false)
+                .create(), 141);
+        register("minecraft", "potatoes", new BlockBuilder(new BlockCrop(mapViewer, "potatoes", false))
+                .solid(false)
+                .collidable(false)
+                .create(), 142);
+
         // TODO: wooden_button
         // TODO: skull
         // TODO: anvil
