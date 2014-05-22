@@ -205,14 +205,17 @@ public class Renderer implements ResizeHandler, Runnable {
                 sortableRenderObject.needResort = true;
             }
 
+            boolean forceUpdate = false;
+
             if (sortableRenderObject.buffer == null) {
                 sortableRenderObject.buffer = gl.createBuffer();
                 sortableRenderObject.needResort = true;
+                forceUpdate = true;
             }
 
             boolean update = sortableRenderObject.needResort && updates < TRANSPARENT_UPDATES_LIMIT;
 
-            if (update) {
+            if (update || forceUpdate) {
                 updates++;
                 sortableRenderObject.needResort = false;
 
