@@ -16,6 +16,8 @@
 
 package uk.co.thinkofdeath.mapviewer.client.input;
 
+import elemental.events.Touch;
+import elemental.events.TouchList;
 import uk.co.thinkofdeath.mapviewer.client.MapViewer;
 import uk.co.thinkofdeath.mapviewer.client.render.Camera;
 
@@ -127,6 +129,83 @@ public class InputManager {
         return false;
     }
 
+    private int cameraTouch = -1;
+    private int cameraTouchX = 0;
+    private int cameraTouchY = 0;
+    private int moveTouch = -1;
+
+    private void onTouchStart(TouchList touches) {
+        int offset = 0;
+        while (cameraTouch == -1 && touches.getLength() - offset >= 1) {
+            if (touches.item(offset).getIdentifier() != moveTouch) { // TODO: Improve
+                Touch touch = touches.item(offset++);
+                cameraTouchX = touch.getClientX();
+                cameraTouchY = touch.getClientY();
+                cameraTouch = touch.getIdentifier();
+                break;
+            }
+            offset++;
+        }
+        while (moveTouch == -1 && touches.getLength() - offset >= 1) {
+            if (touches.item(offset).getIdentifier() != cameraTouch) { // TODO: Improve
+                moveTouch = touches.item(offset++).getIdentifier();
+                movingDirection = 1;
+            }
+            offset++;
+        }
+    }
+
+    private void onTouchEnd(TouchList touches) {
+        Touch ct = findTouch(touches, cameraTouch);
+        if (ct == null) {
+            cameraTouch = -1;
+            cameraTouchX = 0;
+            cameraTouchY = 0;
+        }
+        Touch mt = findTouch(touches, moveTouch);
+        if (mt == null) {
+            movingDirection = 0;
+            moveTouch = -1;
+        }
+    }
+
+    private void onTouchMove(TouchList touches) {
+        Touch ct = findTouch(touches, cameraTouch);
+        if (ct != null) {
+            Camera camera = mapViewer.getCamera();
+            float movementX = ct.getClientX() - cameraTouchX;
+            float movementY = ct.getClientY() - cameraTouchY;
+
+            camera.setRotationY(camera.getRotationY() + (movementX * 0.02f));
+            camera.setRotationX(camera.getRotationX() + (movementY * 0.02f));
+            if (camera.getRotationX() > Math.PI / 2) {
+                camera.setRotationX((float) (Math.PI / 2));
+            }
+            if (camera.getRotationX() < -Math.PI / 2) {
+                camera.setRotationX((float) (-Math.PI / 2));
+            }
+
+            while (camera.getRotationY() < 0) {
+                camera.setRotationY((float) (camera.getRotationY() + Math.PI * 2));
+            }
+            while (camera.getRotationY() >= Math.PI * 2) {
+                camera.setRotationY((float) (camera.getRotationY() - Math.PI * 2));
+            }
+
+            cameraTouchX = ct.getClientX();
+            cameraTouchY = ct.getClientY();
+        }
+    }
+
+    private native Touch findTouch(TouchList touches, int id)/*-{
+        for (var i = 0; i < touches.length; i++) {
+            if (touches[i].identifier === id) {
+                return touches[i];
+            }
+        }
+        return null;
+    }-*/;
+
     private native boolean isPointerLocked()/*-{
         return ($doc.pointerLockElement
             || $doc.webkitPointerLockElement
@@ -145,13 +224,14 @@ public class InputManager {
         return true;
     }-*/;
 
+
     private native void registerNativeEvents()/*-{
         var that = this;
-        $doc.getElementById("main").onclick = function (e) {
+        $doc.getElementById("main").addEventListener("click", function (e) {
             e.preventDefault();
             that.@uk.co.thinkofdeath.mapviewer.client.input.InputManager::onCanvasClick(II)(e.clientX, e.clientY);
-        };
-        $doc.onmousemove = function (e) {
+        }, false);
+        $doc.addEventListener("mousemove", function (e) {
             e.preventDefault();
             var mx = (e.movementX || e.webkitMovementX || e.mozMovementX);
             var my = (e.movementY || e.webkitMovementY || e.mozMovementY);
@@ -162,18 +242,32 @@ public class InputManager {
             } else {
                 that.@uk.co.thinkofdeath.mapviewer.client.input.InputManager::onMouseLockMove(II)(mx, my);
             }
-        };
-        $doc.onkeydown = function (e) {
+        }, false);
+        $doc.addEventListener("keydown", function (e) {
             var key = e.keyCode || e.which;
             if (that.@uk.co.thinkofdeath.mapviewer.client.input.InputManager::onKeyDown(C)(key)) {
                 e.preventDefault();
             }
-        };
-        $doc.onkeyup = function (e) {
+        }, false);
+        $doc.addEventListener("keyup", function (e) {
             var key = e.keyCode || e.which;
             if (that.@uk.co.thinkofdeath.mapviewer.client.input.InputManager::onKeyUp(C)(key)) {
                 e.preventDefault();
             }
-        };
+        }, false);
+
+        // Mobile
+        $doc.addEventListener("touchstart", function (e) {
+            e.preventDefault();
+            that.@uk.co.thinkofdeath.mapviewer.client.input.InputManager::onTouchStart(Lelemental/events/TouchList;)(e.touches);
+        });
+        $doc.addEventListener("touchend", function (e) {
+            e.preventDefault();
+            that.@uk.co.thinkofdeath.mapviewer.client.input.InputManager::onTouchEnd(Lelemental/events/TouchList;)(e.touches);
+        });
+        $doc.addEventListener("touchmove", function (e) {
+            e.preventDefault();
+            that.@uk.co.thinkofdeath.mapviewer.client.input.InputManager::onTouchMove(Lelemental/events/TouchList;)(e.touches);
+        }, false);
     }-*/;
 }
