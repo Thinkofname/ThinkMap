@@ -51,7 +51,8 @@ import java.util.logging.Level;
 public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     public static final String MINECRAFT_VERSION = "1.7.9";
-    public static final String RESOURCE_VERSION = "7";
+    public static final int RESOURCE_VERSION = 1;
+    public static final int WORLD_VERSION = 1;
 
     private final Map<String, ChunkManager> chunkManagers = new HashMap<String, ChunkManager>();
     private WebHandler webHandler;
@@ -82,13 +83,34 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
         config.addDefault("webserver.port", 23333);
         config.addDefault("webserver.bind-address", "0.0.0.0");
         config.addDefault("resources.pack-name", "");
+
+        if (config.getInt("no-touchy.resource-version", 0) != RESOURCE_VERSION) {
+            getLogger().info("Deleting ThinkMap-Resources due to a format update");
+            config.set("no-touchy.resource-version", RESOURCE_VERSION);
+            try {
+                FileUtils.deleteDirectory(new File(getDataFolder(), "resources"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (config.getInt("no-touchy.world-version", 0) != WORLD_VERSION) {
+            getLogger().info("Deleting ThinkMap-Worlds due to a format update");
+            config.set("no-touchy.world-version", WORLD_VERSION);
+            try {
+                FileUtils.deleteDirectory(worldDir);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         saveConfig();
 
 
         resourceDir = new File(getDataFolder(),
-                "resources/" + MINECRAFT_VERSION + "-" + RESOURCE_VERSION
-                        + (config.getString("resources.pack-name").length() == 0 ? "" : "-" +
-                        config.getString("resources.pack-name"))
+                "resources/"
+                        + (config.getString("resources.pack-name").length() == 0 ?
+                        "default" : config.getString("resources.pack-name"))
         );
 
         // Resource loading
