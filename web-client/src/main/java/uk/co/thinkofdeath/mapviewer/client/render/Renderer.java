@@ -103,6 +103,11 @@ public class Renderer implements ResizeHandler, Runnable {
         chunkShader.setup(gl);
         chunkShaderAlpha.setup(gl);
 
+        for (int i = 0; i < blockTextures.length; i++) {
+            gl.activeTexture(TEXTURE0 + i);
+            gl.bindTexture(TEXTURE_2D, blockTextures[i]);
+        }
+
         run();
     }
 
@@ -147,10 +152,6 @@ public class Renderer implements ResizeHandler, Runnable {
 
         chunkShader.setPerspectiveMatrix(perspectiveMatrix);
         chunkShader.setViewMatrix(viewMatrix);
-        for (int i = 0; i < blockTextures.length; i++) {
-            gl.activeTexture(TEXTURE0 + i);
-            gl.bindTexture(TEXTURE_2D, blockTextures[i]);
-        }
         chunkShader.setBlockTexture(textureLocations);
         chunkShader.setScale(timeScale);
         chunkShader.setFrame((int) currentFrame);
@@ -315,6 +316,8 @@ public class Renderer implements ResizeHandler, Runnable {
 
     public void loadBlockTexture(int id, ImageElement imageElement) {
         blockTextures[id] = loadTexture(imageElement);
+        gl.activeTexture(TEXTURE0 + id);
+        gl.bindTexture(TEXTURE_2D, blockTextures[id]);
     }
 
     /**
