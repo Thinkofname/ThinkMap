@@ -26,7 +26,6 @@ import uk.co.thinkofdeath.mapviewer.shared.support.JsUtils;
 import uk.co.thinkofdeath.mapviewer.shared.support.TUint8Array;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import static elemental.html.WebGLRenderingContext.*;
 import static uk.co.thinkofdeath.mapviewer.client.render.RendererUtils.*;
@@ -154,7 +153,8 @@ public class Renderer implements ResizeHandler, Runnable {
 
         // TODO: Think about grouping objects from the same chunk to save setOffset calls
         JsUtils.sort(renderObjectList, new ChunkSorter(camera));
-        for (ChunkRenderObject renderObject : renderObjectList) {
+        for (int i = 0, renderObjectListSize = renderObjectList.size(); i < renderObjectListSize; i++) {
+            ChunkRenderObject renderObject = renderObjectList.get(i);
             if (renderObject.data != null) {
                 if (renderObject.buffer == null) {
                     renderObject.buffer = gl.createBuffer();
@@ -199,7 +199,8 @@ public class Renderer implements ResizeHandler, Runnable {
         int updates = 0;
 
         JsUtils.sort(sortableRenderObjects, new SortableSorter(camera));
-        for (SortableRenderObject sortableRenderObject : sortableRenderObjects) {
+        for (int i = 0, sortableRenderObjectsSize = sortableRenderObjects.size(); i < sortableRenderObjectsSize; i++) {
+            SortableRenderObject sortableRenderObject = sortableRenderObjects.get(i);
 
             if (moved) {
                 sortableRenderObject.needResort = true;
@@ -244,8 +245,9 @@ public class Renderer implements ResizeHandler, Runnable {
                 break;
             }
         }
-        Collections.reverse(sortableRenderObjects);
-        for (SortableRenderObject sortableRenderObject : sortableRenderObjects) {
+
+        for (int i = sortableRenderObjects.size() - 1; i >= 0; i--) {
+            SortableRenderObject sortableRenderObject = sortableRenderObjects.get(i);
             if (sortableRenderObject.count == 0 || sortableRenderObject.buffer == null) continue;
             gl.bindBuffer(ARRAY_BUFFER, sortableRenderObject.buffer);
             chunkShaderAlpha.setOffset(sortableRenderObject.getX(), sortableRenderObject.getZ());

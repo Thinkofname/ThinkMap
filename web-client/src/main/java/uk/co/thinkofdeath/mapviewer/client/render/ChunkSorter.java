@@ -28,12 +28,12 @@ class ChunkSorter implements Comparator<ChunkRenderObject> {
 
     @Override
     public int compare(ChunkRenderObject a, ChunkRenderObject b) {
-        int ax = (a.x << 4) + 8 - (int) camera.getX();
-        int ay = (a.y << 4) + 8 - (int) camera.getY();
-        int az = (a.z << 4) + 8 - (int) camera.getZ();
-        int bx = (b.x << 4) + 8 - (int) camera.getX();
-        int by = (b.y << 4) + 8 - (int) camera.getY();
-        int bz = (b.z << 4) + 8 - (int) camera.getZ();
-        return (ax * ax + ay * ay + az * az) - (bx * bx + by * by + bz * bz);
+        double ax = (a.x << 4) + 8 - camera.getX();
+        double ay = (a.y << 4) + 8 - camera.getY();
+        double az = (a.z << 4) + 8 - camera.getZ();
+        double bx = (b.x << 4) + 8 - camera.getX();
+        double by = (b.y << 4) + 8 - camera.getY();
+        double bz = (b.z << 4) + 8 - camera.getZ();
+        return (int) ((ax * ax + ay * ay + az * az) - (bx * bx + by * by + bz * bz));
     }
 }
