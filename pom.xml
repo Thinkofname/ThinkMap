@@ -92,6 +92,7 @@
                         <webappDirectory>target</webappDirectory>
                         <optimizationLevel>9</optimizationLevel>
                         <draftCompile>${fast.build}</draftCompile>
+                        <closureCompiler>true</closureCompiler>
                     </configuration>
                     <executions>
                         <execution>
