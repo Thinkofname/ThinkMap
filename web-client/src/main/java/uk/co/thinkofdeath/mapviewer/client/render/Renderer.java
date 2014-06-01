@@ -64,6 +64,10 @@ public class Renderer implements ResizeHandler, Runnable {
     private double lastFrame;
     private double currentFrame;
 
+    // Sorters
+    private final ChunkSorter chunkSorter = new ChunkSorter(camera);
+    private final SortableSorter sortableSorter = new SortableSorter(camera);
+
     /**
      * Creates a Renderer that handles almost anything that is displayed to the user
      *
@@ -152,7 +156,7 @@ public class Renderer implements ResizeHandler, Runnable {
         chunkShader.setFrame((int) currentFrame);
 
         // TODO: Think about grouping objects from the same chunk to save setOffset calls
-        JsUtils.sort(renderObjectList, new ChunkSorter(camera));
+        JsUtils.sort(renderObjectList, chunkSorter);
         for (int i = 0, renderObjectListSize = renderObjectList.size(); i < renderObjectListSize; i++) {
             ChunkRenderObject renderObject = renderObjectList.get(i);
             if (renderObject.data != null) {
@@ -198,7 +202,7 @@ public class Renderer implements ResizeHandler, Runnable {
         }
         int updates = 0;
 
-        JsUtils.sort(sortableRenderObjects, new SortableSorter(camera));
+        JsUtils.sort(sortableRenderObjects, sortableSorter);
         for (int i = 0, sortableRenderObjectsSize = sortableRenderObjects.size(); i < sortableRenderObjectsSize; i++) {
             SortableRenderObject sortableRenderObject = sortableRenderObjects.get(i);
 
