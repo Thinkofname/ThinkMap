@@ -441,6 +441,10 @@ public class Model {
         faces.add(modelFace);
     }
 
+    public List<ModelFace> getFaces() {
+        return faces;
+    }
+
 
     /**
      * Used for checking whether this model can render against certain blocks
