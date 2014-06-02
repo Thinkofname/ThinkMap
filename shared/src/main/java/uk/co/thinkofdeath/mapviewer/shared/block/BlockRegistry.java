@@ -467,8 +467,12 @@ public class BlockRegistry {
         register("minecraft", "glowstone", new BlockBuilder(mapViewer)
                 .texture("glowstone")
                 .create(), 89);
+        register("minecraft", "portal", new BlockBuilder(new BlockPortal(mapViewer))
+                .solid(false)
+                .collidable(false)
+                .transparent(true)
+                .create(), 90);
 
-        // TODO: portal
         // TODO: lit_pumpkin
         // TODO: cake
         // TODO: unpowered_repeater
