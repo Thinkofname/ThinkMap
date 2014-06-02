@@ -25,6 +25,7 @@ import elemental.html.ImageElement;
 import elemental.js.util.Json;
 import elemental.xml.XMLHttpRequest;
 import uk.co.thinkofdeath.html.lib.NativeLib;
+import uk.co.thinkofdeath.mapviewer.client.feature.FeatureHandler;
 import uk.co.thinkofdeath.mapviewer.client.input.InputManager;
 import uk.co.thinkofdeath.mapviewer.client.network.Connection;
 import uk.co.thinkofdeath.mapviewer.client.network.ConnectionHandler;
@@ -56,6 +57,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     private final BlockRegistry blockRegistry = new BlockRegistry(this);
     private final WorkerPool workerPool = new WorkerPool(this, NUMBER_OF_WORKERS);
     private final InputManager inputManager = new InputManager(this);
+    private final FeatureHandler featureHandler = new FeatureHandler();
 
     private HashMap<String, Texture> textures = new HashMap<>();
     private XMLHttpRequest xhr;
@@ -73,6 +75,8 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
      */
     public void onModuleLoad() {
         NativeLib.init();
+        // Feature detection
+        if (!featureHandler.detect()) return;
         // Atlas to look up position of textures
         xhr = Browser.getWindow().newXMLHttpRequest();
         xhr.open("GET", "http://" + getConfigAdddress() + "/resources/blocks.json", true);

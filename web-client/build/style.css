@@ -38,3 +38,26 @@ div.link-back {
     font-size: 10px;
     text-shadow: #000 1px 1px 0;
 }
+
+div.fade-background {
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 999999;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+div.center-message {
+    background-color: #FFFFFF;
+    z-index: 9999999;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 500px;
+    height: 500px;
+    margin-left: -250px;
+    margin-top: -250px;
+    overflow-y: scroll;
+}
