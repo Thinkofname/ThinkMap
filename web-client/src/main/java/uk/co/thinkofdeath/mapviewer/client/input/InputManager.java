@@ -213,13 +213,13 @@ public class InputManager {
 
     private native boolean requestPointerLock()/*-{
         var canvas = $doc.getElementById("main");
-        var f = (canvas.requestPointerLock
+        canvas.requestPointerLock = (canvas.requestPointerLock
             || canvas.webkitRequestPointerLock
             || canvas.mozRequestPointerLock);
-        if (f == null) {
+        if (canvas.requestPointerLock == null) {
             return false;
         }
-        f.bind(canvas)();
+        canvas.requestPointerLock();
         return true;
     }-*/;
 
