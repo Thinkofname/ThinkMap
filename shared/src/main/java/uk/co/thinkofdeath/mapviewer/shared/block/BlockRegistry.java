@@ -410,7 +410,11 @@ public class BlockRegistry {
 
         // TODO: lever
         // TODO: stone_pressure_plate
-        // TODO: iron_door
+
+        register("minecraft", "iron_door", new BlockBuilder(new BlockDoor(mapViewer, "door_iron"))
+                .solid(false)
+                .create(), 71);
+
         // TODO: wooden_pressure_plate
 
         register("minecraft", "redstone_ore", new BlockBuilder(mapViewer)
