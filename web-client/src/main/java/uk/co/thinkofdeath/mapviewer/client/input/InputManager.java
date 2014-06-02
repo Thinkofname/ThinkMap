@@ -58,7 +58,6 @@ public class InputManager {
     // Supporting multiple browsers and devices can be a pain since some browsers may use
     // prefixed events, some may use different events and others will support the event but
     // not the same variables as other browsers.
-    // TODO: Touch events
     // TODO: Drag controls
 
     /**
