@@ -612,8 +612,11 @@ public class BlockRegistry {
                 .solid(false)
                 .collidable(false)
                 .create(), 142);
+        register("minecraft", "wooden_button", new BlockBuilder(new BlockButton(mapViewer, "planks_oak"))
+                .solid(false)
+                .collidable(false)
+                .create(), 143);
 
-        // TODO: wooden_button
         // TODO: skull
         // TODO: anvil
 
