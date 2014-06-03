@@ -409,8 +409,11 @@ public class BlockRegistry {
                 .solid(false)
                 .collidable(false)
                 .create(), 68);
+        register("minecraft", "lever", new BlockBuilder(new BlockLever(mapViewer))
+                .solid(false)
+                .collidable(false)
+                .create(), 69);
 
-        // TODO: lever
         // TODO: stone_pressure_plate
 
         register("minecraft", "iron_door", new BlockBuilder(new BlockDoor(mapViewer, "door_iron"))
