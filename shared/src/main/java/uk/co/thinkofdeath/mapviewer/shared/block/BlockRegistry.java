@@ -413,15 +413,19 @@ public class BlockRegistry {
                 .solid(false)
                 .collidable(false)
                 .create(), 69);
-
-        // TODO: stone_pressure_plate
-
+        register("minecraft", "stone_pressure_plate", new BlockBuilder(
+                new BlockPressurePlate(mapViewer, "stone"))
+                .solid(false)
+                .collidable(false)
+                .create(), 70);
         register("minecraft", "iron_door", new BlockBuilder(new BlockDoor(mapViewer, "door_iron"))
                 .solid(false)
                 .create(), 71);
-
-        // TODO: wooden_pressure_plate
-
+        register("minecraft", "wooden_pressure_plate", new BlockBuilder(
+                new BlockPressurePlate(mapViewer, "planks_oak"))
+                .solid(false)
+                .collidable(false)
+                .create(), 72);
         register("minecraft", "redstone_ore", new BlockBuilder(mapViewer)
                 .texture("redstone_ore")
                 .create(), 73);
@@ -613,9 +617,17 @@ public class BlockRegistry {
         register("minecraft", "trapped_chest", new BlockBuilder(new BlockChest(mapViewer, "trapped"))
                 .solid(false)
                 .create(), 146);
+        register("minecraft", "light_weighted_pressure_plate", new BlockBuilder(
+                new BlockPressurePlate(mapViewer, "gold_block"))
+                .solid(false)
+                .collidable(false)
+                .create(), 147);
+        register("minecraft", "heavy_weighted_pressure_plate", new BlockBuilder(
+                new BlockPressurePlate(mapViewer, "iron_block"))
+                .solid(false)
+                .collidable(false)
+                .create(), 148);
 
-        // TODO: light_weighted_pressure_plate
-        // TODO: heavy_weighted_pressure_plate
         // TODO: unpowered_comparator
         // TODO: powered_comparator
         // TODO: daylight_detector
