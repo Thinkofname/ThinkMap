@@ -392,8 +392,10 @@ public class BlockRegistry {
         register("minecraft", "wooden_door", new BlockBuilder(new BlockDoor(mapViewer, "door_wood"))
                 .solid(false)
                 .create(), 64);
-        // TODO: ladder
-
+        register("minecraft", "ladder", new BlockBuilder(new BlockLadder(mapViewer))
+                .collidable(false)
+                .solid(false)
+                .create(), 65);
         register("minecraft", "rail", new BlockBuilder(new BlockRail(mapViewer))
                 .texture("rail_normal")
                 .solid(false)
