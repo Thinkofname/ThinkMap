@@ -442,8 +442,11 @@ public class BlockRegistry {
                 .solid(false)
                 .collidable(false)
                 .create(), 76);
+        register("minecraft", "stone_button", new BlockBuilder(new BlockButton(mapViewer, "stone"))
+                .solid(false)
+                .collidable(false)
+                .create(), 77);
 
-        // TODO: stone_button
         // TODO: snow_layer
 
 
