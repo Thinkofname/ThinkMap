@@ -446,10 +446,9 @@ public class BlockRegistry {
                 .solid(false)
                 .collidable(false)
                 .create(), 77);
-
-        // TODO: snow_layer
-
-
+        register("minecraft", "snow_layer", new BlockBuilder(new BlockSnowLayer(mapViewer))
+                .solid(false)
+                .create(), 78);
         register("minecraft", "ice", new BlockBuilder(mapViewer)
                 .texture("ice")
                 .solid(false)
@@ -616,6 +615,7 @@ public class BlockRegistry {
                 .solid(false)
                 .collidable(false)
                 .create(), 143);
+
 
         // TODO: skull
         // TODO: anvil
