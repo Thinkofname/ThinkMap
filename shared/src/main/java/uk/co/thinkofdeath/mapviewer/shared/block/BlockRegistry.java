@@ -463,9 +463,10 @@ public class BlockRegistry {
         register("minecraft", "clay", new BlockBuilder(mapViewer)
                 .texture("clay")
                 .create(), 82);
-
-        // TODO: reeds
-
+        register("minecraft", "reeds", new BlockBuilder(new BlockReeds(mapViewer))
+                .solid(false)
+                .collidable(false)
+                .create(), 83);
         register("minecraft", "jukebox", new BlockBuilder(new BlockMultiSide(
                 mapViewer,
                 "jukebox_top", "noteblock",
