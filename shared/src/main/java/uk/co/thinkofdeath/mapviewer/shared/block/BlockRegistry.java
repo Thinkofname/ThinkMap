@@ -457,9 +457,9 @@ public class BlockRegistry {
         register("minecraft", "snow", new BlockBuilder(mapViewer)
                 .texture("snow")
                 .create(), 80);
-
-        // TODO: cactus
-
+        register("minecraft", "cactus", new BlockBuilder(new BlockCactus(mapViewer))
+                .solid(false)
+                .create(), 81);
         register("minecraft", "clay", new BlockBuilder(mapViewer)
                 .texture("clay")
                 .create(), 82);
