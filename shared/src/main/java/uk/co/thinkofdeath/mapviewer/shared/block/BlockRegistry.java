@@ -465,7 +465,15 @@ public class BlockRegistry {
                 .create(), 82);
 
         // TODO: reeds
-        // TODO: jukebox
+
+        register("minecraft", "jukebox", new BlockBuilder(new BlockMultiSide(
+                mapViewer,
+                "jukebox_top", "noteblock",
+                "jukebox_side", "jukebox_side",
+                "jukebox_side", "jukebox_side"
+        ))
+                .create(), 84);
+
         // TODO: fence
         // TODO: pumpkin
 
