@@ -499,16 +499,16 @@ public class BlockRegistry {
         register("minecraft", "cake", new BlockBuilder(new BlockCake(mapViewer))
                 .solid(false)
                 .create(), 92);
-
-        // TODO: unpowered_repeater
-        // TODO: powered_repeater
-
-        register("minecraft", "stained_glass",
-                new BlockBuilder(new BlockColoured(mapViewer, "glass_"))
-                        .solid(false)
-                        .transparent(true)
-                        .create(), 95
-        );
+        register("minecraft", "unpowered_repeater", new BlockBuilder(new BlockRepeater(mapViewer, false))
+                .solid(false)
+                .create(), 93);
+        register("minecraft", "powered_repeater", new BlockBuilder(new BlockRepeater(mapViewer, true))
+                .solid(false)
+                .create(), 94);
+        register("minecraft", "stained_glass", new BlockBuilder(new BlockColoured(mapViewer, "glass_"))
+                .solid(false)
+                .transparent(true)
+                .create(), 95);
 
         // TODO: trapdoor
         // TODO: monster_egg
