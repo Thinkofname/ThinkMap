@@ -540,9 +540,10 @@ public class BlockRegistry {
         register("minecraft", "nether_brick", new BlockBuilder(mapViewer)
                 .texture("nether_brick")
                 .create(), 112);
-
-        // TODO: nether_brick_fence
-
+        register("minecraft", "nether_brick_fence", new BlockBuilder(new BlockFence(mapViewer))
+                .solid(false)
+                .texture("nether_brick")
+                .create(), 113);
         register("minecraft", "nether_brick_stairs", new BlockBuilder(new BlockStairs(mapViewer))
                 .texture("nether_brick")
                 .solid(false)

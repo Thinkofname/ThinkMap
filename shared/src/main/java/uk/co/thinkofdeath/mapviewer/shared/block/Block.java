@@ -26,6 +26,7 @@ import java.util.Map;
 
 public class Block implements Model.RenderChecker {
 
+    protected final BlockFactory factory;
     protected final StateMap state;
     protected String plugin;
     protected String name;
@@ -42,6 +43,7 @@ public class Block implements Model.RenderChecker {
     private String toString;
 
     protected Block(BlockFactory factory, StateMap state) {
+        this.factory = factory;
         this.state = state;
         renderable = factory.renderable;
         solid = factory.solid;

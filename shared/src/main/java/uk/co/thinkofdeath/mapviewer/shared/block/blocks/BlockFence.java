@@ -126,7 +126,12 @@ public class BlockFence extends BlockFactory {
         }
 
         public boolean checkFence(World world, int x, int y, int z) {
-            return world.getBlock(x, y, z) instanceof BlockImpl;
+            Block block = world.getBlock(x, y, z);
+            if (block instanceof BlockImpl) {
+                BlockImpl fence = (BlockImpl) block;
+                return fence.factory == this.factory;
+            }
+            return false;
         }
     }
 }
