@@ -478,9 +478,8 @@ public class BlockRegistry {
                 .solid(false)
                 .texture("planks_oak")
                 .create(), 85);
-
-        // TODO: pumpkin
-
+        register("minecraft", "pumpkin", new BlockBuilder(new BlockPumpkin(mapViewer, false))
+                .create(), 86);
         register("minecraft", "netherrack", new BlockBuilder(mapViewer)
                 .texture("netherrack")
                 .create(), 87);
@@ -495,8 +494,9 @@ public class BlockRegistry {
                 .collidable(false)
                 .transparent(true)
                 .create(), 90);
+        register("minecraft", "lit_pumpkin", new BlockBuilder(new BlockPumpkin(mapViewer, true))
+                .create(), 91);
 
-        // TODO: lit_pumpkin
         // TODO: cake
         // TODO: unpowered_repeater
         // TODO: powered_repeater
