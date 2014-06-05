@@ -474,8 +474,11 @@ public class BlockRegistry {
                 "jukebox_side", "jukebox_side"
         ))
                 .create(), 84);
+        register("minecraft", "fence", new BlockBuilder(new BlockFence(mapViewer))
+                .solid(false)
+                .texture("planks_oak")
+                .create(), 85);
 
-        // TODO: fence
         // TODO: pumpkin
 
         register("minecraft", "netherrack", new BlockBuilder(mapViewer)
