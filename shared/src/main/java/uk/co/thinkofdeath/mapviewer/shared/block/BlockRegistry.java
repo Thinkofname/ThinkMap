@@ -496,8 +496,10 @@ public class BlockRegistry {
                 .create(), 90);
         register("minecraft", "lit_pumpkin", new BlockBuilder(new BlockPumpkin(mapViewer, true))
                 .create(), 91);
+        register("minecraft", "cake", new BlockBuilder(new BlockCake(mapViewer))
+                .solid(false)
+                .create(), 92);
 
-        // TODO: cake
         // TODO: unpowered_repeater
         // TODO: powered_repeater
 
