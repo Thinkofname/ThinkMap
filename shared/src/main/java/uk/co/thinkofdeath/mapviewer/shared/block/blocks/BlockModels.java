@@ -77,4 +77,19 @@ public class BlockModels {
                 }));
         return model;
     }
+
+    public static Model createTorch(Texture texture) {
+        Model model = new Model();
+        model.addFace(new ModelFace(Face.LEFT, texture, 6, 0, 4, 11, 9)
+                .setTextureSize(6, 5, 4, 11));
+        model.addFace(new ModelFace(Face.RIGHT, texture, 6, 0, 4, 11, 7)
+                .setTextureSize(6, 5, 4, 11));
+        model.addFace(new ModelFace(Face.FRONT, texture, 6, 0, 4, 11, 9)
+                .setTextureSize(6, 5, 4, 11));
+        model.addFace(new ModelFace(Face.BACK, texture, 6, 0, 4, 11, 7)
+                .setTextureSize(6, 5, 4, 11));
+        model.addFace(new ModelFace(Face.TOP, texture, 7, 7, 2, 2, 10)
+                .setTextureSize(7, 6, 2, 2));
+        return model;
+    }
 }

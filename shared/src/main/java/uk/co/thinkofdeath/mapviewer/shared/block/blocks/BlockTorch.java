@@ -16,7 +16,6 @@
 
 package uk.co.thinkofdeath.mapviewer.shared.block.blocks;
 
-import uk.co.thinkofdeath.mapviewer.shared.Face;
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
@@ -24,7 +23,6 @@ import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
 import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
-import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 
 public class BlockTorch extends BlockFactory {
 
@@ -86,17 +84,7 @@ public class BlockTorch extends BlockFactory {
             if (model == null) {
                 Facing facing = getState(FACING);
 
-                model = new Model();
-                model.addFace(new ModelFace(Face.LEFT, texture, 6, 0, 4, 11, 9)
-                        .setTextureSize(6, 5, 4, 11));
-                model.addFace(new ModelFace(Face.RIGHT, texture, 6, 0, 4, 11, 7)
-                        .setTextureSize(6, 5, 4, 11));
-                model.addFace(new ModelFace(Face.FRONT, texture, 6, 0, 4, 11, 9)
-                        .setTextureSize(6, 5, 4, 11));
-                model.addFace(new ModelFace(Face.BACK, texture, 6, 0, 4, 11, 7)
-                        .setTextureSize(6, 5, 4, 11));
-                model.addFace(new ModelFace(Face.TOP, texture, 7, 7, 2, 2, 10)
-                        .setTextureSize(7, 6, 2, 2));
+                model = BlockModels.createTorch(texture);
 
                 if (facing.rotation != -1) {
                     model = new Model().join(model.rotateX(22.5f), 0, 4, 5)
