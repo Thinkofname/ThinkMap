@@ -22,7 +22,7 @@ import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
 import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
-import uk.co.thinkofdeath.mapviewer.shared.block.states.BooleanState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.IntegerState;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 
@@ -34,7 +34,7 @@ public class BlockPortal extends BlockFactory {
 
     public BlockPortal(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(ROTATED, new BooleanState());
+        addState(ROTATED, new IntegerState(0, 2));
         texture = mapViewer.getTexture("portal");
     }
 
@@ -51,7 +51,7 @@ public class BlockPortal extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            return this.<Boolean>getState(ROTATED) ? 1 : 2;
+            return this.<Integer>getState(ROTATED);
         }
 
         @Override
@@ -62,7 +62,7 @@ public class BlockPortal extends BlockFactory {
                 model.addFace(new ModelFace(Face.LEFT, texture, 0, 0, 16, 16, 10));
                 model.addFace(new ModelFace(Face.RIGHT, texture, 0, 0, 16, 16, 6));
 
-                if (getState(ROTATED)) {
+                if (this.<Integer>getState(ROTATED) == 1) {
                     model.rotateY(90);
                 }
             }
