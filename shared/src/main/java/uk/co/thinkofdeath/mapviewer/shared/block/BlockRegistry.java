@@ -318,8 +318,8 @@ public class BlockRegistry {
         register("minecraft", "iron_block", new BlockBuilder(mapViewer)
                 .texture("iron_block")
                 .create(), 42);
-
-        // TODO: double_stone_slab
+        register("minecraft", "double_stone_slab", new BlockBuilder(new BlockDoubleSlab<>(mapViewer, BlockDoubleSlab.StoneSlab.class))
+                .create(), 43);
         register("minecraft", "stone_slab", new BlockBuilder(new BlockSlab<>(mapViewer, BlockSlab.StoneSlab.class))
                 .solid(false)
                 .create(), 44);
@@ -540,6 +540,7 @@ public class BlockRegistry {
                 .create(), 109);
         register("minecraft", "mycelium", new BlockBuilder(new BlockMycelium(mapViewer))
                 .create(), 110);
+
         // TODO: waterlily
 
         register("minecraft", "nether_brick", new BlockBuilder(mapViewer)
@@ -573,9 +574,8 @@ public class BlockRegistry {
         register("minecraft", "lit_redstone_lamp", new BlockBuilder(mapViewer)
                 .texture("redstone_lamp_on")
                 .create(), 124);
-
-        // TODO: double_wooden_slab
-
+        register("minecraft", "double_wooden_slab", new BlockBuilder(new BlockDoubleSlab<>(mapViewer, BlockDoubleSlab.WoodenSlab.class))
+                .create(), 125);
         register("minecraft", "wooden_slab", new BlockBuilder(new BlockSlab<>(mapViewer, BlockSlab.WoodenSlab.class))
                 .solid(false)
                 .create(), 126);
@@ -586,7 +586,6 @@ public class BlockRegistry {
                 .texture("sandstone_normal")
                 .solid(false)
                 .create(), 128);
-
         register("minecraft", "emerald_ore", new BlockBuilder(mapViewer)
                 .texture("emerald_ore")
                 .create(), 129);

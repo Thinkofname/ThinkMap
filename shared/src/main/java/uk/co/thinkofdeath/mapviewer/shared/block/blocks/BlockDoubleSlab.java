@@ -21,21 +21,17 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
-import uk.co.thinkofdeath.mapviewer.shared.model.Model;
-import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 
-public class BlockSlab<T extends Enum<T> & BlockSlab.SlabType> extends BlockFactory {
+public class BlockDoubleSlab<T extends Enum<T> & BlockDoubleSlab.SlabType> extends BlockFactory {
 
     public final StateKey<T> VARIANT;
-    public final StateKey<Boolean> TOP = stateAllocator.alloc("top", new BooleanState());
 
     private final Texture[] textures;
 
-    public BlockSlab(IMapViewer iMapViewer, Class<T> clazz) {
+    public BlockDoubleSlab(IMapViewer iMapViewer, Class<T> clazz) {
         super(iMapViewer);
         VARIANT = stateAllocator.alloc("variant", new EnumState<>(clazz));
 
@@ -90,7 +86,9 @@ public class BlockSlab<T extends Enum<T> & BlockSlab.SlabType> extends BlockFact
                         "quartz_block_top" :
                         "quartz_block_side";
             }
-        };
+        },
+        SMOOTH_STONE("stone_slab_top"),
+        SMOOTH_SANDSTONE("sandstone_top");
 
         private final String texture;
 
@@ -137,42 +135,17 @@ public class BlockSlab<T extends Enum<T> & BlockSlab.SlabType> extends BlockFact
     private class BlockImpl extends Block {
 
         BlockImpl(StateMap state) {
-            super(BlockSlab.this, state);
+            super(BlockDoubleSlab.this, state);
         }
 
         @Override
         public int getLegacyData() {
-            int val = getState(VARIANT).ordinal();
-            if (this.<Boolean>getState(TOP)) {
-                val |= 0x8;
-            }
-            return val;
+            return getState(VARIANT).ordinal();
         }
 
         @Override
-        public Model getModel() {
-            if (model == null) {
-                model = new Model();
-
-                boolean top = getState(TOP);
-                SlabType type = getState(VARIANT);
-
-                int i = type.ordinal() * 6;
-
-                model.addFace(new ModelFace(Face.TOP,
-                        textures[i + Face.TOP.ordinal()], 0, 0, 16, 16, top ? 16 : 8, top));
-                model.addFace(new ModelFace(Face.BOTTOM,
-                        textures[i + Face.BOTTOM.ordinal()], 0, 0, 16, 16, top ? 8 : 0, !top));
-                model.addFace(new ModelFace(Face.FRONT,
-                        textures[i + Face.FRONT.ordinal()], 0, top ? 8 : 0, 16, 8, 16, true));
-                model.addFace(new ModelFace(Face.BACK,
-                        textures[i + Face.BACK.ordinal()], 0, top ? 8 : 0, 16, 8, 0, true));
-                model.addFace(new ModelFace(Face.LEFT,
-                        textures[i + Face.LEFT.ordinal()], 0, top ? 8 : 0, 16, 8, 16, true));
-                model.addFace(new ModelFace(Face.RIGHT,
-                        textures[i + Face.RIGHT.ordinal()], 0, top ? 8 : 0, 16, 8, 0, true));
-            }
-            return model;
+        public Texture getTexture(Face face) {
+            return textures[getState(VARIANT).ordinal() * 6 + face.ordinal()];
         }
     }
 }
