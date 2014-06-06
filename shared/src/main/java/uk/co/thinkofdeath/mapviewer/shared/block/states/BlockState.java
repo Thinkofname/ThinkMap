@@ -16,31 +16,14 @@
 
 package uk.co.thinkofdeath.mapviewer.shared.block.states;
 
-public class EnumState<T extends Enum<T>> implements BlockState<T> {
-
-    private final T[] states;
-    private Class<T> e;
+public interface BlockState<T> {
 
     /**
-     * A creates an Enum factory for the given enum
+     * Returns all possible states
+     *
+     * @return All states
      */
-    public EnumState(Class<T> e) {
-        this.e = e;
-        states = e.getEnumConstants();
-    }
+    public T[] getStates();
 
-    @Override
-    public T[] getStates() {
-        return states;
-    }
-
-    @Override
-    public int indexOf(T value) {
-        for (int i = 0; i < states.length; i++) {
-            if (states[i] == value) {
-                return i;
-            }
-        }
-        return -1;
-    }
+    public int indexOf(T value);
 }

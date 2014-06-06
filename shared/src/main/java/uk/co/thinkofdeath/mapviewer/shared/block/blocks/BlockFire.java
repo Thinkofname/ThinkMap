@@ -22,9 +22,10 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.IntegerState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelVertex;
@@ -32,26 +33,19 @@ import uk.co.thinkofdeath.mapviewer.shared.world.World;
 
 public class BlockFire extends BlockFactory {
 
-    public static final String AGE = "age";
-    public static final String UP = "up";
-    public static final String DOWN = "down";
-    public static final String NORTH = "north";
-    public static final String SOUTH = "south";
-    public static final String EAST = "east";
-    public static final String WEST = "west";
+    public final StateKey<Integer> AGE = stateAllocator.alloc("age", new IntegerState(0, 15));
+    public final StateKey<Boolean> UP = stateAllocator.alloc("up", new BooleanState());
+    public final StateKey<Boolean> DOWN = stateAllocator.alloc("down", new BooleanState());
+    public final StateKey<Boolean> NORTH = stateAllocator.alloc("north", new BooleanState());
+    public final StateKey<Boolean> SOUTH = stateAllocator.alloc("south", new BooleanState());
+    public final StateKey<Boolean> EAST = stateAllocator.alloc("east", new BooleanState());
+    public final StateKey<Boolean> WEST = stateAllocator.alloc("west", new BooleanState());
 
     private final Texture layer0;
     private final Texture layer1;
 
     public BlockFire(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(AGE, new IntegerState(0, 15));
-        addState(UP, new BooleanState());
-        addState(DOWN, new BooleanState());
-        addState(NORTH, new BooleanState());
-        addState(SOUTH, new BooleanState());
-        addState(EAST, new BooleanState());
-        addState(WEST, new BooleanState());
 
         layer0 = mapViewer.getTexture("fire_layer_0");
         layer1 = mapViewer.getTexture("fire_layer_1");
@@ -153,12 +147,12 @@ public class BlockFire extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            if (this.<Boolean>getState(DOWN)
-                    || this.<Boolean>getState(UP)
-                    || this.<Boolean>getState(NORTH)
-                    || this.<Boolean>getState(SOUTH)
-                    || this.<Boolean>getState(EAST)
-                    || this.<Boolean>getState(WEST)) {
+            if (getState(DOWN)
+                    || getState(UP)
+                    || getState(NORTH)
+                    || getState(SOUTH)
+                    || getState(EAST)
+                    || getState(WEST)) {
                 return -1;
             }
             return getState(AGE);

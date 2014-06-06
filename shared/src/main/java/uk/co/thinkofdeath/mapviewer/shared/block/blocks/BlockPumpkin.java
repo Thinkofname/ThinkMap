@@ -21,12 +21,13 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 
 public class BlockPumpkin extends BlockFactory {
 
-    public static final String FACING = "facing";
+    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class));
 
     private final Texture top;
     private final Texture side;
@@ -34,7 +35,7 @@ public class BlockPumpkin extends BlockFactory {
 
     public BlockPumpkin(IMapViewer iMapViewer, boolean on) {
         super(iMapViewer);
-        addState(FACING, new EnumState(Facing.class));
+
         top = iMapViewer.getTexture("pumpkin_top");
         side = iMapViewer.getTexture("pumpkin_side");
         front = iMapViewer.getTexture("pumpkin_face_" + (on ? "on" : "off"));
@@ -66,7 +67,7 @@ public class BlockPumpkin extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            return this.<Facing>getState(FACING).ordinal();
+            return getState(FACING).ordinal();
         }
 
         @Override

@@ -22,25 +22,24 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelVertex;
 
 public class BlockPoweredRail extends BlockFactory {
 
-    public static final String POWERED = "powered";
-    public static final String SHAPE = "shape";
+    public final StateKey<Boolean> POWERED = stateAllocator.alloc("powered", new BooleanState());
+    public final StateKey<Shape> SHAPE = stateAllocator.alloc("shape", new EnumState<>(Shape.class));
 
     private final Texture texture;
     private final Texture texturePowered;
 
     public BlockPoweredRail(IMapViewer iMapViewer, String textureName) {
         super(iMapViewer);
-        addState(POWERED, new BooleanState());
-        addState(SHAPE, new EnumState(Shape.class));
 
         texture = iMapViewer.getTexture(textureName);
         texturePowered = iMapViewer.getTexture(textureName + "_powered");
@@ -75,14 +74,14 @@ public class BlockPoweredRail extends BlockFactory {
         public Model getModel() {
             if (model == null) {
                 Texture tex;
-                if (this.<Boolean>getState(POWERED)) {
+                if (getState(POWERED)) {
                     tex = texturePowered;
                 } else {
                     tex = texture;
                 }
 
                 model = new Model();
-                switch (this.<Shape>getState(SHAPE)) {
+                switch (getState(SHAPE)) {
                     case NORTH_SOUTH:
                         model.addFace(new ModelFace(Face.TOP, tex, 0, 0, 16, 16, 0.5f));
                         break;

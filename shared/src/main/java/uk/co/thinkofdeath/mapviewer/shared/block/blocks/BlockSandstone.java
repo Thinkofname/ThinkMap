@@ -21,12 +21,13 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 
 public class BlockSandstone extends BlockFactory {
 
-    public static final String VARIANT = "variant";
+    public final StateKey<Variant> VARIANT = stateAllocator.alloc("variant", new EnumState<>(Variant.class));
 
     private final Texture[] textures;
     private final Texture sandstoneTop;
@@ -34,7 +35,6 @@ public class BlockSandstone extends BlockFactory {
 
     public BlockSandstone(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(VARIANT, new EnumState(Variant.class));
 
         textures = new Texture[Variant.values().length];
         for (Variant variant : Variant.values()) {
@@ -74,7 +74,7 @@ public class BlockSandstone extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            return this.<Variant>getState(VARIANT).ordinal();
+            return getState(VARIANT).ordinal();
         }
 
         @Override
@@ -84,7 +84,7 @@ public class BlockSandstone extends BlockFactory {
             } else if (face == Face.BOTTOM) {
                 return sandstoneBottom;
             }
-            return textures[this.<Variant>getState(VARIANT).ordinal()];
+            return textures[getState(VARIANT).ordinal()];
         }
     }
 }

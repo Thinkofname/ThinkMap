@@ -21,20 +21,20 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.IntegerState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 
 public class BlockSnowLayer extends BlockFactory {
 
-    public static final String HEIGHT = "height";
+    public final StateKey<Integer> HEIGHT = stateAllocator.alloc("height", new IntegerState(1, 8));
 
     private final Texture texture;
 
     public BlockSnowLayer(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(HEIGHT, new IntegerState(1, 8));
 
         texture = mapViewer.getTexture("snow");
     }

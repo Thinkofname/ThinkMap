@@ -21,14 +21,15 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.IntegerState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 
 public class BlockCake extends BlockFactory {
 
-    public static final String EATEN = "eaten";
+    public final StateKey<Integer> EATEN = stateAllocator.alloc("eaten", new IntegerState(0, 7));
 
     private final Texture top;
     private final Texture side;
@@ -37,7 +38,6 @@ public class BlockCake extends BlockFactory {
 
     public BlockCake(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(EATEN, new IntegerState(0, 7));
 
         top = mapViewer.getTexture("cake_top");
         side = mapViewer.getTexture("cake_side");
@@ -58,7 +58,7 @@ public class BlockCake extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            return this.<Integer>getState(EATEN);
+            return getState(EATEN);
         }
 
         @Override
@@ -66,7 +66,7 @@ public class BlockCake extends BlockFactory {
             if (model == null) {
                 model = new Model();
 
-                int remaining = 8 - this.<Integer>getState(EATEN);
+                int remaining = 8 - getState(EATEN);
                 int len = (int) (14f / 8f * remaining);
 
                 model.addFace(new ModelFace(Face.TOP, top, 1, 1, len, 14, 8));

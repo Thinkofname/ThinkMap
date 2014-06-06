@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.mapviewer.shared.block;
+package uk.co.thinkofdeath.mapviewer.shared.bit;
 
-public interface BlockState {
+public final class BitKey {
+    final int shift;
+    final int mask;
 
-    /**
-     * Returns all possible states
-     *
-     * @return All states
-     */
-    public Object[] getStates();
+    public BitKey(int shift, int mask) {
+        this.shift = shift;
+        this.mask = mask;
+    }
+
+    @Override
+    public String toString() {
+        return "BitKey{" +
+                "shift=" + shift +
+                ", mask=" + Integer.toBinaryString(mask) +
+                '}';
+    }
 }

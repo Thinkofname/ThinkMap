@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.mapviewer.shared.block;
+package uk.co.thinkofdeath.mapviewer.shared.block.states;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import uk.co.thinkofdeath.mapviewer.shared.bit.BitField;
 
 public class StateMap {
 
-    private final HashMap<String, Object> state = new HashMap<>();
+    private final BitField state = new BitField();
 
     /**
      * Creates an empty state map
@@ -38,7 +36,7 @@ public class StateMap {
      *         The map to copy from
      */
     public StateMap(StateMap stateMap) {
-        state.putAll(stateMap.state);
+        state.copy(stateMap.state);
     }
 
     /**
@@ -49,8 +47,9 @@ public class StateMap {
      * @param value
      *         The new value
      */
-    public void set(String key, Object value) {
-        state.put(key, value);
+    public <T> void set(StateKey<T> key, T value) {
+        int v = key.getState().indexOf(value);
+        state.set(key.key, v);
     }
 
     /**
@@ -60,42 +59,11 @@ public class StateMap {
      *         The state's key
      * @return The state's value or null
      */
-    @SuppressWarnings("unchecked")
-    public <T> T get(String key) {
-        return (T) state.get(key);
+    public <T> T get(StateKey<T> key) {
+        return key.getState().getStates()[state.get(key.key)];
     }
 
-    /**
-     * Returns the number of states in the map
-     *
-     * @return The number of states
-     */
-    public int size() {
-        return state.size();
-    }
-
-    /**
-     * Returns a set of the all the states in this map
-     *
-     * @return A set of all states
-     */
-    public Set<Map.Entry<String, Object>> entrySet() {
-        return state.entrySet();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        StateMap stateMap = (StateMap) o;
-
-        return state.equals(stateMap.state);
-
-    }
-
-    @Override
-    public int hashCode() {
-        return state.hashCode();
+    public int asInt() {
+        return state.asInt();
     }
 }

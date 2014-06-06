@@ -21,21 +21,21 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.IntegerState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 
 public class BlockFloorSign extends BlockFactory {
 
-    public static final String ROTATION = "rotation";
+    public final StateKey<Integer> ROTATION = stateAllocator.alloc("rotation", new IntegerState(0, 15));
 
     private final Texture sign;
     private final Texture post;
 
     public BlockFloorSign(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(ROTATION, new IntegerState(0, 15));
 
         sign = mapViewer.getTexture("planks_oak");
         post = mapViewer.getTexture("log_oak");
@@ -54,7 +54,7 @@ public class BlockFloorSign extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            return this.<Integer>getState(ROTATION);
+            return getState(ROTATION);
         }
 
         @Override

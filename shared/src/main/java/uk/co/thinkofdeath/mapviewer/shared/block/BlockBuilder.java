@@ -103,20 +103,6 @@ public class BlockBuilder {
         return this;
     }
 
-    /**
-     * Adds a state to this block
-     *
-     * @param name
-     *         Name of the state
-     * @param blockState
-     *         The state to add
-     * @return This builder
-     */
-    public BlockBuilder state(String name, BlockState blockState) {
-        block.addState(name, blockState);
-        return this;
-    }
-
     public BlockBuilder allowSelf(boolean allowSelf) {
         block.allowSelf = allowSelf;
         return this;

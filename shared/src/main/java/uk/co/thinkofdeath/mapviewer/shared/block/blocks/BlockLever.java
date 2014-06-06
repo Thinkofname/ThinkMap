@@ -21,24 +21,23 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 
 public class BlockLever extends BlockFactory {
 
-    public static final String POWERED = "powered";
-    public static final String DIRECTION = "direction";
+    public final StateKey<Boolean> POWERED = stateAllocator.alloc("powered", new BooleanState());
+    public final StateKey<Direction> DIRECTION = stateAllocator.alloc("direction", new EnumState<>(Direction.class));
 
     private final Texture cobblestone;
     private final Texture lever;
 
     public BlockLever(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(POWERED, new BooleanState());
-        addState(DIRECTION, new EnumState(Direction.class));
         cobblestone = mapViewer.getTexture("cobblestone");
         lever = mapViewer.getTexture("lever");
     }
@@ -86,7 +85,7 @@ public class BlockLever extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            int val = this.<Direction>getState(DIRECTION).ordinal();
+            int val = getState(DIRECTION).ordinal();
             if (getState(POWERED)) {
                 val |= 0x8;
             }

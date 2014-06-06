@@ -19,19 +19,18 @@ package uk.co.thinkofdeath.mapviewer.shared.block.blocks;
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.IntegerState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 
 public class BlockLiquid extends BlockFactory {
 
-    public final static String LEVEL = "level";
-    public final static String FALLING = "falling";
+    public final StateKey<Integer> LEVEL = stateAllocator.alloc("level", new IntegerState(0, 7));
+    public final StateKey<Boolean> FALLING = stateAllocator.alloc("falling", new BooleanState());
 
     public BlockLiquid(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(LEVEL, new IntegerState(0, 7));
-        addState(FALLING, new BooleanState());
     }
 
     @Override
@@ -46,8 +45,8 @@ public class BlockLiquid extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            return this.<Integer>getState(LEVEL)
-                    | (this.<Boolean>getState(FALLING) ? 8 : 0);
+            return getState(LEVEL)
+                    | (getState(FALLING) ? 8 : 0);
         }
 
         @Override

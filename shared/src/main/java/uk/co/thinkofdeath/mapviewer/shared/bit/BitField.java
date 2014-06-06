@@ -14,33 +14,29 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.mapviewer.shared.block.states;
+package uk.co.thinkofdeath.mapviewer.shared.bit;
 
-public class EnumState<T extends Enum<T>> implements BlockState<T> {
+public class BitField {
 
-    private final T[] states;
-    private Class<T> e;
+    private int value = 0;
 
-    /**
-     * A creates an Enum factory for the given enum
-     */
-    public EnumState(Class<T> e) {
-        this.e = e;
-        states = e.getEnumConstants();
+    public BitField() {
+
     }
 
-    @Override
-    public T[] getStates() {
-        return states;
+    public void set(BitKey key, int val) {
+        value = (value & ~key.mask) | ((val << key.shift) & key.mask);
     }
 
-    @Override
-    public int indexOf(T value) {
-        for (int i = 0; i < states.length; i++) {
-            if (states[i] == value) {
-                return i;
-            }
-        }
-        return -1;
+    public int get(BitKey key) {
+        return (value & key.mask) >> key.shift;
+    }
+
+    public int asInt() {
+        return value;
+    }
+
+    public void copy(BitField state) {
+        value = state.value;
     }
 }

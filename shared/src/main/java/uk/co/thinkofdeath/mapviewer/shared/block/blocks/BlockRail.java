@@ -22,20 +22,20 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelVertex;
 
 public class BlockRail extends BlockFactory {
 
-    public static final String SHAPE = "shape";
+    public final StateKey<Shape> SHAPE = stateAllocator.alloc("shape", new EnumState<>(Shape.class));
     private final Texture railTurned;
 
     public BlockRail(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(SHAPE, new EnumState(Shape.class));
 
         railTurned = iMapViewer.getTexture("rail_normal_turned");
     }
@@ -74,7 +74,7 @@ public class BlockRail extends BlockFactory {
             if (model == null) {
                 Texture tex = getTexture(Face.TOP);
                 model = new Model();
-                switch (this.<Shape>getState(SHAPE)) {
+                switch (getState(SHAPE)) {
                     case NORTH_SOUTH:
                         model.addFace(new ModelFace(Face.TOP, tex, 0, 0, 16, 16, 0.5f));
                         break;
@@ -155,7 +155,7 @@ public class BlockRail extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            return this.<Shape>getState(SHAPE).ordinal();
+            return getState(SHAPE).ordinal();
         }
     }
 }

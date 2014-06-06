@@ -22,9 +22,10 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.IntegerState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelVertex;
@@ -32,23 +33,17 @@ import uk.co.thinkofdeath.mapviewer.shared.world.World;
 
 public class BlockRedstone extends BlockFactory {
 
-    public static final String POWER = "power";
-    public static final String NORTH = "north";
-    public static final String SOUTH = "south";
-    public static final String EAST = "east";
-    public static final String WEST = "west";
+    public final StateKey<Integer> POWER = stateAllocator.alloc("power", new IntegerState(0, 15));
+    public final StateKey<Side> NORTH = stateAllocator.alloc("north", new EnumState<>(Side.class));
+    public final StateKey<Side> SOUTH = stateAllocator.alloc("south", new EnumState<>(Side.class));
+    public final StateKey<Side> EAST = stateAllocator.alloc("east", new EnumState<>(Side.class));
+    public final StateKey<Side> WEST = stateAllocator.alloc("west", new EnumState<>(Side.class));
 
     private final Texture line;
     private final Texture cross;
 
     public BlockRedstone(IMapViewer iMapViewer) {
         super(iMapViewer);
-
-        addState(POWER, new IntegerState(0, 15));
-        addState(NORTH, new EnumState(Side.class));
-        addState(SOUTH, new EnumState(Side.class));
-        addState(EAST, new EnumState(Side.class));
-        addState(WEST, new EnumState(Side.class));
 
         line = mapViewer.getTexture("redstone_dust_line");
         cross = mapViewer.getTexture("redstone_dust_cross");

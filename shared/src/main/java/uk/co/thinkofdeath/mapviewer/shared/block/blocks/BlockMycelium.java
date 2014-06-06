@@ -21,7 +21,7 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 
 public class BlockMycelium extends BlockFactory {
 

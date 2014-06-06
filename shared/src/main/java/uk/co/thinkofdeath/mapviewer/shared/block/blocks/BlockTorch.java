@@ -20,19 +20,20 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 
 public class BlockTorch extends BlockFactory {
 
-    public static final String FACING = "facing";
+    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class));
 
     private final Texture texture;
 
     public BlockTorch(IMapViewer iMapViewer, String texture) {
         super(iMapViewer);
-        addState(FACING, new EnumState(Facing.class));
+
         this.texture = mapViewer.getTexture(texture);
     }
 
@@ -72,7 +73,7 @@ public class BlockTorch extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            int val = this.<Facing>getState(FACING).ordinal();
+            int val = getState(FACING).ordinal();
             if (val == 0) {
                 val = 5;
             }

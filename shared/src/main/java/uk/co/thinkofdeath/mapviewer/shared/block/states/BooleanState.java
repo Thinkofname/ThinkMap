@@ -16,18 +16,24 @@
 
 package uk.co.thinkofdeath.mapviewer.shared.block.states;
 
-import uk.co.thinkofdeath.mapviewer.shared.block.BlockState;
+public class BooleanState implements BlockState<Boolean> {
 
-public class BooleanState implements BlockState {
+    private final Boolean[] values;
 
     /**
      * A creates a boolean factory
      */
     public BooleanState() {
+        values = new Boolean[]{false, true};
     }
 
     @Override
-    public Object[] getStates() {
-        return new Object[]{true, false};
+    public Boolean[] getStates() {
+        return values;
+    }
+
+    @Override
+    public int indexOf(Boolean value) {
+        return value ? 1 : 0;
     }
 }

@@ -21,14 +21,15 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.IntegerState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 
 public class BlockCactus extends BlockFactory {
 
-    public static final String GROWTH = "growth";
+    public final StateKey<Integer> GROWTH = stateAllocator.alloc("growth", new IntegerState(0, 15));
 
     private final Texture top;
     private final Texture bottom;
@@ -36,7 +37,7 @@ public class BlockCactus extends BlockFactory {
 
     public BlockCactus(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(GROWTH, new IntegerState(0, 15));
+
         top = mapViewer.getTexture("cactus_top");
         bottom = mapViewer.getTexture("cactus_bottom");
         side = mapViewer.getTexture("cactus_side");

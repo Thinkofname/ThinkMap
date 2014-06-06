@@ -21,25 +21,22 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.BooleanState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 import uk.co.thinkofdeath.mapviewer.shared.world.World;
 
 public class BlockFence extends BlockFactory {
 
-    public static final String NORTH = "north";
-    public static final String SOUTH = "south";
-    public static final String EAST = "east";
-    public static final String WEST = "west";
+    public final StateKey<Boolean> NORTH = stateAllocator.alloc("north", new BooleanState());
+    public final StateKey<Boolean> SOUTH = stateAllocator.alloc("south", new BooleanState());
+    public final StateKey<Boolean> EAST = stateAllocator.alloc("east", new BooleanState());
+    public final StateKey<Boolean> WEST = stateAllocator.alloc("west", new BooleanState());
 
     public BlockFence(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(NORTH, new BooleanState());
-        addState(SOUTH, new BooleanState());
-        addState(EAST, new BooleanState());
-        addState(WEST, new BooleanState());
     }
 
     @Override

@@ -16,12 +16,11 @@
 
 package uk.co.thinkofdeath.mapviewer.shared.block.states;
 
-import uk.co.thinkofdeath.mapviewer.shared.block.BlockState;
-
-public class IntegerState implements BlockState {
+public class IntegerState implements BlockState<Integer> {
 
     private final int min;
     private final int max;
+    private final Integer[] states;
 
     /**
      * A creates a integer factory for the given range of values
@@ -34,14 +33,19 @@ public class IntegerState implements BlockState {
     public IntegerState(int min, int max) {
         this.min = min;
         this.max = max;
-    }
-
-    @Override
-    public Object[] getStates() {
-        Object[] states = new Object[max - min];
+        states = new Integer[max - min];
         for (int i = min; i <= max; i++) {
             states[i - min] = i;
         }
+    }
+
+    @Override
+    public Integer[] getStates() {
         return states;
+    }
+
+    @Override
+    public int indexOf(Integer value) {
+        return value - min;
     }
 }

@@ -22,9 +22,10 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelVertex;
@@ -32,20 +33,16 @@ import uk.co.thinkofdeath.mapviewer.shared.world.World;
 
 public class BlockDoor extends BlockFactory {
 
-    public static final String HALF = "half";
-    public static final String OPEN = "open";
-    public static final String FACING = "facing";
-    public static final String HINGE = "hinge";
+    public final StateKey<Half> HALF = stateAllocator.alloc("half", new EnumState<>(Half.class));
+    public final StateKey<Boolean> OPEN = stateAllocator.alloc("open", new BooleanState());
+    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class));
+    public final StateKey<Hinge> HINGE = stateAllocator.alloc("hinge", new EnumState<>(Hinge.class));
 
     private final Texture upper;
     private final Texture lower;
 
     public BlockDoor(IMapViewer iMapViewer, String texture) {
         super(iMapViewer);
-        addState(HALF, new EnumState(Half.class));
-        addState(OPEN, new BooleanState());
-        addState(FACING, new EnumState(Facing.class));
-        addState(HINGE, new EnumState(Hinge.class));
         upper = mapViewer.getTexture(texture + "_upper");
         lower = mapViewer.getTexture(texture + "_lower");
     }
@@ -169,7 +166,7 @@ public class BlockDoor extends BlockFactory {
         public int getLegacyData() {
             int val = getState(HALF) == Half.UPPER ? 0x8 : 0x0;
             if (getState(HALF) == Half.UPPER) {
-                if (!this.<Boolean>getState(OPEN)
+                if (!getState(OPEN)
                         || getState(FACING) != Facing.WEST) {
                     return -1;
                 }
@@ -178,8 +175,8 @@ public class BlockDoor extends BlockFactory {
                 if (getState(HINGE) == Hinge.RIGHT) {
                     return -1;
                 }
-                val |= this.<Boolean>getState(OPEN) ? 0x4 : 0x0;
-                val |= this.<Facing>getState(FACING).ordinal();
+                val |= getState(OPEN) ? 0x4 : 0x0;
+                val |= getState(FACING).ordinal();
             }
             return val;
         }

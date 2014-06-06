@@ -21,23 +21,23 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 
-public class BlockSlab extends BlockFactory {
+public class BlockSlab<T extends Enum<T> & BlockSlab.SlabType> extends BlockFactory {
 
-    public static final String VARIANT = "variant";
-    public static final String TOP = "top";
+    public final StateKey<T> VARIANT;
+    public final StateKey<Boolean> TOP = stateAllocator.alloc("top", new BooleanState());
 
     private final Texture[] textures;
 
-    public BlockSlab(IMapViewer iMapViewer, Class<? extends Enum> clazz) {
+    public BlockSlab(IMapViewer iMapViewer, Class<T> clazz) {
         super(iMapViewer);
-        addState(VARIANT, new EnumState(clazz));
-        addState(TOP, new BooleanState());
+        VARIANT = stateAllocator.alloc("variant", new EnumState<>(clazz));
 
         textures = new Texture[clazz.getEnumConstants().length * 6];
 
@@ -55,7 +55,7 @@ public class BlockSlab extends BlockFactory {
         return new BlockImpl(states);
     }
 
-    private static interface SlabType {
+    public static interface SlabType {
         int ordinal();
 
         String texture(Face face);
@@ -142,7 +142,7 @@ public class BlockSlab extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            int val = this.<SlabType>getState(VARIANT).ordinal();
+            int val = getState(VARIANT).ordinal();
             if (this.<Boolean>getState(TOP)) {
                 val |= 0x8;
             }

@@ -21,12 +21,13 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 
 public class BlockFurnace extends BlockFactory {
 
-    public static final String FACING = "facing";
+    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class));
 
     private final Texture furnaceTop;
     private final Texture furnaceSide;
@@ -34,7 +35,7 @@ public class BlockFurnace extends BlockFactory {
 
     public BlockFurnace(IMapViewer iMapViewer, boolean on) {
         super(iMapViewer);
-        addState(FACING, new EnumState(Facing.class));
+
         furnaceTop = iMapViewer.getTexture("furnace_top");
         furnaceSide = iMapViewer.getTexture("furnace_side");
         furnaceFront = iMapViewer.getTexture("furnace_front_" + (on ? "on" : "off"));
@@ -65,7 +66,7 @@ public class BlockFurnace extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            return this.<Facing>getState(FACING).ordinal() + 2;
+            return getState(FACING).ordinal() + 2;
         }
 
         @Override

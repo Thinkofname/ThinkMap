@@ -22,16 +22,17 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelVertex;
 
 public class BlockPistonHead extends BlockFactory {
 
-    public static final String TYPE = "type";
-    public static final String FACING = "facing";
+    public final StateKey<Type> TYPE = stateAllocator.alloc("type", new EnumState<>(Type.class));
+    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class));
 
     private final Texture pistonTopNormal;
     private final Texture pistonTopSticky;
@@ -39,8 +40,6 @@ public class BlockPistonHead extends BlockFactory {
 
     public BlockPistonHead(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(FACING, new EnumState(Facing.class));
-        addState(TYPE, new EnumState(Type.class));
 
         pistonTopNormal = iMapViewer.getTexture("piston_top_normal");
         pistonTopSticky = iMapViewer.getTexture("piston_top_sticky");
@@ -167,7 +166,7 @@ public class BlockPistonHead extends BlockFactory {
 
 
                 model.join(BlockPiston.createHeadPart(
-                        (this.<Type>getState(TYPE) == Type.DEFAULT ? pistonTopNormal :
+                        (getState(TYPE) == Type.DEFAULT ? pistonTopNormal :
                                 pistonTopSticky), pistonTopNormal, pistonSide
                 ), 0, 0, 12);
 
@@ -186,8 +185,8 @@ public class BlockPistonHead extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            int val = this.<Facing>getState(FACING).ordinal();
-            if (this.<Type>getState(TYPE) == Type.STICKY) {
+            int val = getState(FACING).ordinal();
+            if (getState(TYPE) == Type.STICKY) {
                 val |= 0x8;
             }
             return val;

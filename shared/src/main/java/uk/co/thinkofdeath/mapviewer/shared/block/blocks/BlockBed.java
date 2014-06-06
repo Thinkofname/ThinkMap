@@ -22,18 +22,19 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelVertex;
 
 public class BlockBed extends BlockFactory {
 
-    private static final String FACING = "facing";
-    private static final String OCCUPIED = "occupied";
-    private static final String PART = "part";
+    private final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class));
+    private final StateKey<Boolean> OCCUPIED = stateAllocator.alloc("occupied", new BooleanState());
+    private final StateKey<Part> PART = stateAllocator.alloc("part", new EnumState<>(Part.class));
 
     private final Texture bedHeadTop;
     private final Texture bedHeadEnd;
@@ -46,9 +47,6 @@ public class BlockBed extends BlockFactory {
 
     public BlockBed(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(FACING, new EnumState(Facing.class));
-        addState(OCCUPIED, new BooleanState());
-        addState(PART, new EnumState(Part.class));
 
         bedHeadTop = iMapViewer.getTexture("bed_head_top");
         bedHeadEnd = iMapViewer.getTexture("bed_head_end");
@@ -128,14 +126,14 @@ public class BlockBed extends BlockFactory {
                                 }
                             }));
                 }
-                model.rotateY(90 + this.<Facing>getState(FACING).ordinal() * 90);
+                model.rotateY(90 + getState(FACING).ordinal() * 90);
             }
             return model;
         }
 
         @Override
         public int getLegacyData() {
-            int val = this.<Facing>getState(FACING).ordinal();
+            int val = getState(FACING).ordinal();
             if (this.<Boolean>getState(OCCUPIED)) {
                 val |= 0x4;
             }

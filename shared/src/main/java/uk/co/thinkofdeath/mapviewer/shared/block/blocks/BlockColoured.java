@@ -21,19 +21,18 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 
 public class BlockColoured extends BlockFactory {
 
-    public static final String COLOUR = "color";
+    public final StateKey<Colour> COLOUR = stateAllocator.alloc("color", new EnumState<>(Colour.class));
 
     private final Texture[] textures;
 
     public BlockColoured(IMapViewer mapViewer, String prefix) {
         super(mapViewer);
-
-        addState(COLOUR, new EnumState(Colour.class));
 
         textures = new Texture[Colour.values().length];
         for (Colour colour : Colour.values()) {
@@ -90,12 +89,12 @@ public class BlockColoured extends BlockFactory {
 
         @Override
         public Texture getTexture(Face face) {
-            return textures[this.<Colour>getState(COLOUR).ordinal()];
+            return textures[getState(COLOUR).ordinal()];
         }
 
         @Override
         public int getLegacyData() {
-            return this.<Colour>getState(COLOUR).ordinal();
+            return getState(COLOUR).ordinal();
         }
     }
 }

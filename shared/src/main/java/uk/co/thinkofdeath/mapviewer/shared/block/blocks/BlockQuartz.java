@@ -21,12 +21,13 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 
 public class BlockQuartz extends BlockFactory {
 
-    public static final String VARIANT = "variant";
+    public final StateKey<Variant> VARIANT = stateAllocator.alloc("variant", new EnumState<>(Variant.class));
 
     private final Texture quartzTop;
     private final Texture quartzSide;
@@ -38,7 +39,7 @@ public class BlockQuartz extends BlockFactory {
 
     public BlockQuartz(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(VARIANT, new EnumState(Variant.class));
+
         quartzTop = iMapViewer.getTexture("quartz_block_top");
         quartzSide = iMapViewer.getTexture("quartz_block_side");
         quartzBottom = iMapViewer.getTexture("quartz_block_bottom");
@@ -72,7 +73,7 @@ public class BlockQuartz extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            return this.<Variant>getState(VARIANT).ordinal();
+            return getState(VARIANT).ordinal();
         }
 
         @Override

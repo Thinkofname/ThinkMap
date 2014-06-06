@@ -22,17 +22,18 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelVertex;
 
 public class BlockPiston extends BlockFactory {
 
-    public static final String EXTENDED = "extended";
-    public static final String FACING = "facing";
+    public final StateKey<Boolean> EXTENDED = stateAllocator.alloc("extended", new BooleanState());
+    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class));
 
     private final Texture pistonBottom;
     private final Texture pistonInner;
@@ -42,8 +43,6 @@ public class BlockPiston extends BlockFactory {
 
     public BlockPiston(IMapViewer iMapViewer, String type) {
         super(iMapViewer);
-        addState(EXTENDED, new BooleanState());
-        addState(FACING, new EnumState(Facing.class));
 
         pistonBottom = iMapViewer.getTexture("piston_bottom");
         pistonInner = iMapViewer.getTexture("piston_inner");
@@ -164,7 +163,7 @@ public class BlockPiston extends BlockFactory {
                             }
                         }));
 
-                if (!this.<Boolean>getState(EXTENDED)) {
+                if (!getState(EXTENDED)) {
                     model.join(createHeadPart(pistonTop, pistonTopNormal, pistonSide), 0, 0, 12);
                 }
 
@@ -183,8 +182,8 @@ public class BlockPiston extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            int val = this.<Facing>getState(FACING).ordinal();
-            if (this.<Boolean>getState(EXTENDED)) {
+            int val = getState(FACING).ordinal();
+            if (getState(EXTENDED)) {
                 val |= 0x8;
             }
             return val;

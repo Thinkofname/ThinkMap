@@ -21,24 +21,22 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 import uk.co.thinkofdeath.mapviewer.shared.world.World;
 
 public class BlockStairs extends BlockFactory {
 
-    public static final String TOP = "top";
-    public static final String FACING = "facing";
-    public static final String SHAPE = "shape";
+    public final StateKey<Boolean> TOP = stateAllocator.alloc("top", new BooleanState());
+    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class));
+    public final StateKey<Shape> SHAPE = stateAllocator.alloc("shape", new EnumState<>(Shape.class));
 
     public BlockStairs(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(TOP, new BooleanState());
-        addState(FACING, new EnumState(Facing.class));
-        addState(SHAPE, new EnumState(Shape.class));
     }
 
     @Override
@@ -99,8 +97,8 @@ public class BlockStairs extends BlockFactory {
             if (getState(SHAPE) != Shape.STRAIGHT) {
                 return -1;
             }
-            int val = this.<Facing>getState(FACING).ordinal();
-            if (this.<Boolean>getState(TOP)) {
+            int val = getState(FACING).ordinal();
+            if (getState(TOP)) {
                 val |= 0x4;
             }
             return val;

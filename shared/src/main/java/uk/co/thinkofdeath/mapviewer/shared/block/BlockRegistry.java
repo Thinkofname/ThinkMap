@@ -18,6 +18,7 @@ package uk.co.thinkofdeath.mapviewer.shared.block;
 
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.block.blocks.*;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.support.IntMap;
 
 import java.util.HashMap;
@@ -25,13 +26,10 @@ import java.util.Map;
 
 public class BlockRegistry {
 
-    private static final boolean BUILD_BLOCK_LIST = false;
-
     private IMapViewer mapViewer;
     private Map<String, Block> blockMap = new HashMap<>();
-    private Map<String, Map<StateMap, Block>> blockStateMap = new HashMap<>();
+    private Map<String, IntMap<Block>> blockStateMap = new HashMap<>();
     private IntMap<Block> legacyMap = IntMap.create();
-    private StringBuilder blockListBuilder = new StringBuilder();
 
     /**
      * Creates a block registry which contains all the known blocks
@@ -65,7 +63,7 @@ public class BlockRegistry {
      */
     public Block get(String name, StateMap state) {
         if (blockStateMap.containsKey(name)) {
-            return blockStateMap.get(name).get(state);
+            return blockStateMap.get(name).get(state.asInt());
         }
         return null;
     }
@@ -112,8 +110,7 @@ public class BlockRegistry {
     }
 
     /**
-     * Adds the block to this registry with a legacy id. Legacy ids are only valid for 'minecraft'
-     * blocks
+     * Adds the block to this registry with a legacy id. Legacy ids are only valid for 'minecraft' blocks
      *
      * @param plugin
      *         The plugin the block belongs to
@@ -134,16 +131,12 @@ public class BlockRegistry {
         for (Block block : blocks.getBlocks()) {
             block.plugin = plugin;
             block.name = name;
-            if (BUILD_BLOCK_LIST) {
-                block.htmlFormat(blockListBuilder);
-                blockListBuilder.append("\n");
-            }
             blockMap.put(block.toString(), block);
             // State lookup
             if (!blockStateMap.containsKey(key)) {
-                blockStateMap.put(key, new HashMap<StateMap, Block>());
+                blockStateMap.put(key, IntMap.<Block>create());
             }
-            blockStateMap.get(key).put(block.state, block);
+            blockStateMap.get(key).put(block.state.asInt(), block);
             // Legacy support
             if (legacyId != -1) {
                 int data = block.getLegacyData();
@@ -316,8 +309,7 @@ public class BlockRegistry {
 
         // TODO: double_stone_slab
 
-        register("minecraft", "stone_slab", new BlockBuilder(new BlockSlab(mapViewer,
-                BlockSlab.StoneSlab.class))
+        register("minecraft", "stone_slab", new BlockBuilder(new BlockSlab(mapViewer, BlockSlab.StoneSlab.class))
                 .solid(false)
                 .create(), 44);
         register("minecraft", "brick_block", new BlockBuilder(mapViewer)
@@ -573,8 +565,7 @@ public class BlockRegistry {
 
         // TODO: double_wooden_slab
 
-        register("minecraft", "wooden_slab", new BlockBuilder(new BlockSlab(mapViewer,
-                BlockSlab.WoodenSlab.class))
+        register("minecraft", "wooden_slab", new BlockBuilder(new BlockSlab(mapViewer, BlockSlab.WoodenSlab.class))
                 .solid(false)
                 .create(), 126);
 
@@ -718,8 +709,5 @@ public class BlockRegistry {
 
         System.out.println("Blocks registered: " + blockMap.size() + " (" + blockStateMap.size()
                 + " excluding states)");
-        if (BUILD_BLOCK_LIST) {
-            System.out.println(blockListBuilder.toString());
-        }
     }
 }

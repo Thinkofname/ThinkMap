@@ -21,20 +21,21 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.BooleanState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 
 public class BlockPressurePlate extends BlockFactory {
 
-    public static final String POWERED = "powered";
+    public final StateKey<Boolean> POWERED = stateAllocator.alloc("powered", new BooleanState());
 
     private final Texture texture;
 
     public BlockPressurePlate(IMapViewer iMapViewer, String texture) {
         super(iMapViewer);
-        addState(POWERED, new BooleanState());
+
         this.texture = mapViewer.getTexture(texture);
     }
 
@@ -51,7 +52,7 @@ public class BlockPressurePlate extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            return this.<Boolean>getState(POWERED) ? 1 : 0;
+            return getState(POWERED) ? 1 : 0;
         }
 
         @Override

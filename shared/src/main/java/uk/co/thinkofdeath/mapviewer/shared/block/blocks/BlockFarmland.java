@@ -21,14 +21,15 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.IntegerState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 
 public class BlockFarmland extends BlockFactory {
 
-    public static final String WETNESS = "wetness";
+    public final StateKey<Integer> WETNESS = stateAllocator.alloc("wetness", new IntegerState(0, 8));
 
     private final Texture dry;
     private final Texture wet;
@@ -36,7 +37,6 @@ public class BlockFarmland extends BlockFactory {
 
     public BlockFarmland(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(WETNESS, new IntegerState(0, 8));
 
         dry = mapViewer.getTexture("farmland_dry");
         wet = mapViewer.getTexture("farmland_wet");
@@ -64,7 +64,7 @@ public class BlockFarmland extends BlockFactory {
             if (model == null) {
                 model = new Model();
 
-                Texture top = this.<Integer>getState(WETNESS) == 0 ? dry : wet;
+                Texture top = getState(WETNESS) == 0 ? dry : wet;
 
                 model.addFace(new ModelFace(Face.TOP, top, 0, 0, 16, 16, 15));
                 model.addFace(new ModelFace(Face.LEFT, dirt, 0, 0, 16, 15, 16, true));

@@ -21,13 +21,14 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 
 public class BlockLog extends BlockFactory {
 
-    public static final String VARIANT = "variant";
-    public static final String AXIS = "axis";
+    public final StateKey<Variant> VARIANT = stateAllocator.alloc("variant", new EnumState<>(Variant.class));
+    public final StateKey<Axis> AXIS = stateAllocator.alloc("axis", new EnumState<>(Axis.class));
     private static final int BOTTOM = 0;
     private static final int TOP = 1;
 
@@ -35,8 +36,6 @@ public class BlockLog extends BlockFactory {
 
     public BlockLog(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(AXIS, new EnumState(Axis.class));
-        addState(VARIANT, new EnumState(Variant.class));
 
         textures = new Texture[Variant.values().length][];
         for (Variant variant : Variant.values()) {
@@ -100,7 +99,7 @@ public class BlockLog extends BlockFactory {
         @Override
         public Texture getTexture(Face face) {
             Variant variant = getState(VARIANT);
-            switch (this.<Axis>getState(AXIS)) {
+            switch (getState(AXIS)) {
                 case X:
                     if (face == Face.LEFT || face == Face.RIGHT) {
                         return textures[variant.ordinal()][TOP];
@@ -122,8 +121,8 @@ public class BlockLog extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            return this.<Variant>getState(VARIANT).ordinal()
-                    + this.<Axis>getState(AXIS).legacy();
+            return getState(VARIANT).ordinal()
+                    + getState(AXIS).legacy();
         }
     }
 }

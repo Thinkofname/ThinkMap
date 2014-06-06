@@ -16,31 +16,25 @@
 
 package uk.co.thinkofdeath.mapviewer.shared.block.states;
 
-public class EnumState<T extends Enum<T>> implements BlockState<T> {
+import uk.co.thinkofdeath.mapviewer.shared.bit.BitAllocator;
+import uk.co.thinkofdeath.mapviewer.shared.bit.BitKey;
 
-    private final T[] states;
-    private Class<T> e;
+import java.util.Map;
 
-    /**
-     * A creates an Enum factory for the given enum
-     */
-    public EnumState(Class<T> e) {
-        this.e = e;
-        states = e.getEnumConstants();
+public class StateAllocator {
+
+    private final BitAllocator bitAllocator = new BitAllocator();
+    private final Map<String, StateKey> states;
+
+    public StateAllocator(Map<String, StateKey> states) {
+        this.states = states;
     }
 
-    @Override
-    public T[] getStates() {
-        return states;
-    }
-
-    @Override
-    public int indexOf(T value) {
-        for (int i = 0; i < states.length; i++) {
-            if (states[i] == value) {
-                return i;
-            }
-        }
-        return -1;
+    public <T> StateKey<T> alloc(String name, BlockState<T> state) {
+        T[] values = state.getStates();
+        BitKey bitKey = bitAllocator.alloc(values.length);
+        StateKey<T> key = new StateKey<>(name, bitKey, state);
+        states.put(name, key);
+        return key;
     }
 }

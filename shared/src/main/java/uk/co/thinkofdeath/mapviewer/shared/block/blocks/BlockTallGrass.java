@@ -21,19 +21,19 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 
 public class BlockTallGrass extends BlockFactory {
 
-    public static final String TYPE = "type";
+    public final StateKey<Type> TYPE = stateAllocator.alloc("type", new EnumState<>(Type.class));
 
     private final Texture[] textures;
 
     public BlockTallGrass(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(TYPE, new EnumState(Type.class));
 
         textures = new Texture[Type.values().length];
         for (Type type : Type.values()) {
@@ -67,7 +67,7 @@ public class BlockTallGrass extends BlockFactory {
         public Model getModel() {
             if (model == null) {
                 int colour = 0xFFFFFF;
-                if (this.<Type>getState(TYPE) != Type.DEADBUSH) {
+                if (getState(TYPE) != Type.DEADBUSH) {
                     colour = 0xA7D389;
                 }
                 model = BlockModels.createCross(getTexture(Face.FRONT), colour);
@@ -77,12 +77,12 @@ public class BlockTallGrass extends BlockFactory {
 
         @Override
         public Texture getTexture(Face face) {
-            return textures[this.<Type>getState(TYPE).ordinal()];
+            return textures[getState(TYPE).ordinal()];
         }
 
         @Override
         public int getLegacyData() {
-            return this.<Type>getState(TYPE).ordinal();
+            return getState(TYPE).ordinal();
         }
     }
 }

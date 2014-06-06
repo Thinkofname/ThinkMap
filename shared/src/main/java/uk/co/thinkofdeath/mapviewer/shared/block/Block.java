@@ -18,6 +18,8 @@ package uk.co.thinkofdeath.mapviewer.shared.block;
 
 import uk.co.thinkofdeath.mapviewer.shared.Face;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 import uk.co.thinkofdeath.mapviewer.shared.world.World;
@@ -61,7 +63,7 @@ public class Block implements Model.RenderChecker {
      *         The state's name
      * @return The state's value or null
      */
-    public <T> T getState(String name) {
+    public <T> T getState(StateKey<T> name) {
         return state.get(name);
     }
 
@@ -139,15 +141,15 @@ public class Block implements Model.RenderChecker {
             builder.append(plugin);
             builder.append(':');
             builder.append(name);
-            if (state.size() > 0) {
+            if (factory.states.size() > 0) {
                 builder.append('[');
                 int i = 0;
-                for (Map.Entry<String, Object> s : state.entrySet()) {
+                for (Map.Entry<String, StateKey> s : factory.states.entrySet()) {
                     builder.append(s.getKey());
                     builder.append('=');
-                    builder.append(s.getValue());
+                    builder.append(getState(s.getValue()));
                     i++;
-                    if (i != state.size()) {
+                    if (i != factory.states.size()) {
                         builder.append(',');
                     }
                 }
@@ -199,38 +201,5 @@ public class Block implements Model.RenderChecker {
     @Override
     public boolean shouldRenderAgainst(Block other) {
         return !other.isSolid() && (allowSelf || other != this);
-    }
-
-    /**
-     * Used to produce the block list at http://thinkofdeath.co.uk/thinkmap/blocklist.html
-     *
-     * @param builder
-     *         The builder to output to
-     */
-    public void htmlFormat(StringBuilder builder) {
-        builder.append("<span class=\"bl-pl\">")
-                .append(plugin)
-                .append("</span>:")
-                .append("<span class=\"bl-na\">")
-                .append(name)
-                .append("</span>");
-        if (state.size() > 0) {
-            builder.append("<span class=\"bl-st\">[");
-            int i = 0;
-            for (Map.Entry<String, Object> s : state.entrySet()) {
-                builder.append("<span class=\"bl-sn\">")
-                        .append(s.getKey())
-                        .append("</span>")
-                        .append('=')
-                        .append("<span class=\"bl-sv\">")
-                        .append(s.getValue())
-                        .append("</span>");
-                i++;
-                if (i != state.size()) {
-                    builder.append(',');
-                }
-            }
-            builder.append("]</span>");
-        }
     }
 }

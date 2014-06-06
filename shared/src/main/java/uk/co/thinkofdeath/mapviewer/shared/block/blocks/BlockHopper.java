@@ -21,16 +21,17 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 
 public class BlockHopper extends BlockFactory {
 
-    public static final String FACING = "facing";
-    public static final String TRIGGERED = "triggered";
+    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class));
+    public final StateKey<Boolean> TRIGGERED = stateAllocator.alloc("triggered", new BooleanState());
 
     private final Texture hopperTop;
     private final Texture hopperInside;
@@ -38,8 +39,6 @@ public class BlockHopper extends BlockFactory {
 
     public BlockHopper(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(FACING, new EnumState(Facing.class));
-        addState(TRIGGERED, new BooleanState());
 
         hopperTop = iMapViewer.getTexture("hopper_top");
         hopperInside = iMapViewer.getTexture("hopper_inside");
@@ -83,8 +82,8 @@ public class BlockHopper extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            int val = this.<Facing>getState(FACING).ordinal();
-            if (this.<Boolean>getState(TRIGGERED)) {
+            int val = getState(FACING).ordinal();
+            if (getState(TRIGGERED)) {
                 val |= 0x8;
             }
             return val;

@@ -20,19 +20,20 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.IntegerState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 
 public class BlockReeds extends BlockFactory {
 
-    public static final String GROWTH = "growth";
+    public final StateKey<Integer> GROWTH = stateAllocator.alloc("growth", new IntegerState(0, 15));
 
     private final Texture texture;
 
     public BlockReeds(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(GROWTH, new IntegerState(0, 15));
+
         texture = mapViewer.getTexture("reeds");
     }
 

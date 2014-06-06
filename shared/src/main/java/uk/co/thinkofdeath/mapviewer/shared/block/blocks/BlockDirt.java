@@ -21,12 +21,13 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 
 public class BlockDirt extends BlockFactory {
 
-    public static final String VARIANT = "variant";
+    public final StateKey<Variant> VARIANT = stateAllocator.alloc("variant", new EnumState<>(Variant.class));
 
     private final Texture dirt;
     private final Texture dirtPodzolTop;
@@ -34,7 +35,7 @@ public class BlockDirt extends BlockFactory {
 
     public BlockDirt(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(VARIANT, new EnumState(Variant.class));
+
         dirt = iMapViewer.getTexture("dirt");
         dirtPodzolTop = iMapViewer.getTexture("dirt_podzol_top");
         dirtPodzolSide = iMapViewer.getTexture("dirt_podzol_side");
@@ -64,7 +65,7 @@ public class BlockDirt extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            return this.<Variant>getState(VARIANT).ordinal();
+            return getState(VARIANT).ordinal();
         }
 
         @Override

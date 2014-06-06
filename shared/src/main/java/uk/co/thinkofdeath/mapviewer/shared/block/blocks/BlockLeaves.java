@@ -21,23 +21,21 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 
 public class BlockLeaves extends BlockFactory {
 
-    public static final String VARIANT = "variant";
-    public static final String CHECK_DECAY = "check_decay";
-    public static final String DECAYABLE = "decayable";
+    public final StateKey<Variant> VARIANT = stateAllocator.alloc("variant", new EnumState<>(Variant.class));
+    public final StateKey<Boolean> CHECK_DECAY = stateAllocator.alloc("check_decay", new BooleanState());
+    public final StateKey<Boolean> DECAYABLE = stateAllocator.alloc("decayable", new BooleanState());
 
     private final Texture[] textures;
 
     public BlockLeaves(IMapViewer iMapViewer) {
         super(iMapViewer);
-        addState(CHECK_DECAY, new BooleanState());
-        addState(DECAYABLE, new BooleanState());
-        addState(VARIANT, new EnumState(Variant.class));
 
         textures = new Texture[Variant.values().length];
         for (Variant variant : Variant.values()) {
@@ -70,16 +68,16 @@ public class BlockLeaves extends BlockFactory {
 
         @Override
         public Texture getTexture(Face face) {
-            return textures[this.<Variant>getState(VARIANT).ordinal()];
+            return textures[getState(VARIANT).ordinal()];
         }
 
         @Override
         public int getLegacyData() {
-            int val = this.<Variant>getState(VARIANT).ordinal();
-            if (!this.<Boolean>getState(DECAYABLE)) {
+            int val = getState(VARIANT).ordinal();
+            if (!getState(DECAYABLE)) {
                 val |= 0x4;
             }
-            if (this.<Boolean>getState(CHECK_DECAY)) {
+            if (getState(CHECK_DECAY)) {
                 val |= 0x8;
             }
             return val;

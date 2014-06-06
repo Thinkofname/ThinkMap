@@ -21,23 +21,22 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.EnumState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 
 public class BlockButton extends BlockFactory {
 
-    public static final String PRESSED = "pressed";
-    public static final String FACING = "facing";
+    public final StateKey<Boolean> PRESSED = stateAllocator.alloc("pressed", new BooleanState());
+    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class));
 
     private final Texture texture;
 
     public BlockButton(IMapViewer iMapViewer, String texture) {
         super(iMapViewer);
-        addState(PRESSED, new BooleanState());
-        addState(FACING, new EnumState(Facing.class));
 
         this.texture = mapViewer.getTexture(texture);
     }
@@ -73,7 +72,7 @@ public class BlockButton extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            int val = 1 + this.<Facing>getState(FACING).ordinal();
+            int val = 1 + getState(FACING).ordinal();
             if (getState(PRESSED)) {
                 val |= 0x8;
             }
@@ -85,7 +84,7 @@ public class BlockButton extends BlockFactory {
             if (model == null) {
                 model = new Model();
 
-                float offset = this.<Boolean>getState(PRESSED) ? 1 : 2;
+                float offset = getState(PRESSED) ? 1 : 2;
 
                 model.addFace(new ModelFace(Face.FRONT, texture, 5, 6, 6, 4, offset));
                 model.addFace(new ModelFace(Face.LEFT, texture, 0, 6, offset, 4, 11));

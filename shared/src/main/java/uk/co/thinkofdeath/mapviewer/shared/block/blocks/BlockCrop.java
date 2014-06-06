@@ -21,21 +21,21 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
-import uk.co.thinkofdeath.mapviewer.shared.block.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.IntegerState;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 
 public class BlockCrop extends BlockFactory {
 
-    public static final String STAGE = "stage";
+    public final StateKey<Integer> STAGE = stateAllocator.alloc("stage", new IntegerState(0, 7));
 
     private final Texture[] textures;
 
 
     public BlockCrop(IMapViewer iMapViewer, String type, boolean fullStages) {
         super(iMapViewer);
-        addState(STAGE, new IntegerState(0, 7));
 
         textures = new Texture[8];
         for (int i = 0; i < 8; i++) {

@@ -18,6 +18,9 @@ package uk.co.thinkofdeath.mapviewer.shared.block;
 
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateAllocator;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateKey;
+import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
 import uk.co.thinkofdeath.mapviewer.shared.model.Model;
 
 import java.util.ArrayList;
@@ -27,7 +30,8 @@ import java.util.Map;
 
 public class BlockFactory {
 
-    private Map<String, BlockState> states = new HashMap<>();
+    Map<String, StateKey> states = new HashMap<>();
+    protected StateAllocator stateAllocator = new StateAllocator(states);
     boolean renderable = true;
     boolean solid = true;
     boolean collidable = true;
@@ -44,10 +48,6 @@ public class BlockFactory {
         this.mapViewer = mapViewer;
     }
 
-    protected void addState(String name, BlockState state) {
-        states.put(name, state);
-    }
-
     /**
      * Returns all possible versions of the blocks from this factory
      *
@@ -57,12 +57,12 @@ public class BlockFactory {
         if (states.size() > 0) {
             List<StateMap> stateList = new ArrayList<>();
             stateList.add(new StateMap());
-            for (Map.Entry<String, BlockState> state : states.entrySet()) {
+            for (Map.Entry<String, StateKey> state : states.entrySet()) {
                 List<StateMap> newStateList = new ArrayList<>();
-                for (Object blockState : state.getValue().getStates()) {
+                for (Object blockState : state.getValue().getState().getStates()) {
                     for (StateMap stateMap : stateList) {
                         StateMap newStateMap = new StateMap(stateMap);
-                        newStateMap.set(state.getKey(), blockState);
+                        newStateMap.set(state.getValue(), blockState);
                         newStateList.add(newStateMap);
                     }
                 }
