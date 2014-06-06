@@ -320,8 +320,7 @@ public class BlockRegistry {
                 .create(), 42);
 
         // TODO: double_stone_slab
-
-        register("minecraft", "stone_slab", new BlockBuilder(new BlockSlab(mapViewer, BlockSlab.StoneSlab.class))
+        register("minecraft", "stone_slab", new BlockBuilder(new BlockSlab<>(mapViewer, BlockSlab.StoneSlab.class))
                 .solid(false)
                 .create(), 44);
         register("minecraft", "brick_block", new BlockBuilder(mapViewer)
@@ -577,7 +576,7 @@ public class BlockRegistry {
 
         // TODO: double_wooden_slab
 
-        register("minecraft", "wooden_slab", new BlockBuilder(new BlockSlab(mapViewer, BlockSlab.WoodenSlab.class))
+        register("minecraft", "wooden_slab", new BlockBuilder(new BlockSlab<>(mapViewer, BlockSlab.WoodenSlab.class))
                 .solid(false)
                 .create(), 126);
 
