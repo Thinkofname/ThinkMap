@@ -27,6 +27,8 @@ import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.TextureMap;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockRegistry;
+import uk.co.thinkofdeath.mapviewer.shared.building.DynamicBuffer;
+import uk.co.thinkofdeath.mapviewer.shared.support.TUint8Array;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkBuildMessage;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkLoadMessage;
 import uk.co.thinkofdeath.mapviewer.shared.worker.ChunkUnloadMessage;
@@ -91,6 +93,10 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
                 });
                 getBlockRegistry().init();
                 postMessage(WorkerMessage.create("null", null, false));
+                break;
+            case "pool:free":
+                TUint8Array data = (TUint8Array) message.getMessage();
+                DynamicBuffer.POOL.free(data);
                 break;
         }
     }

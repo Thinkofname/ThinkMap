@@ -230,7 +230,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
      * @param message
      *         The message to process
      */
-    public void handleWorkerMessage(WorkerMessage message) {
+    public void handleWorkerMessage(WorkerMessage message, int sender) {
         switch (message.getType()) {
             case "chunk:loaded":
                 ChunkLoadedMessage chunkLoadedMessage = (ChunkLoadedMessage) message.getMessage();
@@ -245,9 +245,15 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
                     if (chunk.checkAndSetBuildNumber(chunkBuildReply.getBuildNumber(),
                             chunkBuildReply.getSectionNumber())) {
                         chunk.fillBuffer(
-                                chunkBuildReply.getSectionNumber(), chunkBuildReply.getData());
-                        chunk.setTransparentModels(chunkBuildReply.getSectionNumber(),
-                                chunkBuildReply.getTrans(), chunkBuildReply.getTransData());
+                                chunkBuildReply.getSectionNumber(),
+                                chunkBuildReply.getData(),
+                                sender);
+
+                        chunk.setTransparentModels(
+                                chunkBuildReply.getSectionNumber(),
+                                chunkBuildReply.getTrans(),
+                                chunkBuildReply.getTransData(),
+                                sender);
                     }
                 }
                 break;

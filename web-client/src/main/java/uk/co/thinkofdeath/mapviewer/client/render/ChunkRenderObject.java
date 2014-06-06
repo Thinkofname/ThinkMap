@@ -28,6 +28,7 @@ public class ChunkRenderObject {
     WebGLBuffer buffer;
     TUint8Array data;
     int triangleCount;
+    int sender;
 
     /**
      * Creates a new chunk render object used by the render to render a chunk section
@@ -50,9 +51,11 @@ public class ChunkRenderObject {
      *
      * @param data
      *         The new data to use
+     * @param sender
      */
-    public void load(TUint8Array data) {
+    public void load(TUint8Array data, int sender) {
         this.data = data;
         triangleCount = data.length() / 26;
+        this.sender = sender;
     }
 }

@@ -79,8 +79,13 @@ public class ClientChunk extends Chunk {
         return true;
     }
 
-    public void setTransparentModels(int i, JsArray<PositionedModel> trans, TUint8Array transData) {
-
+    public void setTransparentModels(int i, JsArray<PositionedModel> trans, TUint8Array transData,
+                                     int sender) {
+        if (sortableRenderObjects[i] != null) {
+            TUint8Array data = sortableRenderObjects[i].getData();
+            world.mapViewer.getWorkerPool().sendMessage(sender, "pool:free", data,
+                    new Object[]{data.getBuffer()}, false);
+        }
         if (sortableRenderObjects[i] != null && trans.length() == 0) {
             world.mapViewer.getRenderer().removeSortable(sortableRenderObjects[i]);
             return;
@@ -107,7 +112,7 @@ public class ClientChunk extends Chunk {
      * @param data
      *         The data
      */
-    public void fillBuffer(int sectionNumber, TUint8Array data) {
+    public void fillBuffer(int sectionNumber, TUint8Array data, int sender) {
         if (data.length() == 0) {
             if (renderObjects[sectionNumber] != null) {
                 world.mapViewer.getRenderer().removeChunkObject(renderObjects[sectionNumber]);
@@ -117,7 +122,7 @@ public class ClientChunk extends Chunk {
                 renderObjects[sectionNumber] = new ChunkRenderObject(getX(), sectionNumber, getZ());
                 world.mapViewer.getRenderer().postChunkObject(renderObjects[sectionNumber]);
             }
-            renderObjects[sectionNumber].load(data);
+            renderObjects[sectionNumber].load(data, sender);
         }
     }
 

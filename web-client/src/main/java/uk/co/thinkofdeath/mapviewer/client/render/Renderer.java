@@ -166,6 +166,9 @@ public class Renderer implements ResizeHandler, Runnable {
                 }
                 gl.bindBuffer(ARRAY_BUFFER, renderObject.buffer);
                 gl.bufferData(ARRAY_BUFFER, (ArrayBufferView) renderObject.data, STATIC_DRAW);
+
+                mapViewer.getWorkerPool().sendMessage(renderObject.sender, "pool:free", renderObject.data,
+                        new Object[]{renderObject.data.getBuffer()}, false);
                 renderObject.data = null;
             }
             chunkShader.setOffset(renderObject.x, renderObject.z);

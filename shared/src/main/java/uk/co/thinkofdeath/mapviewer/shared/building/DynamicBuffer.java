@@ -20,11 +20,11 @@ import elemental.html.ArrayBuffer;
 import uk.co.thinkofdeath.mapviewer.shared.support.DataReader;
 import uk.co.thinkofdeath.mapviewer.shared.support.TUint8Array;
 
-// TODO: Think about readding the pool
 public class DynamicBuffer {
 
     private static final boolean IS_LITTLE_ENDIAN =
             (DataReader.create(createEndianTestBuffer()).getInt8(0) == 1);
+    public static final BufferPool POOL = new BufferPool();
 
     private TUint8Array buffer;
     private DataReader dataReader;
@@ -39,7 +39,7 @@ public class DynamicBuffer {
      */
     public DynamicBuffer(int size) {
         if (size < 16) size = 16;
-        buffer = TUint8Array.create(size);
+        buffer = POOL.alloc(size);
         dataReader = DataReader.create(buffer.getBuffer());
     }
 
@@ -86,9 +86,7 @@ public class DynamicBuffer {
 
     // Doubles the size of the buffer
     private void resize() {
-        TUint8Array newBuffer = TUint8Array.create(buffer.length() * 2);
-        newBuffer.set(buffer);
-        buffer = newBuffer;
+        buffer = POOL.resize(buffer, buffer.length() * 2);
         dataReader = DataReader.create(buffer.getBuffer());
     }
 

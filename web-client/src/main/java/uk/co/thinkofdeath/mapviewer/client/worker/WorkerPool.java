@@ -45,7 +45,7 @@ public class WorkerPool {
         for (int i = 0; i < limit; i++) {
             workers.add(new PooledWorker(Browser.getWindow().newWorker(
                     "./mapviewerworker/mapviewerworker.worker.js"
-            )));
+            ), i));
         }
     }
 
@@ -111,6 +111,14 @@ public class WorkerPool {
         }
     }
 
+    public void sendMessage(int target, String type, Object msg, Object[] transferables, boolean reply) {
+        PooledWorker worker = workers.get(target);
+        if (reply) {
+            worker.noOfTasks++;
+        }
+        postMessage(worker.worker, WorkerMessage.create(type, msg, reply), transferables);
+    }
+
     /**
      * Dump the worker pool's state into the console. Used for debugging
      */
@@ -134,8 +142,10 @@ public class WorkerPool {
 
         private final Worker worker;
         private int noOfTasks = 0;
+        private final int id;
 
-        public PooledWorker(Worker worker) {
+        public PooledWorker(Worker worker, int id) {
+            this.id = id;
             this.worker = worker;
             worker.setOnmessage(this);
         }
@@ -144,7 +154,7 @@ public class WorkerPool {
         public void handleEvent(Event evt) {
             noOfTasks--;
             WorkerMessage message = (WorkerMessage) ((MessageEvent) evt).getData();
-            mapViewer.handleWorkerMessage(message);
+            mapViewer.handleWorkerMessage(message, id);
         }
     }
 }
