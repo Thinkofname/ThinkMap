@@ -142,7 +142,7 @@ public class BlockFire extends BlockFactory {
             map.set(SOUTH, world.getBlock(x, y, z + 1).isSolid());
             map.set(EAST, world.getBlock(x + 1, y, z).isSolid());
             map.set(WEST, world.getBlock(x - 1, y, z).isSolid());
-            return mapViewer.getBlockRegistry().get(plugin + ":" + name, map);
+            return mapViewer.getBlockRegistry().get(fullName, map);
         }
 
         @Override

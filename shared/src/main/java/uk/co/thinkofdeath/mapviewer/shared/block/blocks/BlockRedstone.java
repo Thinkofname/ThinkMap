@@ -149,7 +149,7 @@ public class BlockRedstone extends BlockFactory {
             map.set(EAST, checkRedstone(world, x + 1, y, z, blocked));
             map.set(WEST, checkRedstone(world, x - 1, y, z, blocked));
 
-            return mapViewer.getBlockRegistry().get(plugin + ":" + name, map);
+            return mapViewer.getBlockRegistry().get(fullName, map);
         }
 
         private Side checkRedstone(World world, int x, int y, int z, boolean blocked) {

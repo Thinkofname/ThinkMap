@@ -119,7 +119,7 @@ public class BlockFence extends BlockFactory {
             map.set(EAST, checkFence(world, x + 1, y, z));
             map.set(WEST, checkFence(world, x - 1, y, z));
 
-            return mapViewer.getBlockRegistry().get(plugin + ":" + name, map);
+            return mapViewer.getBlockRegistry().get(fullName, map);
         }
 
         public boolean checkFence(World world, int x, int y, int z) {

@@ -159,7 +159,7 @@ public class BlockDoor extends BlockFactory {
                     stateMap.set(HINGE, other.getState(HINGE));
                 }
             }
-            return world.getMapViewer().getBlockRegistry().get(plugin + ":" + name, stateMap);
+            return world.getMapViewer().getBlockRegistry().get(fullName, stateMap);
         }
 
         @Override

@@ -131,6 +131,7 @@ public class BlockRegistry {
         for (Block block : blocks.getBlocks()) {
             block.plugin = plugin;
             block.name = name;
+            block.fullName = key;
             blockMap.put(block.toString(), block);
             // State lookup
             if (!blockStateMap.containsKey(key)) {

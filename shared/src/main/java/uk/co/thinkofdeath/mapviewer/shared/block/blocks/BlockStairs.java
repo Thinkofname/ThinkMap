@@ -219,7 +219,7 @@ public class BlockStairs extends BlockFactory {
                 }
             }
 
-            return world.getMapViewer().getBlockRegistry().get(plugin + ":" + name, stateMap);
+            return world.getMapViewer().getBlockRegistry().get(fullName, stateMap);
         }
 
         private boolean isMatching(Block block) {

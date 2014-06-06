@@ -32,6 +32,7 @@ public class Block implements Model.RenderChecker {
     protected final StateMap state;
     protected String plugin;
     protected String name;
+    protected String fullName;
     // The following should be mirrored in BlockFactory, BlockBuilder
     // and the constructor
     private boolean renderable;
