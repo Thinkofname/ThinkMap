@@ -90,8 +90,8 @@ public class BlockRepeater extends BlockFactory {
                 model.addFace(new ModelFace(Face.FRONT, repeater, 0, 0, 16, 2, 16, true));
                 model.addFace(new ModelFace(Face.BACK, repeater, 0, 0, 16, 2, 0, true));
 
-                model.join(BlockModels.createTorch(torch), 0, 0, -5);
-                model.join(BlockModels.createTorch(torch), 0, 0, -1 + 2 * delay);
+                model.join(BlockModels.createTorch(torch), 0, -3, -5);
+                model.join(BlockModels.createTorch(torch), 0, -3, -1 + 2 * delay);
                 model.rotateY(facing.ordinal() * 90);
             }
             return model;
