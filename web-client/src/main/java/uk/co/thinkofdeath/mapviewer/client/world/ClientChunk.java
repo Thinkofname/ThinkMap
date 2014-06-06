@@ -154,27 +154,24 @@ public class ClientChunk extends Chunk {
         this.@uk.co.thinkofdeath.mapviewer.shared.world.Chunk::nextId = chunkLoadedMessage.nextId;
 
         var idmap = this.@uk.co.thinkofdeath.mapviewer.shared.world.Chunk::idBlockMap;
+        var blockMap = this.@uk.co.thinkofdeath.mapviewer.shared.world.Chunk::blockIdMap;
         for (var key in chunkLoadedMessage.idmap) {
             if (chunkLoadedMessage.idmap.hasOwnProperty(key)) {
                 var k = parseInt(key);
-                var block = this.@uk.co.thinkofdeath.mapviewer.client.world.ClientChunk::_js_toBlock(Ljava/lang/String;)(chunkLoadedMessage.idmap[k]);
+                var val = chunkLoadedMessage.idmap[k];
+                var name = val[0];
+                var raw = val[1]
+                var block = this.@uk.co.thinkofdeath.mapviewer.client.world.ClientChunk::_js_toBlock(Ljava/lang/String;I)(name, raw);
                 idmap[k] = block;
                 idmap.$keys.push(k);
-            }
-        }
-
-        var blockMap = this.@uk.co.thinkofdeath.mapviewer.shared.world.Chunk::blockIdMap;
-        for (var key in chunkLoadedMessage.blockmap) {
-            if (chunkLoadedMessage.blockmap.hasOwnProperty(key)) {
-                var block = this.@uk.co.thinkofdeath.mapviewer.client.world.ClientChunk::_js_toBlock(Ljava/lang/String;)(key);
-                blockMap.@java.util.Map::put(Ljava/lang/Object;Ljava/lang/Object;)(block, blockMap[k]);
+                blockMap.@java.util.Map::put(Ljava/lang/Object;Ljava/lang/Object;)(block, k);
             }
         }
     }-*/;
 
     // Short-cut method for JSNI code
-    private Block _js_toBlock(String name) {
-        return world.getMapViewer().getBlockRegistry().get(name);
+    private Block _js_toBlock(String name, int rawState) {
+        return world.getMapViewer().getBlockRegistry().get(name, rawState);
     }
 
     private native ChunkSection extractSection(ChunkLoadedMessage message, int i)/*-{

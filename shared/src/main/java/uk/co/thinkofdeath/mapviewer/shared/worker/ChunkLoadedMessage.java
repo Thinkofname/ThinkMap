@@ -91,18 +91,9 @@ public class ChunkLoadedMessage extends JavaScriptObject {
      *         The block
      */
     public final native void addIdBlockMapping(int key, Block value)/*-{
-        this.idmap[key] = value.@uk.co.thinkofdeath.mapviewer.shared.block.Block::toString()();
-    }-*/;
-
-    /**
-     * Adds a block -> id mapping to the message
-     *
-     * @param key
-     *         The block
-     * @param value
-     *         The id
-     */
-    public final native void addBlockIdMapping(Block key, int value)/*-{
-        this.blockmap[key.@uk.co.thinkofdeath.mapviewer.shared.block.Block::toString()()] = value;
+        this.idmap[key] = [
+            value.@uk.co.thinkofdeath.mapviewer.shared.block.Block::fullName,
+            value.@uk.co.thinkofdeath.mapviewer.shared.block.Block::state.@uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap::asInt()()
+        ];
     }-*/;
 }

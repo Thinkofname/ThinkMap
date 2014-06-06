@@ -69,6 +69,17 @@ public class BlockRegistry {
     }
 
     /**
+     @deprecated Internal use only
+     */
+    @Deprecated
+    public Block get(String name, int raw) {
+        if (blockStateMap.containsKey(name)) {
+            return blockStateMap.get(name).get(raw);
+        }
+        return null;
+    }
+
+    /**
      * Returns a block by its name and plugin.
      *
      * @param plugin
