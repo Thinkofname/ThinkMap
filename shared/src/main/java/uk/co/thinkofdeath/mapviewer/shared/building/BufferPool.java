@@ -23,7 +23,14 @@ import java.util.ArrayList;
 
 public class BufferPool {
 
+    private static final int PRE_ALLOC = 8;
     private ArrayList<ArrayBuffer> freeBuffers = new ArrayList<>();
+
+    public BufferPool() {
+        for (int i = 0; i < PRE_ALLOC; i++) {
+            freeBuffers.add(TUint8Array.create(80000).getBuffer());
+        }
+    }
 
     public TUint8Array alloc(int size) {
         for (int i = 0, freeBuffersSize = freeBuffers.size(); i < freeBuffersSize; i++) {
