@@ -43,4 +43,6 @@ public interface IMapViewer {
      * @return The world
      */
     public World getWorld();
+
+    public ClientSettings getSettings();
 }

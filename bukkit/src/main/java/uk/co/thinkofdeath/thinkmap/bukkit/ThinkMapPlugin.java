@@ -104,6 +104,10 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
             }
         }
 
+        // Client settings
+
+        config.addDefault("client.hide-ores", false);
+
         saveConfig();
 
 

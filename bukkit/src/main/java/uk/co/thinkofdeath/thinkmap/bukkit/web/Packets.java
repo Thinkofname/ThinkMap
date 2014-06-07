@@ -17,10 +17,25 @@
 package uk.co.thinkofdeath.thinkmap.bukkit.web;
 
 import com.google.common.base.Charsets;
+import com.google.gson.Gson;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import org.bukkit.configuration.ConfigurationSection;
+
+import java.util.Map;
 
 public class Packets {
+
+    private static final Gson gson = new Gson();
+
+    public static ByteBuf writeClientSettings(ConfigurationSection section) {
+        Map<String, Object> values = section.getValues(true);
+        byte[] json = gson.toJson(values).getBytes(Charsets.UTF_8);
+        ByteBuf buf = Unpooled.buffer(1 + json.length);
+        buf.writeByte(0);
+        buf.writeBytes(json);
+        return buf;
+    }
 
     public static ByteBuf writeSpawnPosition(int x, int y, int z) {
         ByteBuf buf = Unpooled.buffer(1 + 4 + 1 + 4);
@@ -31,18 +46,18 @@ public class Packets {
         return buf;
     }
 
-    public static ByteBuf writeTimeUpdate(int time) {
-        ByteBuf buf = Unpooled.buffer(5);
-        buf.writeByte(0);
-        buf.writeInt(time);
-        return buf;
-    }
-
     public static ByteBuf writeChatMessage(String msg) {
         byte[] msgBytes = msg.getBytes(Charsets.UTF_8);
         ByteBuf buf = Unpooled.buffer(1 + msgBytes.length);
         buf.writeByte(2);
         buf.writeBytes(msgBytes);
+        return buf;
+    }
+
+    public static ByteBuf writeTimeUpdate(int time) {
+        ByteBuf buf = Unpooled.buffer(5);
+        buf.writeByte(3);
+        buf.writeInt(time);
         return buf;
     }
 }

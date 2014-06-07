@@ -22,6 +22,8 @@ import elemental.events.EventListener;
 import elemental.events.MessageEvent;
 import elemental.html.ArrayBuffer;
 import elemental.html.WebSocket;
+import elemental.js.util.Json;
+import uk.co.thinkofdeath.mapviewer.shared.ClientSettings;
 import uk.co.thinkofdeath.mapviewer.shared.support.DataReader;
 
 /**
@@ -56,7 +58,7 @@ public class Connection implements EventListener {
             public void handleEvent(Event evt) {
                 System.out.println("Connected to server");
                 send(Browser.getWindow().newUint8Array(1).getBuffer());
-                callback.run();
+                if (callback != null) callback.run();
             }
         });
         webSocket.setOnmessage(this);
@@ -86,21 +88,28 @@ public class Connection implements EventListener {
     @Override
     public void handleEvent(Event evt) {
         MessageEvent event = (MessageEvent) evt;
-        DataReader reader = DataReader.create((ArrayBuffer) ((MessageEvent) evt).getData());
+        DataReader reader = DataReader.create((ArrayBuffer) event.getData());
 
         switch (reader.getUint8(0)) {
-            case 0: // Time update
-                handler.onTimeUpdate(reader.getInt32(1));
+            case 0: // Client settings
+                StringBuilder builder = new StringBuilder();
+                for (int i = 1; i < reader.getLength(); i++) {
+                    builder.append((char) reader.getUint8(i));
+                }
+                handler.onSettings(Json.<ClientSettings>parse(builder.toString()));
                 break;
             case 1: // Set position
                 handler.onSetPosition(reader.getInt32(1), reader.getUint8(5), reader.getInt32(6));
                 break;
             case 2: // Message
-                StringBuilder builder = new StringBuilder();
+                builder = new StringBuilder();
                 for (int i = 1; i < reader.getLength(); i++) {
                     builder.append((char) reader.getUint8(i));
                 }
                 handler.onMessage(builder.toString());
+                break;
+            case 3: // Time update
+                handler.onTimeUpdate(reader.getInt32(1));
                 break;
         }
     }

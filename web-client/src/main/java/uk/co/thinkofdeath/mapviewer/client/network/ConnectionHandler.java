@@ -16,6 +16,8 @@
 
 package uk.co.thinkofdeath.mapviewer.client.network;
 
+import uk.co.thinkofdeath.mapviewer.shared.ClientSettings;
+
 public interface ConnectionHandler {
 
     /**
@@ -45,4 +47,11 @@ public interface ConnectionHandler {
      *         The message
      */
     public void onMessage(String message);
+
+    /**
+     * Called when the server gives the client the initial settings
+     *
+     * @param settings
+     */
+    public void onSettings(ClientSettings settings);
 }

@@ -34,6 +34,7 @@ import uk.co.thinkofdeath.mapviewer.client.render.Renderer;
 import uk.co.thinkofdeath.mapviewer.client.worker.WorkerPool;
 import uk.co.thinkofdeath.mapviewer.client.world.ClientChunk;
 import uk.co.thinkofdeath.mapviewer.client.world.ClientWorld;
+import uk.co.thinkofdeath.mapviewer.shared.ClientSettings;
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.TextureMap;
@@ -58,6 +59,8 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     private final WorkerPool workerPool = new WorkerPool(this, NUMBER_OF_WORKERS);
     private final InputManager inputManager = new InputManager(this);
     private final FeatureHandler featureHandler = new FeatureHandler();
+
+    private ClientSettings clientSettings;
 
     private HashMap<String, Texture> textures = new HashMap<>();
     private XMLHttpRequest xhr;
@@ -110,22 +113,9 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
                 texture.setCrossOrigin("anonymous");
                 texture.setSrc("http://" + getConfigAdddress() + "/resources/blocks_" + i + ".png");
             }
-            getBlockRegistry().init();
             inputManager.hook();
 
-            connection = new Connection(
-                    getConfigAdddress(),
-                    this, new Runnable() {
-                @Override
-                public void run() {
-                    world = new ClientWorld(MapViewer.this);
-                    renderer = new Renderer(MapViewer.this, (CanvasElement) Browser.getDocument().getElementById("main"));
-                    for (TextureLoadHandler handler : earlyTextures) {
-                        handler.load();
-                    }
-                }
-            }
-            );
+            connection = new Connection(getConfigAdddress(), this, null);
         }
     }
 
@@ -183,6 +173,35 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     }
 
     @Override
+    public void onSettings(ClientSettings settings) {
+        clientSettings = settings;
+        // Sync to workers
+        getWorkerPool().sendMessage("settings", settings, new Object[0], true);
+        handleSettings();
+
+        getBlockRegistry().init();
+        world = new ClientWorld(MapViewer.this);
+        renderer = new Renderer(MapViewer.this, (CanvasElement) Browser.getDocument().getElementById("main"));
+        for (TextureLoadHandler handler : earlyTextures) {
+            handler.load();
+        }
+    }
+
+    private void handleSettings() {
+        if (clientSettings.areOresHidden()) {
+            Texture replacement = textures.get("stone");
+            textures.put("gold_ore", replacement);
+            textures.put("iron_ore", replacement);
+            textures.put("coal_ore", replacement);
+            textures.put("lapis_ore", replacement);
+            textures.put("diamond_ore", replacement);
+            textures.put("redstone_ore", replacement);
+            textures.put("emerald_ore", replacement);
+            textures.put("quartz_ore", textures.get("netherrack"));
+        }
+    }
+
+    @Override
     public BlockRegistry getBlockRegistry() {
         return blockRegistry;
     }
@@ -206,8 +225,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     }
 
     /**
-     * Returns the worker pool for the map viewer which contains several workers ready for
-     * processing data
+     * Returns the worker pool for the map viewer which contains several workers ready for processing data
      *
      * @return The worker pool
      */
@@ -267,5 +285,10 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     @Override
     public World getWorld() {
         return world;
+    }
+
+    @Override
+    public ClientSettings getSettings() {
+        return clientSettings;
     }
 }

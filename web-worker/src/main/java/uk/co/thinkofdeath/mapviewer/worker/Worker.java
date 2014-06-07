@@ -23,6 +23,7 @@ import elemental.events.EventListener;
 import elemental.events.MessageEvent;
 import elemental.html.WorkerGlobalScope;
 import uk.co.thinkofdeath.html.lib.NativeLib;
+import uk.co.thinkofdeath.mapviewer.shared.ClientSettings;
 import uk.co.thinkofdeath.mapviewer.shared.IMapViewer;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.TextureMap;
@@ -43,6 +44,8 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
 
     private final BlockRegistry blockRegistry = new BlockRegistry(this);
     private final WorkerWorld world = new WorkerWorld(this);
+
+    private ClientSettings clientSettings;
     private HashMap<String, Texture> textures = new HashMap<>();
 
     @Override
@@ -91,6 +94,11 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
                         textures.put(k, v);
                     }
                 });
+                postMessage(WorkerMessage.create("null", null, false));
+                break;
+            case "settings":
+                clientSettings = (ClientSettings) message.getMessage();
+                handleSettings();
                 getBlockRegistry().init();
                 postMessage(WorkerMessage.create("null", null, false));
                 break;
@@ -98,6 +106,20 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
                 TUint8Array data = (TUint8Array) message.getMessage();
                 DynamicBuffer.POOL.free(data);
                 break;
+        }
+    }
+
+    private void handleSettings() {
+        if (clientSettings.areOresHidden()) {
+            Texture replacement = textures.get("stone");
+            textures.put("gold_ore", replacement);
+            textures.put("iron_ore", replacement);
+            textures.put("coal_ore", replacement);
+            textures.put("lapis_ore", replacement);
+            textures.put("diamond_ore", replacement);
+            textures.put("redstone_ore", replacement);
+            textures.put("emerald_ore", replacement);
+            textures.put("quartz_ore", textures.get("netherrack"));
         }
     }
 
@@ -119,6 +141,11 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
     @Override
     public World getWorld() {
         return world;
+    }
+
+    @Override
+    public ClientSettings getSettings() {
+        return clientSettings;
     }
 
     // Web worker magic
