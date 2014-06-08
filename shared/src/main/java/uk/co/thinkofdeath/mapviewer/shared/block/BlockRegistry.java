@@ -688,8 +688,10 @@ public class BlockRegistry {
                 .create(), 158);
         register("minecraft", "stained_hardened_clay", new BlockBuilder(new BlockColoured(mapViewer, "hardened_clay_stained_"))
                 .create(), 159);
-
-        // TODO: stained_glass_pane
+        register("minecraft", "stained_glass_pane", new BlockBuilder(new BlockStainedGlassPane(mapViewer))
+                .solid(false)
+                .transparent(true)
+                .create(), 160);
         // TODO: leaves2
         // TODO: log2
 

@@ -41,14 +41,10 @@ public class BlockGlassPane extends BlockFactory {
     private final Texture top;
 
     public BlockGlassPane(IMapViewer iMapViewer) {
-        this(iMapViewer, "");
-    }
-
-    public BlockGlassPane(IMapViewer iMapViewer, String texture) {
         super(iMapViewer);
 
-        this.texture = mapViewer.getTexture("glass" + texture);
-        top = mapViewer.getTexture("glass_pane_top" + texture);
+        this.texture = mapViewer.getTexture("glass");
+        top = mapViewer.getTexture("glass_pane_top");
     }
 
     @Override
@@ -56,7 +52,15 @@ public class BlockGlassPane extends BlockFactory {
         return new BlockImpl(states);
     }
 
-    private class BlockImpl extends Block {
+    protected Texture getTexture(BlockImpl block, boolean top) {
+        return top ? this.top : texture;
+    }
+
+    protected int legacy(BlockImpl block) {
+        return 0;
+    }
+
+    protected class BlockImpl extends Block {
 
         BlockImpl(StateMap state) {
             super(BlockGlassPane.this, state);
@@ -68,7 +72,7 @@ public class BlockGlassPane extends BlockFactory {
                     && getState(SOUTH)
                     && getState(EAST)
                     && getState(WEST)) {
-                return 0;
+                return legacy(this);
             }
             return -1;
         }
@@ -77,6 +81,9 @@ public class BlockGlassPane extends BlockFactory {
         public Model getModel() {
             if (model == null) {
                 model = new Model();
+
+                Texture top = BlockGlassPane.this.getTexture(this, true);
+                Texture texture = BlockGlassPane.this.getTexture(this, false);
 
                 boolean north = getState(NORTH);
                 boolean south = getState(SOUTH);
@@ -91,8 +98,8 @@ public class BlockGlassPane extends BlockFactory {
 
                 if (north || south) {
 
-                    z = north ? 0 : 8;
-                    z2 = south ? 16 : 8;
+                    //z = north ? 0 : 8;
+                    //z2 = south ? 16 : 8;
 
                     model.addFace(new ModelFace(Face.LEFT, texture, z, 0, z2 - z, 16, 9));
                     model.addFace(new ModelFace(Face.RIGHT, texture, z, 0, z2 - z, 16, 7));
@@ -100,8 +107,8 @@ public class BlockGlassPane extends BlockFactory {
 
 
                 if (east || west) {
-                    int x = west ? 0 : 8;
-                    int x2 = east ? 16 : 8;
+                    int x = west ? 0 : 7;
+                    int x2 = east ? 16 : 9;
 
                     ForEachIterator<ModelVertex> swap = new ForEachIterator<ModelVertex>() {
                         @Override
@@ -150,7 +157,7 @@ public class BlockGlassPane extends BlockFactory {
 
         @Override
         public Block update(World world, int x, int y, int z) {
-            StateMap stateMap = new StateMap();
+            StateMap stateMap = new StateMap(state);
             stateMap.set(NORTH, checkAttach(world, x, y, z, Face.NORTH));
             stateMap.set(SOUTH, checkAttach(world, x, y, z, Face.SOUTH));
             stateMap.set(EAST, checkAttach(world, x, y, z, Face.EAST));
