@@ -69,7 +69,7 @@ public class BlockRegistry {
     }
 
     /**
-     @deprecated Internal use only
+     * @deprecated Internal use only
      */
     @Deprecated
     public Block get(String name, int raw) {
@@ -512,8 +512,10 @@ public class BlockRegistry {
                 .solid(false)
                 .transparent(true)
                 .create(), 95);
+        register("minecraft", "trapdoor", new BlockBuilder(new BlockTrapdoor(mapViewer))
+                .solid(false)
+                .create(), 96);
 
-        // TODO: trapdoor
         // TODO: monster_egg
         // TODO: stonebrick
         // TODO: brown_mushroom_block
