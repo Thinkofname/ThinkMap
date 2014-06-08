@@ -352,12 +352,10 @@ public class BlockRegistry {
                 .solid(false)
                 .allowSelf(true)
                 .create(), 52);
-
         register("minecraft", "oak_stairs", new BlockBuilder(new BlockStairs(mapViewer))
                 .texture("planks_oak")
                 .solid(false)
                 .create(), 53);
-
         register("minecraft", "chest", new BlockBuilder(new BlockChest(mapViewer, "normal"))
                 .solid(false)
                 .create(), 54);
