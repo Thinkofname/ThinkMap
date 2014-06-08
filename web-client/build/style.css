@@ -33,9 +33,12 @@ div.link-back {
     position: absolute;
     right: 2px;
     bottom: 2px;
+    text-align: right;
+    vertical-align: top;
+    line-height: 10px;
     width: 150px;
-    height: 12px;
-    font-size: 10px;
+    height: 14px;
+    font-size: 8px;
     text-shadow: #000 1px 1px 0;
 }
 
