@@ -519,9 +519,11 @@ public class BlockRegistry {
                 .create(), 97);
         register("minecraft", "stonebrick", new BlockBuilder(new BlockStonebrick(mapViewer))
                 .create(), 98);
+        register("minecraft", "brown_mushroom_block", new BlockBuilder(new BlockMushroom(mapViewer, "brown"))
+                .create(), 99);
+        register("minecraft", "red_mushroom_block", new BlockBuilder(new BlockMushroom(mapViewer, "red"))
+                .create(), 100);
 
-        // TODO: brown_mushroom_block
-        // TODO: red_mushroom_block
         // TODO: iron_bars
         // TODO: glass_pane
         // TODO: melon_block
