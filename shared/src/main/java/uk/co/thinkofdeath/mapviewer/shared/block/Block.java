@@ -104,6 +104,10 @@ public class Block implements Model.RenderChecker {
         return transparent;
     }
 
+    public String getFullName() {
+        return fullName;
+    }
+
     /**
      * Returns the texture used by this block (if it has one)
      *
