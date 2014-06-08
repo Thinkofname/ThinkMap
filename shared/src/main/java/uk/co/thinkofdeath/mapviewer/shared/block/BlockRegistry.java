@@ -168,10 +168,11 @@ public class BlockRegistry {
      */
     public void init() {
         // Vanilla blocks
-        register("minecraft", "air", new BlockBuilder(mapViewer)
+        register("minecraft", "air", new BlockBuilder(new BlockAir(mapViewer))
                 .renderable(false)
                 .collidable(false)
-                .solid(false).create(), 0);
+                .solid(false)
+                .create(), 0);
         register("minecraft", "stone", new BlockBuilder(mapViewer)
                 .texture("stone")
                 .create(), 1);
