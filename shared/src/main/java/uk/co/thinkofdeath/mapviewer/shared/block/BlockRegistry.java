@@ -526,8 +526,10 @@ public class BlockRegistry {
         register("minecraft", "iron_bars", new BlockBuilder(new BlockIronBars(mapViewer))
                 .solid(false)
                 .create(), 101);
+        register("minecraft", "glass_pane", new BlockBuilder(new BlockGlassPane(mapViewer))
+                .solid(false)
+                .create(), 102);
 
-        // TODO: glass_pane
         // TODO: melon_block
         // TODO: pumpkin_stem
         // TODO: melon_stem
