@@ -528,8 +528,13 @@ public class BlockRegistry {
         register("minecraft", "glass_pane", new BlockBuilder(new BlockGlassPane(mapViewer))
                 .solid(false)
                 .create(), 102);
+        register("minecraft", "melon_block", new BlockBuilder(new BlockMultiSide(mapViewer,
+                "melon_top", "melon_top",
+                "melon_side", "melon_side",
+                "melon_side", "melon_side"
+        ))
+                .create(), 103);
 
-        // TODO: melon_block
         // TODO: pumpkin_stem
         // TODO: melon_stem
 
