@@ -22,8 +22,8 @@ import elemental.html.ImageElement;
 
 class TextureLoadHandler implements EventListener {
     private final MapViewer mapViewer;
-    private final int id;
-    private final ImageElement imageElement;
+    final int id;
+    final ImageElement imageElement;
 
     public TextureLoadHandler(MapViewer mapViewer, int id, ImageElement imageElement) {
         this.mapViewer = mapViewer;
@@ -41,6 +41,6 @@ class TextureLoadHandler implements EventListener {
     }
 
     public void load() {
-        mapViewer.getRenderer().loadBlockTexture(id, imageElement);
+        TexturePreProcessor.process(mapViewer, id, imageElement, this);
     }
 }

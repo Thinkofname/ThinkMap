@@ -22,11 +22,14 @@ import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.block.BlockFactory;
 import uk.co.thinkofdeath.mapviewer.shared.block.states.StateMap;
+import uk.co.thinkofdeath.mapviewer.shared.model.Model;
+import uk.co.thinkofdeath.mapviewer.shared.model.ModelFace;
 
 public class BlockGrass extends BlockFactory {
 
     private final Texture grassTop;
     private final Texture grassSide;
+    private final Texture grassSideOverlay;
     private final Texture dirt;
 
     public BlockGrass(IMapViewer iMapViewer) {
@@ -34,6 +37,7 @@ public class BlockGrass extends BlockFactory {
 
         grassTop = iMapViewer.getTexture("grass_top");
         grassSide = iMapViewer.getTexture("grass_side");
+        grassSideOverlay = iMapViewer.getTexture("grass_side_overlay");
         dirt = iMapViewer.getTexture("dirt");
     }
 
@@ -45,6 +49,26 @@ public class BlockGrass extends BlockFactory {
     private class BlockImpl extends Block {
         public BlockImpl(StateMap states) {
             super(BlockGrass.this, states);
+        }
+
+        @Override
+        public Model getModel() {
+            if (model == null) {
+                model = super.getModel();
+
+                // Add on the overlay
+                int colour = getColour(Face.TOP);
+
+                model.addFace(new ModelFace(Face.LEFT, grassSideOverlay, 0, 0, 16, 16, 16, true)
+                        .colour((colour >> 16) & 0xFF, (colour >> 8) & 0xFF, colour & 0xFF));
+                model.addFace(new ModelFace(Face.RIGHT, grassSideOverlay, 0, 0, 16, 16, 0, true)
+                        .colour((colour >> 16) & 0xFF, (colour >> 8) & 0xFF, colour & 0xFF));
+                model.addFace(new ModelFace(Face.FRONT, grassSideOverlay, 0, 0, 16, 16, 16, true)
+                        .colour((colour >> 16) & 0xFF, (colour >> 8) & 0xFF, colour & 0xFF));
+                model.addFace(new ModelFace(Face.BACK, grassSideOverlay, 0, 0, 16, 16, 0, true)
+                        .colour((colour >> 16) & 0xFF, (colour >> 8) & 0xFF, colour & 0xFF));
+            }
+            return model;
         }
 
         @Override
