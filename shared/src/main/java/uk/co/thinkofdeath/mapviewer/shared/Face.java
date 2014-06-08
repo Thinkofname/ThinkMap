@@ -42,6 +42,12 @@ public enum Face {
      */
     BACK(0, 0, -1);
 
+    // Minecraft style
+    public static final Face NORTH = BACK;
+    public static final Face SOUTH = FRONT;
+    public static final Face EAST = LEFT;
+    public static final Face WEST = RIGHT;
+
     private final String name;
     private final int offsetX;
     private final int offsetY;
