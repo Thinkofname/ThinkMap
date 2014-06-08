@@ -151,6 +151,17 @@ public class BlockGlassPane extends BlockFactory {
                     model.addFace(new ModelFace(Face.WEST, texture, 7, 0, 2, 16, 7));
                     model.addFace(new ModelFace(Face.EAST, texture, 7, 0, 2, 16, 7));
                 }
+
+                if (north && south && east && west) {
+                    model.addFace(new ModelFace(Face.NORTH, texture, 7, 0, 2, 16, 16));
+                    model.addFace(new ModelFace(Face.SOUTH, texture, 7, 0, 2, 16, 16));
+                    model.addFace(new ModelFace(Face.NORTH, texture, 7, 0, 2, 16, 0));
+                    model.addFace(new ModelFace(Face.SOUTH, texture, 7, 0, 2, 16, 0));
+                    model.addFace(new ModelFace(Face.WEST, texture, 7, 0, 2, 16, 16));
+                    model.addFace(new ModelFace(Face.EAST, texture, 7, 0, 2, 16, 16));
+                    model.addFace(new ModelFace(Face.WEST, texture, 7, 0, 2, 16, 0));
+                    model.addFace(new ModelFace(Face.EAST, texture, 7, 0, 2, 16, 0));
+                }
             }
             return model;
         }
