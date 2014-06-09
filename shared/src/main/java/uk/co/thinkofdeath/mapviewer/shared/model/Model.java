@@ -106,7 +106,7 @@ public class Model {
             // First triangle
             for (int i = 0; i < 3; i++) {
                 ModelVertex vertex = face.vertices[2 - i];
-                LightInfo light = calculateLight(chunk.getWorld(),
+                LightInfo light = calculateLight(chunk.getWorld(), x, y, z,
                         (chunk.getX() << 4) + x + vertex.getX(),
                         y + vertex.getY(),
                         (chunk.getZ() << 4) + z + vertex.getZ(), face.getFace());
@@ -121,7 +121,7 @@ public class Model {
             // Second triangle
             for (int i = 0; i < 3; i++) {
                 ModelVertex vertex = face.vertices[1 + i];
-                LightInfo light = calculateLight(chunk.getWorld(),
+                LightInfo light = calculateLight(chunk.getWorld(), x, y, z,
                         (chunk.getX() << 4) + x + vertex.getX(),
                         y + vertex.getY(),
                         (chunk.getZ() << 4) + z + vertex.getZ(), face.getFace());
@@ -136,9 +136,9 @@ public class Model {
         }
     }
 
-    public static LightInfo calculateLight(World world, float x, float y, float z, Face face) {
-        int emittedLight = world.getEmittedLight((int) x, (int) y, (int) z);
-        int skyLight = world.getSkyLight((int) x, (int) y, (int) z);
+    public static LightInfo calculateLight(World world, int origX, int origY, int origZ, float x, float y, float z, Face face) {
+        int emittedLight = world.getEmittedLight(origX, origY, origZ);
+        int skyLight = world.getSkyLight(origX, origY, origZ);
 
         int count = 0;
 
