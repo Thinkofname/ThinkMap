@@ -534,10 +534,12 @@ public class BlockRegistry {
                 "melon_side", "melon_side"
         ))
                 .create(), 103);
-
-        // TODO: pumpkin_stem
-        // TODO: melon_stem
-
+        register("minecraft", "pumpkin_stem", new BlockBuilder(new BlockStem(mapViewer, "pumpkin", "minecraft:pumpkin"))
+                .solid(false)
+                .create(), 104);
+        register("minecraft", "melon_stem", new BlockBuilder(new BlockStem(mapViewer, "melon", "minecraft:melon_block"))
+                .solid(false)
+                .create(), 105);
         register("minecraft", "vine", new BlockBuilder(new BlockVine(mapViewer))
                 .solid(false)
                 .create(), 106);
