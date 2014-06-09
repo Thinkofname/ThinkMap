@@ -140,7 +140,7 @@ public class Model {
         int emittedLight = world.getEmittedLight(origX, origY, origZ);
         int skyLight = world.getSkyLight(origX, origY, origZ);
 
-        int count = 0;
+        int count = 1;
 
         int pox = 0;
         int poy = 0;
