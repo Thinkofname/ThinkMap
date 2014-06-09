@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import org.apache.commons.io.FileUtils;
+import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -209,6 +210,48 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     @Override
     public boolean onCommand(final CommandSender sender, Command command, String label, String[] args) {
+        if (args.length == 1 && args[0].equals("forcegen")) {
+            sender.sendMessage("Generating world data - Please wait");
+            for (World world : getServer().getWorlds()) {
+                sender.sendMessage("Generating world: " + world.getName());
+                File worldFolder = new File(world.getWorldFolder(), "region");
+                if (!worldFolder.exists()) {
+                    // handle nether/end
+                    worldFolder = new File(world.getWorldFolder(), String.format("DIM%d/region", world.getEnvironment().getId()));
+                    if (!worldFolder.exists()) {
+                        sender.sendMessage("Failed to generate: " + world.getName());
+                        continue;
+                    }
+                }
+                String[] regions = worldFolder.list();
+                int i = 0;
+                for (String region : regions) {
+                    if (!region.endsWith(".mca")) {
+                        continue;
+                    }
+                    String[] parts = region.split("\\.");
+                    int rx = Integer.parseInt(parts[1]);
+                    int rz = Integer.parseInt(parts[2]);
+                    for (int x = 0; x < 32; x++) {
+                        for (int z = 0; z < 32; z++) {
+                            int cx = (rx << 5) + x;
+                            int cz = (rz << 5) + z;
+                            boolean unload = !world.isChunkLoaded(cx, cz);
+                            if (world.loadChunk(cx, cz, false)) {
+                                Chunk chunk = world.getChunkAt(cx, cz);
+                                if (unload) {
+                                    world.unloadChunkRequest(cx, cz);
+                                }
+                            }
+                        }
+                    }
+                    i++;
+                    sender.sendMessage(String.format("Progress: %d/%d", i, regions.length));
+                }
+
+            }
+            sender.sendMessage("Complete");
+        }
         return true;
     }
 
