@@ -93,6 +93,9 @@
                         <optimizationLevel>9</optimizationLevel>
                         <draftCompile>${fast.build}</draftCompile>
                         <closureCompiler>true</closureCompiler>
+                        <disableCastChecking>true</disableCastChecking>
+                        <disableClassMetadata>true</disableClassMetadata>
+                        <localWorkers>4</localWorkers>
                     </configuration>
                     <executions>
                         <execution>
