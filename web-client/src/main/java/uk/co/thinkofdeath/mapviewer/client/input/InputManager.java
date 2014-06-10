@@ -78,7 +78,7 @@ public class InputManager {
             return;
         }
         // Filter overly large movements
-        if (Math.abs(movementX) > 100 || Math.abs(movementY) > 100) return;
+        if (Math.abs(movementX) > 300 || Math.abs(movementY) > 300) return;
 
         Camera camera = mapViewer.getCamera();
         camera.setRotationY(camera.getRotationY() + (movementX * 0.0025f));
