@@ -24,14 +24,26 @@
     <artifactId>ThinkMap</artifactId>
     <packaging>pom</packaging>
     <version>0.8</version>
-    <modules>
-        <module>html</module>
-        <module>shared</module>
-        <module>web-worker</module>
-        <module>web-client</module>
-        <module>textures</module>
-        <module>bukkit</module>
-    </modules>
+
+    <profiles>
+        <profile>
+            <id>web</id>
+            <modules>
+                <module>html</module>
+                <module>shared</module>
+                <module>web-worker</module>
+                <module>web-client</module>
+                <module>textures</module>
+                <module>bukkit</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>desktop</id>
+            <modules>
+                <module>desktop-client</module>
+            </modules>
+        </profile>
+    </profiles>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
