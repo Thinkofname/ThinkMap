@@ -228,12 +228,12 @@ public class InputManager {
 
     private native void registerNativeEvents()/*-{
         var that = this;
-        $doc.getElementById("main").addEventListener("click", function (e) {
+        var canvas = $doc.getElementById("main");
+        canvas.addEventListener("click", function (e) {
             e.preventDefault();
             that.@uk.co.thinkofdeath.mapviewer.client.input.InputManager::onCanvasClick(II)(e.clientX, e.clientY);
         }, false);
-        $doc.addEventListener("mousemove", function (e) {
-            e.preventDefault();
+        canvas.addEventListener("mousemove", function (e) {
             var mx = (e.movementX || e.webkitMovementX || e.mozMovementX);
             var my = (e.movementY || e.webkitMovementY || e.mozMovementY);
             if (($doc.pointerLockElement
@@ -243,6 +243,8 @@ public class InputManager {
             } else {
                 that.@uk.co.thinkofdeath.mapviewer.client.input.InputManager::onMouseLockMove(II)(mx, my);
             }
+            e.stopPropagation();
+            e.preventDefault();
         }, false);
         $doc.addEventListener("keydown", function (e) {
             var key = e.keyCode || e.which;
