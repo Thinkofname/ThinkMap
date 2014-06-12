@@ -51,8 +51,6 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
     @Override
     public void onModuleLoad() {
         NativeLib.init();
-
-        importScripts("../gl-matrix-min.js");
         setOnmessage(this);
     }
 

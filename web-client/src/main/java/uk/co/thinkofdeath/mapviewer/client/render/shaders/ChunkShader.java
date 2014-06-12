@@ -16,10 +16,11 @@
 
 package uk.co.thinkofdeath.mapviewer.client.render.shaders;
 
+import elemental.html.Float32Array;
 import elemental.html.Int32Array;
 import elemental.html.WebGLUniformLocation;
 import uk.co.thinkofdeath.mapviewer.client.render.ShaderProgram;
-import uk.co.thinkofdeath.mapviewer.shared.glmatrix.Mat4;
+import uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4;
 
 public class ChunkShader extends ShaderProgram {
 
@@ -79,8 +80,8 @@ public class ChunkShader extends ShaderProgram {
      * @param matrix
      *         The matrix to use
      */
-    public void setPerspectiveMatrix(Mat4 matrix) {
-        gl.uniformMatrix4fv(perspectiveMatrix, false, matrix);
+    public void setPerspectiveMatrix(Matrix4 matrix) {
+        gl.uniformMatrix4fv(perspectiveMatrix, false, (Float32Array) matrix.getStorage());
     }
 
     /**
@@ -89,8 +90,8 @@ public class ChunkShader extends ShaderProgram {
      * @param matrix
      *         The matrix to use
      */
-    public void setViewMatrix(Mat4 matrix) {
-        gl.uniformMatrix4fv(viewMatrix, false, matrix);
+    public void setViewMatrix(Matrix4 matrix) {
+        gl.uniformMatrix4fv(viewMatrix, false, (Float32Array) matrix.getStorage());
     }
 
     /**

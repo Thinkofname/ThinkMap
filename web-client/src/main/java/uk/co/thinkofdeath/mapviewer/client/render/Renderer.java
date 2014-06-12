@@ -20,10 +20,10 @@ import elemental.client.Browser;
 import elemental.html.*;
 import uk.co.thinkofdeath.mapviewer.client.MapViewer;
 import uk.co.thinkofdeath.mapviewer.client.render.shaders.ChunkShader;
-import uk.co.thinkofdeath.mapviewer.shared.glmatrix.Mat4;
 import uk.co.thinkofdeath.mapviewer.shared.model.PositionedModel;
 import uk.co.thinkofdeath.mapviewer.shared.support.JsUtils;
 import uk.co.thinkofdeath.mapviewer.shared.support.TUint8Array;
+import uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4;
 
 import java.util.ArrayList;
 
@@ -45,11 +45,8 @@ public class Renderer implements ResizeHandler, Runnable {
     private int cz = Integer.MAX_VALUE;
 
     // Matrices
-    private final Mat4 perspectiveMatrix = Mat4.create();
-    private final Mat4 viewMatrix = Mat4.create();
-    // Used to save creating a new matrix each time
-    private final Mat4 tempMatrix1 = Mat4.create();
-    private final Mat4 tempMatrix2 = Mat4.create();
+    private final Matrix4 perspectiveMatrix = new Matrix4();
+    private final Matrix4 viewMatrix = new Matrix4();
 
     // Textures
     private final WebGLTexture[] blockTextures;
@@ -138,15 +135,11 @@ public class Renderer implements ResizeHandler, Runnable {
                 1.0f);
         gl.clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
 
-        // Camera -> Matrix
         viewMatrix.identity();
-        tempMatrix1.identity();
-        tempMatrix2.identity();
-        tempMatrix1.scale(-1, -1, 1);
-        tempMatrix1.rotateX((float) (-camera.getRotationX() - Math.PI));
-        tempMatrix1.rotateY((float) (camera.getRotationY() + Math.PI));
-        tempMatrix2.translate(-camera.getX(), -camera.getY(), -camera.getZ());
-        tempMatrix1.multiply(tempMatrix2, viewMatrix);
+        viewMatrix.translate(-camera.getX(), -camera.getY(), -camera.getZ());
+        viewMatrix.rotateY(-camera.getRotationY());
+        viewMatrix.rotateX(-camera.getRotationX());
+
 
         chunkShader.use();
 

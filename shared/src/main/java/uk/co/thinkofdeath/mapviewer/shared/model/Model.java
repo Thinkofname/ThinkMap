@@ -21,7 +21,8 @@ import uk.co.thinkofdeath.mapviewer.shared.LightInfo;
 import uk.co.thinkofdeath.mapviewer.shared.Texture;
 import uk.co.thinkofdeath.mapviewer.shared.block.Block;
 import uk.co.thinkofdeath.mapviewer.shared.building.ModelBuilder;
-import uk.co.thinkofdeath.mapviewer.shared.glmatrix.Quat;
+import uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4;
+import uk.co.thinkofdeath.mapviewer.shared.vector.Vector3;
 import uk.co.thinkofdeath.mapviewer.shared.world.Chunk;
 import uk.co.thinkofdeath.mapviewer.shared.world.World;
 
@@ -218,7 +219,9 @@ public class Model {
      * @return This model
      */
     public Model rotateY(float deg) {
-        rotate(deg, 0, 1, 0);
+        Matrix4 matrix = new Matrix4();
+        matrix.rotateY((float) Math.toRadians(deg));
+        rotate(matrix);
         for (ModelFace face : faces) {
             int idx = rotationHelperY.indexOf(face.getFace());
             if (idx != -1) {
@@ -249,7 +252,9 @@ public class Model {
      * @return This model
      */
     public Model rotateX(float deg) {
-        rotate(deg, 1, 0, 0);
+        Matrix4 matrix = new Matrix4();
+        matrix.rotateX((float) Math.toRadians(deg));
+        rotate(matrix);
         for (ModelFace face : faces) {
             int idx = rotationHelperX.indexOf(face.getFace());
             if (idx != -1) {
@@ -280,7 +285,9 @@ public class Model {
      * @return This model
      */
     public Model rotateZ(float deg) {
-        rotate(deg, 0, 0, 1);
+        Matrix4 matrix = new Matrix4();
+        matrix.rotateZ((float) Math.toRadians(deg));
+        rotate(matrix);
         for (ModelFace face : faces) {
             int idx = rotationHelperZ.indexOf(face.getFace());
             if (idx != -1) {
@@ -294,23 +301,15 @@ public class Model {
         return this;
     }
 
-    private void rotate(float deg, float x, float y, float z) {
-        // TODO: Pretty sure all these are not needed
-        Quat q = Quat.create();
-        Quat t1 = Quat.create();
-        Quat t2 = Quat.create();
-        q.setAxisAngle((float) Math.toRadians(deg), x, y, z);
-        t1.conjugate(q);
+    private void rotate(Matrix4 matrix) {
+        Vector3 vector = new Vector3();
         for (ModelFace face : faces) {
             for (ModelVertex vertex : face.vertices) {
-
-                float vx = vertex.getX() - 0.5f;
-                float vy = vertex.getY() - 0.5f;
-                float vz = vertex.getZ() - 0.5f;
-                t2.multiply(t2.multiply(t1, vx, vy, vz), q);
-                vertex.setX((float) (t2.numberAt(0) + 0.5));
-                vertex.setY((float) (t2.numberAt(1) + 0.5));
-                vertex.setZ((float) (t2.numberAt(2) + 0.5));
+                vector.set(vertex.getX() - 0.5f, vertex.getY() - 0.5f, vertex.getZ() - 0.5f);
+                vector.apply(matrix);
+                vertex.setX(vector.getX() + 0.5f);
+                vertex.setY(vector.getY() + 0.5f);
+                vertex.setZ(vector.getZ() + 0.5f);
             }
         }
     }
