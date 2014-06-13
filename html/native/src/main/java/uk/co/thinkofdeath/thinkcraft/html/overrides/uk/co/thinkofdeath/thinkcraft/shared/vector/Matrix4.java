@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.html.overrides.uk.co.thinkofdeath.mapviewer.shared.vector;
+package uk.co.thinkofdeath.thinkcraft.shared.vector;
 
 import elemental.html.Float32Array;
 
@@ -28,7 +28,7 @@ public class Matrix4 {
     }
 
     private native void init()/*-{
-        this.@uk.co.thinkofdeath.thinkcraft.html.overrides.uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4::values = new Float32Array(4 * 4);
+        this.@uk.co.thinkofdeath.thinkcraft.shared.vector.Matrix4::values = new Float32Array(4 * 4);
     }-*/;
 
     private static native int k(int x, int y)/*-{
@@ -36,9 +36,9 @@ public class Matrix4 {
     }-*/;
 
     public native void identity()/*-{
-        var values = this.@uk.co.thinkofdeath.thinkcraft.html.overrides.uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4::values;
+        var values = this.@uk.co.thinkofdeath.thinkcraft.shared.vector.Matrix4::values;
         for (var i = 0; i < 16; i++) values[i] = 0;
-        var k = @uk.co.thinkofdeath.thinkcraft.html.overrides.uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4::k(II);
+        var k = @uk.co.thinkofdeath.thinkcraft.shared.vector.Matrix4::k(II);
 
         values[k(0, 0)]
             = values[k(1, 1)]
@@ -48,9 +48,9 @@ public class Matrix4 {
     }-*/;
 
     public native void perspective(float fovy, float aspect, float near, float far)/*-{
-        var values = this.@uk.co.thinkofdeath.thinkcraft.html.overrides.uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4::values;
+        var values = this.@uk.co.thinkofdeath.thinkcraft.shared.vector.Matrix4::values;
         var invDepth = 1 / (near - far);
-        var k = @uk.co.thinkofdeath.thinkcraft.html.overrides.uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4::k(II);
+        var k = @uk.co.thinkofdeath.thinkcraft.shared.vector.Matrix4::k(II);
 
         values[k(1, 1)] = 1 / Math.tan(0.5 * fovy);
         values[k(0, 0)] = values[k(1, 1)] / aspect;
@@ -61,7 +61,7 @@ public class Matrix4 {
     }-*/;
 
     public native void scale(float x, float y, float z)/*-{
-        var values = this.@uk.co.thinkofdeath.thinkcraft.html.overrides.uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4::values;
+        var values = this.@uk.co.thinkofdeath.thinkcraft.shared.vector.Matrix4::values;
         values[0] *= x;
         values[1] *= x;
         values[2] *= x;
@@ -78,7 +78,7 @@ public class Matrix4 {
 
 
     public native void translate(float x, float y, float z)/*-{
-        var values = this.@uk.co.thinkofdeath.thinkcraft.html.overrides.uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4::values;
+        var values = this.@uk.co.thinkofdeath.thinkcraft.shared.vector.Matrix4::values;
         values[0] += values[3] * x;
         values[1] += values[3] * y;
         values[2] += values[3] * z;
@@ -99,7 +99,7 @@ public class Matrix4 {
     public native void rotateX(float ang)/*-{
         var c = Math.cos(ang);
         var s = Math.sin(ang);
-        var values = this.@uk.co.thinkofdeath.thinkcraft.html.overrides.uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4::values;
+        var values = this.@uk.co.thinkofdeath.thinkcraft.shared.vector.Matrix4::values;
 
         var t = values[1];
         values[1] = t * c + values[2] * s;
@@ -121,7 +121,7 @@ public class Matrix4 {
     public native void rotateY(float ang)/*-{
         var c = Math.cos(ang);
         var s = Math.sin(ang);
-        var values = this.@uk.co.thinkofdeath.thinkcraft.html.overrides.uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4::values;
+        var values = this.@uk.co.thinkofdeath.thinkcraft.shared.vector.Matrix4::values;
 
         var t = values[0];
         values[0] = t * c + values[2] * -s;
@@ -144,7 +144,7 @@ public class Matrix4 {
     public native void rotateZ(float ang)/*-{
         var c = Math.cos(ang);
         var s = Math.sin(ang);
-        var values = this.@uk.co.thinkofdeath.thinkcraft.html.overrides.uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4::values;
+        var values = this.@uk.co.thinkofdeath.thinkcraft.shared.vector.Matrix4::values;
 
         var t = values[0];
         values[0] = t * c + values[1] * s;
@@ -164,9 +164,9 @@ public class Matrix4 {
     }-*/;
 
     public native void multiply(Matrix4 other)/*-{
-        var values = this.@uk.co.thinkofdeath.thinkcraft.html.overrides.uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4::values;
+        var values = this.@uk.co.thinkofdeath.thinkcraft.shared.vector.Matrix4::values;
         var vals = new Float32Array(values);
-        var ovals = other.@uk.co.thinkofdeath.thinkcraft.html.overrides.uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4::values;
+        var ovals = other.@uk.co.thinkofdeath.thinkcraft.shared.vector.Matrix4::values;
 
         values[0] = vals[0] * ovals[0] + vals[1] * ovals[4] + vals[2] * ovals[8] + vals[3] * ovals[12];
         values[1] = vals[0] * ovals[1] + vals[1] * ovals[5] + vals[2] * ovals[9] + vals[3] * ovals[13];
@@ -190,7 +190,7 @@ public class Matrix4 {
     }-*/;
 
     public native float get(int i)/*-{
-        return this.@uk.co.thinkofdeath.thinkcraft.html.overrides.uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4::values[i];
+        return this.@uk.co.thinkofdeath.thinkcraft.shared.vector.Matrix4::values[i];
     }-*/;
 
     public Object getStorage() {
