@@ -19,6 +19,7 @@
 <module rename-to="native">
 
     <inherits name="elemental.Elemental"/>
+    <inherits name="com.google.gwt.core.Core"/>
 
     <source path="shared"/>
 

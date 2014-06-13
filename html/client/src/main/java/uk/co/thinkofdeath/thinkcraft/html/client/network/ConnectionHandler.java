@@ -16,7 +16,7 @@
 
 package uk.co.thinkofdeath.thinkcraft.html.client.network;
 
-import uk.co.thinkofdeath.thinkcraft.shared.ClientSettings;
+import uk.co.thinkofdeath.thinkcraft.html.shared.settings.ClientSettings;
 
 public interface ConnectionHandler {
 

@@ -34,7 +34,7 @@ import uk.co.thinkofdeath.thinkcraft.html.client.worker.WorkerPool;
 import uk.co.thinkofdeath.thinkcraft.html.client.world.ClientChunk;
 import uk.co.thinkofdeath.thinkcraft.html.client.world.ClientWorld;
 import uk.co.thinkofdeath.thinkcraft.html.shared.NativeLib;
-import uk.co.thinkofdeath.thinkcraft.shared.ClientSettings;
+import uk.co.thinkofdeath.thinkcraft.html.shared.settings.ClientSettings;
 import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.TextureMap;

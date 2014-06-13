@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.shared;
+package uk.co.thinkofdeath.thinkcraft.html.shared.settings;
 
 import com.google.gwt.core.client.JavaScriptObject;
 

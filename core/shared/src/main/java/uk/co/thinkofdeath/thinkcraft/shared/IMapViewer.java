@@ -16,6 +16,7 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared;
 
+import uk.co.thinkofdeath.thinkcraft.html.shared.settings.ClientSettings;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockRegistry;
 import uk.co.thinkofdeath.thinkcraft.shared.world.World;
 

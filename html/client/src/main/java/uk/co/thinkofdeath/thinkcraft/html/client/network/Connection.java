@@ -23,7 +23,7 @@ import elemental.events.MessageEvent;
 import elemental.html.ArrayBuffer;
 import elemental.html.WebSocket;
 import elemental.js.util.Json;
-import uk.co.thinkofdeath.thinkcraft.shared.ClientSettings;
+import uk.co.thinkofdeath.thinkcraft.html.shared.settings.ClientSettings;
 import uk.co.thinkofdeath.thinkcraft.shared.support.DataReader;
 
 /**
