@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.html.lib;
+package uk.co.thinkofdeath.thinkcraft.html.shared;
 
 public class NativeLib {
 

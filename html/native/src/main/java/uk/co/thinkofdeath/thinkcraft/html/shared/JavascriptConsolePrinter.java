@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.html.lib;
+package uk.co.thinkofdeath.thinkcraft.html.shared;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -30,7 +30,7 @@ public class JavascriptConsolePrinter extends PrintStream {
 
     @Override
     public native void println(String x)/*-{
-        if (this.@uk.co.thinkofdeath.thinkcraft.html.lib.JavascriptConsolePrinter::err) {
+        if (this.@uk.co.thinkofdeath.thinkcraft.html.shared.JavascriptConsolePrinter::err) {
             $wnd.console.error(x);
         } else {
             $wnd.console.log(x);

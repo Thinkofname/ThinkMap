@@ -22,7 +22,7 @@ import elemental.events.Event;
 import elemental.events.EventListener;
 import elemental.events.MessageEvent;
 import elemental.html.WorkerGlobalScope;
-import uk.co.thinkofdeath.thinkcraft.html.lib.NativeLib;
+import uk.co.thinkofdeath.thinkcraft.html.shared.NativeLib;
 import uk.co.thinkofdeath.thinkcraft.html.worker.world.WorkerChunk;
 import uk.co.thinkofdeath.thinkcraft.html.worker.world.WorkerWorld;
 import uk.co.thinkofdeath.thinkcraft.shared.ClientSettings;
