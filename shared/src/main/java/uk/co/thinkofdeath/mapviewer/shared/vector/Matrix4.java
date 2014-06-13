@@ -28,22 +28,26 @@ public class Matrix4 {
 
     public void identity() {
         Arrays.fill(values, 0);
-        values[0]
-                = values[1 + 4]
-                = values[2 + 2 * 4]
-                = values[3 + 3 * 4]
+        values[k(0,0)]
+                = values[k(1,1)]
+                = values[k(2,2)]
+                = values[k(3,3)]
                 = 1;
+    }
+
+    private static int k(int x, int y) {
+        return y + x * 4;
     }
 
     public void perspective(float fovy, float aspect, float near, float far) {
         float invDepth = 1 / (near - far);
 
-        values[1 + 4] = (float) (1 / Math.tan(0.5f * fovy));
-        values[0] = values[1 + 4] / aspect;
-        values[2 + 2 * 4] = (far + near) * invDepth;
-        values[2 + 3 * 3] = 2 * (far * near) * invDepth;
-        values[3 + 2 * 4] = -1;
-        values[3 + 3 * 3] = 0;
+        values[k(1,1)] = (float) (1 / Math.tan(0.5f * fovy));
+        values[k(0,0)] = values[k(1,1)] / aspect;
+        values[k(2,2)] = (far + near) * invDepth;
+        values[k(3,2)] = 2 * (far * near) * invDepth;
+        values[k(2,3)] = -1;
+        values[k(3,3)] = 0;
     }
 
     public void scale(float x, float y, float z) {

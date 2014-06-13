@@ -31,26 +31,33 @@ public class Matrix4 {
         this.@uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4::values = new Float32Array(4 * 4);
     }-*/;
 
+    private static native int k(int x, int y)/*-{
+        return y + x * 4;
+    }-*/;
+
     public native void identity()/*-{
         var values = this.@uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4::values;
         for (var i = 0; i < 16; i++) values[i] = 0;
-        values[0] // 0,0
-                = values[1 + 4] // 1,1
-                = values[2 + 2 * 4] // 2,2
-                = values[3 + 3 * 4] // 3,3
+        var k = @uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4::k(II);
+
+        values[k(0,0)]
+                = values[k(1,1)]
+                = values[k(2,2)]
+                = values[k(3,3)]
                 = 1;
     }-*/;
 
     public native void perspective(float fovy, float aspect, float near, float far)/*-{
         var values = this.@uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4::values;
         var invDepth = 1 / (near - far);
+        var k = @uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4::k(II);
 
-        values[1 + 4] = 1 / Math.tan(0.5 * fovy);
-        values[0] = values[1 + 4] / aspect;
-        values[2 + 2 * 4] = (far + near) * invDepth;
-        values[2 + 3 * 3] = (2 * far * near) * invDepth;
-        values[3 + 2 * 4] = -1;
-        values[3 + 3 * 3] = 0;
+        values[k(1, 1)] = 1 / Math.tan(0.5 * fovy);
+        values[k(0,0)] = values[k(1, 1)] / aspect;
+        values[k(2, 2)] = (far + near) * invDepth;
+        values[k(3, 2)] = (2 * far * near) * invDepth;
+        values[k(2, 3)] = -1;
+        values[k(3, 3)] = 0;
     }-*/;
 
     public native void scale(float x, float y, float z)/*-{
