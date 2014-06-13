@@ -24,8 +24,7 @@ public class JoinedProvider implements TextureProvider {
     private TextureProvider[] providers;
 
     /**
-     * Joins the providers in a way where if one texture is missing then the next one will be
-     * checked. The first argument is checked first and then on.
+     * Joins the providers in a way where if one texture is missing then the next one will be checked. The first argument is checked first and then on.
      *
      * @param providers
      *         The providers to join

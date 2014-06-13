@@ -28,10 +28,10 @@ public class Matrix4 {
 
     public void identity() {
         Arrays.fill(values, 0);
-        values[k(0,0)]
-                = values[k(1,1)]
-                = values[k(2,2)]
-                = values[k(3,3)]
+        values[k(0, 0)]
+                = values[k(1, 1)]
+                = values[k(2, 2)]
+                = values[k(3, 3)]
                 = 1;
     }
 
@@ -42,12 +42,12 @@ public class Matrix4 {
     public void perspective(float fovy, float aspect, float near, float far) {
         float invDepth = 1 / (near - far);
 
-        values[k(1,1)] = (float) (1 / Math.tan(0.5f * fovy));
-        values[k(0,0)] = values[k(1,1)] / aspect;
-        values[k(2,2)] = (far + near) * invDepth;
-        values[k(3,2)] = 2 * (far * near) * invDepth;
-        values[k(2,3)] = -1;
-        values[k(3,3)] = 0;
+        values[k(1, 1)] = (float) (1 / Math.tan(0.5f * fovy));
+        values[k(0, 0)] = values[k(1, 1)] / aspect;
+        values[k(2, 2)] = (far + near) * invDepth;
+        values[k(3, 2)] = 2 * (far * near) * invDepth;
+        values[k(2, 3)] = -1;
+        values[k(3, 3)] = 0;
     }
 
     public void scale(float x, float y, float z) {

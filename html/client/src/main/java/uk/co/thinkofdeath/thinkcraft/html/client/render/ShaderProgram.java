@@ -49,8 +49,7 @@ public abstract class ShaderProgram {
     }
 
     /**
-     * Sets this program as the active program for the WebGL Context and enables all vertex
-     * attribute arrays
+     * Sets this program as the active program for the WebGL Context and enables all vertex attribute arrays
      */
     public void use() {
         gl.useProgram(program);

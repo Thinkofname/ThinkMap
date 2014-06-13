@@ -40,11 +40,11 @@ public class Matrix4 {
         for (var i = 0; i < 16; i++) values[i] = 0;
         var k = @uk.co.thinkofdeath.thinkcraft.html.overrides.uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4::k(II);
 
-        values[k(0,0)]
-                = values[k(1,1)]
-                = values[k(2,2)]
-                = values[k(3,3)]
-                = 1;
+        values[k(0, 0)]
+            = values[k(1, 1)]
+            = values[k(2, 2)]
+            = values[k(3, 3)]
+            = 1;
     }-*/;
 
     public native void perspective(float fovy, float aspect, float near, float far)/*-{
@@ -53,7 +53,7 @@ public class Matrix4 {
         var k = @uk.co.thinkofdeath.thinkcraft.html.overrides.uk.co.thinkofdeath.mapviewer.shared.vector.Matrix4::k(II);
 
         values[k(1, 1)] = 1 / Math.tan(0.5 * fovy);
-        values[k(0,0)] = values[k(1, 1)] / aspect;
+        values[k(0, 0)] = values[k(1, 1)] / aspect;
         values[k(2, 2)] = (far + near) * invDepth;
         values[k(3, 2)] = (2 * far * near) * invDepth;
         values[k(2, 3)] = -1;

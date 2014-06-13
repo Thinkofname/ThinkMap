@@ -65,8 +65,7 @@ public abstract class Chunk {
     }
 
     /**
-     * Called when the chunk is unloaded by the world. Should be overridden to handle unloading of
-     * resources.
+     * Called when the chunk is unloaded by the world. Should be overridden to handle unloading of resources.
      */
     public void unload() {
         unloaded = true;
@@ -103,8 +102,7 @@ public abstract class Chunk {
     }
 
     /**
-     * Returns the block at location given by the coordinates x, y, z relative to the chunk. The x
-     * and z coordinates must be between 0 and 15. The y coordinate must be between 0 and 255.
+     * Returns the block at location given by the coordinates x, y, z relative to the chunk. The x and z coordinates must be between 0 and 15. The y coordinate must be between 0 and 255.
      *
      * @param x
      *         The position on the x axis
@@ -141,9 +139,7 @@ public abstract class Chunk {
     }
 
     /**
-     * Returns the emitted light level at location given by the coordinates x, y, z relative to the
-     * chunk. The x and z coordinates must be between 0 and 15. The y coordinate must be between 0
-     * and 255.
+     * Returns the emitted light level at location given by the coordinates x, y, z relative to the chunk. The x and z coordinates must be between 0 and 15. The y coordinate must be between 0 and 255.
      *
      * @param x
      *         The position on the x axis
@@ -162,9 +158,7 @@ public abstract class Chunk {
     }
 
     /**
-     * Returns the sky light level at location given by the coordinates x, y, z relative to the
-     * chunk. The x and z coordinates must be between 0 and 15. The y coordinate must be between 0
-     * and 255.
+     * Returns the sky light level at location given by the coordinates x, y, z relative to the chunk. The x and z coordinates must be between 0 and 15. The y coordinate must be between 0 and 255.
      *
      * @param x
      *         The position on the x axis

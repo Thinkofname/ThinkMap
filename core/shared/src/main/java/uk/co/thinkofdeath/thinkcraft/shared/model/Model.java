@@ -54,8 +54,7 @@ public class Model {
     }
 
     /**
-     * Renders this model into the passed model builder offset by the passed x, y and z relative to
-     * the passed chunk. No culling will be performed.
+     * Renders this model into the passed model builder offset by the passed x, y and z relative to the passed chunk. No culling will be performed.
      *
      * @param builder
      *         The builder to render into
@@ -73,9 +72,7 @@ public class Model {
     }
 
     /**
-     * Renders this model into the passed model builder offset by the passed x, y and z relative to
-     * the passed chunk. If a face is cullable then the passed render checker will be used to check
-     * whether the face should be culled or not
+     * Renders this model into the passed model builder offset by the passed x, y and z relative to the passed chunk. If a face is cullable then the passed render checker will be used to check whether the face should be culled or not
      *
      * @param builder
      *         The builder to render into

@@ -157,8 +157,7 @@ public class ClientWorld extends World {
     }
 
     /**
-     * Triggers an async request to load the chunk. The chunk is forwarded to all workers to be
-     * processed before being returned to the client
+     * Triggers an async request to load the chunk. The chunk is forwarded to all workers to be processed before being returned to the client
      *
      * @param x
      *         The chunk x position

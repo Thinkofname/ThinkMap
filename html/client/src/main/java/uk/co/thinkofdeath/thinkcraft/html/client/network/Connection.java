@@ -27,8 +27,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.ClientSettings;
 import uk.co.thinkofdeath.thinkcraft.shared.support.DataReader;
 
 /**
- * Manages a connection between the client and the Bukkit plugin. Fires events based on messages
- * received.
+ * Manages a connection between the client and the Bukkit plugin. Fires events based on messages received.
  */
 public class Connection implements EventListener {
 
@@ -37,8 +36,7 @@ public class Connection implements EventListener {
     private final ConnectionHandler handler;
 
     /**
-     * Creates a connect to the plugin at the address. Calls the callback once the connection
-     * succeeds.
+     * Creates a connect to the plugin at the address. Calls the callback once the connection succeeds.
      *
      * @param address
      *         The address to connect to, may include the port

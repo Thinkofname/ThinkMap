@@ -31,8 +31,7 @@ public class DynamicBuffer {
     private int offset = 0;
 
     /**
-     * Creates a DynamicBuffer which resizes as it needs more space. The endianness of the buffer is
-     * that of the current system. The starting start has a minimum value of 16.
+     * Creates a DynamicBuffer which resizes as it needs more space. The endianness of the buffer is that of the current system. The starting start has a minimum value of 16.
      *
      * @param size
      *         The starting size of the buffer

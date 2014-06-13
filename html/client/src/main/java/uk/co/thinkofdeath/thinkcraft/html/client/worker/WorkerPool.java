@@ -80,8 +80,7 @@ public class WorkerPool {
     }
 
     /**
-     * Sends the message to a free worker. If all is set then all workers will get the message but
-     * only one will reply
+     * Sends the message to a free worker. If all is set then all workers will get the message but only one will reply
      *
      * @param type
      *         The message type

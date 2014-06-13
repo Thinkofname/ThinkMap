@@ -154,8 +154,7 @@ public class TUint16Array extends JavaScriptObject {
     }-*/;
 
     /**
-     * Creates a sub array of this array starting and finishing at the specified indexes. This is a
-     * view not a copy
+     * Creates a sub array of this array starting and finishing at the specified indexes. This is a view not a copy
      *
      * @param start
      *         The start position

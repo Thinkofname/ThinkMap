@@ -23,8 +23,7 @@ public class ModelBuilder {
     private DynamicBuffer buffer;
 
     /**
-     * Creates a model builder with provides helper methods to create models in a format ready to
-     * uploaded as a WebGL buffer
+     * Creates a model builder with provides helper methods to create models in a format ready to uploaded as a WebGL buffer
      */
     public ModelBuilder() {
         buffer = new DynamicBuffer(80000);

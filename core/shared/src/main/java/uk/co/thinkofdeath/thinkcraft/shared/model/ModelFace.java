@@ -103,8 +103,7 @@ public class ModelFace {
      *         The height of the face (relative to its direction)
      * @param offset
      *         The offset of the face (relative to its direction)
-     * @see ModelFace#ModelFace(uk.co.thinkofdeath.thinkcraft.shared.Face,
-     * uk.co.thinkofdeath.thinkcraft.shared.Texture, float, float, float, float, float, boolean)
+     * @see ModelFace#ModelFace(uk.co.thinkofdeath.thinkcraft.shared.Face, uk.co.thinkofdeath.thinkcraft.shared.Texture, float, float, float, float, float, boolean)
      */
     public ModelFace(Face face, Texture texture, float x, float y, float width, float height,
                      float offset) {
@@ -146,8 +145,7 @@ public class ModelFace {
     }
 
     /**
-     * Changes the offset of this face to the passed value, the direction it is offset from is based
-     * on the facing direction of the face
+     * Changes the offset of this face to the passed value, the direction it is offset from is based on the facing direction of the face
      *
      * @param offset
      *         The offset of the face (relative to its direction)
@@ -316,8 +314,7 @@ public class ModelFace {
     }
 
     /**
-     * Sets the facing direction of this face. Doesn't change the position of the vertices for the
-     * face
+     * Sets the facing direction of this face. Doesn't change the position of the vertices for the face
      *
      * @param face
      *         The facing direction of the face
