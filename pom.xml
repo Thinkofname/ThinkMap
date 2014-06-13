@@ -29,10 +29,8 @@
         <profile>
             <id>web</id>
             <modules>
+                <module>core</module>
                 <module>html</module>
-                <module>shared</module>
-                <module>web-worker</module>
-                <module>web-client</module>
                 <module>textures</module>
                 <module>bukkit</module>
             </modules>
@@ -40,10 +38,15 @@
         <profile>
             <id>desktop</id>
             <modules>
-                <module>desktop-client</module>
+                <module>core</module>
+                <module>desktop</module>
             </modules>
         </profile>
     </profiles>
+    <modules>
+        <module>desktop</module>
+        <module>core</module>
+    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -5,11 +5,8 @@
 dependency-reduced-pom.xml
 
 target
-packages
-/frontend/build
-*.hxproj
-/web-client/out
-/web-client/build/mapviewer
-/web-client/build/mapviewerworker
-/web-client/build/WEB-INF
+/html/client/out
+/html/client/build/mapviewer
+/html/client/build/mapviewerworker
+/html/client/build/WEB-INF
 gwt-unitCache
