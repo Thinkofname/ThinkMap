@@ -19,8 +19,8 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>ThinkMap</artifactId>
-        <groupId>uk.co.thinkofdeath.thinkmap</groupId>
+        <artifactId>ThinkCraft</artifactId>
+        <groupId>uk.co.thinkofdeath.thinkcraft</groupId>
         <version>0.8</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -36,7 +36,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>uk.co.thinkofdeath.thinkmap</groupId>
+            <groupId>uk.co.thinkofdeath.thinkcraft</groupId>
             <artifactId>textures</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -101,25 +101,25 @@
                                 <relocation>
                                     <pattern>io.netty</pattern>
                                     <shadedPattern>
-                                        uk.co.thinkofdeath.thinkmap.lib.netty
+                                        uk.co.thinkofdeath.thinkcraft.lib.netty
                                     </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.apache</pattern>
                                     <shadedPattern>
-                                        uk.co.thinkofdeath.thinkmap.lib.apache
+                                        uk.co.thinkofdeath.thinkcraft.lib.apache
                                     </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>gnu.trove</pattern>
                                     <shadedPattern>
-                                        uk.co.thinkofdeath.thinkmap.lib.trove
+                                        uk.co.thinkofdeath.thinkcraft.lib.trove
                                     </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.google.code.gson</pattern>
                                     <shadedPattern>
-                                        uk.co.thinkofdeath.thinkmap.lib.gson
+                                        uk.co.thinkofdeath.thinkcraft.lib.gson
                                     </shadedPattern>
                                 </relocation>
                             </relocations>

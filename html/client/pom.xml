@@ -22,7 +22,7 @@
 
     <parent>
         <artifactId>html</artifactId>
-        <groupId>uk.co.thinkofdeath.thinkmap</groupId>
+        <groupId>uk.co.thinkofdeath.thinkcraft</groupId>
         <version>0.8</version>
     </parent>
 
@@ -31,8 +31,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>uk.co.thinkofdeath.thinkmap</groupId>
-            <artifactId>shared</artifactId>
+            <groupId>uk.co.thinkofdeath.thinkcraft</groupId>
+            <artifactId>core-shared</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

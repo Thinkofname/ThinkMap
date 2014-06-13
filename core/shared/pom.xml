@@ -20,12 +20,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>core</artifactId>
-        <groupId>uk.co.thinkofdeath.thinkmap</groupId>
+        <groupId>uk.co.thinkofdeath.thinkcraft</groupId>
         <version>0.8</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>shared</artifactId>
+    <artifactId>core-shared</artifactId>
 
     <dependencies>
         <dependency>
@@ -41,7 +41,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>uk.co.thinkofdeath.thinkmap</groupId>
+            <groupId>uk.co.thinkofdeath.thinkcraft</groupId>
             <artifactId>html-native</artifactId>
             <version>${project.version}</version>
         </dependency>

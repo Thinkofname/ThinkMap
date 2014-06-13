@@ -3,7 +3,7 @@ version: ${project.version}-${build.number}
 description: Displays a 3D render of your server's map in the browser
 author: Thinkofdeath
 
-main: uk.co.thinkofdeath.thinkmap.bukkit.ThinkMapPlugin
+main: uk.co.thinkofdeath.thinkcraft.bukkit.ThinkMapPlugin
 load: STARTUP
 
 commands:
