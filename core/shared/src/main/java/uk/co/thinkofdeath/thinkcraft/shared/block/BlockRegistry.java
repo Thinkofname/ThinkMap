@@ -650,8 +650,10 @@ public class BlockRegistry {
 
 
         // TODO: skull
-        // TODO: anvil
 
+        register("minecraft", "anvil", new BlockBuilder(new BlockAnvil(mapViewer))
+                .solid(false)
+                .create(), 145);
         register("minecraft", "trapped_chest", new BlockBuilder(new BlockChest(mapViewer, "trapped"))
                 .solid(false)
                 .create(), 146);
