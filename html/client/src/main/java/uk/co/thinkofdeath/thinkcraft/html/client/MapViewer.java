@@ -146,7 +146,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
      * Returns the camera used by the renderer
      *
      * @return the camera
-     * @see uk.co.thinkofdeath.thinkcraft.client.render.Renderer#getCamera()
+     * @see uk.co.thinkofdeath.thinkcraft.html.client.render.Renderer#getCamera()
      */
     public Camera getCamera() {
         return renderer.getCamera();

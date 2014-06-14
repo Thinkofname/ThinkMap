@@ -101,6 +101,7 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
 
         for (int i = 0; i < blockTextures.length; i++) {
             gl.activeTexture(TEXTURE0 + i);
+            loadDummyTexture(i);
             gl.bindTexture(TEXTURE_2D, blockTextures[i]);
         }
 
@@ -325,7 +326,7 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
     private WebGLTexture loadTexture(ImageElement imageElement) {
         WebGLTexture texture = gl.createTexture();
         gl.bindTexture(TEXTURE_2D, texture);
-        // Flip the Y to be like we used to
+        // Flip the Y to be like we are used to
         gl.pixelStorei(UNPACK_FLIP_Y_WEBGL, 0);
         gl.pixelStorei(UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
         gl.texImage2D(TEXTURE_2D, 0, RGBA, RGBA, UNSIGNED_BYTE, imageElement);
@@ -336,6 +337,16 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         gl.texParameteri(TEXTURE_2D, TEXTURE_WRAP_T, CLAMP_TO_EDGE);
         gl.bindTexture(TEXTURE_2D, null);
         return texture;
+    }
+
+    private void loadDummyTexture(int id) {
+        WebGLTexture texture = gl.createTexture();
+        gl.bindTexture(TEXTURE_2D, texture);
+        TUint8Array img = TUint8Array.create(4);
+        img.set(new int[]{0, 255, 0, 255});
+        gl.texImage2D(TEXTURE_2D, 0, RGBA, 1, 1, 0, RGBA, UNSIGNED_BYTE,
+                (ArrayBufferView) img);
+        blockTextures[id] = texture;
     }
 
     @Override
