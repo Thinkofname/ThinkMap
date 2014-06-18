@@ -23,7 +23,7 @@
     <groupId>uk.co.thinkofdeath.thinkcraft</groupId>
     <artifactId>ThinkCraft</artifactId>
     <packaging>pom</packaging>
-    <version>0.8</version>
+    <version>0.9-SNAPSHOT</version>
 
     <profiles>
         <profile>
@@ -47,7 +47,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <build.number>SNAPSHOT</build.number>
+        <build.number>0</build.number>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <fast.build>false</fast.build>
