@@ -19,7 +19,6 @@
 <module rename-to="shared">
     <inherits name="com.google.gwt.core.Core"/>
     <inherits name="elemental.Elemental"/>
-    <inherits name="uk.co.thinkofdeath.thinkcraft.html.Native"/>
 
     <source path="shared"/>
 </module>

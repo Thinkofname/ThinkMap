@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.shared;
+package uk.co.thinkofdeath.thinkcraft.html.shared;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 
 public class TextureMap extends JavaScriptObject {
     protected TextureMap() {
@@ -30,7 +31,7 @@ public class TextureMap extends JavaScriptObject {
         for (key in this.textures) {
             if (this.textures.hasOwnProperty(key)) {
                 var texture = this.textures[key];
-                looper.@uk.co.thinkofdeath.thinkcraft.shared.TextureMap.Looper::forEach(Ljava/lang/String;Luk/co/thinkofdeath/thinkcraft/shared/Texture;)(
+                looper.@uk.co.thinkofdeath.thinkcraft.html.shared.TextureMap.Looper::forEach(Ljava/lang/String;Luk/co/thinkofdeath/thinkcraft/shared/Texture;)(
                     key,
                     new @uk.co.thinkofdeath.thinkcraft.shared.Texture::new(Ljava/lang/String;IIIII)(
                         key,

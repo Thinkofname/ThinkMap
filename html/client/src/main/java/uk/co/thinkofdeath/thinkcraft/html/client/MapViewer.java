@@ -34,10 +34,10 @@ import uk.co.thinkofdeath.thinkcraft.html.client.worker.WorkerPool;
 import uk.co.thinkofdeath.thinkcraft.html.client.world.ClientChunk;
 import uk.co.thinkofdeath.thinkcraft.html.client.world.ClientWorld;
 import uk.co.thinkofdeath.thinkcraft.html.shared.NativeLib;
+import uk.co.thinkofdeath.thinkcraft.html.shared.TextureMap;
 import uk.co.thinkofdeath.thinkcraft.html.shared.settings.ClientSettings;
 import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
-import uk.co.thinkofdeath.thinkcraft.shared.TextureMap;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockRegistry;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkBuildReply;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage;
@@ -287,7 +287,6 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
         return world;
     }
 
-    @Override
     public ClientSettings getSettings() {
         return clientSettings;
     }

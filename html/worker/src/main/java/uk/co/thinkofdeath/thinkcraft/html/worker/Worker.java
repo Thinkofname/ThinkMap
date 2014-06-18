@@ -23,12 +23,12 @@ import elemental.events.EventListener;
 import elemental.events.MessageEvent;
 import elemental.html.WorkerGlobalScope;
 import uk.co.thinkofdeath.thinkcraft.html.shared.NativeLib;
+import uk.co.thinkofdeath.thinkcraft.html.shared.TextureMap;
 import uk.co.thinkofdeath.thinkcraft.html.shared.settings.ClientSettings;
 import uk.co.thinkofdeath.thinkcraft.html.worker.world.WorkerChunk;
 import uk.co.thinkofdeath.thinkcraft.html.worker.world.WorkerWorld;
 import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
-import uk.co.thinkofdeath.thinkcraft.shared.TextureMap;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockRegistry;
 import uk.co.thinkofdeath.thinkcraft.shared.building.DynamicBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
@@ -141,7 +141,6 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
         return world;
     }
 
-    @Override
     public ClientSettings getSettings() {
         return clientSettings;
     }

@@ -40,11 +40,6 @@
             <version>${gwt.version}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>uk.co.thinkofdeath.thinkcraft</groupId>
-            <artifactId>html-native</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 
     <build>

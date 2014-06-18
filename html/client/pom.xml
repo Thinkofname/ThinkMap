@@ -36,7 +36,12 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.google.gwt</groupId>
+            <groupId>uk.co.thinkofdeath.thinkcraft</groupId>
+            <artifactId>html-native</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+        <groupId>com.google.gwt</groupId>
             <artifactId>gwt-user</artifactId>
             <version>${gwt.version}</version>
             <scope>provided</scope>
