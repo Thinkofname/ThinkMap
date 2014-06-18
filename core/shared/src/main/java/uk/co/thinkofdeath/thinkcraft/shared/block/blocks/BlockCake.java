@@ -29,7 +29,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
 
 public class BlockCake extends BlockFactory {
 
-    public final StateKey<Integer> EATEN = stateAllocator.alloc("eaten", new IntegerState(0, 7));
+    public final StateKey<Integer> EATEN = stateAllocator.alloc("eaten", new IntegerState(0, 5));
 
     private final Texture top;
     private final Texture side;
@@ -66,8 +66,8 @@ public class BlockCake extends BlockFactory {
             if (model == null) {
                 model = new Model();
 
-                int remaining = 8 - getState(EATEN);
-                int len = (int) (14f / 8f * remaining);
+                int remaining = 7 - getState(EATEN);
+                int len = 2 * remaining;
 
                 model.addFace(new ModelFace(Face.TOP, top, 1, 1, len, 14, 8));
                 model.addFace(new ModelFace(Face.LEFT,
