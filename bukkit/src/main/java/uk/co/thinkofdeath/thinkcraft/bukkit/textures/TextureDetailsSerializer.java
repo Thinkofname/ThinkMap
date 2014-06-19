@@ -16,10 +16,7 @@
 
 package uk.co.thinkofdeath.thinkcraft.bukkit.textures;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import com.google.gson.*;
 import uk.co.thinkofdeath.thinkcraft.textures.TextureDetails;
 
 import java.lang.reflect.Type;
@@ -32,7 +29,15 @@ public class TextureDetailsSerializer implements JsonSerializer<TextureDetails> 
         obj.addProperty("posY", src.getPosY());
         obj.addProperty("size", src.getSize());
         obj.addProperty("width", src.getWidth());
-        obj.addProperty("frames", src.getFrames());
+        obj.addProperty("frameCount", src.getFrameCount());
+        JsonArray jsFrames = new JsonArray();
+        for (int frame : src.getFrames()) {
+            jsFrames.add(new JsonPrimitive(frame));
+        }
+        obj.add("frames", jsFrames);
+        obj.addProperty("frameTime", src.getFrameTime());
+        obj.addProperty("virtualX", src.getVirtualPosition().getX());
+        obj.addProperty("virtualY", src.getVirtualPosition().getY());
         return obj;
     }
 }

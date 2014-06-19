@@ -23,15 +23,24 @@ public class Texture {
     private final int posY;
     private final int size;
     private final int width;
-    private final int frames;
+    private final int frameCount;
+    private final int[] frames;
+    private final int frameTime;
+    private final int virtualX;
+    private final int virtualY;
 
-    public Texture(String name, int posX, int posY, int size, int width, int frames) {
+    public Texture(String name, int posX, int posY, int size, int width, int frameCount,
+                   int[] frames, int frameTime, int virtualX, int virtualY) {
         this.name = name;
         this.posX = posX;
         this.posY = posY;
         this.size = size;
         this.width = width;
+        this.frameCount = frameCount;
         this.frames = frames;
+        this.frameTime = frameTime;
+        this.virtualX = virtualX;
+        this.virtualY = virtualY;
     }
 
     /**
@@ -59,7 +68,23 @@ public class Texture {
         return width;
     }
 
-    public int getFrames() {
+    public int getFrameCount() {
+        return frameCount;
+    }
+
+    public int[] getFrames() {
         return frames;
+    }
+
+    public int getFrameTime() {
+        return frameTime;
+    }
+
+    public int getVirtualX() {
+        return virtualX;
+    }
+
+    public int getVirtualY() {
+        return virtualY;
     }
 }

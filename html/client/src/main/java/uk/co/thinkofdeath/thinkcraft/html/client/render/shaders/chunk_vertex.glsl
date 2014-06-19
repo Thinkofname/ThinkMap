@@ -3,8 +3,7 @@ precision mediump float;
 attribute vec3 position;
 attribute vec4 colour;
 attribute vec2 texturePos;
-attribute vec4 textureDetails;
-attribute float textureFrames;
+attribute vec3 textureDetails;
 attribute vec2 lighting;
 
 uniform mat4 pMatrix;
@@ -31,11 +30,9 @@ void main(void) {
     vColour = colour;
 
     vTextureSize = textureDetails[2] * invTextureSize;
-    float currentFrame = floor(mod(frame, textureFrames));
-    float totalPosition = currentFrame * textureDetails[2];
-    float posX = textureDetails[0] + mod(totalPosition, textureDetails[3]);
-    float posY = textureDetails[1] + floor(totalPosition / textureDetails[3]) * textureDetails[2];
-    texture = floor(posY / 1024.0);
+    float posX = textureDetails[0];
+    float posY = textureDetails[1];
+    texture = floor(posY * invTextureSize);
     posY = posY - texture * 1024.0;
     vTexturePos = vec2(posX, posY) * invTextureSize;
     vTextureOffset = texturePos * invPosScale;

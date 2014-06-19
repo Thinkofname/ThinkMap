@@ -20,6 +20,7 @@ import elemental.client.Browser;
 import elemental.html.*;
 import uk.co.thinkofdeath.thinkcraft.html.client.MapViewer;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.shaders.ChunkShader;
+import uk.co.thinkofdeath.thinkcraft.html.client.texture.VirtualTexture;
 import uk.co.thinkofdeath.thinkcraft.shared.model.PositionedModel;
 import uk.co.thinkofdeath.thinkcraft.shared.support.JsUtils;
 import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
@@ -101,11 +102,11 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
 
         for (int i = 0; i < blockTextures.length; i++) {
             gl.activeTexture(TEXTURE0 + i);
-            loadDummyTexture(i);
+            blockTextures[i] = loadTexture(mapViewer.getVirtualTextures()[i]);
             gl.bindTexture(TEXTURE_2D, blockTextures[i]);
         }
 
-        run();
+        RendererUtils.requestAnimationFrame(this);
     }
 
     @Override
@@ -118,6 +119,10 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         currentFrame += (1d / 3d) * delta;
         if (currentFrame > 0xFFFFFFF) {
             currentFrame -= 0xFFFFFFF;
+        }
+        // Update textures
+        for (VirtualTexture texture : mapViewer.getVirtualTextures()) {
+            texture.update((int) currentFrame);
         }
 
         float timeScale = (mapViewer.getWorld().getTimeOfDay() - 6000f) / 12000f;
@@ -167,12 +172,11 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
             chunkShader.setOffset(renderObject.x, renderObject.z);
 
             gl.bindBuffer(ARRAY_BUFFER, renderObject.buffer);
-            gl.vertexAttribPointer(chunkShader.getPosition(), 3, UNSIGNED_SHORT, false, 26, 0);
-            gl.vertexAttribPointer(chunkShader.getColour(), 4, UNSIGNED_BYTE, true, 26, 6);
-            gl.vertexAttribPointer(chunkShader.getTexturePosition(), 2, UNSIGNED_SHORT, false, 26, 10);
-            gl.vertexAttribPointer(chunkShader.getTextureDetails(), 4, UNSIGNED_SHORT, false, 26, 14);
-            gl.vertexAttribPointer(chunkShader.getTextureFrames(), 1, UNSIGNED_SHORT, false, 26, 22);
-            gl.vertexAttribPointer(chunkShader.getLighting(), 2, UNSIGNED_BYTE, false, 26, 24);
+            gl.vertexAttribPointer(chunkShader.getPosition(), 3, UNSIGNED_SHORT, false, 22, 0);
+            gl.vertexAttribPointer(chunkShader.getColour(), 4, UNSIGNED_BYTE, true, 22, 6);
+            gl.vertexAttribPointer(chunkShader.getTexturePosition(), 2, UNSIGNED_SHORT, false, 22, 10);
+            gl.vertexAttribPointer(chunkShader.getTextureDetails(), 3, UNSIGNED_SHORT, false, 22, 14);
+            gl.vertexAttribPointer(chunkShader.getLighting(), 2, UNSIGNED_BYTE, false, 22, 20);
             gl.drawArrays(TRIANGLES, 0, renderObject.triangleCount);
         }
         chunkShader.disable();
@@ -239,7 +243,7 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
                 gl.bindBuffer(ARRAY_BUFFER, sortableRenderObject.buffer);
                 gl.bufferData(ARRAY_BUFFER, (ArrayBufferView) temp,
                         DYNAMIC_DRAW);
-                sortableRenderObject.count = temp.length() / 26;
+                sortableRenderObject.count = temp.length() / 22;
             }
 
             if (updates >= TRANSPARENT_UPDATES_LIMIT && !moved) {
@@ -252,12 +256,11 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
             if (sortableRenderObject.count == 0 || sortableRenderObject.buffer == null) continue;
             gl.bindBuffer(ARRAY_BUFFER, sortableRenderObject.buffer);
             chunkShaderAlpha.setOffset(sortableRenderObject.getX(), sortableRenderObject.getZ());
-            gl.vertexAttribPointer(chunkShaderAlpha.getPosition(), 3, UNSIGNED_SHORT, false, 26, 0);
-            gl.vertexAttribPointer(chunkShaderAlpha.getColour(), 4, UNSIGNED_BYTE, true, 26, 6);
-            gl.vertexAttribPointer(chunkShaderAlpha.getTexturePosition(), 2, UNSIGNED_SHORT, false, 26, 10);
-            gl.vertexAttribPointer(chunkShaderAlpha.getTextureDetails(), 4, UNSIGNED_SHORT, false, 26, 14);
-            gl.vertexAttribPointer(chunkShaderAlpha.getTextureFrames(), 1, UNSIGNED_SHORT, false, 26, 22);
-            gl.vertexAttribPointer(chunkShaderAlpha.getLighting(), 2, UNSIGNED_BYTE, false, 26, 24);
+            gl.vertexAttribPointer(chunkShaderAlpha.getPosition(), 3, UNSIGNED_SHORT, false, 22, 0);
+            gl.vertexAttribPointer(chunkShaderAlpha.getColour(), 4, UNSIGNED_BYTE, true, 22, 6);
+            gl.vertexAttribPointer(chunkShaderAlpha.getTexturePosition(), 2, UNSIGNED_SHORT, false, 22, 10);
+            gl.vertexAttribPointer(chunkShaderAlpha.getTextureDetails(), 4, UNSIGNED_SHORT, false, 22, 14);
+            gl.vertexAttribPointer(chunkShaderAlpha.getLighting(), 2, UNSIGNED_BYTE, false, 22, 20);
             gl.drawArrays(TRIANGLES, 0, sortableRenderObject.count);
         }
 
@@ -310,26 +313,19 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         renderObject.buffer = null;
     }
 
-    public void loadBlockTexture(int id, ImageElement imageElement) {
-        blockTextures[id] = loadTexture(imageElement);
-        gl.activeTexture(TEXTURE0 + id);
-        gl.bindTexture(TEXTURE_2D, blockTextures[id]);
-    }
-
     /**
      * Creates a WebGL texture from an ImageElement
      *
-     * @param imageElement
-     *         The image element to load
+     * @param vt
+     *         The texture to load
      * @return The created WebGL texture
      */
-    private WebGLTexture loadTexture(ImageElement imageElement) {
+    private WebGLTexture loadTexture(VirtualTexture vt) {
         WebGLTexture texture = gl.createTexture();
         gl.bindTexture(TEXTURE_2D, texture);
-        // Flip the Y to be like we are used to
         gl.pixelStorei(UNPACK_FLIP_Y_WEBGL, 0);
         gl.pixelStorei(UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
-        gl.texImage2D(TEXTURE_2D, 0, RGBA, RGBA, UNSIGNED_BYTE, imageElement);
+        gl.texImage2D(TEXTURE_2D, 0, RGBA, RGBA, UNSIGNED_BYTE, vt.getTexture());
         // Nearest filtering gives a Minecrafty look
         gl.texParameteri(TEXTURE_2D, TEXTURE_MAG_FILTER, NEAREST);
         gl.texParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, NEAREST);
@@ -339,14 +335,10 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         return texture;
     }
 
-    private void loadDummyTexture(int id) {
-        WebGLTexture texture = gl.createTexture();
-        gl.bindTexture(TEXTURE_2D, texture);
-        TUint8Array img = TUint8Array.create(4);
-        img.set(new int[]{0, 255, 0, 255});
-        gl.texImage2D(TEXTURE_2D, 0, RGBA, 1, 1, 0, RGBA, UNSIGNED_BYTE,
-                (ArrayBufferView) img);
-        blockTextures[id] = texture;
+    public void updateTexture(int id) {
+        gl.bindTexture(TEXTURE_2D, blockTextures[id]);
+        gl.pixelStorei(UNPACK_FLIP_Y_WEBGL, 0);
+        gl.texImage2D(TEXTURE_2D, 0, RGBA, RGBA, UNSIGNED_BYTE, mapViewer.getVirtualTextures()[id].getTexture());
     }
 
     @Override

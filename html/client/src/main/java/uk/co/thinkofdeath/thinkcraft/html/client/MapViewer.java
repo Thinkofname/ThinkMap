@@ -30,6 +30,7 @@ import uk.co.thinkofdeath.thinkcraft.html.client.network.Connection;
 import uk.co.thinkofdeath.thinkcraft.html.client.network.ConnectionHandler;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.Camera;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.Renderer;
+import uk.co.thinkofdeath.thinkcraft.html.client.texture.VirtualTexture;
 import uk.co.thinkofdeath.thinkcraft.html.client.worker.WorkerPool;
 import uk.co.thinkofdeath.thinkcraft.html.client.world.ClientChunk;
 import uk.co.thinkofdeath.thinkcraft.html.client.world.ClientWorld;
@@ -46,6 +47,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.world.World;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, IMapViewer {
 
@@ -63,6 +65,8 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     private ClientSettings clientSettings;
 
     private HashMap<String, Texture> textures = new HashMap<>();
+    private VirtualTexture[] virtualTextures;
+    private ImageElement[] imageElements;
     private XMLHttpRequest xhr;
     private int loaded = 0;
     private Connection connection;
@@ -106,9 +110,14 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
             });
             // Sync to workers
             getWorkerPool().sendMessage("textures", tmap, new Object[0], true);
-            noTextures = tmap.getNumberOfImages();
+            noTextures = tmap.getNumberVirtuals();
+            virtualTextures = new VirtualTexture[noTextures];
+            for (int i = 0; i < noTextures; i++) {
+                virtualTextures[i] = new VirtualTexture(this, i);
+            }
+            imageElements = new ImageElement[tmap.getNumberOfImages()];
             for (int i = 0; i < tmap.getNumberOfImages(); i++) {
-                ImageElement texture = (ImageElement) Browser.getDocument().createElement("img");
+                ImageElement texture = imageElements[i] = (ImageElement) Browser.getDocument().createElement("img");
                 texture.setOnload(new TextureLoadHandler(this, i, texture));
                 texture.setCrossOrigin("anonymous");
                 texture.setSrc("http://" + getConfigAdddress() + "/resources/blocks_" + i + ".png");
@@ -289,5 +298,17 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
 
     public ClientSettings getSettings() {
         return clientSettings;
+    }
+
+    public VirtualTexture[] getVirtualTextures() {
+        return virtualTextures;
+    }
+
+    public ImageElement[] getImageElements() {
+        return imageElements;
+    }
+
+    public Map<String, Texture> getTextures() {
+        return textures;
     }
 }

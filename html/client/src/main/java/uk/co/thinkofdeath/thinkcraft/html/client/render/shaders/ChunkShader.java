@@ -35,7 +35,6 @@ public class ChunkShader extends ShaderProgram {
     private int position;
     private int colour;
     private int textureDetails;
-    private int textureFrames;
     private int texturePosition;
     private int lighting;
     // Flags
@@ -69,7 +68,6 @@ public class ChunkShader extends ShaderProgram {
         position = getAttribute("position");
         colour = getAttribute("colour");
         textureDetails = getAttribute("textureDetails");
-        textureFrames = getAttribute("textureFrames");
         texturePosition = getAttribute("texturePos");
         lighting = getAttribute("lighting");
     }
@@ -155,10 +153,6 @@ public class ChunkShader extends ShaderProgram {
      */
     public int getTextureDetails() {
         return textureDetails;
-    }
-
-    public int getTextureFrames() {
-        return textureFrames;
     }
 
     /**

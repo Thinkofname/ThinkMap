@@ -27,19 +27,27 @@ public class TextureMap extends JavaScriptObject {
         return this.textureImages;
     }-*/;
 
+    public final native int getNumberVirtuals()/*-{
+        return this.virtualCount;
+    }-*/;
+
     public final native void forEach(Looper looper)/*-{
         for (key in this.textures) {
             if (this.textures.hasOwnProperty(key)) {
                 var texture = this.textures[key];
                 looper.@uk.co.thinkofdeath.thinkcraft.html.shared.TextureMap.Looper::forEach(Ljava/lang/String;Luk/co/thinkofdeath/thinkcraft/shared/Texture;)(
                     key,
-                    new @uk.co.thinkofdeath.thinkcraft.shared.Texture::new(Ljava/lang/String;IIIII)(
+                    new @uk.co.thinkofdeath.thinkcraft.shared.Texture::new(Ljava/lang/String;IIIII[IIII)(
                         key,
                         texture.posX,
                         texture.posY,
                         texture.size,
                         texture.width,
-                        texture.frames
+                        texture.frameCount,
+                        texture.frames,
+                        texture.frameTime,
+                        texture.virtualX,
+                        texture.virtualY
                     ));
             }
         }

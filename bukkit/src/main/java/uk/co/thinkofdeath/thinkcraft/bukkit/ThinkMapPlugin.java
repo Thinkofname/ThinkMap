@@ -52,7 +52,7 @@ import java.util.logging.Level;
 public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     public static final String MINECRAFT_VERSION = "1.7.9";
-    public static final int RESOURCE_VERSION = 1;
+    public static final int RESOURCE_VERSION = 2;
     public static final int WORLD_VERSION = 1;
 
     private final Map<String, ChunkManager> chunkManagers = new HashMap<String, ChunkManager>();
@@ -172,6 +172,7 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
                         HashMap<String, Object> info = new HashMap<String, Object>();
                         info.put("textures", result.getDetails());
                         info.put("textureImages", result.getOutput().length);
+                        info.put("virtualCount", result.getVirtualCount());
                         FileUtils.writeStringToFile(
                                 blockInfo,
                                 gson.toJson(info)

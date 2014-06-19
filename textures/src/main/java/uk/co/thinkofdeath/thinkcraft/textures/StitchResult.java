@@ -23,6 +23,7 @@ public class StitchResult {
 
     Texture[] output;
     Map<String, TextureDetails> details = new HashMap<>();
+    int virtualCount;
 
     public Texture[] getOutput() {
         return output;
@@ -30,5 +31,9 @@ public class StitchResult {
 
     public Map<String, TextureDetails> getDetails() {
         return details;
+    }
+
+    public int getVirtualCount() {
+        return virtualCount;
     }
 }

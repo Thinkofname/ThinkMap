@@ -19,6 +19,7 @@ package uk.co.thinkofdeath.thinkcraft.html.client;
 import elemental.events.Event;
 import elemental.events.EventListener;
 import elemental.html.ImageElement;
+import uk.co.thinkofdeath.thinkcraft.html.client.texture.VirtualTexture;
 
 class TextureLoadHandler implements EventListener {
     private final MapViewer mapViewer;
@@ -41,6 +42,9 @@ class TextureLoadHandler implements EventListener {
     }
 
     public void load() {
-        TexturePreProcessor.process(mapViewer, id, imageElement, this);
+        for (VirtualTexture texture : mapViewer.getVirtualTextures()) {
+            texture.loadTextures(id);
+        }
+        TexturePreProcessor.process(mapViewer, id, this);
     }
 }

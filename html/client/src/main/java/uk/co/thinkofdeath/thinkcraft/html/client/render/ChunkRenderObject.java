@@ -55,7 +55,7 @@ public class ChunkRenderObject {
      */
     public void load(TUint8Array data, int sender) {
         this.data = data;
-        triangleCount = data.length() / 26;
+        triangleCount = data.length() / 22;
         this.sender = sender;
     }
 }

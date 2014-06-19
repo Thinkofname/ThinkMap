@@ -111,8 +111,7 @@ public class Model {
                         .position(x + vertex.getX(), y + vertex.getY(), z + vertex.getZ())
                         .colour(face.r, face.g, face.b)
                         .texturePosition(vertex.getTextureX(), vertex.getTextureY())
-                        .textureDetails(texture.getPosX(), texture.getPosY(), texture.getSize(),
-                                texture.getWidth(), texture.getFrames())
+                        .textureDetails(texture.getVirtualX(), texture.getVirtualY(), texture.getSize())
                         .lighting(light.getEmittedLight(), light.getSkyLight());
             }
             // Second triangle
@@ -126,8 +125,7 @@ public class Model {
                         .position(x + vertex.getX(), y + vertex.getY(), z + vertex.getZ())
                         .colour(face.r, face.g, face.b)
                         .texturePosition(vertex.getTextureX(), vertex.getTextureY())
-                        .textureDetails(texture.getPosX(), texture.getPosY(), texture.getSize(),
-                                texture.getWidth(), texture.getFrames())
+                        .textureDetails(texture.getVirtualX(), texture.getVirtualY(), texture.getSize())
                         .lighting(light.getEmittedLight(), light.getSkyLight());
             }
         }

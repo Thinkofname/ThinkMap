@@ -27,6 +27,7 @@ public class TextureStitcher {
     private final TextureProvider provider;
     private final TextureFactory textureFactory;
     private final ArrayList<StitchedTexture> textures = new ArrayList<>();
+    private final ArrayList<StitchedTexture> virtualTextures = new ArrayList<>();
 
     public TextureStitcher(TextureProvider provider, TextureFactory textureFactory) {
         this.provider = provider;
@@ -56,15 +57,7 @@ public class TextureStitcher {
             if (provider.getMetadata(name) != null) {
                 TextureMetadata metadata = provider.getMetadata(name);
 
-                int[] frames = metadata.getFrames();
-                if (frames == null) {
-                    // Work out from texture size
-                    frames = new int[texture.getHeight() / texture.getWidth()];
-                    for (int i = 0; i < frames.length; i++) {
-                        frames[i] = i;
-                    }
-                }
-                int frameTime = metadata.getFrameTime();
+                int frames = texture.getHeight() / texture.getWidth();
                 int size = texture.getWidth();
 
                 Position position = null;
@@ -73,20 +66,28 @@ public class TextureStitcher {
 
                 main:
                 for (int t = 0; t <= 1; t++) {
-                    for (columns = (frames.length * frameTime); columns > 0; columns--) {
+                    for (columns = frames; columns > 0; columns--) {
                         int width = columns * size;
                         if (width > TEXTURE_SIZE) {
                             continue;
                         }
-                        int height = (int) Math.ceil((float) (frames.length * frameTime) / columns)
+                        int height = (int) Math.ceil((float) frames / columns)
                                 * size;
                         if (height > TEXTURE_SIZE) {
                             break;
                         }
                         position = getFree(width, height, t == 1);
                         if (position != null) {
+                            int[] frs = metadata.getFrames();
+                            if (frs == null) {
+                                frs = new int[frames];
+                                for (int i = 0; i < frames; i++) {
+                                    frs[i] = i;
+                                }
+                            }
+                            Position virtualPosition = getVirtual(size, size);
                             details = new TextureDetails(name, position.x, position.y, size,
-                                    width, frames.length * frameTime);
+                                    width, frames, frs, metadata.getFrameTime(), virtualPosition);
                             break main;
                         }
                     }
@@ -96,17 +97,13 @@ public class TextureStitcher {
                     System.out.println("Failed to place texture: " + name);
                     continue;
                 }
-                int i = 0;
-                for (int frame : frames) {
-                    for (int n = 0; n < frameTime; n++) {
-                        int[] data = texture.getPixels(0, size * frame, size, size);
-                        putTexture(new Position(position.x + (i % columns) * size,
-                                        position.y + (i / columns) * size),
-                                data, size,
-                                size
-                        );
-                        i++;
-                    }
+                for (int frame = 0; frame < frames; frame++) {
+                    int[] data = texture.getPixels(0, size * frame, size, size);
+                    putTexture(new Position(position.x + (frame % columns) * size,
+                                    position.y + (frame / columns) * size),
+                            data, size,
+                            size
+                    );
                 }
                 result.details.put(name, details);
                 continue;
@@ -117,15 +114,42 @@ public class TextureStitcher {
                 continue;
             }
             putTexture(position, texture);
+            Position virtualPosition = getVirtual(texture.getWidth(), texture.getHeight());
             result.details.put(name, new TextureDetails(name, position.x, position.y,
-                    texture.getWidth(), texture.getWidth(), 1));
+                    texture.getWidth(), texture.getWidth(), 1, new int[]{0}, -1, virtualPosition));
         }
 
         result.output = new Texture[textures.size()];
         for (int i = 0; i < textures.size(); i++) {
             result.output[i] = textures.get(i).texture;
         }
+        result.virtualCount = virtualTextures.size();
         return result;
+    }
+
+
+    private Position getVirtual(int width, int height) {
+        if (width > TEXTURE_SIZE || height > TEXTURE_SIZE) {
+            throw new IllegalArgumentException("Texture too big");
+        }
+        Position position = null;
+        int i = 0;
+        for (StitchedTexture texture : virtualTextures) {
+            position = texture.getFree(width, height, true);
+            if (position != null) {
+                position = new Position(position.x, position.y + i * TEXTURE_SIZE);
+                break;
+            }
+            i++;
+        }
+        if (position == null) {
+            StitchedTexture texture = new StitchedTexture(textureFactory.create(
+                    TEXTURE_SIZE, TEXTURE_SIZE));
+            position = texture.getFree(width, height, true);
+            position = new Position(position.x, position.y + virtualTextures.size() * TEXTURE_SIZE);
+            virtualTextures.add(texture);
+        }
+        return position;
     }
 
     private void putTexture(Position position, Texture t) {
@@ -147,7 +171,7 @@ public class TextureStitcher {
         Position position = null;
         int i = 0;
         for (StitchedTexture texture : textures) {
-            position = texture.getFree(width, height);
+            position = texture.getFree(width, height, false);
             if (position != null) {
                 position = new Position(position.x, position.y + i * TEXTURE_SIZE);
                 break;
@@ -157,7 +181,7 @@ public class TextureStitcher {
         if (position == null && createNew) {
             StitchedTexture texture = new StitchedTexture(textureFactory.create(
                     TEXTURE_SIZE, TEXTURE_SIZE));
-            position = texture.getFree(width, height);
+            position = texture.getFree(width, height, false);
             position = new Position(position.x, position.y + textures.size() * TEXTURE_SIZE);
             textures.add(texture);
         }
@@ -175,7 +199,7 @@ public class TextureStitcher {
             usedPixels = new boolean[texture.getWidth() * texture.getHeight()];
         }
 
-        public Position getFree(int width, int height) {
+        public Position getFree(int width, int height, boolean mark) {
             for (int x = 0; x < texture.getWidth(); x++) {
                 main:
                 for (int y = 0; y < texture.getHeight(); y++) {
@@ -189,6 +213,9 @@ public class TextureStitcher {
                                 }
                             }
                         }
+                        if (mark) {
+                            markLocation(x, y, width, height);
+                        }
                         return new Position(x, y);
                     }
                 }
@@ -198,8 +225,12 @@ public class TextureStitcher {
 
         public void putTexture(Position position, int[] data, int width, int height) {
             texture.setPixels(data, position.x, position.y, width, height);
-            for (int x = position.x; x < position.x + width; x++) {
-                for (int y = position.y; y < position.y + height; y++) {
+            markLocation(position.x, position.y, width, height);
+        }
+
+        private void markLocation(int px, int py, int width, int height) {
+            for (int x = px; x < px + width; x++) {
+                for (int y = py; y < py + height; y++) {
                     if (usedPixels[x + y * texture.getWidth()]) {
                         throw new RuntimeException("Double used location (" + x + "," + y + ")");
                     }
@@ -209,7 +240,7 @@ public class TextureStitcher {
         }
     }
 
-    private static class Position {
+    public static class Position {
         private final int x;
         private final int y;
 
@@ -221,6 +252,14 @@ public class TextureStitcher {
         @Override
         public String toString() {
             return "(" + x + "," + y + ")";
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
         }
     }
 }

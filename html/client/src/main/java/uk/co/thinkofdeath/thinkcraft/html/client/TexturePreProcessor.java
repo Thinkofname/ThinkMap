@@ -20,7 +20,7 @@ import elemental.client.Browser;
 import elemental.html.CanvasElement;
 import elemental.html.CanvasRenderingContext2D;
 import elemental.html.ImageData;
-import elemental.html.ImageElement;
+import uk.co.thinkofdeath.thinkcraft.html.client.texture.VirtualTexture;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
 
@@ -29,8 +29,7 @@ public class TexturePreProcessor {
     private static TextureLoadHandler grassOverlay;
     private static TextureLoadHandler grass;
 
-    public static void process(MapViewer mapViewer, int id, ImageElement imageElement, TextureLoadHandler textureLoadHandler) {
-        // Grass
+    public static void process(MapViewer mapViewer, int id, TextureLoadHandler textureLoadHandler) {
         if ((mapViewer.getTexture("grass_side_overlay").getPosY() / 1024) == id) {
             grassOverlay = textureLoadHandler;
         }
@@ -74,19 +73,13 @@ public class TexturePreProcessor {
                     }
                 }
             }
-            ctx.putImageData(
-                    data,
-                    g.getPosX(),
-                    g.getPosY() - grass.id * 1024);
 
-            mapViewer.getRenderer().loadBlockTexture(grass.id, (ImageElement) canvasElement);
-            if (grass != grassOverlay) {
-                mapViewer.getRenderer().loadBlockTexture(grassOverlay.id, grassOverlay.imageElement);
-            }
+            int vid = g.getVirtualY() / 1024;
+            VirtualTexture virtualTexture = mapViewer.getVirtualTextures()[vid];
+            virtualTexture.getCtx().putImageData(data, g.getVirtualX(), g.getVirtualY() - vid * 1024);
+
             grass = null;
             grassOverlay = null;
-            return;
         }
-        mapViewer.getRenderer().loadBlockTexture(id, imageElement);
     }
 }

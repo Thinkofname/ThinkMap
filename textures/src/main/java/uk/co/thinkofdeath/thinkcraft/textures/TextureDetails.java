@@ -26,15 +26,22 @@ public class TextureDetails {
     private final int posY;
     private final int size;
     private final int width;
-    private final int frames;
+    private final int frameCount;
+    private final int[] frames;
+    private final int frameTime;
+    private final TextureStitcher.Position virtualPosition;
 
-    public TextureDetails(String name, int posX, int posY, int size, int width, int frames) {
+    public TextureDetails(String name, int posX, int posY, int size, int width,
+                          int frameCount, int[] frames, int frameTime, TextureStitcher.Position virtualPosition) {
         this.name = name;
         this.posX = posX;
         this.posY = posY;
         this.size = size;
         this.width = width;
+        this.frameCount = frameCount;
         this.frames = frames;
+        this.frameTime = frameTime;
+        this.virtualPosition = virtualPosition;
     }
 
     public String getName() {
@@ -57,7 +64,19 @@ public class TextureDetails {
         return width;
     }
 
-    public int getFrames() {
+    public int getFrameCount() {
+        return frameCount;
+    }
+
+    public int[] getFrames() {
         return frames;
+    }
+
+    public int getFrameTime() {
+        return frameTime;
+    }
+
+    public TextureStitcher.Position getVirtualPosition() {
+        return virtualPosition;
     }
 }

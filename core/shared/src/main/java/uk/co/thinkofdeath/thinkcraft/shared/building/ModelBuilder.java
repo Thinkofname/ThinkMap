@@ -89,13 +89,10 @@ public class ModelBuilder {
      *
      * @return This builder
      */
-    public ModelBuilder textureDetails(int posX, int posY, int size, int width, int frames) {
+    public ModelBuilder textureDetails(int posX, int posY, int size) {
         buffer.addUnsignedShort(posX);
         buffer.addUnsignedShort(posY);
         buffer.addUnsignedShort(size);
-        buffer.addUnsignedShort(width);
-        buffer.add(frames);
-        buffer.add(0); // Padding
         return this;
     }
 
