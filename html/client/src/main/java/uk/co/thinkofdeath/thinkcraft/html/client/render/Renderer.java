@@ -152,7 +152,6 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         chunkShader.setViewMatrix(viewMatrix);
         chunkShader.setBlockTexture(textureLocations);
         chunkShader.setScale(timeScale);
-        chunkShader.setFrame((int) currentFrame);
 
         // TODO: Think about grouping objects from the same chunk to save setOffset calls
         JsUtils.sort(renderObjectList, chunkSorter);
@@ -188,7 +187,6 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         chunkShaderAlpha.setViewMatrix(viewMatrix);
         chunkShaderAlpha.setBlockTexture(textureLocations);
         chunkShaderAlpha.setScale(timeScale);
-        chunkShaderAlpha.setFrame((int) currentFrame);
 
         int nx = (int) camera.getX();
         int ny = (int) camera.getY();

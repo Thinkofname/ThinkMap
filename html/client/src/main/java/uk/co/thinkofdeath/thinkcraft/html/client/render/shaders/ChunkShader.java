@@ -28,7 +28,6 @@ public class ChunkShader extends ShaderProgram {
     private WebGLUniformLocation perspectiveMatrix;
     private WebGLUniformLocation viewMatrix;
     private WebGLUniformLocation offset;
-    private WebGLUniformLocation frame;
     private WebGLUniformLocation scale;
     private WebGLUniformLocation blockTextures;
     // Attributes
@@ -61,7 +60,6 @@ public class ChunkShader extends ShaderProgram {
         perspectiveMatrix = getUniform("pMatrix");
         viewMatrix = getUniform("uMatrix");
         offset = getUniform("offset");
-        frame = getUniform("frame");
         scale = getUniform("scale");
         blockTextures = getUniform("textures");
         // Attributes
@@ -102,16 +100,6 @@ public class ChunkShader extends ShaderProgram {
      */
     public void setOffset(int x, int z) {
         gl.uniform2f(offset, x, z);
-    }
-
-    /**
-     * Sets the current frame
-     *
-     * @param i
-     *         Frame
-     */
-    public void setFrame(int i) {
-        gl.uniform1f(frame, i);
     }
 
     /**

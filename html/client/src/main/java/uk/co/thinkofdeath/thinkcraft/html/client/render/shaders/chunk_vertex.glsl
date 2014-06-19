@@ -10,7 +10,6 @@ uniform mat4 pMatrix;
 uniform mat4 uMatrix;
 uniform vec2 offset;
 uniform float scale;
-uniform float frame;
 
 varying vec4 vColour;
 varying vec2 vTexturePos;
