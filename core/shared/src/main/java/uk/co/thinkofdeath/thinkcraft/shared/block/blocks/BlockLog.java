@@ -27,18 +27,19 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
 
 public class BlockLog extends BlockFactory {
 
-    public final StateKey<Variant> VARIANT = stateAllocator.alloc("variant", new EnumState<>(Variant.class));
+    public final StateKey<? extends Enum> VARIANT;
     public final StateKey<Axis> AXIS = stateAllocator.alloc("axis", new EnumState<>(Axis.class));
     private static final int BOTTOM = 0;
     private static final int TOP = 1;
 
     private final Texture[][] textures;
 
-    public BlockLog(IMapViewer iMapViewer) {
+    public BlockLog(IMapViewer iMapViewer, Class<? extends Enum> v) {
         super(iMapViewer);
+        VARIANT = stateAllocator.alloc("variant", new EnumState<>(Variant.class));
 
-        textures = new Texture[Variant.values().length][];
-        for (Variant variant : Variant.values()) {
+        textures = new Texture[v.getEnumConstants().length][];
+        for (Enum variant : v.getEnumConstants()) {
             textures[variant.ordinal()] = new Texture[]{
                     iMapViewer.getTexture("log_" + variant),
                     iMapViewer.getTexture("log_" + variant + "_top")
@@ -85,6 +86,16 @@ public class BlockLog extends BlockFactory {
         }
     }
 
+    public static enum Variant2 {
+        ACACIA,
+        BIG_OAK;
+
+        @Override
+        public String toString() {
+            return super.toString().toLowerCase();
+        }
+    }
+
 
     @Override
     protected Block createBlock(StateMap states) {
@@ -98,7 +109,7 @@ public class BlockLog extends BlockFactory {
 
         @Override
         public Texture getTexture(Face face) {
-            Variant variant = getState(VARIANT);
+            Enum variant = getState(VARIANT);
             switch (getState(AXIS)) {
                 case X:
                     if (face == Face.LEFT || face == Face.RIGHT) {

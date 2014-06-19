@@ -224,9 +224,9 @@ public class BlockRegistry {
         register("minecraft", "coal_ore", new BlockBuilder(mapViewer)
                 .texture("coal_ore")
                 .create(), 16);
-        register("minecraft", "log", new BlockBuilder(new BlockLog(mapViewer))
+        register("minecraft", "log", new BlockBuilder(new BlockLog(mapViewer, BlockLog.Variant.class))
                 .create(), 17);
-        register("minecraft", "leaves", new BlockBuilder(new BlockLeaves(mapViewer))
+        register("minecraft", "leaves", new BlockBuilder(new BlockLeaves(mapViewer, BlockLeaves.Variant.class))
                 .solid(false)
                 .allowSelf(true)
                 .create(), 18);
@@ -700,9 +700,12 @@ public class BlockRegistry {
                 .solid(false)
                 .transparent(true)
                 .create(), 160);
-        // TODO: leaves2
-        // TODO: log2
-
+        register("minecraft", "leaves2", new BlockBuilder(new BlockLeaves(mapViewer, BlockLeaves.Variant2.class))
+                .solid(false)
+                .allowSelf(true)
+                .create(), 161);
+        register("minecraft", "log2", new BlockBuilder(new BlockLog(mapViewer, BlockLog.Variant2.class))
+                .create(), 162);
         register("minecraft", "acacia_stairs", new BlockBuilder(new BlockStairs(mapViewer))
                 .texture("planks_acacia")
                 .solid(false)

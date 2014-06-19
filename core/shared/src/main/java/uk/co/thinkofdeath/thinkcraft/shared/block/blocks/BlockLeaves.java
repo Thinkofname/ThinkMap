@@ -28,14 +28,15 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
 
 public class BlockLeaves extends BlockFactory {
 
-    public final StateKey<Variant> VARIANT = stateAllocator.alloc("variant", new EnumState<>(Variant.class));
+    public final StateKey<? extends Enum> VARIANT;
     public final StateKey<Boolean> CHECK_DECAY = stateAllocator.alloc("check_decay", new BooleanState());
     public final StateKey<Boolean> DECAYABLE = stateAllocator.alloc("decayable", new BooleanState());
 
     private final Texture[] textures;
 
-    public BlockLeaves(IMapViewer iMapViewer) {
+    public BlockLeaves(IMapViewer iMapViewer, Class<? extends Enum> v) {
         super(iMapViewer);
+        VARIANT = stateAllocator.alloc("variant", new EnumState<>(v));
 
         textures = new Texture[Variant.values().length];
         for (Variant variant : Variant.values()) {
@@ -48,6 +49,16 @@ public class BlockLeaves extends BlockFactory {
         SPRUCE,
         BIRCH,
         JUNGLE;
+
+        @Override
+        public String toString() {
+            return super.toString().toLowerCase();
+        }
+    }
+
+    public static enum Variant2 {
+        ACACIA,
+        BIG_OAK;
 
         @Override
         public String toString() {
