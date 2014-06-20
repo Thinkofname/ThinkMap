@@ -21,22 +21,25 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
-import uk.co.thinkofdeath.thinkcraft.shared.block.states.IntegerState;
+import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
 import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
 
-public class BlockSnowLayer extends BlockFactory {
+public class BlockCarpet extends BlockFactory {
 
-    public final StateKey<Integer> HEIGHT = stateAllocator.alloc("height", new IntegerState(1, 8));
+    public final StateKey<BlockColoured.Colour> COLOUR = stateAllocator.alloc("color", new EnumState<>(BlockColoured.Colour.class));
 
-    private final Texture texture;
+    private final Texture[] textures;
 
-    public BlockSnowLayer(IMapViewer iMapViewer) {
+    public BlockCarpet(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        texture = mapViewer.getTexture("snow");
+        textures = new Texture[BlockColoured.Colour.values().length];
+        for (BlockColoured.Colour colour : BlockColoured.Colour.values()) {
+            textures[colour.ordinal()] = mapViewer.getTexture("wool_colored_" + colour.texture);
+        }
     }
 
     @Override
@@ -47,12 +50,12 @@ public class BlockSnowLayer extends BlockFactory {
     private class BlockImpl extends Block {
 
         BlockImpl(StateMap state) {
-            super(BlockSnowLayer.this, state);
+            super(BlockCarpet.this, state);
         }
 
         @Override
         public int getLegacyData() {
-            return getState(HEIGHT) - 1;
+            return getState(COLOUR).ordinal();
         }
 
         @Override
@@ -60,14 +63,14 @@ public class BlockSnowLayer extends BlockFactory {
             if (model == null) {
                 model = new Model();
 
-                int height = getState(HEIGHT);
+                Texture texture = textures[getState(COLOUR).ordinal()];
 
-                model.addFace(new ModelFace(Face.TOP, texture, 0, 0, 16, 16, height * 2, height == 8));
+                model.addFace(new ModelFace(Face.TOP, texture, 0, 0, 16, 16, 1, false));
                 model.addFace(new ModelFace(Face.BOTTOM, texture, 0, 0, 16, 16, 0, true));
-                model.addFace(new ModelFace(Face.LEFT, texture, 0, 0, 16, height * 2, 16, true));
-                model.addFace(new ModelFace(Face.RIGHT, texture, 0, 0, 16, height * 2, 0, true));
-                model.addFace(new ModelFace(Face.FRONT, texture, 0, 0, 16, height * 2, 16, true));
-                model.addFace(new ModelFace(Face.BACK, texture, 0, 0, 16, height * 2, 0, true));
+                model.addFace(new ModelFace(Face.LEFT, texture, 0, 0, 16, 1, 16, true));
+                model.addFace(new ModelFace(Face.RIGHT, texture, 0, 0, 16, 1, 0, true));
+                model.addFace(new ModelFace(Face.FRONT, texture, 0, 0, 16, 1, 16, true));
+                model.addFace(new ModelFace(Face.BACK, texture, 0, 0, 16, 1, 0, true));
             }
             return model;
         }

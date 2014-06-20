@@ -716,8 +716,10 @@ public class BlockRegistry {
                 .create(), 164);
 
         // TODO: hay_block
-        // TODO: carpet
 
+        register("minecraft", "carpet", new BlockBuilder(new BlockCarpet(mapViewer))
+                .solid(false)
+                .create(), 171);
         register("minecraft", "hardened_clay", new BlockBuilder(mapViewer)
                 .texture("hardened_clay")
                 .create(), 172);

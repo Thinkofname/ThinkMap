@@ -23,15 +23,15 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 
 public class BlockStainedGlassPane extends BlockGlassPane {
 
-    public final StateKey<Colour> COLOUR = stateAllocator.alloc("color", new EnumState<>(Colour.class));
+    public final StateKey<BlockColoured.Colour> COLOUR = stateAllocator.alloc("color", new EnumState<>(BlockColoured.Colour.class));
 
-    private final Texture[] textures = new Texture[Colour.values().length * 2];
+    private final Texture[] textures = new Texture[BlockColoured.Colour.values().length * 2];
 
     public BlockStainedGlassPane(IMapViewer iMapViewer) {
         super(iMapViewer);
 
         int i = 0;
-        for (Colour colour : Colour.values()) {
+        for (BlockColoured.Colour colour : BlockColoured.Colour.values()) {
             textures[i] = mapViewer.getTexture("glass_" + colour.texture);
             textures[i + 1] = mapViewer.getTexture("glass_pane_top_" + colour.texture);
             i += 2;
@@ -48,40 +48,4 @@ public class BlockStainedGlassPane extends BlockGlassPane {
         return block.getState(COLOUR).ordinal();
     }
 
-    public static enum Colour {
-        WHITE,
-        ORANGE,
-        MAGENTA,
-        LIGHT_BLUE("lightBlue", "light_blue"), // Because keeping a single standard is hard
-        YELLOW,
-        LIME,
-        PINK,
-        GRAY,
-        SILVER,
-        CYAN,
-        PURPLE,
-        BLUE,
-        BROWN,
-        GREEN,
-        RED,
-        BLACK;
-
-        public final String name;
-        public final String texture;
-
-        Colour() {
-            name = name().toLowerCase();
-            texture = name;
-        }
-
-        Colour(String name, String texture) {
-            this.name = name;
-            this.texture = texture;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-    }
 }
