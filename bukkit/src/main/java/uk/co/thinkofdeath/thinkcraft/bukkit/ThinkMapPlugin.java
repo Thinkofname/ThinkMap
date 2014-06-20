@@ -20,12 +20,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import org.apache.commons.io.FileUtils;
-import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import uk.co.thinkofdeath.thinkcraft.bukkit.textures.BufferedTexture;
 import uk.co.thinkofdeath.thinkcraft.bukkit.textures.BufferedTextureFactory;
 import uk.co.thinkofdeath.thinkcraft.bukkit.textures.TextureDetailsSerializer;
@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -64,6 +65,8 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
     private File resourceDir;
     private File worldDir;
     private Date startUpDate = new Date((System.currentTimeMillis() / 1000) * 1000);
+
+    private boolean isGenerating = false;
 
     @Override
     public void onEnable() {
@@ -212,46 +215,71 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
     @Override
     public boolean onCommand(final CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 1 && args[0].equals("forcegen")) {
-            sender.sendMessage("Generating world data - Please wait");
-            for (World world : getServer().getWorlds()) {
-                sender.sendMessage("Generating world: " + world.getName());
-                File worldFolder = new File(world.getWorldFolder(), "region");
-                if (!worldFolder.exists()) {
-                    // handle nether/end
-                    worldFolder = new File(world.getWorldFolder(), String.format("DIM%d/region", world.getEnvironment().getId()));
-                    if (!worldFolder.exists()) {
-                        sender.sendMessage("Failed to generate: " + world.getName());
-                        continue;
-                    }
-                }
-                String[] regions = worldFolder.list();
-                int i = 0;
-                for (String region : regions) {
-                    if (!region.endsWith(".mca")) {
-                        continue;
-                    }
-                    String[] parts = region.split("\\.");
-                    int rx = Integer.parseInt(parts[1]);
-                    int rz = Integer.parseInt(parts[2]);
-                    for (int x = 0; x < 32; x++) {
-                        for (int z = 0; z < 32; z++) {
-                            int cx = (rx << 5) + x;
-                            int cz = (rz << 5) + z;
-                            boolean unload = !world.isChunkLoaded(cx, cz);
-                            if (world.loadChunk(cx, cz, false)) {
-                                Chunk chunk = world.getChunkAt(cx, cz);
-                                if (unload) {
-                                    world.unloadChunkRequest(cx, cz);
-                                }
+            if (isGenerating) {
+                sender.sendMessage("Already generating");
+                return true;
+            }
+            isGenerating = true;
+            sender.sendMessage("Generating world data - Please wait, this may cause lag");
+            new BukkitRunnable() {
+
+                private int w = 0;
+                private int lastWorld = -1;
+                private int r = 0;
+
+                @Override
+                public void run() {
+                    List<World> worlds = getServer().getWorlds();
+                    for (; w < worlds.size(); w++) {
+                        World world = worlds.get(w);
+                        if (lastWorld != w) {
+                            sender.sendMessage("Generating world: " + world.getName());
+                            lastWorld = w;
+                        }
+                        File worldFolder = new File(world.getWorldFolder(), "region");
+                        if (!worldFolder.exists()) {
+                            // handle nether/end
+                            worldFolder = new File(world.getWorldFolder(), String.format("DIM%d/region", world.getEnvironment().getId()));
+                            if (!worldFolder.exists()) {
+                                sender.sendMessage("Failed to generate: " + world.getName());
+                                continue;
                             }
                         }
-                    }
-                    i++;
-                    sender.sendMessage(String.format("Progress: %d/%d", i, regions.length));
-                }
+                        String[] regions = worldFolder.list();
+                        int count = 0;
+                        for (; r < regions.length; r++) {
+                            String region = regions[r];
+                            if (!region.endsWith(".mca")) {
+                                continue;
+                            }
+                            String[] parts = region.split("\\.");
+                            int rx = Integer.parseInt(parts[1]);
+                            int rz = Integer.parseInt(parts[2]);
+                            for (int x = 0; x < 32; x++) {
+                                for (int z = 0; z < 32; z++) {
+                                    int cx = (rx << 5) + x;
+                                    int cz = (rz << 5) + z;
+                                    boolean unload = !world.isChunkLoaded(cx, cz);
+                                    if (world.loadChunk(cx, cz, false)) {
+                                        world.getChunkAt(cx, cz); // Trigger a chunk load
+                                        if (unload) {
+                                            world.unloadChunkRequest(cx, cz);
+                                        }
+                                    }
+                                }
+                            }
+                            sender.sendMessage(String.format("Progress: %d/%d", r, regions.length));
+                            if (count > 5) {
+                                return;
+                            }
+                        }
+                        r = 0;
 
-            }
-            sender.sendMessage("Complete");
+                    }
+                    sender.sendMessage("Complete");
+                    cancel();
+                }
+            }.runTaskTimer(this, 0, 10);
         }
         return true;
     }
