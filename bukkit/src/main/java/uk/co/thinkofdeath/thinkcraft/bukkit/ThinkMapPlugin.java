@@ -172,7 +172,7 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
                                 .registerTypeAdapter(TextureDetails.class,
                                         new TextureDetailsSerializer())
                                 .create();
-                        HashMap<String, Object> info = new HashMap<String, Object>();
+                        HashMap<String, Object> info = new HashMap<>();
                         info.put("textures", result.getDetails());
                         info.put("textureImages", result.getOutput().length);
                         info.put("virtualCount", result.getVirtualCount());
