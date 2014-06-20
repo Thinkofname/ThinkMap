@@ -729,8 +729,10 @@ public class BlockRegistry {
         register("minecraft", "packed_ice", new BlockBuilder(mapViewer)
                 .texture("ice_packed")
                 .create(), 174);
-
-        // TODO: double_plant
+        register("minecraft", "double_plant", new BlockBuilder(new BlockDoubleFlowers(mapViewer))
+                .solid(false)
+                .collidable(false)
+                .create(), 175);
 
         // ThinkMap blocks
         register("thinkmap", "missing_block", new BlockBuilder(mapViewer)
