@@ -84,7 +84,7 @@ public class InputManager {
             camera.setY(camera.getY() + vSpeed);
 
             vSpeed -= 0.01;
-            if (vSpeed < -0.5f) vSpeed = -0.5f;
+            if (vSpeed < -0.3f) vSpeed = -0.3f;
         }
 
         // Collisions
