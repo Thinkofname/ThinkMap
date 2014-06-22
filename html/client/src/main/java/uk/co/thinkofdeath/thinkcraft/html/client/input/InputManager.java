@@ -31,6 +31,7 @@ public class InputManager {
     private final MapViewer mapViewer;
 
     private int movingDirection = 0;
+    private int sideDirection = 0;
 
     private float lx = Float.NaN;
     private float ly = Float.NaN;
@@ -68,16 +69,20 @@ public class InputManager {
             lz = camera.getZ();
         }
 
-        if (movingDirection != 0) {
+        if (movingDirection != 0 || sideDirection != 0) {
+            double rot = movingDirection != 0 ?
+                    camera.getRotationY() + sideDirection * (Math.PI / 4)
+                    : camera.getRotationY() + sideDirection * (Math.PI / 2);
+            int movingDirection = this.movingDirection == 0 ? 1 : this.movingDirection;
             if (flying) {
-                camera.setX((float) (camera.getX() + 0.2 * Math.sin(camera.getRotationY())
+                camera.setX((float) (camera.getX() + 0.2 * Math.sin(rot)
                         * Math.cos(camera.getRotationX()) * delta * movingDirection));
-                camera.setZ((float) (camera.getZ() - 0.2 * Math.cos(camera.getRotationY())
+                camera.setZ((float) (camera.getZ() - 0.2 * Math.cos(rot)
                         * Math.cos(camera.getRotationX()) * delta * movingDirection));
                 camera.setY((float) (camera.getY() - 0.2 * Math.sin(camera.getRotationX()) * delta * movingDirection));
             } else {
-                camera.setX((float) (camera.getX() + 0.1 * Math.sin(camera.getRotationY()) * delta * movingDirection));
-                camera.setZ((float) (camera.getZ() - 0.1 * Math.cos(camera.getRotationY()) * delta * movingDirection));
+                camera.setX((float) (camera.getX() + 0.1 * Math.sin(rot) * delta * movingDirection));
+                camera.setZ((float) (camera.getZ() - 0.1 * Math.cos(rot) * delta * movingDirection));
             }
         }
         if (!flying) {
@@ -203,6 +208,12 @@ public class InputManager {
             case 'S':
                 movingDirection = -1;
                 return true;
+            case 'A':
+                sideDirection = -1;
+                return true;
+            case 'D':
+                sideDirection = 1;
+                return true;
             case 32:
                 double now = Duration.currentTimeMillis();
                 if (now - lastJump > 75 && now - lastJump < 250) {
@@ -228,6 +239,16 @@ public class InputManager {
             case 'S':
                 if (movingDirection == -1) {
                     movingDirection = 0;
+                }
+                return true;
+            case 'A':
+                if (sideDirection == -1) {
+                    sideDirection = 0;
+                }
+                return true;
+            case 'D':
+                if (sideDirection == 1) {
+                    sideDirection = 0;
                 }
                 return true;
         }
