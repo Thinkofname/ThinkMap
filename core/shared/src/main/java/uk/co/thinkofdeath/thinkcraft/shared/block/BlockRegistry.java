@@ -536,12 +536,15 @@ public class BlockRegistry {
                 .create(), 103);
         register("minecraft", "pumpkin_stem", new BlockBuilder(new BlockStem(mapViewer, "pumpkin", "minecraft:pumpkin"))
                 .solid(false)
+                .collidable(false)
                 .create(), 104);
         register("minecraft", "melon_stem", new BlockBuilder(new BlockStem(mapViewer, "melon", "minecraft:melon_block"))
                 .solid(false)
+                .collidable(false)
                 .create(), 105);
         register("minecraft", "vine", new BlockBuilder(new BlockVine(mapViewer))
                 .solid(false)
+                .collidable(false)
                 .create(), 106);
 
         // TODO: fence_gate
