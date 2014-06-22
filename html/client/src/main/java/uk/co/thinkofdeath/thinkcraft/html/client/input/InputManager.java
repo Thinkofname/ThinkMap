@@ -70,6 +70,7 @@ public class InputManager {
         }
 
         if (movingDirection != 0 || sideDirection != 0) {
+            int sideDirection = this.movingDirection == 0 ? this.sideDirection : this.sideDirection * this.movingDirection;
             double rot = movingDirection != 0 ?
                     camera.getRotationY() + sideDirection * (Math.PI / 4)
                     : camera.getRotationY() + sideDirection * (Math.PI / 2);
