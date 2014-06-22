@@ -16,6 +16,7 @@
 
 package uk.co.thinkofdeath.thinkcraft.html.client.input;
 
+import com.google.gwt.core.client.Duration;
 import elemental.events.Touch;
 import elemental.events.TouchList;
 import uk.co.thinkofdeath.thinkcraft.html.client.MapViewer;
@@ -40,6 +41,8 @@ public class InputManager {
     private float vSpeed = 0;
     private boolean onGround = false;
     private int offGround = 0;
+    private double lastJump;
+    private boolean flying;
 
     /**
      * Creates a new input manager
@@ -66,13 +69,23 @@ public class InputManager {
         }
 
         if (movingDirection != 0) {
-            camera.setX((float) (camera.getX() + 0.1 * Math.sin(camera.getRotationY()) * delta * movingDirection));
-            camera.setZ((float) (camera.getZ() - 0.1 * Math.cos(camera.getRotationY()) * delta * movingDirection));
+            if (flying) {
+                camera.setX((float) (camera.getX() + 0.2 * Math.sin(camera.getRotationY())
+                        * Math.cos(camera.getRotationX()) * delta * movingDirection));
+                camera.setZ((float) (camera.getZ() - 0.2 * Math.cos(camera.getRotationY())
+                        * Math.cos(camera.getRotationX()) * delta * movingDirection));
+                camera.setY((float) (camera.getY() - 0.2 * Math.sin(camera.getRotationX()) * delta * movingDirection));
+            } else {
+                camera.setX((float) (camera.getX() + 0.1 * Math.sin(camera.getRotationY()) * delta * movingDirection));
+                camera.setZ((float) (camera.getZ() - 0.1 * Math.cos(camera.getRotationY()) * delta * movingDirection));
+            }
         }
-        camera.setY(camera.getY() + vSpeed);
+        if (!flying) {
+            camera.setY(camera.getY() + vSpeed);
 
-        vSpeed -= 0.01;
-        if (vSpeed < -0.5f) vSpeed = -0.5f;
+            vSpeed -= 0.01;
+            if (vSpeed < -0.5f) vSpeed = -0.5f;
+        }
 
         // Collisions
 
@@ -191,9 +204,15 @@ public class InputManager {
                 movingDirection = -1;
                 return true;
             case 32:
-                if (onGround) {
-                    vSpeed = 0.15f;
+                double now = Duration.currentTimeMillis();
+                if (now - lastJump > 75 && now - lastJump < 250) {
+                    flying = !flying;
+                } else {
+                    if (onGround) {
+                        vSpeed = 0.15f;
+                    }
                 }
+                lastJump = now;
                 return true;
         }
         return false;
