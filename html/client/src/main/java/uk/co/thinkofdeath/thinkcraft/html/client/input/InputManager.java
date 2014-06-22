@@ -95,9 +95,15 @@ public class InputManager {
         lx = camera.getX();
         ly = camera.getY();
         lz = camera.getZ();
+
+        while (mapViewer.getWorld().isLoaded((int) camera.getX() >> 4, (int) camera.getZ() >> 4) && checkCollisions()) {
+            camera.setY(camera.getY() + 0.1f);
+            hitbox.set(camera.getX() - 0.2, camera.getY() - 1.7, camera.getZ() - 0.2,
+                    camera.getX() + 0.2, camera.getY() + 0.2, camera.getZ() + 0.2);
+        }
     }
 
-    private void checkCollisions() {
+    private boolean checkCollisions() {
         int mix = (int) (hitbox.getX1() - 1);
         int max = (int) (hitbox.getX2() + 1);
         int miy = (int) (hitbox.getY1() - 1);
@@ -105,13 +111,15 @@ public class InputManager {
         int miz = (int) (hitbox.getZ1() - 1);
         int maz = (int) (hitbox.getZ2() + 1);
 
+        boolean hit = false;
         for (int y = miy; y < may; y++) {
             for (int z = miz; z < maz; z++) {
                 for (int x = mix; x < max; x++) {
-                    mapViewer.getWorld().getBlock(x, y, z).collide(hitbox, x, y, z, direction);
+                    hit |= mapViewer.getWorld().getBlock(x, y, z).collide(hitbox, x, y, z, direction);
                 }
             }
         }
+        return hit;
     }
 
     // This is where things get nasty.

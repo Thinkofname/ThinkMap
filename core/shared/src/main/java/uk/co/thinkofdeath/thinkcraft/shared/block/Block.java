@@ -207,15 +207,17 @@ public class Block implements Model.RenderChecker {
         return this;
     }
 
-    public void collide(AABB aabb, int x, int y, int z, Vector3 direction) {
+    public boolean collide(AABB aabb, int x, int y, int z, Vector3 direction) {
         if (isCollidable()) {
             if (hitbox == null) {
                 computeHitboxFromModel();
             }
             if (hitbox.intersectsOffset(aabb, x, y, z)) {
                 aabb.moveOutOf(hitbox, x, y, z, direction);
+                return true;
             }
         }
+        return false;
     }
 
     private void computeHitboxFromModel() {
