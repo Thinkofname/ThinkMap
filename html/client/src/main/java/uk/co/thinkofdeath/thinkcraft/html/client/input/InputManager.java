@@ -25,6 +25,8 @@ import uk.co.thinkofdeath.thinkcraft.shared.vector.Vector3;
 
 public class InputManager {
 
+    private static final double EYE_HEIGHT = 1.6;
+
     private final MapViewer mapViewer;
 
     private int movingDirection = 0;
@@ -35,6 +37,9 @@ public class InputManager {
 
     private AABB hitbox = new AABB(0, 0, 0, 0, 0, 0);
     private Vector3 direction = new Vector3();
+    private float vSpeed = 0;
+    private boolean onGround = false;
+    private int offGround = 0;
 
     /**
      * Creates a new input manager
@@ -61,36 +66,43 @@ public class InputManager {
         }
 
         if (movingDirection != 0) {
-            camera.setX((float) (camera.getX() + 0.3 * Math.sin(camera.getRotationY()) *
-                    Math.cos(camera.getRotationX()) * delta * movingDirection));
-            camera.setZ((float) (camera.getZ() - 0.3 * Math.cos(camera.getRotationY()) *
-                    Math.cos(camera.getRotationX()) * delta * movingDirection));
-            camera.setY((float) (camera.getY() - 0.3 * Math.sin(camera.getRotationX()) * delta *
-                    movingDirection));
+            camera.setX((float) (camera.getX() + 0.1 * Math.sin(camera.getRotationY()) * delta * movingDirection));
+            camera.setZ((float) (camera.getZ() - 0.1 * Math.cos(camera.getRotationY()) * delta * movingDirection));
         }
+        camera.setY(camera.getY() + vSpeed);
+
+        vSpeed -= 0.01;
+        if (vSpeed < -0.5f) vSpeed = -0.5f;
 
         // Collisions
 
         // X Axis
-        hitbox.set(camera.getX() - 0.2, ly - 1.7, lz - 0.2,
+        hitbox.set(camera.getX() - 0.2, ly - EYE_HEIGHT, lz - 0.2,
                 camera.getX() + 0.2, ly + 0.2, lz + 0.2);
         direction.set(camera.getX() - lx, 0, 0);
         checkCollisions();
         camera.setX((float) (hitbox.getX1() + 0.2));
 
         // Z Axis
-        hitbox.set(camera.getX() - 0.2, ly - 1.7, camera.getZ() - 0.2,
+        hitbox.set(camera.getX() - 0.2, ly - EYE_HEIGHT, camera.getZ() - 0.2,
                 camera.getX() + 0.2, ly + 0.2, camera.getZ() + 0.2);
         direction.set(0, 0, camera.getZ() - lz);
         checkCollisions();
         camera.setZ((float) (hitbox.getZ1() + 0.2));
 
         // Y Axis
-        hitbox.set(camera.getX() - 0.2, camera.getY() - 1.7, camera.getZ() - 0.2,
+        hitbox.set(camera.getX() - 0.2, camera.getY() - EYE_HEIGHT, camera.getZ() - 0.2,
                 camera.getX() + 0.2, camera.getY() + 0.2, camera.getZ() + 0.2);
         direction.set(0, camera.getY() - ly, 0);
-        checkCollisions();
-        camera.setY((float) (hitbox.getY1() + 1.7));
+        if (checkCollisions()) {
+            vSpeed = 0;
+            onGround = true;
+            offGround = 0;
+        } else {
+            onGround = offGround <= 1;
+            offGround++;
+        }
+        camera.setY((float) (hitbox.getY1() + EYE_HEIGHT));
 
         lx = camera.getX();
         ly = camera.getY();
@@ -98,7 +110,7 @@ public class InputManager {
 
         while (mapViewer.getWorld().isLoaded((int) camera.getX() >> 4, (int) camera.getZ() >> 4) && checkCollisions()) {
             camera.setY(camera.getY() + 0.1f);
-            hitbox.set(camera.getX() - 0.2, camera.getY() - 1.7, camera.getZ() - 0.2,
+            hitbox.set(camera.getX() - 0.2, camera.getY() - EYE_HEIGHT, camera.getZ() - 0.2,
                     camera.getX() + 0.2, camera.getY() + 0.2, camera.getZ() + 0.2);
         }
     }
@@ -177,6 +189,11 @@ public class InputManager {
                 return true;
             case 'S':
                 movingDirection = -1;
+                return true;
+            case 32:
+                if (onGround) {
+                    vSpeed = 0.15f;
+                }
                 return true;
         }
         return false;
