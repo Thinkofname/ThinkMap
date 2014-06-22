@@ -20,12 +20,21 @@ import elemental.events.Touch;
 import elemental.events.TouchList;
 import uk.co.thinkofdeath.thinkcraft.html.client.MapViewer;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.Camera;
+import uk.co.thinkofdeath.thinkcraft.shared.collision.AABB;
+import uk.co.thinkofdeath.thinkcraft.shared.vector.Vector3;
 
 public class InputManager {
 
     private final MapViewer mapViewer;
 
     private int movingDirection = 0;
+
+    private float lx = Float.NaN;
+    private float ly = Float.NaN;
+    private float lz = Float.NaN;
+
+    private AABB hitbox = new AABB(0, 0, 0, 0, 0, 0);
+    private Vector3 direction = new Vector3();
 
     /**
      * Creates a new input manager
@@ -44,6 +53,13 @@ public class InputManager {
      */
     public void update(double delta) {
         Camera camera = mapViewer.getCamera();
+
+        if (Float.isNaN(lx)) {
+            lx = camera.getX();
+            ly = camera.getY();
+            lz = camera.getZ();
+        }
+
         if (movingDirection != 0) {
             camera.setX((float) (camera.getX() + 0.3 * Math.sin(camera.getRotationY()) *
                     Math.cos(camera.getRotationX()) * delta * movingDirection));
@@ -51,6 +67,50 @@ public class InputManager {
                     Math.cos(camera.getRotationX()) * delta * movingDirection));
             camera.setY((float) (camera.getY() - 0.3 * Math.sin(camera.getRotationX()) * delta *
                     movingDirection));
+        }
+
+        // Collisions
+
+        // X Axis
+        hitbox.set(camera.getX() - 0.2, ly - 1.7, lz - 0.2,
+                camera.getX() + 0.2, ly + 0.2, lz + 0.2);
+        direction.set(camera.getX() - lx, 0, 0);
+        checkCollisions();
+        camera.setX((float) (hitbox.getX1() + 0.2));
+
+        // Z Axis
+        hitbox.set(camera.getX() - 0.2, ly - 1.7, camera.getZ() - 0.2,
+                camera.getX() + 0.2, ly + 0.2, camera.getZ() + 0.2);
+        direction.set(0, 0, camera.getZ() - lz);
+        checkCollisions();
+        camera.setZ((float) (hitbox.getZ1() + 0.2));
+
+        // Y Axis
+        hitbox.set(camera.getX() - 0.2, camera.getY() - 1.7, camera.getZ() - 0.2,
+                camera.getX() + 0.2, camera.getY() + 0.2, camera.getZ() + 0.2);
+        direction.set(0, camera.getY() - ly, 0);
+        checkCollisions();
+        camera.setY((float) (hitbox.getY1() + 1.7));
+
+        lx = camera.getX();
+        ly = camera.getY();
+        lz = camera.getZ();
+    }
+
+    private void checkCollisions() {
+        int mix = (int) (hitbox.getX1() - 1);
+        int max = (int) (hitbox.getX2() + 1);
+        int miy = (int) (hitbox.getY1() - 1);
+        int may = (int) (hitbox.getY2() + 1);
+        int miz = (int) (hitbox.getZ1() - 1);
+        int maz = (int) (hitbox.getZ2() + 1);
+
+        for (int y = miy; y < may; y++) {
+            for (int z = miz; z < maz; z++) {
+                for (int x = mix; x < max; x++) {
+                    mapViewer.getWorld().getBlock(x, y, z).collide(hitbox, x, y, z, direction);
+                }
+            }
         }
     }
 

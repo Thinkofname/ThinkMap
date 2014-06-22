@@ -20,8 +20,11 @@ import uk.co.thinkofdeath.thinkcraft.shared.Face;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
+import uk.co.thinkofdeath.thinkcraft.shared.collision.AABB;
 import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
+import uk.co.thinkofdeath.thinkcraft.shared.model.ModelVertex;
+import uk.co.thinkofdeath.thinkcraft.shared.vector.Vector3;
 import uk.co.thinkofdeath.thinkcraft.shared.world.World;
 
 import java.util.Map;
@@ -33,6 +36,7 @@ public class Block implements Model.RenderChecker {
     protected String plugin;
     protected String name;
     protected String fullName;
+    protected AABB hitbox;
     // The following should be mirrored in BlockFactory, BlockBuilder
     // and the constructor
     private boolean renderable;
@@ -201,6 +205,38 @@ public class Block implements Model.RenderChecker {
      */
     public Block update(World world, int x, int y, int z) {
         return this;
+    }
+
+    public void collide(AABB aabb, int x, int y, int z, Vector3 direction) {
+        if (isCollidable()) {
+            if (hitbox == null) {
+                computeHitboxFromModel();
+            }
+            if (hitbox.intersectsOffset(aabb, x, y, z)) {
+                aabb.moveOutOf(hitbox, x, y, z, direction);
+            }
+        }
+    }
+
+    private void computeHitboxFromModel() {
+        Model model = getModel();
+        double mix = Double.MAX_VALUE;
+        double miy = Double.MAX_VALUE;
+        double miz = Double.MAX_VALUE;
+        double max = Double.MIN_VALUE;
+        double may = Double.MIN_VALUE;
+        double maz = Double.MIN_VALUE;
+        for (ModelFace face : model.getFaces()) {
+            for (ModelVertex vertex : face.getVertices()) {
+                if (vertex.getX() < mix) mix = vertex.getX();
+                if (vertex.getX() > max) max = vertex.getX();
+                if (vertex.getY() < miy) miy = vertex.getY();
+                if (vertex.getY() > may) may = vertex.getY();
+                if (vertex.getZ() < miz) miz = vertex.getZ();
+                if (vertex.getZ() > maz) maz = vertex.getZ();
+            }
+        }
+        hitbox = new AABB(mix, miy, miz, max, may, maz);
     }
 
     @Override

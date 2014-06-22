@@ -322,4 +322,8 @@ public class ModelFace {
     public void setFace(Face face) {
         this.face = face;
     }
+
+    public ModelVertex[] getVertices() {
+        return vertices;
+    }
 }
