@@ -25,8 +25,10 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
+import uk.co.thinkofdeath.thinkcraft.shared.collision.AABB;
 import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
+import uk.co.thinkofdeath.thinkcraft.shared.vector.Vector3;
 import uk.co.thinkofdeath.thinkcraft.shared.world.World;
 
 public class BlockStairs extends BlockFactory {
@@ -88,6 +90,9 @@ public class BlockStairs extends BlockFactory {
 
     private class BlockImpl extends Block {
 
+        private AABB slabHitbox;
+        private AABB topHitbox;
+
         BlockImpl(StateMap state) {
             super(BlockStairs.this, state);
         }
@@ -119,6 +124,8 @@ public class BlockStairs extends BlockFactory {
                 model.addFace(new ModelFace(Face.FRONT, texture, 0, 0, 16, 8, 16, true));
                 model.addFace(new ModelFace(Face.BACK, texture, 0, 0, 16, 8, 0, true));
 
+                slabHitbox = computeHitboxFromModel(model);
+
                 Facing facing = getState(FACING);
                 Shape shape = getState(SHAPE);
 
@@ -136,7 +143,9 @@ public class BlockStairs extends BlockFactory {
                         section.addFace(new ModelFace(Face.RIGHT, texture, 0, 8, 16, 8, 0));
                         section.addFace(new ModelFace(Face.FRONT, texture, 0, 8, 8, 8, 16));
                         section.addFace(new ModelFace(Face.BACK, texture, 0, 8, 8, 8, 0));
-                        model.join(section.rotateY(facing.rotation * 90));
+                        section.rotateY(facing.rotation * 90);
+                        topHitbox = computeHitboxFromModel(section);
+                        model.join(section);
                         break;
                     case INNER_LEFT:
                     case INNER_RIGHT:
@@ -154,10 +163,11 @@ public class BlockStairs extends BlockFactory {
                         section.addFace(new ModelFace(Face.FRONT, texture, 0, 8, 8, 8, oz + 8));
                         section.addFace(new ModelFace(Face.BACK, texture, 0, 8, 8, 8, oz));
 
-                        model.join(new Model().join(section, 0, 0,
+                        section = new Model().join(section, 0, 0,
                                 alt ? -8 : 0
-                        )
-                                .rotateY(facing.rotation * 90));
+                        ).rotateY(facing.rotation * 90);
+                        topHitbox = computeHitboxFromModel(section);
+                        model.join(section);
                         break;
                     case OUTER_LEFT:
                     case OUTER_RIGHT:
@@ -168,10 +178,11 @@ public class BlockStairs extends BlockFactory {
                         section.addFace(new ModelFace(Face.FRONT, texture, 0, 8, 8, 8, 16));
                         section.addFace(new ModelFace(Face.BACK, texture, 0, 8, 8, 8, 8));
 
-                        model.join(new Model().join(section, 0, 0,
+                        section = new Model().join(section, 0, 0,
                                 alt ? -8 : 0
-                        )
-                                .rotateY(facing.rotation * 90));
+                        ).rotateY(facing.rotation * 90);
+                        topHitbox = computeHitboxFromModel(section);
+                        model.join(section);
                         break;
                 }
 
@@ -220,6 +231,23 @@ public class BlockStairs extends BlockFactory {
             }
 
             return world.getMapViewer().getBlockRegistry().get(fullName, stateMap);
+        }
+
+        @Override
+        public boolean collide(AABB aabb, int x, int y, int z, Vector3 direction) {
+            if (slabHitbox == null) {
+                getModel();
+            }
+            boolean hit = false;
+            if (slabHitbox.intersectsOffset(aabb, x, y, z)) {
+                hit = true;
+                aabb.moveOutOf(slabHitbox, x, y, z, direction);
+            }
+            if (topHitbox.intersectsOffset(aabb, x, y, z)) {
+                hit = true;
+                aabb.moveOutOf(topHitbox, x, y, z, direction);
+            }
+            return hit;
         }
 
         private boolean isMatching(Block block) {

@@ -210,7 +210,7 @@ public class Block implements Model.RenderChecker {
     public boolean collide(AABB aabb, int x, int y, int z, Vector3 direction) {
         if (isCollidable()) {
             if (hitbox == null) {
-                computeHitboxFromModel();
+                hitbox = computeHitboxFromModel(getModel());
             }
             if (hitbox.intersectsOffset(aabb, x, y, z)) {
                 aabb.moveOutOf(hitbox, x, y, z, direction);
@@ -220,8 +220,7 @@ public class Block implements Model.RenderChecker {
         return false;
     }
 
-    private void computeHitboxFromModel() {
-        Model model = getModel();
+    protected AABB computeHitboxFromModel(Model model) {
         double mix = Double.MAX_VALUE;
         double miy = Double.MAX_VALUE;
         double miz = Double.MAX_VALUE;
@@ -238,7 +237,7 @@ public class Block implements Model.RenderChecker {
                 if (vertex.getZ() > maz) maz = vertex.getZ();
             }
         }
-        hitbox = new AABB(mix, miy, miz, max, may, maz);
+        return new AABB(mix, miy, miz, max, may, maz);
     }
 
     @Override
