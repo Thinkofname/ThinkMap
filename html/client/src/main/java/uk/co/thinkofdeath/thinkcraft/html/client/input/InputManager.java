@@ -41,7 +41,6 @@ public class InputManager {
     private Vector3 direction = new Vector3();
     private float vSpeed = 0;
     private boolean onGround = false;
-    private int offGround = 0;
     private double lastJump;
     private boolean flying;
 
@@ -113,20 +112,27 @@ public class InputManager {
         hitbox.set(camera.getX() - 0.2, camera.getY() - EYE_HEIGHT, camera.getZ() - 0.2,
                 camera.getX() + 0.2, camera.getY() + 0.2, camera.getZ() + 0.2);
         direction.set(0, camera.getY() - ly, 0);
+        checkCollisions();
+        camera.setY((float) (hitbox.getY1() + EYE_HEIGHT));
+
+
+        hitbox.set(camera.getX() - 0.2, camera.getY() - EYE_HEIGHT - 0.05, camera.getZ() - 0.2,
+                camera.getX() + 0.2, camera.getY() - EYE_HEIGHT, camera.getZ() + 0.2);
+        direction.set(0, 0, 0);
         if (checkCollisions()) {
             vSpeed = 0;
             onGround = true;
-            offGround = 0;
         } else {
-            onGround = offGround <= 1;
-            offGround++;
+            onGround = false;
         }
-        camera.setY((float) (hitbox.getY1() + EYE_HEIGHT));
 
         lx = camera.getX();
         ly = camera.getY();
         lz = camera.getZ();
 
+        hitbox.set(camera.getX() - 0.2, camera.getY() - EYE_HEIGHT, camera.getZ() - 0.2,
+                camera.getX() + 0.2, camera.getY() + 0.2, camera.getZ() + 0.2);
+        direction.set(0, 1, 0);
         while (mapViewer.getWorld().isLoaded((int) camera.getX() >> 4, (int) camera.getZ() >> 4) && checkCollisions()) {
             camera.setY(camera.getY() + 0.1f);
             hitbox.set(camera.getX() - 0.2, camera.getY() - EYE_HEIGHT, camera.getZ() - 0.2,
@@ -217,7 +223,7 @@ public class InputManager {
                 return true;
             case 32:
                 double now = Duration.currentTimeMillis();
-                if (now - lastJump > 75 && now - lastJump < 250) {
+                if (now - lastJump > 120 && now - lastJump < 250) {
                     flying = !flying;
                 } else {
                     if (onGround) {
