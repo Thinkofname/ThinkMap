@@ -94,6 +94,10 @@ public class InputManager {
 
         // Collisions
 
+        float ox = camera.getX();
+        float oy = camera.getY();
+        float oz = camera.getZ();
+
         // X Axis
         hitbox.set(camera.getX() - 0.2, ly - EYE_HEIGHT, lz - 0.2,
                 camera.getX() + 0.2, ly + 0.2, lz + 0.2);
@@ -129,6 +133,24 @@ public class InputManager {
         lx = camera.getX();
         ly = camera.getY();
         lz = camera.getZ();
+
+        if (onGround) {
+            // Try 1/2 step jump
+            hitbox.set(ox - 0.2, oy - EYE_HEIGHT, oz - 0.2,
+                    ox + 0.2, oy + 0.2, oz + 0.2);
+            direction.set(0, -1, 0);
+            if (checkCollisions()) {
+                if (hitbox.getY1() + EYE_HEIGHT - oy <= 0.51f) {
+                    camera.setX((float) (hitbox.getX1() + 0.2));
+                    camera.setY((float) (hitbox.getY1() + EYE_HEIGHT));
+                    camera.setZ((float) (hitbox.getZ1() + 0.2));
+                } else {
+                    camera.setX(lx);
+                    camera.setY(ly);
+                    camera.setZ(lz);
+                }
+            }
+        }
 
         hitbox.set(camera.getX() - 0.2, camera.getY() - EYE_HEIGHT, camera.getZ() - 0.2,
                 camera.getX() + 0.2, camera.getY() + 0.2, camera.getZ() + 0.2);
