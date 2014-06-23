@@ -170,7 +170,7 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     public void onSetPosition(int x, int y, int z) {
         Camera camera = getCamera();
         camera.setX(x);
-        camera.setY(y);
+        camera.setY(y + 2);
         camera.setZ(z);
         shouldUpdateWorld = true;
     }
