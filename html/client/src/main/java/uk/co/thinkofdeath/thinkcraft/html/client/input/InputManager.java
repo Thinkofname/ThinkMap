@@ -137,7 +137,7 @@ public class InputManager {
         if (onGround) {
             // Try 1/2 step jump
             hitbox.set(ox - 0.2, oy - EYE_HEIGHT, oz - 0.2,
-                    ox + 0.2, oy + 0.2, oz + 0.2);
+                    ox + 0.2, oy + 0.75, oz + 0.2);
             direction.set(0, -1, 0);
             if (checkCollisions()) {
                 if (hitbox.getY1() + EYE_HEIGHT - oy <= 0.51f) {
