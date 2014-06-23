@@ -316,12 +316,14 @@ public class Model {
             // Correct texture positions
             for (ModelVertex vertex : face.vertices) {
                 if (face.getFace() != Face.LEFT && face.getFace() != Face.RIGHT) {
-                    vertex.setTextureX(vertex.getX());
+                    boolean inverted = face.getFace() == Face.BACK;
+                    vertex.setTextureX((inverted ? 1 : 0) + vertex.getX() * (inverted ? -1 : 1));
                 }
                 if (face.getFace() == Face.LEFT || face.getFace() == Face.RIGHT) {
-                    vertex.setTextureX(vertex.getZ());
+                    vertex.setTextureX((face.getFace() == Face.RIGHT ? 0 : 1)
+                            + vertex.getZ() * (face.getFace() == Face.RIGHT ? 1 : -1));
                 } else if (face.getFace() == Face.TOP || face.getFace() == Face.BOTTOM) {
-                    vertex.setTextureY(1 - vertex.getZ());
+                    vertex.setTextureY(vertex.getZ());
                 }
                 if (face.getFace() != Face.TOP && face.getFace() != Face.BOTTOM) {
                     vertex.setTextureY(1 - vertex.getY());
