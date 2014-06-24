@@ -20,7 +20,6 @@
 
     <inherits name="elemental.Elemental"/>
     <inherits name="com.google.gwt.core.Core"/>
-    <inherits name="com.google.gwt.logging.Logging"/>
     <inherits name="uk.co.thinkofdeath.thinkcraft.Shared"/>
     <inherits name="uk.co.thinkofdeath.thinkcraft.html.Native"/>
 
@@ -33,8 +32,4 @@
 
     <set-property name="user.agent" value="gecko1_8"/>
     <set-property name="compiler.useSourceMaps" value="true"/>
-
-    <set-property name='gwt.logging.consoleHandler' value='ENABLED'/>
-    <set-property name='gwt.logging.popupHandler' value='DISABLED'/>
-
 </module>
