@@ -101,7 +101,8 @@ public class InputManager {
                 if (checkCollisions()) {
                     float diff = (float) (hitbox.getY1() + EYE_HEIGHT - oy);
                     if (diff <= 0.51f) {
-                        vSpeed = 0.075f + (diff / 0.51f) * 0.075f;
+                        diff += 0.01; // Jump slightly above the target
+                        vSpeed = (float) Math.sqrt(2 * diff * 0.01);
                         onGround = false;
                     }
                 }
