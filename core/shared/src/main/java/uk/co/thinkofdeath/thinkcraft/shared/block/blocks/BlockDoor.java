@@ -97,7 +97,7 @@ public class BlockDoor extends BlockFactory {
 
                 Texture texture = getState(HALF) == Half.UPPER ? upper : lower;
 
-                model.addFace(new ModelFace(Face.FRONT, texture, 0, 0, 16, 16, 3, true)
+                model.addFace(new ModelFace(Face.FRONT, texture, 0, 0, 16, 16, 3, false)
                         .forEach(new ForEachIterator<ModelVertex>() {
                             @Override
                             public void run(ModelVertex v) {
