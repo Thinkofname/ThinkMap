@@ -92,4 +92,16 @@ public class BlockModels {
                 .setTextureSize(7, 6, 2, 2));
         return model;
     }
+
+    public static Model createFlat(Texture texture, int colour) {
+        Model model = new Model();
+        int r = (colour >> 16) & 0xFF;
+        int g = (colour >> 8) & 0xFF;
+        int b = colour & 0xFF;
+        model.addFace(new ModelFace(Face.TOP, texture, 0, 0, 16, 16, 0)
+                .colour(r, g, b));
+        model.addFace(new ModelFace(Face.BOTTOM, texture, 0, 0, 16, 16, 0)
+                .colour(r, g, b));
+        return model;
+    }
 }

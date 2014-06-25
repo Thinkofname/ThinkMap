@@ -559,9 +559,10 @@ public class BlockRegistry {
                 .create(), 109);
         register("minecraft", "mycelium", new BlockBuilder(new BlockMycelium(mapViewer))
                 .create(), 110);
-
-        // TODO: waterlily
-
+        register("minecraft", "waterlily", new BlockBuilder(mapViewer)
+                .solid(false)
+                .model(BlockModels.createFlat(mapViewer.getTexture("waterlily"), 0x52941C))
+                .create(), 111);
         register("minecraft", "nether_brick", new BlockBuilder(mapViewer)
                 .texture("nether_brick")
                 .create(), 112);
