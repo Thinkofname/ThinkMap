@@ -41,7 +41,7 @@ public class Block implements Model.RenderChecker {
     // and the constructor
     private boolean renderable;
     private boolean solid;
-    private boolean collidable;
+    protected boolean collidable;
     private boolean transparent;
     private Texture texture;
     private boolean allowSelf;

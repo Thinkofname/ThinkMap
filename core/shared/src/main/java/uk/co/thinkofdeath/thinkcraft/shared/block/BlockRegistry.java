@@ -546,9 +546,9 @@ public class BlockRegistry {
                 .solid(false)
                 .collidable(false)
                 .create(), 106);
-
-        // TODO: fence_gate
-
+        register("minecraft", "fence_gate", new BlockBuilder(new BlockFenceGate(mapViewer))
+                .solid(false)
+                .create(), 107);
         register("minecraft", "brick_stairs", new BlockBuilder(new BlockStairs(mapViewer))
                 .texture("brick")
                 .solid(false)
