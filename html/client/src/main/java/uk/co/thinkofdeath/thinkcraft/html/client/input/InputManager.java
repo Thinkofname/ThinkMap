@@ -106,9 +106,9 @@ public class InputManager {
                     }
                 }
             }
-            camera.setY(camera.getY() + vSpeed);
+            camera.setY((float) (camera.getY() + vSpeed * delta));
 
-            vSpeed -= 0.01;
+            vSpeed -= 0.01 * delta;
             if (vSpeed < -0.3f) vSpeed = -0.3f;
         }
 
