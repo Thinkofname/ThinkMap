@@ -44,7 +44,7 @@ public class Block implements Model.RenderChecker {
     protected boolean collidable;
     private boolean transparent;
     private Texture texture;
-    private boolean allowSelf;
+    protected boolean allowSelf;
     protected Model model;
     // Cache value since it doesn't change
     private String toString;

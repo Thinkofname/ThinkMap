@@ -138,6 +138,7 @@ public class BlockSlab<T extends Enum<T> & BlockSlab.SlabType> extends BlockFact
 
         BlockImpl(StateMap state) {
             super(BlockSlab.this, state);
+            allowSelf = true;
         }
 
         @Override
