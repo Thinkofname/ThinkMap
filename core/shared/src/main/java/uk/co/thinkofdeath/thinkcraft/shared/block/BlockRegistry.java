@@ -574,8 +574,11 @@ public class BlockRegistry {
                 .texture("nether_brick")
                 .solid(false)
                 .create(), 114);
+        register("minecraft", "nether_wart", new BlockBuilder(new BlockNetherWart(mapViewer))
+                .solid(false)
+                .collidable(false)
+                .create(), 115);
 
-        // TODO: nether_wart
         // TODO: enchanting_table
         // TODO: brewing_stand
         // TODO: cauldron
