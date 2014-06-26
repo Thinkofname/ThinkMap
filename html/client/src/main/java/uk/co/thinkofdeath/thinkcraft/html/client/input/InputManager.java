@@ -26,7 +26,8 @@ import uk.co.thinkofdeath.thinkcraft.shared.vector.Vector3;
 
 public class InputManager {
 
-    private static final double EYE_HEIGHT = 1.6;
+    private static final double EYE_HEIGHT = 1.62;
+    private static final double WIDTH_HALF = 0.3;
 
     private final MapViewer mapViewer;
 
@@ -95,8 +96,8 @@ public class InputManager {
         if (!flying) {
             if (onGround) {
                 // Try 1/2 step jump
-                hitbox.set(ox - 0.2, oy - EYE_HEIGHT + 0.001, oz - 0.2,
-                        ox + 0.2, oy + 0.75, oz + 0.2);
+                hitbox.set(ox - WIDTH_HALF, oy - EYE_HEIGHT + 0.001, oz - WIDTH_HALF,
+                        ox + WIDTH_HALF, oy + 0.75, oz + WIDTH_HALF);
                 direction.set(0, -1, 0);
                 if (checkCollisions()) {
                     float diff = (float) (hitbox.getY1() + EYE_HEIGHT - oy);
@@ -114,29 +115,29 @@ public class InputManager {
         }
 
         // X Axis
-        hitbox.set(camera.getX() - 0.2, ly - EYE_HEIGHT, lz - 0.2,
-                camera.getX() + 0.2, ly + 0.2, lz + 0.2);
+        hitbox.set(camera.getX() - WIDTH_HALF, ly - EYE_HEIGHT, lz - WIDTH_HALF,
+                camera.getX() + WIDTH_HALF, ly + 0.2, lz + WIDTH_HALF);
         direction.set(camera.getX() - lx, 0, 0);
         checkCollisions();
-        camera.setX((float) (hitbox.getX1() + 0.2));
+        camera.setX((float) (hitbox.getX1() + WIDTH_HALF));
 
         // Z Axis
-        hitbox.set(camera.getX() - 0.2, ly - EYE_HEIGHT, camera.getZ() - 0.2,
-                camera.getX() + 0.2, ly + 0.2, camera.getZ() + 0.2);
+        hitbox.set(camera.getX() - WIDTH_HALF, ly - EYE_HEIGHT, camera.getZ() - WIDTH_HALF,
+                camera.getX() + WIDTH_HALF, ly + 0.2, camera.getZ() + WIDTH_HALF);
         direction.set(0, 0, camera.getZ() - lz);
         checkCollisions();
-        camera.setZ((float) (hitbox.getZ1() + 0.2));
+        camera.setZ((float) (hitbox.getZ1() + WIDTH_HALF));
 
         // Y Axis
-        hitbox.set(camera.getX() - 0.2, camera.getY() - EYE_HEIGHT, camera.getZ() - 0.2,
-                camera.getX() + 0.2, camera.getY() + 0.2, camera.getZ() + 0.2);
+        hitbox.set(camera.getX() - WIDTH_HALF, camera.getY() - EYE_HEIGHT, camera.getZ() - WIDTH_HALF,
+                camera.getX() + WIDTH_HALF, camera.getY() + 0.2, camera.getZ() + WIDTH_HALF);
         direction.set(0, camera.getY() - ly, 0);
         checkCollisions();
         camera.setY((float) (hitbox.getY1() + EYE_HEIGHT));
 
 
-        hitbox.set(camera.getX() - 0.2, camera.getY() - EYE_HEIGHT - 0.05, camera.getZ() - 0.2,
-                camera.getX() + 0.2, camera.getY() - EYE_HEIGHT, camera.getZ() + 0.2);
+        hitbox.set(camera.getX() - WIDTH_HALF, camera.getY() - EYE_HEIGHT - 0.05, camera.getZ() - WIDTH_HALF,
+                camera.getX() + WIDTH_HALF, camera.getY() - EYE_HEIGHT, camera.getZ() + WIDTH_HALF);
         direction.set(0, 0, 0);
         if (checkCollisions()) {
             vSpeed = 0;
@@ -149,13 +150,13 @@ public class InputManager {
         ly = camera.getY();
         lz = camera.getZ();
 
-        hitbox.set(camera.getX() - 0.2, camera.getY() - EYE_HEIGHT, camera.getZ() - 0.2,
-                camera.getX() + 0.2, camera.getY() + 0.2, camera.getZ() + 0.2);
+        hitbox.set(camera.getX() - WIDTH_HALF, camera.getY() - EYE_HEIGHT, camera.getZ() - WIDTH_HALF,
+                camera.getX() + WIDTH_HALF, camera.getY() + 0.2, camera.getZ() + WIDTH_HALF);
         direction.set(0, 1, 0);
         while (mapViewer.getWorld().isLoaded((int) camera.getX() >> 4, (int) camera.getZ() >> 4) && checkCollisions()) {
             camera.setY(camera.getY() + 0.1f);
-            hitbox.set(camera.getX() - 0.2, camera.getY() - EYE_HEIGHT, camera.getZ() - 0.2,
-                    camera.getX() + 0.2, camera.getY() + 0.2, camera.getZ() + 0.2);
+            hitbox.set(camera.getX() - WIDTH_HALF, camera.getY() - EYE_HEIGHT, camera.getZ() - WIDTH_HALF,
+                    camera.getX() + WIDTH_HALF, camera.getY() + 0.2, camera.getZ() + WIDTH_HALF);
         }
     }
 
