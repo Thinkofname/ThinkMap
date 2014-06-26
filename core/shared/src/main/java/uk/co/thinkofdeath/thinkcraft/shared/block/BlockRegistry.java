@@ -581,8 +581,10 @@ public class BlockRegistry {
         register("minecraft", "enchanting_table", new BlockBuilder(new BlockEnchantingTable(mapViewer))
                 .solid(false)
                 .create(), 116);
+        register("minecraft", "brewing_stand", new BlockBuilder(new BlockBrewingStand(mapViewer))
+                .solid(false)
+                .create(), 117);
 
-        // TODO: brewing_stand
         // TODO: cauldron
         // TODO: end_portal
         // TODO: end_portal_frame
