@@ -142,13 +142,17 @@ public class ClientWorld extends World {
                 loadChunk(pos[0], pos[1]);
             }
 
+            ArrayList<Chunk> toUnload = new ArrayList<>();
             for (Chunk chunk : getChunks()) {
                 if (chunk.getX() < cx - MapViewer.VIEW_DISTANCE
                         || chunk.getX() >= cx + MapViewer.VIEW_DISTANCE
                         || chunk.getZ() < cz - MapViewer.VIEW_DISTANCE
                         || chunk.getZ() >= cz + MapViewer.VIEW_DISTANCE) {
-                    unloadChunk(chunk.getX(), chunk.getZ());
+                    toUnload.add(chunk);
                 }
+            }
+            for (Chunk chunk : toUnload) {
+                unloadChunk(chunk.getX(), chunk.getZ());
             }
 
             lastChunkX = cx;
