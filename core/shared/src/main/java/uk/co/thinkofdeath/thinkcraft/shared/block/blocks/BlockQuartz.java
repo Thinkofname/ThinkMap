@@ -21,13 +21,14 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.QuartzVariant;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
 
 public class BlockQuartz extends BlockFactory {
 
-    public final StateKey<Variant> VARIANT = stateAllocator.alloc("variant", new EnumState<>(Variant.class));
+    public final StateKey<QuartzVariant> VARIANT = stateAllocator.alloc("variant", new EnumState<>(QuartzVariant.class));
 
     private final Texture quartzTop;
     private final Texture quartzSide;
@@ -54,17 +55,6 @@ public class BlockQuartz extends BlockFactory {
         return new BlockImpl(states);
     }
 
-    public static enum Variant {
-        DEFAULT,
-        CHISELED,
-        PILLAR;
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
-    }
-
     private class BlockImpl extends Block {
 
         public BlockImpl(StateMap state) {
@@ -78,7 +68,7 @@ public class BlockQuartz extends BlockFactory {
 
         @Override
         public Texture getTexture(Face face) {
-            if (getState(VARIANT) == Variant.CHISELED) {
+            if (getState(VARIANT) == QuartzVariant.CHISELED) {
                 switch (face) {
                     case TOP:
                     case BOTTOM:
@@ -86,7 +76,7 @@ public class BlockQuartz extends BlockFactory {
                     default:
                         return quartzChiseledSide;
                 }
-            } else if (getState(VARIANT) == Variant.PILLAR) {
+            } else if (getState(VARIANT) == QuartzVariant.PILLAR) {
                 switch (face) {
                     case TOP:
                     case BOTTOM:

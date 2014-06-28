@@ -21,6 +21,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.Facing;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
@@ -50,20 +51,6 @@ public class BlockDispenser extends BlockFactory {
         return new BlockImpl(states);
     }
 
-    public static enum Facing {
-        DOWN,
-        UP,
-        NORTH,
-        SOUTH,
-        WEST,
-        EAST;
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
-    }
-
     private class BlockImpl extends Block {
 
         BlockImpl(StateMap state) {
@@ -72,7 +59,7 @@ public class BlockDispenser extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            int val = getState(FACING).ordinal();
+            int val = getState(FACING).getDUNSWEOrder();
             if (getState(TRIGGERED)) {
                 val |= 0x8;
             }

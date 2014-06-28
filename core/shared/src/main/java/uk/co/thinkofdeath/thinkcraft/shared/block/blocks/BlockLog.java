@@ -21,6 +21,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.Axis;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
@@ -36,7 +37,7 @@ public class BlockLog extends BlockFactory {
 
     public BlockLog(IMapViewer iMapViewer, Class<? extends Enum> v) {
         super(iMapViewer);
-        VARIANT = stateAllocator.alloc("variant", new EnumState<>(Variant.class));
+        VARIANT = stateAllocator.alloc("variant", new EnumState<>(v));
 
         textures = new Texture[v.getEnumConstants().length][];
         for (Enum variant : v.getEnumConstants()) {
@@ -44,55 +45,6 @@ public class BlockLog extends BlockFactory {
                     iMapViewer.getTexture("log_" + variant),
                     iMapViewer.getTexture("log_" + variant + "_top")
             };
-        }
-    }
-
-    public static enum Axis {
-        X(4),
-        Y(0),
-        Z(8),
-        NONE(12);
-
-        private final int legacy;
-
-        Axis(int legacy) {
-            this.legacy = legacy;
-        }
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
-
-        /**
-         * Returns the legacy value for this axis
-         *
-         * @return The legacy value
-         */
-        public int legacy() {
-            return legacy;
-        }
-    }
-
-    public static enum Variant {
-        OAK,
-        SPRUCE,
-        BIRCH,
-        JUNGLE;
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
-    }
-
-    public static enum Variant2 {
-        ACACIA,
-        BIG_OAK;
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
         }
     }
 
@@ -133,7 +85,7 @@ public class BlockLog extends BlockFactory {
         @Override
         public int getLegacyData() {
             return getState(VARIANT).ordinal()
-                    + getState(AXIS).legacy();
+                    + getState(AXIS).getLegacy();
         }
     }
 }

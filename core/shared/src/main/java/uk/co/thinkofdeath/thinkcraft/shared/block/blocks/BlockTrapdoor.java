@@ -21,6 +21,8 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.Facing;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.NoVerticalFacing;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
@@ -30,7 +32,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
 
 public class BlockTrapdoor extends BlockFactory {
 
-    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class));
+    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class, new NoVerticalFacing()));
     public final StateKey<Boolean> TOP = stateAllocator.alloc("top", new BooleanState());
     public final StateKey<Boolean> OPEN = stateAllocator.alloc("open", new BooleanState());
 
@@ -40,24 +42,6 @@ public class BlockTrapdoor extends BlockFactory {
         super(iMapViewer);
 
         texture = mapViewer.getTexture("trapdoor");
-    }
-
-    public static enum Facing {
-        SOUTH(3),
-        NORTH(1),
-        EAST(2),
-        WEST(0);
-
-        public final int rotation;
-
-        Facing(int rotation) {
-            this.rotation = rotation;
-        }
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
     }
 
     @Override
@@ -96,7 +80,7 @@ public class BlockTrapdoor extends BlockFactory {
                     model.flipModel();
                 }
 
-                model.rotateY(getState(FACING).rotation * 90);
+                model.rotateY(((getState(FACING).getClockwiseRotation() + 3) % 4) * 90);
                 model.realignTextures();
             }
             return model;
@@ -104,7 +88,7 @@ public class BlockTrapdoor extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            int val = getState(FACING).ordinal();
+            int val = getState(FACING).getNSWEOrder() ^ 1;
             if (getState(TOP)) {
                 val |= 0x8;
             }

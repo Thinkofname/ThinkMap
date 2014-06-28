@@ -21,6 +21,8 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.StairFacing;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.StairShape;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
@@ -34,8 +36,8 @@ import uk.co.thinkofdeath.thinkcraft.shared.world.World;
 public class BlockStairs extends BlockFactory {
 
     public final StateKey<Boolean> TOP = stateAllocator.alloc("top", new BooleanState());
-    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class));
-    public final StateKey<Shape> SHAPE = stateAllocator.alloc("shape", new EnumState<>(Shape.class));
+    public final StateKey<StairFacing> FACING = stateAllocator.alloc("facing", new EnumState<>(StairFacing.class));
+    public final StateKey<StairShape> SHAPE = stateAllocator.alloc("shape", new EnumState<>(StairShape.class));
 
     public BlockStairs(IMapViewer iMapViewer) {
         super(iMapViewer);
@@ -46,47 +48,6 @@ public class BlockStairs extends BlockFactory {
         return new BlockImpl(states);
     }
 
-    public static enum Facing {
-        EAST(2, 1, 0, new int[]{3, 2}, -1, 0),
-        WEST(0, -1, 0, new int[]{3, 2}, 1, 0),
-        SOUTH(3, 0, 1, new int[]{1, 0}, 0, -1),
-        NORTH(1, 0, -1, new int[]{1, 0}, 0, 1);
-
-        public final int rotation;
-        public final int directionX;
-        public final int directionZ;
-        public final int[] acceptedDirections;
-        public final int blockX;
-        public final int blockZ;
-
-        Facing(int rotation, int directionX, int directionZ, int[] acceptedDirections, int blockX, int blockZ) {
-            this.rotation = rotation;
-            this.directionX = directionX;
-            this.directionZ = directionZ;
-            this.acceptedDirections = acceptedDirections;
-            this.blockX = blockX;
-            this.blockZ = blockZ;
-        }
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
-    }
-
-
-    public static enum Shape {
-        STRAIGHT,
-        INNER_LEFT,
-        INNER_RIGHT,
-        OUTER_LEFT,
-        OUTER_RIGHT;
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
-    }
 
     private class BlockImpl extends Block {
 
@@ -99,7 +60,7 @@ public class BlockStairs extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            if (getState(SHAPE) != Shape.STRAIGHT) {
+            if (getState(SHAPE) != StairShape.STRAIGHT) {
                 return -1;
             }
             int val = getState(FACING).ordinal();
@@ -126,13 +87,13 @@ public class BlockStairs extends BlockFactory {
 
                 slabHitbox = computeHitboxFromModel(model);
 
-                Facing facing = getState(FACING);
-                Shape shape = getState(SHAPE);
+                StairFacing facing = getState(FACING);
+                StairShape shape = getState(SHAPE);
 
-                boolean alt = ((facing == Facing.EAST || facing == Facing.NORTH)
-                        && (shape == Shape.OUTER_RIGHT || shape == Shape.INNER_RIGHT))
-                        || ((facing == Facing.WEST || facing == Facing.SOUTH)
-                        && (shape == Shape.OUTER_LEFT || shape == Shape.INNER_LEFT));
+                boolean alt = ((facing == StairFacing.EAST || facing == StairFacing.NORTH)
+                        && (shape == StairShape.OUTER_RIGHT || shape == StairShape.INNER_RIGHT))
+                        || ((facing == StairFacing.WEST || facing == StairFacing.SOUTH)
+                        && (shape == StairShape.OUTER_LEFT || shape == StairShape.INNER_LEFT));
 
                 Model section;
                 switch (shape) {
@@ -203,19 +164,19 @@ public class BlockStairs extends BlockFactory {
         public Block update(World world, int x, int y, int z) {
             StateMap stateMap = new StateMap(state);
 
-            stateMap.set(SHAPE, Shape.STRAIGHT);
-            Facing facing = getState(FACING);
+            stateMap.set(SHAPE, StairShape.STRAIGHT);
+            StairFacing facing = getState(FACING);
             Block other = world.getBlock(x + facing.directionX, y, z + facing.directionZ);
             boolean set = false;
             if (other instanceof BlockImpl) {
                 BlockImpl otherStairs = (BlockImpl) other;
-                Facing otherFacing = otherStairs.getState(FACING);
+                StairFacing otherFacing = otherStairs.getState(FACING);
                 if (otherStairs.getState(TOP) == getState(TOP) &&
                         (otherFacing.ordinal() == facing.acceptedDirections[0]
                                 || otherFacing.ordinal() == facing.acceptedDirections[1])
                         && !isMatching(world.getBlock(x + facing.blockX, y, z + facing.blockZ))) {
                     stateMap.set(SHAPE, otherFacing.ordinal() == facing.acceptedDirections[0] ?
-                            Shape.OUTER_LEFT : Shape.OUTER_RIGHT);
+                            StairShape.OUTER_LEFT : StairShape.OUTER_RIGHT);
                     set = true;
                 }
             }
@@ -223,13 +184,13 @@ public class BlockStairs extends BlockFactory {
                 other = world.getBlock(x - facing.directionX, y, z - facing.directionZ);
                 if (other instanceof BlockImpl) {
                     BlockImpl otherStairs = (BlockImpl) other;
-                    Facing otherFacing = otherStairs.getState(FACING);
+                    StairFacing otherFacing = otherStairs.getState(FACING);
                     if (otherStairs.getState(TOP) == getState(TOP) &&
                             (otherFacing.ordinal() == facing.acceptedDirections[0]
                                     || otherFacing.ordinal() == facing.acceptedDirections[1])
                             && !isMatching(world.getBlock(x - facing.blockX, y, z - facing.blockZ))) {
                         stateMap.set(SHAPE, otherFacing.ordinal() == facing.acceptedDirections[0] ?
-                                Shape.INNER_LEFT : Shape.INNER_RIGHT);
+                                StairShape.INNER_LEFT : StairShape.INNER_RIGHT);
                     }
                 }
             }

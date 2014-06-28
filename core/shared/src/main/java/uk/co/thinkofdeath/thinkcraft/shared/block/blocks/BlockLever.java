@@ -21,6 +21,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.LeverDirection;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
@@ -31,7 +32,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
 public class BlockLever extends BlockFactory {
 
     public final StateKey<Boolean> POWERED = stateAllocator.alloc("powered", new BooleanState());
-    public final StateKey<Direction> DIRECTION = stateAllocator.alloc("direction", new EnumState<>(Direction.class));
+    public final StateKey<LeverDirection> DIRECTION = stateAllocator.alloc("direction", new EnumState<>(LeverDirection.class));
 
     private final Texture cobblestone;
     private final Texture lever;
@@ -40,36 +41,6 @@ public class BlockLever extends BlockFactory {
         super(iMapViewer);
         cobblestone = mapViewer.getTexture("cobblestone");
         lever = mapViewer.getTexture("lever");
-    }
-
-    public static enum Direction {
-        CEILING_EAST(1, 0, 1),
-        WALL_EAST(1),
-        WALL_WEST(3),
-        WALL_SOUTH(2),
-        WALL_NORTH(0),
-        FLOOR_SOUTH(3, 0, 0),
-        FLOOR_EAST(3, 0, 1),
-        CEILING_SOUTH(1, 0, 2);
-
-        private final int rotationX;
-        private final int rotationY;
-        private final int rotationZ;
-
-        Direction(int rotation) {
-            this(0, rotation, 0);
-        }
-
-        Direction(int rotationX, int rotationY, int rotationZ) {
-            this.rotationX = rotationX;
-            this.rotationY = rotationY;
-            this.rotationZ = rotationZ;
-        }
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
     }
 
     @Override
@@ -128,11 +99,11 @@ public class BlockLever extends BlockFactory {
 
                 // Final rotation
 
-                Direction direction = getState(DIRECTION);
+                LeverDirection direction = getState(DIRECTION);
 
-                model.rotateY(direction.rotationY * 90)
-                        .rotateZ(direction.rotationZ * 90)
-                        .rotateX(direction.rotationX * 90);
+                model.rotateY(direction.getRotationY() * 90)
+                        .rotateZ(direction.getRotationZ() * 90)
+                        .rotateX(direction.getRotationX() * 90);
             }
             return model;
         }

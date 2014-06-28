@@ -29,7 +29,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
 
 public class BlockPortal extends BlockFactory {
 
-    public final StateKey<Integer> ROTATED = stateAllocator.alloc("rotated", new IntegerState(0, 2));
+    public final StateKey<Integer> ROTATION = stateAllocator.alloc("rotation", new IntegerState(0, 2));
 
     private final Texture texture;
 
@@ -52,7 +52,7 @@ public class BlockPortal extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            return getState(ROTATED);
+            return getState(ROTATION);
         }
 
         @Override
@@ -63,7 +63,7 @@ public class BlockPortal extends BlockFactory {
                 model.addFace(new ModelFace(Face.LEFT, texture, 0, 0, 16, 16, 10));
                 model.addFace(new ModelFace(Face.RIGHT, texture, 0, 0, 16, 16, 6));
 
-                if (getState(ROTATED) == 1) {
+                if (getState(ROTATION) == 1) {
                     model.rotateY(90);
                 }
             }

@@ -22,6 +22,9 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.BedPart;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.Facing;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.NoVerticalFacing;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
@@ -32,9 +35,9 @@ import uk.co.thinkofdeath.thinkcraft.shared.model.ModelVertex;
 
 public class BlockBed extends BlockFactory {
 
-    private final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class));
+    private final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class, new NoVerticalFacing()));
     private final StateKey<Boolean> OCCUPIED = stateAllocator.alloc("occupied", new BooleanState());
-    private final StateKey<Part> PART = stateAllocator.alloc("part", new EnumState<>(Part.class));
+    private final StateKey<BedPart> PART = stateAllocator.alloc("part", new EnumState<>(BedPart.class));
 
     private final Texture bedHeadTop;
     private final Texture bedHeadEnd;
@@ -62,28 +65,6 @@ public class BlockBed extends BlockFactory {
         return new BlockImpl(states);
     }
 
-    public static enum Facing {
-        SOUTH,
-        WEST,
-        NORTH,
-        EAST;
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
-    }
-
-    public static enum Part {
-        HEAD,
-        FOOT;
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
-    }
-
     private class BlockImpl extends Block {
         public BlockImpl(StateMap states) {
             super(BlockBed.this, states);
@@ -93,7 +74,7 @@ public class BlockBed extends BlockFactory {
         public Model getModel() {
             if (model == null) {
                 model = new Model();
-                if (getState(PART) == Part.HEAD) {
+                if (getState(PART) == BedPart.HEAD) {
                     model.addFace(new ModelFace(Face.TOP, bedHeadTop, 0, 0, 16, 16,
                             9));
                     model.addFace(new ModelFace(Face.LEFT, bedHeadEnd, 0, 0, 16, 9, 16, true)
@@ -126,18 +107,18 @@ public class BlockBed extends BlockFactory {
                                 }
                             }));
                 }
-                model.rotateY(90 + getState(FACING).ordinal() * 90);
+                model.rotateY(90 + getState(FACING).getClockwiseRotation() * 90);
             }
             return model;
         }
 
         @Override
         public int getLegacyData() {
-            int val = getState(FACING).ordinal();
-            if (this.<Boolean>getState(OCCUPIED)) {
+            int val = getState(FACING).getClockwiseRotation();
+            if (getState(OCCUPIED)) {
                 val |= 0x4;
             }
-            if (getState(PART) == Part.HEAD) {
+            if (getState(PART) == BedPart.HEAD) {
                 val |= 0x8;
             }
             return val;

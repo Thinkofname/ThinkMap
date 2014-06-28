@@ -21,20 +21,21 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.MonsterEggVariant;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
 
 public class BlockMonsterEgg extends BlockFactory {
 
-    public final StateKey<Variant> VARIANT = stateAllocator.alloc("variant", new EnumState<>(Variant.class));
+    public final StateKey<MonsterEggVariant> VARIANT = stateAllocator.alloc("variant", new EnumState<>(MonsterEggVariant.class));
 
-    private final Texture[] textures = new Texture[Variant.values().length];
+    private final Texture[] textures = new Texture[MonsterEggVariant.values().length];
 
     public BlockMonsterEgg(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        Variant[] values = Variant.values();
+        MonsterEggVariant[] values = MonsterEggVariant.values();
         for (int i = 0; i < values.length; i++) {
             textures[i] = mapViewer.getTexture(values[i].toString());
         }
@@ -43,20 +44,6 @@ public class BlockMonsterEgg extends BlockFactory {
     @Override
     protected Block createBlock(StateMap states) {
         return new BlockImpl(states);
-    }
-
-    public static enum Variant {
-        STONE,
-        COBBLESTONE,
-        STONEBRICK,
-        STONEBRICK_MOSSY,
-        STONEBRICK_CRACKED,
-        STONEBRICK_CARVED;
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
     }
 
     private class BlockImpl extends Block {

@@ -21,6 +21,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.Facing;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
@@ -50,30 +51,6 @@ public class BlockHopper extends BlockFactory {
         return new BlockImpl(states);
     }
 
-    public static enum Facing {
-        DOWN,
-        UP,
-        NORTH(2),
-        SOUTH(0),
-        WEST(1),
-        EAST(3);
-
-        public final int rotation;
-
-        Facing() {
-            this.rotation = -1;
-        }
-
-        Facing(int rotation) {
-            this.rotation = rotation;
-        }
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
-    }
-
     private class BlockImpl extends Block {
 
         BlockImpl(StateMap state) {
@@ -82,7 +59,7 @@ public class BlockHopper extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            int val = getState(FACING).ordinal();
+            int val = getState(FACING).getDUNSWEOrder();
             if (getState(TRIGGERED)) {
                 val |= 0x8;
             }
@@ -152,7 +129,7 @@ public class BlockHopper extends BlockFactory {
                 if (facing == Facing.UP || facing == Facing.DOWN) {
                     model.join(spout, 6, 0, 6);
                 } else {
-                    model.join(spout, 6, 4, 12).rotateY(facing.rotation * 90);
+                    model.join(spout, 6, 4, 12).rotateY(facing.getClockwiseRotation() * 90);
                 }
             }
             return model;

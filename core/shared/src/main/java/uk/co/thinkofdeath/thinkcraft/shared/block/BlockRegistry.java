@@ -18,6 +18,10 @@ package uk.co.thinkofdeath.thinkcraft.shared.block;
 
 import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.block.blocks.*;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.StoneSlabType;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.TreeVariant;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.TreeVariant2;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.WoodenSlabType;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
 import uk.co.thinkofdeath.thinkcraft.shared.support.IntMap;
 
@@ -224,9 +228,9 @@ public class BlockRegistry {
         register("minecraft", "coal_ore", new BlockBuilder(mapViewer)
                 .texture("coal_ore")
                 .create(), 16);
-        register("minecraft", "log", new BlockBuilder(new BlockLog(mapViewer, BlockLog.Variant.class))
+        register("minecraft", "log", new BlockBuilder(new BlockLog(mapViewer, TreeVariant.class))
                 .create(), 17);
-        register("minecraft", "leaves", new BlockBuilder(new BlockLeaves(mapViewer, BlockLeaves.Variant.class))
+        register("minecraft", "leaves", new BlockBuilder(new BlockLeaves(mapViewer, TreeVariant.class))
                 .solid(false)
                 .allowSelf(true)
                 .create(), 18);
@@ -319,9 +323,9 @@ public class BlockRegistry {
         register("minecraft", "iron_block", new BlockBuilder(mapViewer)
                 .texture("iron_block")
                 .create(), 42);
-        register("minecraft", "double_stone_slab", new BlockBuilder(new BlockDoubleSlab<>(mapViewer, BlockDoubleSlab.StoneSlab.class))
+        register("minecraft", "double_stone_slab", new BlockBuilder(new BlockDoubleSlab<>(mapViewer, StoneSlabType.class))
                 .create(), 43);
-        register("minecraft", "stone_slab", new BlockBuilder(new BlockSlab<>(mapViewer, BlockSlab.StoneSlab.class))
+        register("minecraft", "stone_slab", new BlockBuilder(new BlockSlab<>(mapViewer, StoneSlabType.class))
                 .solid(false)
                 .create(), 44);
         register("minecraft", "brick_block", new BlockBuilder(mapViewer)
@@ -603,9 +607,9 @@ public class BlockRegistry {
         register("minecraft", "lit_redstone_lamp", new BlockBuilder(mapViewer)
                 .texture("redstone_lamp_on")
                 .create(), 124);
-        register("minecraft", "double_wooden_slab", new BlockBuilder(new BlockDoubleSlab<>(mapViewer, BlockDoubleSlab.WoodenSlab.class))
+        register("minecraft", "double_wooden_slab", new BlockBuilder(new BlockDoubleSlab<>(mapViewer, WoodenSlabType.class))
                 .create(), 125);
-        register("minecraft", "wooden_slab", new BlockBuilder(new BlockSlab<>(mapViewer, BlockSlab.WoodenSlab.class))
+        register("minecraft", "wooden_slab", new BlockBuilder(new BlockSlab<>(mapViewer, WoodenSlabType.class))
                 .solid(false)
                 .create(), 126);
 
@@ -713,11 +717,11 @@ public class BlockRegistry {
                 .solid(false)
                 .transparent(true)
                 .create(), 160);
-        register("minecraft", "leaves2", new BlockBuilder(new BlockLeaves(mapViewer, BlockLeaves.Variant2.class))
+        register("minecraft", "leaves2", new BlockBuilder(new BlockLeaves(mapViewer, TreeVariant2.class))
                 .solid(false)
                 .allowSelf(true)
                 .create(), 161);
-        register("minecraft", "log2", new BlockBuilder(new BlockLog(mapViewer, BlockLog.Variant2.class))
+        register("minecraft", "log2", new BlockBuilder(new BlockLog(mapViewer, TreeVariant2.class))
                 .create(), 162);
         register("minecraft", "acacia_stairs", new BlockBuilder(new BlockStairs(mapViewer))
                 .texture("planks_acacia")

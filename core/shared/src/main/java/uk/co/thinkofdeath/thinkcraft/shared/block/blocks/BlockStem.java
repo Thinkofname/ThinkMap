@@ -22,6 +22,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.StemConnection;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.IntegerState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
@@ -34,7 +35,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.world.World;
 public class BlockStem<T extends Block> extends BlockFactory {
 
     public final StateKey<Integer> GROWTH = stateAllocator.alloc("growth", new IntegerState(0, 7));
-    public final StateKey<Connection> CONNECTED = stateAllocator.alloc("connected", new EnumState<>(Connection.class));
+    public final StateKey<StemConnection> CONNECTED = stateAllocator.alloc("connected", new EnumState<>(StemConnection.class));
 
     private final Texture connected;
     private final Texture disconnected;
@@ -54,27 +55,6 @@ public class BlockStem<T extends Block> extends BlockFactory {
         return new BlockImpl(states);
     }
 
-    private static enum Connection {
-        NO_CONNECTION(null, -1),
-        WEST(Face.WEST, 0),
-        EAST(Face.EAST, 2),
-        NORTH(Face.NORTH, 1),
-        SOUTH(Face.SOUTH, 3);
-
-        private final Face facing;
-        private final int rotation;
-
-        Connection(Face face, int rotation) {
-            facing = face;
-            this.rotation = rotation;
-        }
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
-    }
-
     private class BlockImpl extends Block {
 
         BlockImpl(StateMap state) {
@@ -86,12 +66,12 @@ public class BlockStem<T extends Block> extends BlockFactory {
             if (model == null) {
                 model = new Model();
 
-                Connection connection = getState(CONNECTED);
+                StemConnection connection = getState(CONNECTED);
 
                 int height = 2 * (getState(GROWTH) + 1);
 
                 int colour = 0x9DBA27;
-                if (connection != Connection.NO_CONNECTION) {
+                if (connection != StemConnection.NO_CONNECTION) {
                     height = 7;
                     colour = 0xF2FF00;
                 }
@@ -146,7 +126,7 @@ public class BlockStem<T extends Block> extends BlockFactory {
                             }
                         }));
 
-                if (connection != Connection.NO_CONNECTION) {
+                if (connection != StemConnection.NO_CONNECTION) {
                     model.addFace(new ModelFace(Face.FRONT, connected, 0, 0, 16, 16, 8)
                             .colour(r, g, b));
                     model.addFace(new ModelFace(Face.BACK, connected, 0, 0, 16, 16, 8)
@@ -158,7 +138,7 @@ public class BlockStem<T extends Block> extends BlockFactory {
                                 }
                             }));
 
-                    model.rotateY(connection.rotation * 90);
+                    model.rotateY(connection.getRotation() * 90);
                 }
             }
             return model;
@@ -167,10 +147,10 @@ public class BlockStem<T extends Block> extends BlockFactory {
         @Override
         public Block update(World world, int x, int y, int z) {
             StateMap stateMap = new StateMap(state);
-            stateMap.set(CONNECTED, Connection.NO_CONNECTION);
-            for (Connection connection : Connection.values()) {
-                if (connection.facing == null) continue;
-                Face face = connection.facing;
+            stateMap.set(CONNECTED, StemConnection.NO_CONNECTION);
+            for (StemConnection connection : StemConnection.values()) {
+                if (connection.getFacing() == null) continue;
+                Face face = connection.getFacing();
                 Block block = world.getBlock(
                         x + face.getOffsetX(),
                         y + face.getOffsetY(),
@@ -185,7 +165,7 @@ public class BlockStem<T extends Block> extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            return getState(CONNECTED) != Connection.NO_CONNECTION ? -1 : getState(GROWTH);
+            return getState(CONNECTED) != StemConnection.NO_CONNECTION ? -1 : getState(GROWTH);
         }
     }
 }

@@ -21,6 +21,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.Colour;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
@@ -29,15 +30,15 @@ import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
 
 public class BlockCarpet extends BlockFactory {
 
-    public final StateKey<BlockColoured.Colour> COLOUR = stateAllocator.alloc("color", new EnumState<>(BlockColoured.Colour.class));
+    public final StateKey<Colour> COLOUR = stateAllocator.alloc("color", new EnumState<>(Colour.class));
 
     private final Texture[] textures;
 
     public BlockCarpet(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        textures = new Texture[BlockColoured.Colour.values().length];
-        for (BlockColoured.Colour colour : BlockColoured.Colour.values()) {
+        textures = new Texture[Colour.values().length];
+        for (Colour colour : Colour.values()) {
             textures[colour.ordinal()] = mapViewer.getTexture("wool_colored_" + colour.texture);
         }
     }

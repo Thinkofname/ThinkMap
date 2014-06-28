@@ -22,6 +22,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.RedstoneSide;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.IntegerState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
@@ -34,10 +35,10 @@ import uk.co.thinkofdeath.thinkcraft.shared.world.World;
 public class BlockRedstone extends BlockFactory {
 
     public final StateKey<Integer> POWER = stateAllocator.alloc("power", new IntegerState(0, 15));
-    public final StateKey<Side> NORTH = stateAllocator.alloc("north", new EnumState<>(Side.class));
-    public final StateKey<Side> SOUTH = stateAllocator.alloc("south", new EnumState<>(Side.class));
-    public final StateKey<Side> EAST = stateAllocator.alloc("east", new EnumState<>(Side.class));
-    public final StateKey<Side> WEST = stateAllocator.alloc("west", new EnumState<>(Side.class));
+    public final StateKey<RedstoneSide> NORTH = stateAllocator.alloc("north", new EnumState<>(RedstoneSide.class));
+    public final StateKey<RedstoneSide> SOUTH = stateAllocator.alloc("south", new EnumState<>(RedstoneSide.class));
+    public final StateKey<RedstoneSide> EAST = stateAllocator.alloc("east", new EnumState<>(RedstoneSide.class));
+    public final StateKey<RedstoneSide> WEST = stateAllocator.alloc("west", new EnumState<>(RedstoneSide.class));
 
     private final Texture line;
     private final Texture cross;
@@ -47,17 +48,6 @@ public class BlockRedstone extends BlockFactory {
 
         line = mapViewer.getTexture("redstone_dust_line");
         cross = mapViewer.getTexture("redstone_dust_cross");
-    }
-
-    public enum Side {
-        NONE,
-        SIDE,
-        UP;
-
-        @Override
-        public String toString() {
-            return name().toLowerCase();
-        }
     }
 
     @Override
@@ -80,17 +70,17 @@ public class BlockRedstone extends BlockFactory {
 
                 model = new Model();
 
-                Side north = getState(NORTH);
-                Side south = getState(SOUTH);
-                Side east = getState(EAST);
-                Side west = getState(WEST);
+                RedstoneSide north = getState(NORTH);
+                RedstoneSide south = getState(SOUTH);
+                RedstoneSide east = getState(EAST);
+                RedstoneSide west = getState(WEST);
 
-                if ((east != Side.NONE || west != Side.NONE)
-                        && north == Side.NONE && south == Side.NONE) {
+                if ((east != RedstoneSide.NONE || west != RedstoneSide.NONE)
+                        && north == RedstoneSide.NONE && south == RedstoneSide.NONE) {
                     model.addFace(new ModelFace(Face.TOP, line, 0, 0, 16, 16, 0.5f)
                             .colour(brightness, 0, 0));
-                } else if ((north != Side.NONE || south != Side.NONE)
-                        && east == Side.NONE && west == Side.NONE) {
+                } else if ((north != RedstoneSide.NONE || south != RedstoneSide.NONE)
+                        && east == RedstoneSide.NONE && west == RedstoneSide.NONE) {
                     model.addFace(new ModelFace(Face.TOP, line, 0, 0, 16, 16, 0.5f)
                             .colour(brightness, 0, 0).forEach(swap));
                 } else {
@@ -98,38 +88,38 @@ public class BlockRedstone extends BlockFactory {
                     float y = 5;
                     float w = 6;
                     float h = 6;
-                    if (west != Side.NONE) {
+                    if (west != RedstoneSide.NONE) {
                         x = 0;
                         w += 5;
                     }
-                    if (east != Side.NONE) {
+                    if (east != RedstoneSide.NONE) {
                         w += 5;
                     }
-                    if (north != Side.NONE) {
+                    if (north != RedstoneSide.NONE) {
                         y = 0;
                         h += 5;
                     }
-                    if (south != Side.NONE) {
+                    if (south != RedstoneSide.NONE) {
                         h += 5;
                     }
                     model.addFace(new ModelFace(Face.TOP, cross, x, y, w, h, 0.5f)
                             .colour(brightness, 0, 0));
                 }
 
-                if (east == Side.UP) {
+                if (east == RedstoneSide.UP) {
                     model.addFace(new ModelFace(Face.RIGHT, line, 0, 0, 16, 16, 15.5f)
                             .colour(brightness, 0, 0).forEach(swap));
                 }
-                if (west == Side.UP) {
+                if (west == RedstoneSide.UP) {
                     model.addFace(new ModelFace(Face.LEFT, line, 0, 0, 16, 16, 0.5f)
                             .colour(brightness, 0, 0).forEach(swap));
                 }
 
-                if (south == Side.UP) {
+                if (south == RedstoneSide.UP) {
                     model.addFace(new ModelFace(Face.BACK, line, 0, 0, 16, 16, 15.5f)
                             .colour(brightness, 0, 0).forEach(swap));
                 }
-                if (north == Side.UP) {
+                if (north == RedstoneSide.UP) {
                     model.addFace(new ModelFace(Face.FRONT, line, 0, 0, 16, 16, 0.5f)
                             .colour(brightness, 0, 0).forEach(swap));
                 }
@@ -152,30 +142,30 @@ public class BlockRedstone extends BlockFactory {
             return mapViewer.getBlockRegistry().get(fullName, map);
         }
 
-        private Side checkRedstone(World world, int x, int y, int z, boolean blocked) {
+        private RedstoneSide checkRedstone(World world, int x, int y, int z, boolean blocked) {
             Block block = world.getBlock(x, y, z);
             if (block instanceof BlockImpl) {
-                return Side.SIDE;
+                return RedstoneSide.SIDE;
             }
             Block other = world.getBlock(x, y - 1, z);
             if (!block.isSolid() && other instanceof BlockImpl) {
-                return Side.SIDE;
+                return RedstoneSide.SIDE;
             }
             if (!blocked) {
                 block = world.getBlock(x, y + 1, z);
                 if (block instanceof BlockImpl) {
-                    return Side.UP;
+                    return RedstoneSide.UP;
                 }
             }
-            return Side.NONE;
+            return RedstoneSide.NONE;
         }
 
         @Override
         public int getLegacyData() {
-            if (getState(NORTH) == Side.NONE
-                    && getState(SOUTH) == Side.NONE
-                    && getState(EAST) == Side.NONE
-                    && getState(WEST) == Side.NONE) {
+            if (getState(NORTH) == RedstoneSide.NONE
+                    && getState(SOUTH) == RedstoneSide.NONE
+                    && getState(EAST) == RedstoneSide.NONE
+                    && getState(WEST) == RedstoneSide.NONE) {
                 return getState(POWER);
             }
             return -1;

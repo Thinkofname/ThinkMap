@@ -16,6 +16,10 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.block.states;
 
+import uk.co.thinkofdeath.thinkcraft.shared.Test;
+
+import java.util.ArrayList;
+
 public class EnumState<T extends Enum<T>> implements BlockState<T> {
 
     private final T[] states;
@@ -25,8 +29,23 @@ public class EnumState<T extends Enum<T>> implements BlockState<T> {
      * A creates an Enum factory for the given enum
      */
     public EnumState(Class<T> e) {
+        this(e, null);
+    }
+
+    public EnumState(Class<T> e, Test<T> predicate) {
         this.e = e;
-        states = e.getEnumConstants();
+        if (predicate == null) {
+            states = e.getEnumConstants();
+        } else {
+            ArrayList<T> consts = new ArrayList<>();
+            T[] vals = e.getEnumConstants();
+            for (T v : vals) {
+                if (predicate.test(v)) {
+                    consts.add(v);
+                }
+            }
+            states = consts.toArray((T[]) new Object[consts.size()]);
+        }
     }
 
     @Override

@@ -21,6 +21,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.SaplingType;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.IntegerState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
@@ -29,7 +30,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 
 public class BlockSapling extends BlockFactory {
 
-    public final StateKey<Type> TYPE = stateAllocator.alloc("type", new EnumState<>(Type.class));
+    public final StateKey<SaplingType> TYPE = stateAllocator.alloc("type", new EnumState<>(SaplingType.class));
     public final StateKey<Integer> STAGE = stateAllocator.alloc("stage", new IntegerState(0, 1));
 
     private final Texture[] textures;
@@ -37,33 +38,9 @@ public class BlockSapling extends BlockFactory {
     public BlockSapling(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        textures = new Texture[Type.values().length];
-        for (Type type : Type.values()) {
+        textures = new Texture[SaplingType.values().length];
+        for (SaplingType type : SaplingType.values()) {
             textures[type.ordinal()] = iMapViewer.getTexture("sapling_" + type);
-        }
-    }
-
-    public static enum Type {
-        OAK,
-        SPRUCE,
-        BIRCH,
-        JUNGLE,
-        ACACIA,
-        BIG_OAK("roofed_oak");
-
-        private final String name;
-
-        Type() {
-            name = name().toLowerCase();
-        }
-
-        Type(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return name;
         }
     }
 

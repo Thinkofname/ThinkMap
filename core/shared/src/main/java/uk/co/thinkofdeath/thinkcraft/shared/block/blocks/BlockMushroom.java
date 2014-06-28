@@ -21,27 +21,28 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.MushroomVariant;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
 
 public class BlockMushroom extends BlockFactory {
 
-    private static final String PORES = "mushroom_block_inside";
-    private static final String SKIN = "mushroom_block_skin_$type";
-    private static final String STEM = "mushroom_block_skin_stem";
+    public static final String PORES = "mushroom_block_inside";
+    public static final String SKIN = "mushroom_block_skin_$type";
+    public static final String STEM = "mushroom_block_skin_stem";
 
-    public final StateKey<Variant> VARIANT = stateAllocator.alloc("variant", new EnumState<>(Variant.class));
+    public final StateKey<MushroomVariant> VARIANT = stateAllocator.alloc("variant", new EnumState<>(MushroomVariant.class));
 
-    private final Texture[] textures = new Texture[Variant.values().length * 6];
+    private final Texture[] textures = new Texture[MushroomVariant.values().length * 6];
 
     public BlockMushroom(IMapViewer iMapViewer, String type) {
         super(iMapViewer);
 
-        Variant[] values = Variant.values();
+        MushroomVariant[] values = MushroomVariant.values();
         for (int i = 0; i < values.length; i++) {
             for (Face face : Face.values()) {
-                textures[i * 6 + face.ordinal()] = mapViewer.getTexture(values[i].textures[face.ordinal()].replaceAll("\\$type", type));
+                textures[i * 6 + face.ordinal()] = mapViewer.getTexture(values[i].getTextures()[face.ordinal()].replaceAll("\\$type", type));
             }
         }
     }
@@ -49,40 +50,6 @@ public class BlockMushroom extends BlockFactory {
     @Override
     protected Block createBlock(StateMap states) {
         return new BlockImpl(states);
-    }
-
-    public static enum Variant {
-        PORES_ALL(0, PORES, PORES, PORES, PORES, PORES, PORES),
-        CAP_TOP_NORTH_WEST(1, SKIN, PORES, PORES, SKIN, PORES, SKIN),
-        CAP_TOP_NORTH(2, SKIN, PORES, PORES, PORES, PORES, SKIN),
-        CAP_TOP_NORTH_EAST(3, SKIN, PORES, SKIN, PORES, PORES, SKIN),
-        CAP_TOP_WEST(4, SKIN, PORES, PORES, SKIN, PORES, PORES),
-        CAP_TOP(5, SKIN, PORES, PORES, PORES, PORES, PORES),
-        CAP_TOP_EAST(6, SKIN, PORES, SKIN, PORES, PORES, PORES),
-        CAP_TOP_SOUTH_EAST(7, SKIN, PORES, PORES, SKIN, SKIN, PORES),
-        CAP_TOP_SOUTH(8, SKIN, PORES, PORES, PORES, SKIN, PORES),
-        CAP_TOP_SOUTH_WEST(9, SKIN, PORES, SKIN, PORES, SKIN, PORES),
-        PORES_TOP_BOTTON(10, PORES, PORES, STEM, STEM, STEM, STEM),
-        CAP_ALL(14, SKIN, SKIN, SKIN, SKIN, SKIN, SKIN),
-        STEM_ALL(15, STEM, STEM, STEM, STEM, STEM, STEM);
-
-        private final int id;
-        private final String[] textures = new String[6];
-
-        Variant(int id, String top, String bottom, String left, String right, String front, String back) {
-            this.id = id;
-            textures[Face.TOP.ordinal()] = top;
-            textures[Face.BOTTOM.ordinal()] = bottom;
-            textures[Face.LEFT.ordinal()] = left;
-            textures[Face.RIGHT.ordinal()] = right;
-            textures[Face.FRONT.ordinal()] = front;
-            textures[Face.BACK.ordinal()] = back;
-        }
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
     }
 
     private class BlockImpl extends Block {
@@ -93,7 +60,7 @@ public class BlockMushroom extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            return getState(VARIANT).id;
+            return getState(VARIANT).getId();
         }
 
         @Override

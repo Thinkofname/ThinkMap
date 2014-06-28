@@ -21,6 +21,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.Colour;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
@@ -37,43 +38,6 @@ public class BlockColoured extends BlockFactory {
         textures = new Texture[Colour.values().length];
         for (Colour colour : Colour.values()) {
             textures[colour.ordinal()] = mapViewer.getTexture(prefix + colour.texture);
-        }
-    }
-
-    public static enum Colour {
-        WHITE,
-        ORANGE,
-        MAGENTA,
-        LIGHT_BLUE("lightBlue", "light_blue"), // Because keeping a single standard is hard
-        YELLOW,
-        LIME,
-        PINK,
-        GRAY,
-        SILVER,
-        CYAN,
-        PURPLE,
-        BLUE,
-        BROWN,
-        GREEN,
-        RED,
-        BLACK;
-
-        public final String name;
-        public final String texture;
-
-        Colour() {
-            name = name().toLowerCase();
-            texture = name;
-        }
-
-        Colour(String name, String texture) {
-            this.name = name;
-            this.texture = texture;
-        }
-
-        @Override
-        public String toString() {
-            return name;
         }
     }
 

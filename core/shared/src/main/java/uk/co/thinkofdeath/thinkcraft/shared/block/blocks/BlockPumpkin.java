@@ -21,13 +21,14 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.PumpkinFacing;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
 
 public class BlockPumpkin extends BlockFactory {
 
-    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class));
+    public final StateKey<PumpkinFacing> FACING = stateAllocator.alloc("facing", new EnumState<>(PumpkinFacing.class));
 
     private final Texture top;
     private final Texture side;
@@ -46,19 +47,6 @@ public class BlockPumpkin extends BlockFactory {
         return new BlockImpl(states);
     }
 
-    public static enum Facing {
-        SOUTH,
-        WEST,
-        NORTH,
-        EAST,
-        NO_FACE;
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
-    }
-
     private class BlockImpl extends Block {
 
         BlockImpl(StateMap state) {
@@ -72,25 +60,25 @@ public class BlockPumpkin extends BlockFactory {
 
         @Override
         public Texture getTexture(Face face) {
-            Facing facing = getState(FACING);
+            PumpkinFacing facing = getState(FACING);
             switch (face) {
                 case LEFT:
-                    if (facing == Facing.EAST) {
+                    if (facing == PumpkinFacing.EAST) {
                         return front;
                     }
                     break;
                 case RIGHT:
-                    if (facing == Facing.WEST) {
+                    if (facing == PumpkinFacing.WEST) {
                         return front;
                     }
                     break;
                 case FRONT:
-                    if (facing == Facing.SOUTH) {
+                    if (facing == PumpkinFacing.SOUTH) {
                         return front;
                     }
                     break;
                 case BACK:
-                    if (facing == Facing.NORTH) {
+                    if (facing == PumpkinFacing.NORTH) {
                         return front;
                     }
                     break;

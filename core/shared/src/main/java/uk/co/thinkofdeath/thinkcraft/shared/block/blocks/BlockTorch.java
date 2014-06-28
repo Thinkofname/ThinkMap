@@ -17,9 +17,11 @@
 package uk.co.thinkofdeath.thinkcraft.shared.block.blocks;
 
 import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
+import uk.co.thinkofdeath.thinkcraft.shared.Test;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.Facing;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
@@ -27,7 +29,13 @@ import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 
 public class BlockTorch extends BlockFactory {
 
-    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class));
+    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class,
+            new Test<Facing>() {
+                @Override
+                public boolean test(Facing facing) {
+                    return facing != Facing.DOWN;
+                }
+            }));
 
     private final Texture texture;
 
@@ -42,29 +50,6 @@ public class BlockTorch extends BlockFactory {
         return new BlockImpl(states);
     }
 
-    public static enum Facing {
-        UP,
-        EAST(1),
-        WEST(3),
-        SOUTH(2),
-        NORTH(0);
-
-        public final int rotation;
-
-        Facing() {
-            this.rotation = -1;
-        }
-
-        Facing(int rotation) {
-            this.rotation = rotation;
-        }
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
-    }
-
     private class BlockImpl extends Block {
 
         BlockImpl(StateMap state) {
@@ -73,7 +58,7 @@ public class BlockTorch extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            int val = getState(FACING).ordinal();
+            int val = getState(FACING).getDUNSWEOrder() - 1;
             if (val == 0) {
                 val = 5;
             }
@@ -87,9 +72,9 @@ public class BlockTorch extends BlockFactory {
 
                 model = BlockModels.createTorch(texture);
 
-                if (facing.rotation != -1) {
+                if (facing.getClockwiseRotation() != -1) {
                     model = new Model().join(model.rotateX(22.5f), 0, 4, 5)
-                            .rotateY(facing.rotation * 90);
+                            .rotateY(360 - facing.getClockwiseRotation() * 90 + 270);
                 }
             }
             return model;

@@ -21,6 +21,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.TallGrassType;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
@@ -28,27 +29,16 @@ import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 
 public class BlockTallGrass extends BlockFactory {
 
-    public final StateKey<Type> TYPE = stateAllocator.alloc("type", new EnumState<>(Type.class));
+    public final StateKey<TallGrassType> TYPE = stateAllocator.alloc("type", new EnumState<>(TallGrassType.class));
 
     private final Texture[] textures;
 
     public BlockTallGrass(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        textures = new Texture[Type.values().length];
-        for (Type type : Type.values()) {
+        textures = new Texture[TallGrassType.values().length];
+        for (TallGrassType type : TallGrassType.values()) {
             textures[type.ordinal()] = iMapViewer.getTexture(type.toString());
-        }
-    }
-
-    public static enum Type {
-        DEADBUSH,
-        TALLGRASS,
-        FERN;
-
-        @Override
-        public String toString() {
-            return name().toLowerCase();
         }
     }
 
@@ -67,7 +57,7 @@ public class BlockTallGrass extends BlockFactory {
         public Model getModel() {
             if (model == null) {
                 int colour = 0xFFFFFF;
-                if (getState(TYPE) != Type.DEADBUSH) {
+                if (getState(TYPE) != TallGrassType.DEADBUSH) {
                     colour = 0xA7D389;
                 }
                 model = BlockModels.createCross(getTexture(Face.FRONT), colour);

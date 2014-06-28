@@ -22,6 +22,8 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.Facing;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.NoVerticalFacing;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
@@ -31,7 +33,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.model.ModelVertex;
 
 public class BlockChest extends BlockFactory {
 
-    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class));
+    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class, new NoVerticalFacing()));
 
     private final Texture chest;
 
@@ -39,24 +41,6 @@ public class BlockChest extends BlockFactory {
         super(iMapViewer);
 
         chest = iMapViewer.getTexture("chest_" + type);
-    }
-
-    public static enum Facing {
-        NORTH(2),
-        SOUTH(0),
-        WEST(1),
-        EAST(3);
-
-        public final int rotation;
-
-        Facing(int rotation) {
-            this.rotation = rotation;
-        }
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
     }
 
     @Override
@@ -147,14 +131,14 @@ public class BlockChest extends BlockFactory {
                         .setTextureSize(3, 0, 2, 1).forEach(lockTexture));
 
                 model.join(modelTop, 0, 9, 0);
-                model.rotateY(90 * facing.rotation);
+                model.rotateY(90 * facing.getClockwiseRotation());
             }
             return model;
         }
 
         @Override
         public int getLegacyData() {
-            return getState(FACING).ordinal() + 2;
+            return 2 + getState(FACING).getNSWEOrder();
         }
     }
 

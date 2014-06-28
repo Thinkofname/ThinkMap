@@ -22,6 +22,10 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.DoorHalf;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.DoorHinge;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.Facing;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.NoVerticalFacing;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
@@ -33,10 +37,10 @@ import uk.co.thinkofdeath.thinkcraft.shared.world.World;
 
 public class BlockDoor extends BlockFactory {
 
-    public final StateKey<Half> HALF = stateAllocator.alloc("half", new EnumState<>(Half.class));
+    public final StateKey<DoorHalf> HALF = stateAllocator.alloc("half", new EnumState<>(DoorHalf.class));
     public final StateKey<Boolean> OPEN = stateAllocator.alloc("open", new BooleanState());
-    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class));
-    public final StateKey<Hinge> HINGE = stateAllocator.alloc("hinge", new EnumState<>(Hinge.class));
+    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class, new NoVerticalFacing()));
+    public final StateKey<DoorHinge> HINGE = stateAllocator.alloc("hinge", new EnumState<>(DoorHinge.class));
 
     private final Texture upper;
     private final Texture lower;
@@ -45,38 +49,6 @@ public class BlockDoor extends BlockFactory {
         super(iMapViewer);
         upper = mapViewer.getTexture(texture + "_upper");
         lower = mapViewer.getTexture(texture + "_lower");
-    }
-
-    public static enum Hinge {
-        RIGHT,
-        LEFT;
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
-    }
-
-    public static enum Half {
-        UPPER,
-        LOWER;
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
-    }
-
-    public static enum Facing {
-        WEST,
-        NORTH,
-        EAST,
-        SOUTH;
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
     }
 
     @Override
@@ -95,7 +67,7 @@ public class BlockDoor extends BlockFactory {
             if (model == null) {
                 model = new Model();
 
-                Texture texture = getState(HALF) == Half.UPPER ? upper : lower;
+                Texture texture = getState(HALF) == DoorHalf.UPPER ? upper : lower;
 
                 model.addFace(new ModelFace(Face.FRONT, texture, 0, 0, 16, 16, 3, false)
                         .forEach(new ForEachIterator<ModelVertex>() {
@@ -110,11 +82,11 @@ public class BlockDoor extends BlockFactory {
                 model.addFace(new ModelFace(Face.LEFT, texture, 0, 0, 3, 16, 16, true));
                 model.addFace(new ModelFace(Face.RIGHT, texture, 0, 0, 3, 16, 0, true));
 
-                Hinge hinge = getState(HINGE);
+                DoorHinge hinge = getState(HINGE);
                 Facing facing = getState(FACING);
                 boolean open = getState(OPEN);
 
-                if (hinge == Hinge.LEFT) {
+                if (hinge == DoorHinge.LEFT) {
                     for (ModelFace face : model.getFaces()) {
                         face.forEach(new ForEachIterator<ModelVertex>() {
                             @Override
@@ -136,7 +108,7 @@ public class BlockDoor extends BlockFactory {
                 }
 
                 model.rotateY(
-                        facing.ordinal() * 90 + 270 + (open ? (hinge == Hinge.LEFT ? -90 : 90) : 0)
+                        facing.getClockwiseRotation() * 90 + 180 + (open ? (hinge == DoorHinge.LEFT ? -90 : 90) : 0)
                 );
             }
             return model;
@@ -145,7 +117,7 @@ public class BlockDoor extends BlockFactory {
         @Override
         public Block update(World world, int x, int y, int z) {
             StateMap stateMap = new StateMap(state);
-            if (getState(HALF) == Half.UPPER) {
+            if (getState(HALF) == DoorHalf.UPPER) {
                 Block block = world.getBlock(x, y - 1, z);
                 if (block instanceof BlockImpl) {
                     BlockImpl other = (BlockImpl) block;
@@ -164,19 +136,19 @@ public class BlockDoor extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            int val = getState(HALF) == Half.UPPER ? 0x8 : 0x0;
-            if (getState(HALF) == Half.UPPER) {
+            int val = getState(HALF) == DoorHalf.UPPER ? 0x8 : 0x0;
+            if (getState(HALF) == DoorHalf.UPPER) {
                 if (!getState(OPEN)
                         || getState(FACING) != Facing.WEST) {
                     return -1;
                 }
-                val |= getState(HINGE) == Hinge.LEFT ? 0x1 : 0x0;
+                val |= getState(HINGE) == DoorHinge.LEFT ? 0x1 : 0x0;
             } else {
-                if (getState(HINGE) == Hinge.RIGHT) {
+                if (getState(HINGE) == DoorHinge.RIGHT) {
                     return -1;
                 }
                 val |= getState(OPEN) ? 0x4 : 0x0;
-                val |= getState(FACING).ordinal();
+                val |= (getState(FACING).getClockwiseRotation() + 3) % 4;
             }
             return val;
         }

@@ -21,13 +21,14 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.DirtVariant;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
 
 public class BlockDirt extends BlockFactory {
 
-    public final StateKey<Variant> VARIANT = stateAllocator.alloc("variant", new EnumState<>(Variant.class));
+    public final StateKey<DirtVariant> VARIANT = stateAllocator.alloc("variant", new EnumState<>(DirtVariant.class));
 
     private final Texture dirt;
     private final Texture dirtPodzolTop;
@@ -46,17 +47,6 @@ public class BlockDirt extends BlockFactory {
         return new BlockImpl(states);
     }
 
-    public static enum Variant {
-        DEFAULT,
-        GRASSLESS,
-        PODZOL;
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
-    }
-
     private class BlockImpl extends Block {
 
         BlockImpl(StateMap state) {
@@ -70,7 +60,7 @@ public class BlockDirt extends BlockFactory {
 
         @Override
         public Texture getTexture(Face face) {
-            if (getState(VARIANT) == Variant.PODZOL) {
+            if (getState(VARIANT) == DirtVariant.PODZOL) {
                 switch (face) {
                     case TOP:
                         return dirtPodzolTop;

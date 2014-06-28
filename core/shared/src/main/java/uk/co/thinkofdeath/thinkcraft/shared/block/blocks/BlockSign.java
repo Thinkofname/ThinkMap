@@ -21,6 +21,8 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.Facing;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.NoVerticalFacing;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
@@ -29,7 +31,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
 
 public class BlockSign extends BlockFactory {
 
-    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class));
+    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class, new NoVerticalFacing()));
 
     private final Texture texture;
 
@@ -37,24 +39,6 @@ public class BlockSign extends BlockFactory {
         super(iMapViewer);
 
         texture = mapViewer.getTexture("planks_oak");
-    }
-
-    public static enum Facing {
-        NORTH(2),
-        SOUTH(0),
-        WEST(1),
-        EAST(3);
-
-        public final int rotation;
-
-        Facing(int rotation) {
-            this.rotation = rotation;
-        }
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
     }
 
     public static Model createModel(Texture texture) {
@@ -87,7 +71,7 @@ public class BlockSign extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            return getState(FACING).ordinal() + 2;
+            return getState(FACING).getNSWEOrder() + 2;
         }
 
         @Override
@@ -95,7 +79,7 @@ public class BlockSign extends BlockFactory {
             if (model == null) {
                 model = createModel(texture);
                 Facing facing = getState(FACING);
-                model.rotateY(facing.rotation * 90);
+                model.rotateY(facing.getClockwiseRotation() * 90);
             }
             return model;
         }

@@ -22,6 +22,8 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.Facing;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.PistonType;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
@@ -31,7 +33,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.model.ModelVertex;
 
 public class BlockPistonHead extends BlockFactory {
 
-    public final StateKey<Type> TYPE = stateAllocator.alloc("type", new EnumState<>(Type.class));
+    public final StateKey<PistonType> TYPE = stateAllocator.alloc("type", new EnumState<>(PistonType.class));
     public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class));
 
     private final Texture pistonTopNormal;
@@ -44,36 +46,6 @@ public class BlockPistonHead extends BlockFactory {
         pistonTopNormal = iMapViewer.getTexture("piston_top_normal");
         pistonTopSticky = iMapViewer.getTexture("piston_top_sticky");
         pistonSide = iMapViewer.getTexture("piston_side");
-    }
-
-    public static enum Type {
-        DEFAULT,
-        STICKY;
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
-    }
-
-    public static enum Facing {
-        DOWN(-1),
-        UP(-1),
-        NORTH(2),
-        SOUTH(0),
-        WEST(1),
-        EAST(3);
-
-        public final int rotation;
-
-        Facing(int rotation) {
-            this.rotation = rotation;
-        }
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
     }
 
     @Override
@@ -166,12 +138,12 @@ public class BlockPistonHead extends BlockFactory {
 
 
                 model.join(BlockPiston.createHeadPart(
-                        (getState(TYPE) == Type.DEFAULT ? pistonTopNormal :
+                        (getState(TYPE) == PistonType.DEFAULT ? pistonTopNormal :
                                 pistonTopSticky), pistonTopNormal, pistonSide
                 ), 0, 0, 12);
 
-                if (facing.rotation != -1) {
-                    model.rotateY(facing.rotation * 90);
+                if (facing.getClockwiseRotation() != -1) {
+                    model.rotateY(facing.getClockwiseRotation() * 90);
                 } else {
                     if (facing == Facing.DOWN) {
                         model.rotateX(270);
@@ -186,7 +158,7 @@ public class BlockPistonHead extends BlockFactory {
         @Override
         public int getLegacyData() {
             int val = getState(FACING).ordinal();
-            if (getState(TYPE) == Type.STICKY) {
+            if (getState(TYPE) == PistonType.STICKY) {
                 val |= 0x8;
             }
             return val;

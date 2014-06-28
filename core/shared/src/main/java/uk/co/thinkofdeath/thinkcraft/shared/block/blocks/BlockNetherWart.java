@@ -51,7 +51,6 @@ public class BlockNetherWart extends BlockFactory {
         return new BlockImpl(states);
     }
 
-
     private class BlockImpl extends Block {
 
         BlockImpl(StateMap state) {

@@ -21,13 +21,14 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.SandstoneVariant;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
 
 public class BlockSandstone extends BlockFactory {
 
-    public final StateKey<Variant> VARIANT = stateAllocator.alloc("variant", new EnumState<>(Variant.class));
+    public final StateKey<SandstoneVariant> VARIANT = stateAllocator.alloc("variant", new EnumState<>(SandstoneVariant.class));
 
     private final Texture[] textures;
     private final Texture sandstoneTop;
@@ -36,9 +37,9 @@ public class BlockSandstone extends BlockFactory {
     public BlockSandstone(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        textures = new Texture[Variant.values().length];
-        for (Variant variant : Variant.values()) {
-            textures[variant.ordinal()] = iMapViewer.getTexture("sandstone_" + variant.texture);
+        textures = new Texture[SandstoneVariant.values().length];
+        for (SandstoneVariant variant : SandstoneVariant.values()) {
+            textures[variant.ordinal()] = iMapViewer.getTexture("sandstone_" + variant.getTexture());
         }
         sandstoneTop = iMapViewer.getTexture("sandstone_top");
         sandstoneBottom = iMapViewer.getTexture("sandstone_bottom");
@@ -47,23 +48,6 @@ public class BlockSandstone extends BlockFactory {
     @Override
     protected Block createBlock(StateMap states) {
         return new BlockImpl(states);
-    }
-
-    public static enum Variant {
-        DEFAULT("normal"),
-        CHISELED("carved"),
-        SMOOTH("smooth");
-
-        private final String texture;
-
-        Variant(String texture) {
-            this.texture = texture;
-        }
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
     }
 
     private class BlockImpl extends Block {

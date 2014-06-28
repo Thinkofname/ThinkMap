@@ -21,6 +21,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.TreeVariant;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
@@ -38,31 +39,9 @@ public class BlockLeaves extends BlockFactory {
         super(iMapViewer);
         VARIANT = stateAllocator.alloc("variant", new EnumState<>(v));
 
-        textures = new Texture[Variant.values().length];
-        for (Variant variant : Variant.values()) {
+        textures = new Texture[TreeVariant.values().length];
+        for (TreeVariant variant : TreeVariant.values()) {
             textures[variant.ordinal()] = iMapViewer.getTexture("leaves_" + variant);
-        }
-    }
-
-    public static enum Variant {
-        OAK,
-        SPRUCE,
-        BIRCH,
-        JUNGLE;
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
-    }
-
-    public static enum Variant2 {
-        ACACIA,
-        BIG_OAK;
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
         }
     }
 

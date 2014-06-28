@@ -21,6 +21,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.FlowerType;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
@@ -28,33 +29,16 @@ import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 
 public class BlockFlowers extends BlockFactory {
 
-    public final StateKey<Type> TYPE = stateAllocator.alloc("type", new EnumState<>(Type.class));
+    public final StateKey<FlowerType> TYPE = stateAllocator.alloc("type", new EnumState<>(FlowerType.class));
 
     private final Texture[] textures;
 
     public BlockFlowers(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        textures = new Texture[Type.values().length];
-        for (Type type : Type.values()) {
+        textures = new Texture[FlowerType.values().length];
+        for (FlowerType type : FlowerType.values()) {
             textures[type.ordinal()] = iMapViewer.getTexture("flower_" + type);
-        }
-    }
-
-    public static enum Type {
-        ROSE,
-        BLUE_ORCHID,
-        ALLIUM,
-        HOUSTONIA,
-        TULIP_RED,
-        TULIP_ORANGE,
-        TULIP_WHITE,
-        TULIP_PINK,
-        OXEYE_DAISY;
-
-        @Override
-        public String toString() {
-            return name().toLowerCase();
         }
     }
 

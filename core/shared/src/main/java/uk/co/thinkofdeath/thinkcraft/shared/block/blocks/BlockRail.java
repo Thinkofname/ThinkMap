@@ -22,6 +22,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.RailShape;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
@@ -31,31 +32,13 @@ import uk.co.thinkofdeath.thinkcraft.shared.model.ModelVertex;
 
 public class BlockRail extends BlockFactory {
 
-    public final StateKey<Shape> SHAPE = stateAllocator.alloc("shape", new EnumState<>(Shape.class));
+    public final StateKey<RailShape> SHAPE = stateAllocator.alloc("shape", new EnumState<>(RailShape.class));
     private final Texture railTurned;
 
     public BlockRail(IMapViewer iMapViewer) {
         super(iMapViewer);
 
         railTurned = iMapViewer.getTexture("rail_normal_turned");
-    }
-
-    public static enum Shape {
-        NORTH_SOUTH,
-        EAST_WEST,
-        ASCENDING_EAST,
-        ASCENDING_WEST,
-        ASCENDING_NORTH,
-        ASCENDING_SOUTH,
-        CORNER_NORTHWEST,
-        CORNER_NORTHEAST,
-        CORNER_SOUTHWEST,
-        CORNER_SOUTHEAST;
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
     }
 
     @Override

@@ -21,13 +21,14 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.SandVariant;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
 
 public class BlockSand extends BlockFactory {
 
-    public final StateKey<Variant> VARIANT = stateAllocator.alloc("variant", new EnumState<>(Variant.class));
+    public final StateKey<SandVariant> VARIANT = stateAllocator.alloc("variant", new EnumState<>(SandVariant.class));
 
     private final Texture sand;
     private final Texture redSand;
@@ -37,16 +38,6 @@ public class BlockSand extends BlockFactory {
 
         sand = iMapViewer.getTexture("sand");
         redSand = iMapViewer.getTexture("red_sand");
-    }
-
-    public static enum Variant {
-        DEFAULT,
-        RED;
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
     }
 
 
@@ -62,7 +53,7 @@ public class BlockSand extends BlockFactory {
 
         @Override
         public Texture getTexture(Face face) {
-            return getState(VARIANT) == Variant.RED ? redSand : sand;
+            return getState(VARIANT) == SandVariant.RED ? redSand : sand;
         }
 
         @Override

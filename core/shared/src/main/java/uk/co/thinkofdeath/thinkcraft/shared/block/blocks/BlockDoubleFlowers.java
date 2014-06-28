@@ -21,6 +21,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.DoubleFlowerType;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
@@ -31,7 +32,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.world.World;
 
 public class BlockDoubleFlowers extends BlockFactory {
 
-    public final StateKey<Type> TYPE = stateAllocator.alloc("type", new EnumState<>(Type.class));
+    public final StateKey<DoubleFlowerType> TYPE = stateAllocator.alloc("type", new EnumState<>(DoubleFlowerType.class));
     public final StateKey<Boolean> TOP = stateAllocator.alloc("top", new BooleanState());
 
     private final Texture[] textures;
@@ -41,37 +42,14 @@ public class BlockDoubleFlowers extends BlockFactory {
     public BlockDoubleFlowers(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        textures = new Texture[Type.values().length * 2];
-        for (Type type : Type.values()) {
+        textures = new Texture[DoubleFlowerType.values().length * 2];
+        for (DoubleFlowerType type : DoubleFlowerType.values()) {
             textures[type.ordinal() * 2] = iMapViewer.getTexture("double_plant_" + type + "_bottom");
             textures[type.ordinal() * 2 + 1] = iMapViewer.getTexture("double_plant_" + type + "_top");
         }
 
         sunflowerBack = mapViewer.getTexture("double_plant_sunflower_back");
         sunflowerFront = mapViewer.getTexture("double_plant_sunflower_front");
-    }
-
-    public static enum Type {
-        SUNFLOWER,
-        SYRINGA,
-        GRASS(0xA7D389),
-        FERN(0xA7D389),
-        ROSE,
-        PAEONIA;
-
-        private int colour = 0xFFFFFF;
-
-        Type() {
-        }
-
-        Type(int colour) {
-            this.colour = colour;
-        }
-
-        @Override
-        public String toString() {
-            return name().toLowerCase();
-        }
     }
 
 
@@ -88,9 +66,9 @@ public class BlockDoubleFlowers extends BlockFactory {
         @Override
         public Model getModel() {
             if (model == null) {
-                model = BlockModels.createCross(getTexture(Face.FRONT), getState(TYPE).colour);
+                model = BlockModels.createCross(getTexture(Face.FRONT), getState(TYPE).getColour());
 
-                if (getState(TYPE) == Type.SUNFLOWER && getState(TOP)) {
+                if (getState(TYPE) == DoubleFlowerType.SUNFLOWER && getState(TOP)) {
                     Model flower = new Model();
                     flower.addFace(new ModelFace(Face.LEFT, sunflowerFront, 0, 0, 16, 16, 8));
                     flower.addFace(new ModelFace(Face.RIGHT, sunflowerBack, 0, 0, 16, 16, 8));

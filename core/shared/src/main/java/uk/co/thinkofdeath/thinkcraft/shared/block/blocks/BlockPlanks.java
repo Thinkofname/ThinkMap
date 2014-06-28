@@ -21,36 +21,23 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.PlanksType;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
 
 public class BlockPlanks extends BlockFactory {
 
-    public final StateKey<Type> TYPE = stateAllocator.alloc("type", new EnumState<>(Type.class));
+    public final StateKey<PlanksType> TYPE = stateAllocator.alloc("type", new EnumState<>(PlanksType.class));
 
     private final Texture[] textures;
 
     public BlockPlanks(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        textures = new Texture[Type.values().length];
-        for (Type type : Type.values()) {
+        textures = new Texture[PlanksType.values().length];
+        for (PlanksType type : PlanksType.values()) {
             textures[type.ordinal()] = iMapViewer.getTexture("planks_" + type);
-        }
-    }
-
-    public static enum Type {
-        OAK,
-        SPRUCE,
-        BIRCH,
-        JUNGLE,
-        ACACIA,
-        BIG_OAK;
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
         }
     }
 

@@ -22,6 +22,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.Facing;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
@@ -49,26 +50,6 @@ public class BlockPiston extends BlockFactory {
         pistonSide = iMapViewer.getTexture("piston_side");
         pistonTopNormal = iMapViewer.getTexture("piston_top_normal");
         pistonTop = iMapViewer.getTexture("piston_top_" + type);
-    }
-
-    public static enum Facing {
-        DOWN(-1),
-        UP(-1),
-        NORTH(2),
-        SOUTH(0),
-        WEST(1),
-        EAST(3);
-
-        public final int rotation;
-
-        Facing(int rotation) {
-            this.rotation = rotation;
-        }
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
     }
 
     public static Model createHeadPart(Texture pistonTop, Texture pistonTopNormal, Texture pistonSide) {
@@ -167,8 +148,8 @@ public class BlockPiston extends BlockFactory {
                     model.join(createHeadPart(pistonTop, pistonTopNormal, pistonSide), 0, 0, 12);
                 }
 
-                if (facing.rotation != -1) {
-                    model.rotateY(facing.rotation * 90);
+                if (facing.getClockwiseRotation() != -1) {
+                    model.rotateY(facing.getClockwiseRotation() * 90);
                 } else {
                     if (facing == Facing.DOWN) {
                         model.rotateX(270);

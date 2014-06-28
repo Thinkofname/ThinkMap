@@ -21,6 +21,8 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.Facing;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.NoVerticalFacing;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
@@ -30,7 +32,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
 
 public class BlockFenceGate extends BlockFactory {
 
-    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class));
+    public final StateKey<Facing> FACING = stateAllocator.alloc("facing", new EnumState<>(Facing.class, new NoVerticalFacing()));
     public final StateKey<Boolean> OPEN = stateAllocator.alloc("open", new BooleanState());
 
     private final Texture texture;
@@ -44,18 +46,6 @@ public class BlockFenceGate extends BlockFactory {
     @Override
     protected Block createBlock(StateMap states) {
         return new BlockImpl(states);
-    }
-
-    public static enum Facing {
-        SOUTH,
-        WEST,
-        NORTH,
-        EAST;
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
     }
 
     private class BlockImpl extends Block {
@@ -105,7 +95,7 @@ public class BlockFenceGate extends BlockFactory {
                 boolean open = getState(OPEN);
                 model.join(door.clone().rotateY(open ? 90 : 0), -7, 0, 0);
                 model.join(door.clone().rotateY(180 - (open ? 90 : 0)), 7, 0, 0);
-                model.rotateY(getState(FACING).ordinal() * 90);
+                model.rotateY(getState(FACING).getClockwiseRotation() * 90);
                 model.realignTextures();
             }
             return model;
@@ -113,7 +103,7 @@ public class BlockFenceGate extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            int val = getState(FACING).ordinal();
+            int val = getState(FACING).getClockwiseRotation();
             if (getState(OPEN)) {
                 val |= 0x4;
             }

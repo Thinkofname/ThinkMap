@@ -16,12 +16,10 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.block.blocks;
 
-import uk.co.thinkofdeath.thinkcraft.shared.Face;
-import uk.co.thinkofdeath.thinkcraft.shared.ForEachIterator;
-import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
-import uk.co.thinkofdeath.thinkcraft.shared.Texture;
+import uk.co.thinkofdeath.thinkcraft.shared.*;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.enums.RailShape;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
@@ -33,7 +31,13 @@ import uk.co.thinkofdeath.thinkcraft.shared.model.ModelVertex;
 public class BlockPoweredRail extends BlockFactory {
 
     public final StateKey<Boolean> POWERED = stateAllocator.alloc("powered", new BooleanState());
-    public final StateKey<Shape> SHAPE = stateAllocator.alloc("shape", new EnumState<>(Shape.class));
+    public final StateKey<RailShape> SHAPE = stateAllocator.alloc("shape", new EnumState<>(RailShape.class,
+            new Test<RailShape>() {
+                @Override
+                public boolean test(RailShape railShape) {
+                    return !railShape.isCorner();
+                }
+            }));
 
     private final Texture texture;
     private final Texture texturePowered;
@@ -43,20 +47,6 @@ public class BlockPoweredRail extends BlockFactory {
 
         texture = iMapViewer.getTexture(textureName);
         texturePowered = iMapViewer.getTexture(textureName + "_powered");
-    }
-
-    public static enum Shape {
-        NORTH_SOUTH,
-        EAST_WEST,
-        ASCENDING_EAST,
-        ASCENDING_WEST,
-        ASCENDING_NORTH,
-        ASCENDING_SOUTH;
-
-        @Override
-        public String toString() {
-            return super.toString().toLowerCase();
-        }
     }
 
     @Override
@@ -143,7 +133,7 @@ public class BlockPoweredRail extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            int val = this.<Shape>getState(SHAPE).ordinal();
+            int val = this.<RailShape>getState(SHAPE).ordinal();
             if (this.<Boolean>getState(POWERED)) {
                 val |= 0x8;
             }
