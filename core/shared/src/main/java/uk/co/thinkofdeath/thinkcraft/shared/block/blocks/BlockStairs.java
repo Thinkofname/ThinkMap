@@ -188,6 +188,10 @@ public class BlockStairs extends BlockFactory {
 
                 if (this.<Boolean>getState(TOP)) {
                     model.flipModel();
+                    slabHitbox.setY1(slabHitbox.getY1() + 0.5);
+                    slabHitbox.setY2(slabHitbox.getY2() + 0.5);
+                    topHitbox.setY1(topHitbox.getY1() - 0.5);
+                    topHitbox.setY2(topHitbox.getY2() - 0.5);
                 }
                 model.realignTextures();
 
