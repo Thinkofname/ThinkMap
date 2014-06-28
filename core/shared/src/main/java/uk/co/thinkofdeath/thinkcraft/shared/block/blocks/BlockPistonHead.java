@@ -157,7 +157,7 @@ public class BlockPistonHead extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            int val = getState(FACING).ordinal();
+            int val = getState(FACING).getDUNSWEOrder();
             if (getState(TYPE) == PistonType.STICKY) {
                 val |= 0x8;
             }

@@ -163,7 +163,7 @@ public class BlockPiston extends BlockFactory {
 
         @Override
         public int getLegacyData() {
-            int val = getState(FACING).ordinal();
+            int val = getState(FACING).getDUNSWEOrder();
             if (getState(EXTENDED)) {
                 val |= 0x8;
             }
