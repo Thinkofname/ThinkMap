@@ -23,6 +23,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
 import uk.co.thinkofdeath.thinkcraft.shared.block.enums.Facing;
 import uk.co.thinkofdeath.thinkcraft.shared.block.enums.NoVerticalFacing;
+import uk.co.thinkofdeath.thinkcraft.shared.block.helpers.RedstoneConnectible;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
@@ -48,7 +49,7 @@ public class BlockButton extends BlockFactory {
         return new BlockImpl(states);
     }
 
-    private class BlockImpl extends Block {
+    private class BlockImpl extends Block implements RedstoneConnectible {
 
         BlockImpl(StateMap state) {
             super(BlockButton.this, state);
@@ -80,6 +81,11 @@ public class BlockButton extends BlockFactory {
                 model.rotateY(facing.getClockwiseRotation() * 90);
             }
             return model;
+        }
+
+        @Override
+        public boolean isRedstoneConnectible() {
+            return true;
         }
     }
 }

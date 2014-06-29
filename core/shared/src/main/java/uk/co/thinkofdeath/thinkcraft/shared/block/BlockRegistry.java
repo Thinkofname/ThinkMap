@@ -344,7 +344,7 @@ public class BlockRegistry {
         register("minecraft", "obsidian", new BlockBuilder(mapViewer)
                 .texture("obsidian")
                 .create(), 49);
-        register("minecraft", "torch", new BlockBuilder(new BlockTorch(mapViewer, "torch_on"))
+        register("minecraft", "torch", new BlockBuilder(new BlockTorch(mapViewer, "torch_on", false))
                 .solid(false)
                 .collidable(false)
                 .create(), 50);
@@ -439,13 +439,11 @@ public class BlockRegistry {
         register("minecraft", "lit_redstone_ore", new BlockBuilder(mapViewer)
                 .texture("redstone_ore")
                 .create(), 74);
-        register("minecraft", "unlit_redstone_torch", new BlockBuilder(new BlockTorch(mapViewer,
-                "redstone_torch_off"))
+        register("minecraft", "unlit_redstone_torch", new BlockBuilder(new BlockTorch(mapViewer, "redstone_torch_off", true))
                 .solid(false)
                 .collidable(false)
                 .create(), 75);
-        register("minecraft", "redstone_torch", new BlockBuilder(new BlockTorch(mapViewer,
-                "redstone_torch_on"))
+        register("minecraft", "redstone_torch", new BlockBuilder(new BlockTorch(mapViewer, "redstone_torch_on", true))
                 .solid(false)
                 .collidable(false)
                 .create(), 76);
@@ -690,7 +688,7 @@ public class BlockRegistry {
         // TODO: powered_comparator
         // TODO: daylight_detector
 
-        register("minecraft", "redstone_block", new BlockBuilder(mapViewer)
+        register("minecraft", "redstone_block", new BlockBuilder(new BlockRedstoneBlock(mapViewer))
                 .texture("redstone_block")
                 .create(), 152);
         register("minecraft", "quartz_ore", new BlockBuilder(mapViewer)

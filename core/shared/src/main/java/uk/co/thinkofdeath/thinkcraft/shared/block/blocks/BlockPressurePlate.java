@@ -21,6 +21,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.helpers.RedstoneConnectible;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
@@ -44,7 +45,7 @@ public class BlockPressurePlate extends BlockFactory {
         return new BlockImpl(states);
     }
 
-    private class BlockImpl extends Block {
+    private class BlockImpl extends Block implements RedstoneConnectible {
 
         BlockImpl(StateMap state) {
             super(BlockPressurePlate.this, state);
@@ -69,6 +70,11 @@ public class BlockPressurePlate extends BlockFactory {
                 model.addFace(new ModelFace(Face.BACK, texture, 1, 0, 14, height, 1));
             }
             return model;
+        }
+
+        @Override
+        public boolean isRedstoneConnectible() {
+            return true;
         }
     }
 }

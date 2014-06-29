@@ -23,6 +23,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
 import uk.co.thinkofdeath.thinkcraft.shared.block.enums.Facing;
 import uk.co.thinkofdeath.thinkcraft.shared.block.helpers.BlockModels;
+import uk.co.thinkofdeath.thinkcraft.shared.block.helpers.RedstoneConnectible;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
@@ -39,9 +40,11 @@ public class BlockTorch extends BlockFactory {
             }));
 
     private final Texture texture;
+    private final boolean allowRedstone;
 
-    public BlockTorch(IMapViewer iMapViewer, String texture) {
+    public BlockTorch(IMapViewer iMapViewer, String texture, boolean allowRedstone) {
         super(iMapViewer);
+        this.allowRedstone = allowRedstone;
 
         this.texture = mapViewer.getTexture(texture);
     }
@@ -51,7 +54,7 @@ public class BlockTorch extends BlockFactory {
         return new BlockImpl(states);
     }
 
-    private class BlockImpl extends Block {
+    private class BlockImpl extends Block implements RedstoneConnectible {
 
         BlockImpl(StateMap state) {
             super(BlockTorch.this, state);
@@ -79,6 +82,11 @@ public class BlockTorch extends BlockFactory {
                 }
             }
             return model;
+        }
+
+        @Override
+        public boolean isRedstoneConnectible() {
+            return allowRedstone;
         }
     }
 }

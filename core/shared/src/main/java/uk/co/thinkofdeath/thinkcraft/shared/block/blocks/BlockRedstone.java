@@ -23,6 +23,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
 import uk.co.thinkofdeath.thinkcraft.shared.block.enums.RedstoneSide;
+import uk.co.thinkofdeath.thinkcraft.shared.block.helpers.RedstoneConnectible;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.IntegerState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
@@ -56,7 +57,7 @@ public class BlockRedstone extends BlockFactory {
     }
 
 
-    private class BlockImpl extends Block {
+    private class BlockImpl extends Block implements RedstoneConnectible {
 
         BlockImpl(StateMap state) {
             super(BlockRedstone.this, state);
@@ -144,16 +145,19 @@ public class BlockRedstone extends BlockFactory {
 
         private RedstoneSide checkRedstone(World world, int x, int y, int z, boolean blocked) {
             Block block = world.getBlock(x, y, z);
-            if (block instanceof BlockImpl) {
+            if (block instanceof RedstoneConnectible
+                    && ((RedstoneConnectible) block).isRedstoneConnectible()) {
                 return RedstoneSide.SIDE;
             }
             Block other = world.getBlock(x, y - 1, z);
-            if (!block.isSolid() && other instanceof BlockImpl) {
+            if (!block.isSolid() && other instanceof RedstoneConnectible
+                    && ((RedstoneConnectible) other).isRedstoneConnectible()) {
                 return RedstoneSide.SIDE;
             }
             if (!blocked) {
                 block = world.getBlock(x, y + 1, z);
-                if (block instanceof BlockImpl) {
+                if (block instanceof RedstoneConnectible
+                        && ((RedstoneConnectible) block).isRedstoneConnectible()) {
                     return RedstoneSide.UP;
                 }
             }
@@ -169,6 +173,11 @@ public class BlockRedstone extends BlockFactory {
                 return getState(POWER);
             }
             return -1;
+        }
+
+        @Override
+        public boolean isRedstoneConnectible() {
+            return true;
         }
     }
 

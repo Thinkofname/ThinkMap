@@ -22,6 +22,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
 import uk.co.thinkofdeath.thinkcraft.shared.block.enums.LeverDirection;
+import uk.co.thinkofdeath.thinkcraft.shared.block.helpers.RedstoneConnectible;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
@@ -48,7 +49,7 @@ public class BlockLever extends BlockFactory {
         return new BlockImpl(states);
     }
 
-    private class BlockImpl extends Block {
+    private class BlockImpl extends Block implements RedstoneConnectible {
 
         BlockImpl(StateMap state) {
             super(BlockLever.this, state);
@@ -106,6 +107,11 @@ public class BlockLever extends BlockFactory {
                         .rotateX(direction.getRotationX() * 90);
             }
             return model;
+        }
+
+        @Override
+        public boolean isRedstoneConnectible() {
+            return true;
         }
     }
 }
