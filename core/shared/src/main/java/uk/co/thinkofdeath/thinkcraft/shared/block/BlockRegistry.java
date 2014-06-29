@@ -22,6 +22,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.enums.StoneSlabType;
 import uk.co.thinkofdeath.thinkcraft.shared.block.enums.TreeVariant;
 import uk.co.thinkofdeath.thinkcraft.shared.block.enums.TreeVariant2;
 import uk.co.thinkofdeath.thinkcraft.shared.block.enums.WoodenSlabType;
+import uk.co.thinkofdeath.thinkcraft.shared.block.helpers.BlockModels;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
 import uk.co.thinkofdeath.thinkcraft.shared.support.IntMap;
 

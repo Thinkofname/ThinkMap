@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.shared.block.blocks;
+package uk.co.thinkofdeath.thinkcraft.shared.block.helpers;
 
 import uk.co.thinkofdeath.thinkcraft.shared.Face;
 import uk.co.thinkofdeath.thinkcraft.shared.ForEachIterator;
