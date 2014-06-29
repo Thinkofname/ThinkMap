@@ -104,4 +104,28 @@ public class BlockModels {
                 .colour(r, g, b));
         return model;
     }
+
+    public static Model createEgg(Texture texture) {
+        Model model = new Model();
+        model.join(createBox(texture, 8, 1, 8), 4, 0, 4);
+        model.join(createBox(texture, 14, 2, 14), 1, 1, 1);
+        model.join(createBox(texture, 16, 5, 16), 0, 3, 0);
+        model.join(createBox(texture, 14, 3, 14), 1, 8, 1);
+        model.join(createBox(texture, 12, 2, 12), 2, 11, 2);
+        model.join(createBox(texture, 10, 1, 10), 3, 13, 3);
+        model.join(createBox(texture, 8, 1, 8), 4, 14, 4);
+        model.join(createBox(texture, 6, 1, 6), 5, 15, 5);
+        return model;
+    }
+
+    private static Model createBox(Texture texture, int w, int h, int d) {
+        Model model = new Model();
+        model.addFace(new ModelFace(Face.TOP, texture, 0, 0, w, d, h));
+        model.addFace(new ModelFace(Face.BOTTOM, texture, 0, 0, w, d, 0));
+        model.addFace(new ModelFace(Face.LEFT, texture, 0, 0, w, h, d));
+        model.addFace(new ModelFace(Face.RIGHT, texture, 0, 0, w, h, 0));
+        model.addFace(new ModelFace(Face.FRONT, texture, 0, 0, d, h, w));
+        model.addFace(new ModelFace(Face.BACK, texture, 0, 0, d, h, 0));
+        return model;
+    }
 }

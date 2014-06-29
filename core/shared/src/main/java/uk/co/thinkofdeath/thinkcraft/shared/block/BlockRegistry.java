@@ -599,9 +599,10 @@ public class BlockRegistry {
         register("minecraft", "end_stone", new BlockBuilder(mapViewer)
                 .texture("end_stone")
                 .create(), 121);
-
-        // TODO: dragon_egg
-
+        register("minecraft", "dragon_egg", new BlockBuilder(mapViewer)
+                .model(BlockModels.createEgg(mapViewer.getTexture("dragon_egg")))
+                .solid(false)
+                .create(), 122);
         register("minecraft", "redstone_lamp", new BlockBuilder(mapViewer)
                 .texture("redstone_lamp_off")
                 .create(), 123);
