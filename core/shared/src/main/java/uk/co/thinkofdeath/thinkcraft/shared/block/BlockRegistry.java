@@ -592,8 +592,10 @@ public class BlockRegistry {
                 .create(), 118);
 
         // TODO: end_portal
-        // TODO: end_portal_frame
 
+        register("minecraft", "end_portal_frame", new BlockBuilder(new BlockEndPortalFrame(mapViewer))
+                .solid(false)
+                .create(), 120);
         register("minecraft", "end_stone", new BlockBuilder(mapViewer)
                 .texture("end_stone")
                 .create(), 121);
