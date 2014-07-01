@@ -24,7 +24,6 @@ import uk.co.thinkofdeath.thinkcraft.shared.collision.AABB;
 import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
 import uk.co.thinkofdeath.thinkcraft.shared.model.ModelVertex;
-import uk.co.thinkofdeath.thinkcraft.shared.vector.Vector3;
 import uk.co.thinkofdeath.thinkcraft.shared.world.World;
 
 import java.util.Map;
@@ -36,7 +35,7 @@ public class Block implements Model.RenderChecker {
     protected String plugin;
     protected String name;
     protected String fullName;
-    protected AABB hitbox;
+    protected AABB[] hitbox;
     // The following should be mirrored in BlockFactory, BlockBuilder
     // and the constructor
     private boolean renderable;
@@ -207,17 +206,11 @@ public class Block implements Model.RenderChecker {
         return this;
     }
 
-    public boolean collide(AABB aabb, int x, int y, int z, Vector3 direction) {
-        if (isCollidable()) {
-            if (hitbox == null) {
-                hitbox = computeHitboxFromModel(getModel());
-            }
-            if (hitbox.intersectsOffset(aabb, x, y, z)) {
-                aabb.moveOutOf(hitbox, x, y, z, direction);
-                return true;
-            }
+    public AABB[] getHitbox() {
+        if (hitbox == null) {
+            hitbox = new AABB[]{computeHitboxFromModel(getModel())};
         }
-        return false;
+        return hitbox;
     }
 
     protected AABB computeHitboxFromModel(Model model) {

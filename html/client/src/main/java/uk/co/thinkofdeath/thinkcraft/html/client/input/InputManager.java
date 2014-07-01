@@ -21,6 +21,7 @@ import elemental.events.Touch;
 import elemental.events.TouchList;
 import uk.co.thinkofdeath.thinkcraft.html.client.MapViewer;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.Camera;
+import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.collision.AABB;
 import uk.co.thinkofdeath.thinkcraft.shared.vector.Vector3;
 
@@ -172,7 +173,16 @@ public class InputManager {
         for (int y = miy; y < may; y++) {
             for (int z = miz; z < maz; z++) {
                 for (int x = mix; x < max; x++) {
-                    hit |= mapViewer.getWorld().getBlock(x, y, z).collide(hitbox, x, y, z, direction);
+                    Block block = mapViewer.getWorld().getBlock(x, y, z);
+                    if (block.isCollidable()) {
+                        AABB[] hbs = block.getHitbox();
+                        for (AABB hb : hbs) {
+                            if (hb.intersectsOffset(hitbox, x, y, z)) {
+                                hitbox.moveOutOf(hb, x, y, z, direction);
+                                hit = true;
+                            }
+                        }
+                    }
                 }
             }
         }

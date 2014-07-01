@@ -30,7 +30,6 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
 import uk.co.thinkofdeath.thinkcraft.shared.collision.AABB;
 import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
-import uk.co.thinkofdeath.thinkcraft.shared.vector.Vector3;
 import uk.co.thinkofdeath.thinkcraft.shared.world.World;
 
 public class BlockStairs extends BlockFactory {
@@ -199,20 +198,12 @@ public class BlockStairs extends BlockFactory {
         }
 
         @Override
-        public boolean collide(AABB aabb, int x, int y, int z, Vector3 direction) {
-            if (slabHitbox == null) {
+        public AABB[] getHitbox() {
+            if (hitbox == null) {
                 getModel();
+                hitbox = new AABB[]{slabHitbox, topHitbox};
             }
-            boolean hit = false;
-            if (slabHitbox.intersectsOffset(aabb, x, y, z)) {
-                hit = true;
-                aabb.moveOutOf(slabHitbox, x, y, z, direction);
-            }
-            if (topHitbox.intersectsOffset(aabb, x, y, z)) {
-                hit = true;
-                aabb.moveOutOf(topHitbox, x, y, z, direction);
-            }
-            return hit;
+            return hitbox;
         }
 
         private boolean isMatching(Block block) {
