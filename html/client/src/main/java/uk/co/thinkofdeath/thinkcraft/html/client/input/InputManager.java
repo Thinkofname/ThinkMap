@@ -163,11 +163,11 @@ public class InputManager {
     }
 
     private boolean checkCollisions() {
-        int mix = (int) (hitbox.getX1() - 1);
+        int mix = (int) (hitbox.getX1());
         int max = (int) (hitbox.getX2() + 1);
-        int miy = (int) (hitbox.getY1() - 1);
+        int miy = (int) (hitbox.getY1());
         int may = (int) (hitbox.getY2() + 1);
-        int miz = (int) (hitbox.getZ1() - 1);
+        int miz = (int) (hitbox.getZ1());
         int maz = (int) (hitbox.getZ2() + 1);
 
         boolean hit = false;
