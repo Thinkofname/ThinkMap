@@ -27,7 +27,7 @@ import static elemental.html.WebGLRenderingContext.*;
 
 public class Debug {
 
-    private static boolean enabled = false;
+    private static final boolean enabled = false;
     private static boolean init = false;
 
     private static final int MAX_LINES = 5000;
@@ -37,11 +37,6 @@ public class Debug {
     private static Uint8ArrayNative data = Uint8ArrayNative.create(MAX_LINES * (4 * 3 + 4) * 2);
     private static Float32ArrayNative floatView = Float32ArrayNative.create(data.buffer());
     private static int count = 0;
-
-    public static void enable() {
-        if (init) throw new RuntimeException("Enable after init");
-        enabled = true;
-    }
 
     public static boolean isEnabled() {
         return enabled;

@@ -24,7 +24,6 @@ import elemental.html.CanvasElement;
 import elemental.html.ImageElement;
 import elemental.js.util.Json;
 import elemental.xml.XMLHttpRequest;
-import uk.co.thinkofdeath.thinkcraft.html.client.debug.Debug;
 import uk.co.thinkofdeath.thinkcraft.html.client.feature.FeatureHandler;
 import uk.co.thinkofdeath.thinkcraft.html.client.input.InputManager;
 import uk.co.thinkofdeath.thinkcraft.html.client.network.Connection;
@@ -90,11 +89,6 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
         xhr.open("GET", "http://" + getConfigAdddress() + "/resources/blocks.json", true);
         xhr.setOnload(this);
         xhr.send();
-
-        if (Browser.getWindow().getLocation().getSearch().contains("debug")) {
-            Debug.enable();
-            System.out.println("Debugging enabled");
-        }
     }
 
     /**
