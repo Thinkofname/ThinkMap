@@ -20,6 +20,7 @@ import com.google.gwt.core.client.Duration;
 import elemental.events.Touch;
 import elemental.events.TouchList;
 import uk.co.thinkofdeath.thinkcraft.html.client.MapViewer;
+import uk.co.thinkofdeath.thinkcraft.html.client.debug.Debug;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.Camera;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.collision.AABB;
@@ -180,6 +181,15 @@ public class InputManager {
                             if (hb.intersectsOffset(hitbox, x, y, z)) {
                                 hitbox.moveOutOf(hb, x, y, z, direction);
                                 hit = true;
+                                if (Debug.isEnabled()) {
+                                    Debug.drawBox(x + hb.getX1(), y + hb.getY1(), z + hb.getZ1(),
+                                            x + hb.getX2(), y + hb.getY2(), z + hb.getZ2(),
+                                            0, 255, 0);
+                                }
+                            } else if (Debug.isEnabled()) {
+                                Debug.drawBox(x + hb.getX1(), y + hb.getY1(), z + hb.getZ1(),
+                                        x + hb.getX2(), y + hb.getY2(), z + hb.getZ2(),
+                                        255, 0, 0);
                             }
                         }
                     }

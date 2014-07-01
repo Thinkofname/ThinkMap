@@ -19,6 +19,7 @@ package uk.co.thinkofdeath.thinkcraft.html.client.render;
 import elemental.client.Browser;
 import elemental.html.*;
 import uk.co.thinkofdeath.thinkcraft.html.client.MapViewer;
+import uk.co.thinkofdeath.thinkcraft.html.client.debug.Debug;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.shaders.ChunkShader;
 import uk.co.thinkofdeath.thinkcraft.html.client.texture.VirtualTexture;
 import uk.co.thinkofdeath.thinkcraft.shared.model.PositionedModel;
@@ -106,6 +107,7 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
             gl.bindTexture(TEXTURE_2D, blockTextures[i]);
         }
 
+        Debug.init(gl);
         RendererUtils.requestAnimationFrame(this);
     }
 
@@ -264,6 +266,9 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
 
         chunkShaderAlpha.disable();
         gl.disable(BLEND);
+
+        // Debug hook
+        Debug.render(gl, perspectiveMatrix, viewMatrix);
 
         RendererUtils.requestAnimationFrame(this);
     }
