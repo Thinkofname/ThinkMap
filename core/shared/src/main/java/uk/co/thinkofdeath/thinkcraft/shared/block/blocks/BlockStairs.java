@@ -50,9 +50,6 @@ public class BlockStairs extends BlockFactory {
 
     private class BlockImpl extends Block {
 
-        private AABB slabHitbox;
-        private AABB topHitbox;
-
         BlockImpl(StateMap state) {
             super(BlockStairs.this, state);
         }
@@ -72,6 +69,9 @@ public class BlockStairs extends BlockFactory {
         @Override
         public Model getModel() {
             if (model == null) {
+                AABB slabHitbox = null;
+                AABB topHitbox = null;
+                AABB top2Hitbox = null;
                 model = new Model();
 
                 Texture texture = getTexture(Face.TOP);
@@ -116,18 +116,25 @@ public class BlockStairs extends BlockFactory {
                         section.addFace(new ModelFace(Face.FRONT, texture, 0, 8, 16, 8, 16));
                         section.addFace(new ModelFace(Face.BACK, texture, 0, 8, 16, 8, 8));
 
+                        Model section2 = new Model();
                         int oz = alt ? 16 : 0;
-                        section.addFace(new ModelFace(Face.TOP, texture, 0, oz, 8, 8, 16));
-                        section.addFace(new ModelFace(Face.LEFT, texture, oz, 8, 8, 8, 8));
-                        section.addFace(new ModelFace(Face.RIGHT, texture, oz, 8, 8, 8, 0));
-                        section.addFace(new ModelFace(Face.FRONT, texture, 0, 8, 8, 8, oz + 8));
-                        section.addFace(new ModelFace(Face.BACK, texture, 0, 8, 8, 8, oz));
+                        section2.addFace(new ModelFace(Face.TOP, texture, 0, oz, 8, 8, 16));
+                        section2.addFace(new ModelFace(Face.LEFT, texture, oz, 8, 8, 8, 8));
+                        section2.addFace(new ModelFace(Face.RIGHT, texture, oz, 8, 8, 8, 0));
+                        section2.addFace(new ModelFace(Face.FRONT, texture, 0, 8, 8, 8, oz + 8));
+                        section2.addFace(new ModelFace(Face.BACK, texture, 0, 8, 8, 8, oz));
 
                         section = new Model().join(section, 0, 0,
                                 alt ? -8 : 0
                         ).rotateY(facing.rotation * 90);
-                        topHitbox = computeHitboxFromModel(section);
+                        section2 = new Model().join(section2, 0, 0,
+                                alt ? -8 : 0
+                        ).rotateY(facing.rotation * 90);
                         model.join(section);
+                        model.join(section2);
+
+                        topHitbox = computeHitboxFromModel(section);
+                        top2Hitbox = computeHitboxFromModel(section2);
                         break;
                     case OUTER_LEFT:
                     case OUTER_RIGHT:
@@ -152,9 +159,18 @@ public class BlockStairs extends BlockFactory {
                     slabHitbox.setY2(slabHitbox.getY2() + 0.5);
                     topHitbox.setY1(topHitbox.getY1() - 0.5);
                     topHitbox.setY2(topHitbox.getY2() - 0.5);
+                    if (top2Hitbox != null) {
+                        top2Hitbox.setY1(top2Hitbox.getY1() - 0.5);
+                        top2Hitbox.setY2(top2Hitbox.getY2() - 0.5);
+                    }
                 }
                 model.realignTextures();
 
+                if (top2Hitbox == null) {
+                    hitbox = new AABB[]{slabHitbox, topHitbox};
+                } else {
+                    hitbox = new AABB[]{slabHitbox, topHitbox, top2Hitbox};
+                }
             }
             return model;
         }
@@ -201,7 +217,6 @@ public class BlockStairs extends BlockFactory {
         public AABB[] getHitbox() {
             if (hitbox == null) {
                 getModel();
-                hitbox = new AABB[]{slabHitbox, topHitbox};
             }
             return hitbox;
         }
