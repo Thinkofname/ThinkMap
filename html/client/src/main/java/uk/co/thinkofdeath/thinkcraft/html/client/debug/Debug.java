@@ -34,8 +34,16 @@ public class Debug {
     private static DebugShader shader;
 
     private static WebGLBuffer buffer;
-    private static Uint8ArrayNative data = Uint8ArrayNative.create(MAX_LINES * (4 * 3 + 4) * 2);
-    private static Float32ArrayNative floatView = Float32ArrayNative.create(data.buffer());
+    private static Uint8ArrayNative data;
+    private static Float32ArrayNative floatView;
+
+    static {
+        if (enabled) {
+            data = Uint8ArrayNative.create(MAX_LINES * (4 * 3 + 4) * 2);
+            floatView = Float32ArrayNative.create(data.buffer());
+        }
+    }
+
     private static int count = 0;
 
     public static boolean isEnabled() {
