@@ -26,6 +26,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
+import uk.co.thinkofdeath.thinkcraft.shared.collision.AABB;
 import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
 
@@ -133,6 +134,20 @@ public class BlockHopper extends BlockFactory {
                 }
             }
             return model;
+        }
+
+        @Override
+        public AABB[] getHitbox() {
+            if (hitbox == null) {
+                hitbox = new AABB[]{
+                        new AABB(0, 0, 0, 1, 10d / 16d, 1),
+                        new AABB(0, 10d / 16d, 0, 1, 1, 2d / 16d),
+                        new AABB(14d / 16d, 10d / 16d, 0, 1, 1, 1),
+                        new AABB(0, 10d / 16d, 0, 2d / 16d, 1, 1),
+                        new AABB(0, 10d / 16d, 14d / 16d, 1, 1, 1)
+                };
+            }
+            return hitbox;
         }
     }
 }
