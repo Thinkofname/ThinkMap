@@ -24,6 +24,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.IntegerState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
+import uk.co.thinkofdeath.thinkcraft.shared.collision.AABB;
 import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
 
@@ -72,6 +73,16 @@ public class BlockCactus extends BlockFactory {
                 model.addFace(new ModelFace(Face.BACK, side, 0, 0, 16, 16, 1));
             }
             return model;
+        }
+
+        @Override
+        public AABB[] getHitbox() {
+            if (hitbox == null) {
+                hitbox = new AABB[]{
+                        new AABB(1d / 16d, 0, 1d / 16d, 15d / 16d, 1, 15d / 16d)
+                };
+            }
+            return hitbox;
         }
     }
 }
