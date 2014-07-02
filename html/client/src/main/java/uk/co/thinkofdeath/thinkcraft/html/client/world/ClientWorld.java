@@ -218,6 +218,35 @@ public class ClientWorld extends World {
                 }
             }
         }
+        // Update surrounding chunks
+        Chunk other;
+        Chunk other2;
+        if ((other = getChunk(chunk.getX() - 1, chunk.getZ())) != null
+                | (other2 = getChunk(chunk.getX() + 1, chunk.getZ())) != null) {
+            for (int z = 0; z < 16; z++) {
+                for (int i = 0; i < 16; i++) {
+                    if (chunk.hasSection(i)) {
+                        for (int y = 0; y < 16; y++) {
+                            if (other != null) other.updateBlock(15, (i << 4) + y, z);
+                            if (other2 != null) other2.updateBlock(0, (i << 4) + y, z);
+                        }
+                    }
+                }
+            }
+        }
+        if ((other = getChunk(chunk.getX(), chunk.getZ() - 1)) != null
+                | (other2 = getChunk(chunk.getX(), chunk.getZ() + 1)) != null) {
+            for (int x = 0; x < 16; x++) {
+                for (int i = 0; i < 16; i++) {
+                    if (chunk.hasSection(i)) {
+                        for (int y = 0; y < 16; y++) {
+                            if (other != null) other.updateBlock(x, (i << 4) + y, 15);
+                            if (other2 != null) other2.updateBlock(x, (i << 4) + y, 0);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override

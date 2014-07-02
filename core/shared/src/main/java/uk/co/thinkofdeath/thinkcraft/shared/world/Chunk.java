@@ -184,4 +184,8 @@ public abstract class Chunk {
     public World getWorld() {
         return world;
     }
+
+    public boolean hasSection(int i) {
+        return sections[i] != null;
+    }
 }
