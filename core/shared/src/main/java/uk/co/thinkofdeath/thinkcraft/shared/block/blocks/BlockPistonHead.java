@@ -27,6 +27,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.enums.PistonType;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
+import uk.co.thinkofdeath.thinkcraft.shared.collision.AABB;
 import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
 import uk.co.thinkofdeath.thinkcraft.shared.model.ModelVertex;
@@ -136,23 +137,39 @@ public class BlockPistonHead extends BlockFactory {
                             }
                         }));
 
-
-                model.join(BlockPiston.createHeadPart(
+                Model head = new Model().join(BlockPiston.createHeadPart(
                         (getState(TYPE) == PistonType.DEFAULT ? pistonTopNormal :
                                 pistonTopSticky), pistonTopNormal, pistonSide
                 ), 0, 0, 12);
 
                 if (facing.getClockwiseRotation() != -1) {
                     model.rotateY(facing.getClockwiseRotation() * 90);
+                    head.rotateY(facing.getClockwiseRotation() * 90);
                 } else {
                     if (facing == Facing.DOWN) {
                         model.rotateX(270);
+                        head.rotateX(270);
                     } else {
                         model.rotateX(270 + 180);
+                        head.rotateX(270 + 180);
                     }
                 }
+
+                hitbox = new AABB[]{
+                        computeHitboxFromModel(model),
+                        computeHitboxFromModel(head)
+                };
+                model = model.join(head);
             }
             return model;
+        }
+
+        @Override
+        public AABB[] getHitbox() {
+            if (hitbox == null) {
+                getModel();
+            }
+            return hitbox;
         }
 
         @Override
