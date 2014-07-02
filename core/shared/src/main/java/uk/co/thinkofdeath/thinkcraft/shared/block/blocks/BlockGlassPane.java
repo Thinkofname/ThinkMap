@@ -25,6 +25,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
+import uk.co.thinkofdeath.thinkcraft.shared.collision.AABB;
 import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
 import uk.co.thinkofdeath.thinkcraft.shared.model.ModelVertex;
@@ -184,6 +185,30 @@ public class BlockGlassPane extends BlockFactory {
                 stateMap.set(WEST, true);
             }
             return mapViewer.getBlockRegistry().get(fullName, stateMap);
+        }
+
+        @Override
+        public AABB[] getHitbox() {
+            if (hitbox == null) {
+                AABB horz = new AABB(7d / 16d, 0, 7d / 16, 9d / 16d, 1, 9d / 16d);
+                AABB vert = new AABB(7d / 16d, 0, 7d / 16, 9d / 16d, 1, 9d / 16d);
+
+                if (getState(EAST)) {
+                    horz.setX2(1);
+                }
+                if (getState(WEST)) {
+                    horz.setX1(0);
+                }
+
+                if (getState(SOUTH)) {
+                    vert.setZ2(1);
+                }
+                if (getState(NORTH)) {
+                    vert.setZ1(0);
+                }
+                hitbox = new AABB[]{horz, vert};
+            }
+            return hitbox;
         }
 
     }
