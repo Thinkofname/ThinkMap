@@ -29,6 +29,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.IntegerState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
+import uk.co.thinkofdeath.thinkcraft.shared.collision.AABB;
 import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
 
@@ -87,6 +88,16 @@ public class BlockRepeater extends BlockFactory {
                 model.rotateY(facing.ordinal() * 90);
             }
             return model;
+        }
+
+        @Override
+        public AABB[] getHitbox() {
+            if (hitbox == null) {
+                hitbox = new AABB[]{
+                        new AABB(0, 0, 0, 1, 2d / 16d, 1)
+                };
+            }
+            return hitbox;
         }
 
         @Override
