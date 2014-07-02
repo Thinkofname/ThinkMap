@@ -24,6 +24,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
+import uk.co.thinkofdeath.thinkcraft.shared.collision.AABB;
 import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
 import uk.co.thinkofdeath.thinkcraft.shared.world.World;
@@ -120,6 +121,33 @@ public class BlockFence extends BlockFactory {
             map.set(WEST, checkFence(world, x - 1, y, z));
 
             return mapViewer.getBlockRegistry().get(fullName, map);
+        }
+
+        @Override
+        public AABB[] getHitbox() {
+            if (hitbox == null) {
+                AABB horz = new AABB(6d / 16d, 0, 6d / 16, 10d / 16d, 1.5, 10d / 16d);
+                AABB vert = new AABB(6d / 16d, 0, 6d / 16, 10d / 16d, 1.5, 10d / 16d);
+
+                if (getState(EAST)) {
+                    horz.setX2(1);
+                }
+                if (getState(WEST)) {
+                    horz.setX1(0);
+                }
+
+                if (getState(SOUTH)) {
+                    vert.setZ2(1);
+                }
+                if (getState(NORTH)) {
+                    vert.setZ1(0);
+                }
+                hitbox = new AABB[]{
+                        horz,
+                        vert
+                };
+            }
+            return hitbox;
         }
 
         public boolean checkFence(World world, int x, int y, int z) {
