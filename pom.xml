@@ -23,7 +23,7 @@
     <groupId>uk.co.thinkofdeath.thinkcraft</groupId>
     <artifactId>ThinkCraft</artifactId>
     <packaging>pom</packaging>
-    <version>0.9-SNAPSHOT</version>
+    <version>0.9</version>
 
     <profiles>
         <profile>
