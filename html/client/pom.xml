@@ -23,7 +23,7 @@
     <parent>
         <artifactId>html</artifactId>
         <groupId>uk.co.thinkofdeath.thinkcraft</groupId>
-        <version>0.9</version>
+        <version>0.10-SNAPSHOT</version>
     </parent>
 
     <artifactId>html-client</artifactId>
