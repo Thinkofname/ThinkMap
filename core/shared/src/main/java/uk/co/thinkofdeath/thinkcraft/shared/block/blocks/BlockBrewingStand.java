@@ -25,6 +25,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
+import uk.co.thinkofdeath.thinkcraft.shared.collision.AABB;
 import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
 import uk.co.thinkofdeath.thinkcraft.shared.model.ModelVertex;
@@ -118,6 +119,17 @@ public class BlockBrewingStand extends BlockFactory {
                         }
                     }));
             return model;
+        }
+
+        @Override
+        public AABB[] getHitbox() {
+            if (hitbox == null) {
+                hitbox = new AABB[]{
+                        new AABB(0, 0, 0, 1, 2d / 16d, 1),
+                        new AABB(7d / 16d, 2d / 16d, 7d / 16d, 9d / 16d, 14d / 16d, 9d / 16d)
+                };
+            }
+            return hitbox;
         }
 
         @Override
