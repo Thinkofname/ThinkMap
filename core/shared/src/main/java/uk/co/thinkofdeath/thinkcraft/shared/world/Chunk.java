@@ -120,8 +120,7 @@ public abstract class Chunk {
         return idBlockMap.get(section.getBlocks().get(x | (z << 4) | ((y & 0xF) << 8)));
     }
 
-    // TODO: Make public once fully tested/ready
-    private void setBlock(int x, int y, int z, Block block) {
+    public void setBlock(int x, int y, int z, Block block) {
         ChunkSection section = sections[y >> 4];
         if (section == null) {
             if (block == Blocks.AIR) {
@@ -130,9 +129,9 @@ public abstract class Chunk {
             section = sections[y >> 4] = new ChunkSection();
         }
         if (!blockIdMap.containsKey(block)) {
-            int id = nextId++;
-            idBlockMap.put(id, block);
-            blockIdMap.put(block, id);
+            idBlockMap.put(nextId, block);
+            blockIdMap.put(block, nextId);
+            nextId++;
         }
         int id = blockIdMap.get(block);
         section.getBlocks().set(x | (z << 4) | ((y & 0xF) << 8), id);

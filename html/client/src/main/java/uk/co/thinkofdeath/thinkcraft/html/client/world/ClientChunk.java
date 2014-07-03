@@ -164,7 +164,7 @@ public class ClientChunk extends Chunk {
                 var block = this.@uk.co.thinkofdeath.thinkcraft.html.client.world.ClientChunk::_js_toBlock(Ljava/lang/String;I)(name, raw);
                 idmap[k] = block;
                 idmap.$keys.push(k);
-                blockMap.@java.util.Map::put(Ljava/lang/Object;Ljava/lang/Object;)(block, k);
+                blockMap.@java.util.Map::put(Ljava/lang/Object;Ljava/lang/Object;)(block, @java.lang.Integer::valueOf(I)(k));
             }
         }
     }-*/;
