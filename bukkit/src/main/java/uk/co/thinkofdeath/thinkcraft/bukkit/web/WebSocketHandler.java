@@ -23,6 +23,7 @@ import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import org.bukkit.Location;
 import uk.co.thinkofdeath.thinkcraft.bukkit.ThinkMapPlugin;
 
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 public class WebSocketHandler extends SimpleChannelInboundHandler<BinaryWebSocketFrame> {
@@ -49,8 +50,10 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<BinaryWebSocke
                 plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
                     @Override
                     public void run() {
+                        HashMap<String, Object> settings = new HashMap<String, Object>();
+                        settings.put("hide-ores", plugin.getConfiguration().shouldHideOres());
                         ctx.writeAndFlush(new BinaryWebSocketFrame(
-                                Packets.writeClientSettings(plugin.getConfig().getConfigurationSection("client"))
+                                Packets.writeClientSettings(settings)
                         ));
                         Location spawn = plugin.getTargetWorld().getSpawnLocation();
                         ctx.writeAndFlush(new BinaryWebSocketFrame(

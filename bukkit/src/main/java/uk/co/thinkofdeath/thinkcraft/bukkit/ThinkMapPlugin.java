@@ -23,9 +23,11 @@ import org.apache.commons.io.FileUtils;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import uk.co.thinkofdeath.thinkcraft.bukkit.config.InvalidConfigFieldException;
+import uk.co.thinkofdeath.thinkcraft.bukkit.config.PluginConfiguration;
 import uk.co.thinkofdeath.thinkcraft.bukkit.textures.BufferedTexture;
 import uk.co.thinkofdeath.thinkcraft.bukkit.textures.BufferedTextureFactory;
 import uk.co.thinkofdeath.thinkcraft.bukkit.textures.TextureDetailsSerializer;
@@ -59,6 +61,7 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
     private final Map<String, ChunkManager> chunkManagers = new HashMap<String, ChunkManager>();
     private WebHandler webHandler;
     private World targetWorld;
+    private PluginConfiguration configuration;
 
     private final ExecutorService chunkExecutor = Executors.newFixedThreadPool(4);
 
@@ -70,6 +73,20 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     @Override
     public void onEnable() {
+        try {
+            configuration = new PluginConfiguration(new File(getDataFolder(), "config.yml"));
+            configuration.load();
+        } catch (IOException | InvalidConfigurationException e) {
+            getLogger().log(Level.SEVERE, "Failed to load configuration. Disabling ThinkMap", e);
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        } catch (InvalidConfigFieldException e) {
+            getLogger().log(Level.SEVERE, "Failed to load configuration. Disabling ThinkMap");
+            getLogger().log(Level.SEVERE, e.getMessage());
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         worldDir = new File(getDataFolder(), "worlds");
         getServer().getPluginManager().registerEvents(new Events(this), this);
         getServer().getScheduler().runTaskTimer(this, this, 20l, 20 * 2l);
@@ -82,15 +99,9 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
             }
         }
 
-        final FileConfiguration config = getConfig();
-        config.options().copyDefaults(true);
-        config.addDefault("webserver.port", 23333);
-        config.addDefault("webserver.bind-address", "0.0.0.0");
-        config.addDefault("resources.pack-name", "");
-
-        if (config.getInt("no-touchy.resource-version", 0) != RESOURCE_VERSION) {
+        if (configuration.getResourceVersion() != RESOURCE_VERSION) {
             getLogger().info("Deleting ThinkMap-Resources due to a format update");
-            config.set("no-touchy.resource-version", RESOURCE_VERSION);
+            configuration.setResourceVersion(RESOURCE_VERSION);
             try {
                 FileUtils.deleteDirectory(new File(getDataFolder(), "resources"));
             } catch (IOException e) {
@@ -98,9 +109,9 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
             }
         }
 
-        if (config.getInt("no-touchy.world-version", 0) != WORLD_VERSION) {
+        if (configuration.getWorldVersion() != WORLD_VERSION) {
             getLogger().info("Deleting ThinkMap-Worlds due to a format update");
-            config.set("no-touchy.world-version", WORLD_VERSION);
+            configuration.setWorldVersion(WORLD_VERSION);
             try {
                 FileUtils.deleteDirectory(worldDir);
             } catch (IOException e) {
@@ -108,17 +119,16 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
             }
         }
 
-        // Client settings
-
-        config.addDefault("client.hide-ores", false);
-
-        saveConfig();
-
+        try {
+            configuration.save();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         resourceDir = new File(getDataFolder(),
                 "resources/"
-                        + (config.getString("resources.pack-name").length() == 0 ?
-                        "default" : config.getString("resources.pack-name"))
+                        + (configuration.getResourcePackName().length() == 0 ?
+                        "default" : configuration.getResourcePackName())
         );
 
         // Resource loading
@@ -129,11 +139,11 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
             webHandler = new WebHandler(this);
             webHandler.start();
         } else {
-            String resourcePack = config.getString("resources.pack-name");
+            String resourcePack = configuration.getResourcePackName();
             final File resourceFile = new File(getDataFolder(), resourcePack + ".zip");
             if (!resourceFile.exists()) {
                 getLogger().log(Level.SEVERE, "Unable to find the resource pack "
-                        + config.getString("resources.pack-name"));
+                        + configuration.getResourcePackName());
                 resourcePack = "";
             }
             final String finalResourcePack = resourcePack;
@@ -341,5 +351,9 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     public Date getStartUpDate() {
         return startUpDate;
+    }
+
+    public PluginConfiguration getConfiguration() {
+        return configuration;
     }
 }

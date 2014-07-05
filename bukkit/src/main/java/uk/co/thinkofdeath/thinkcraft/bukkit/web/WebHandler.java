@@ -48,8 +48,8 @@ public class WebHandler extends Thread {
                     childHandler(new ServerHandler(plugin));
 
             Channel channel = bootstrap.bind(
-                    plugin.getConfig().getString("webserver.bind-address"),
-                    plugin.getConfig().getInt("webserver.port")
+                    plugin.getConfiguration().getAddress(),
+                    plugin.getConfiguration().getPort()
             ).sync().channel();
 
             channel.closeFuture().sync();

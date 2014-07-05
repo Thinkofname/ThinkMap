@@ -20,7 +20,6 @@ import com.google.common.base.Charsets;
 import com.google.gson.Gson;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Map;
 
@@ -28,8 +27,7 @@ public class Packets {
 
     private static final Gson gson = new Gson();
 
-    public static ByteBuf writeClientSettings(ConfigurationSection section) {
-        Map<String, Object> values = section.getValues(true);
+    public static ByteBuf writeClientSettings(Map<String, Object> values) {
         byte[] json = gson.toJson(values).getBytes(Charsets.UTF_8);
         ByteBuf buf = Unpooled.buffer(1 + json.length);
         buf.writeByte(0);
