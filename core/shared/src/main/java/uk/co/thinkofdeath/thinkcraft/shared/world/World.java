@@ -22,13 +22,11 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Blocks;
 import uk.co.thinkofdeath.thinkcraft.shared.support.ChunkMap;
 
-import java.util.List;
-
 public abstract class World {
 
     private final IMapViewer mapViewer;
     private int timeOfDay = 6000;
-    private ChunkMap<Chunk> chunks = ChunkMap.create();
+    private ChunkMap<Chunk> chunks = new ChunkMap<>();
 
     protected World(IMapViewer mapViewer) {
         this.mapViewer = mapViewer;
@@ -87,8 +85,8 @@ public abstract class World {
      *
      * @return Every chunk in the world
      */
-    public List<Chunk> getChunks() {
-        return chunks.values();
+    public ChunkMap<Chunk> getChunks() {
+        return chunks;
     }
 
     /**
