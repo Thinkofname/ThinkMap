@@ -10,5 +10,4 @@ commands:
    thinkmap:
      description: TODO
      aliases: [thinkmap]
-     permission: thinkmap.command
      usage: N/A

@@ -32,6 +32,10 @@
             <id>spigot-repo</id>
             <url>http://repo.md-5.net/content/repositories/snapshots/</url>
         </repository>
+        <repository>
+            <id>think-repo</id>
+            <url>http://ci.thinkofdeath.co.uk/plugin/repository/everything/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -39,6 +43,16 @@
             <groupId>uk.co.thinkofdeath.thinkcraft</groupId>
             <artifactId>textures</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.co.thinkofdeath</groupId>
+            <artifactId>command-base</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.co.thinkofdeath</groupId>
+            <artifactId>command-bukkit</artifactId>
+            <version>0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
