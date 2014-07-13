@@ -43,9 +43,9 @@ public class Commands implements CommandHandler {
 
     @Command("thinkmap forcegen ?")
     public void forceGen(@HasPermission("thinkmap.forcegen") CommandSender sender,
-                         @Range(min = 1) int chunksPerCycle) {
+                         @Range(min = 1) int regionsPerCycle) {
         for (World world : plugin.getServer().getWorlds()) {
-            forceGen(sender, world, chunksPerCycle);
+            forceGen(sender, world, regionsPerCycle);
         }
     }
 
@@ -57,7 +57,7 @@ public class Commands implements CommandHandler {
     @Command("thinkmap forcegen ? ?")
     public void forceGen(@HasPermission("thinkmap.forcegen") final CommandSender sender,
                          final World world,
-                         @Range(min = 1) final int chunksPerCycle) {
+                         @Range(min = 1) final int regionsPerCycle) {
         sender.sendMessage("Generating world data for " + world.getName() + " - Please wait, this may cause lag");
         new BukkitRunnable() {
 
@@ -99,7 +99,7 @@ public class Commands implements CommandHandler {
                         }
                     }
                     sender.sendMessage(String.format("Progress: %d/%d", r, regions.length));
-                    if (count > chunksPerCycle) {
+                    if (count++ > regionsPerCycle) {
                         return;
                     }
                 }
