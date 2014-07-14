@@ -23,7 +23,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import uk.co.thinkofdeath.command.Command;
 import uk.co.thinkofdeath.command.CommandHandler;
 import uk.co.thinkofdeath.command.bukkit.HasPermission;
-import uk.co.thinkofdeath.command.types.Range;
+import uk.co.thinkofdeath.command.validators.Range;
 import uk.co.thinkofdeath.thinkcraft.bukkit.ThinkMapPlugin;
 
 import java.io.File;
@@ -38,7 +38,8 @@ public class Commands implements CommandHandler {
     }
 
     @Command("thinkmap user count")
-    public void count(@HasPermission(value = "thinkmap.user.count", wildcard = true) CommandSender sender) {
+    @HasPermission(value = "thinkmap.user.count", wildcard = true)
+    public void count(CommandSender sender) {
         if (plugin.getWebHandler() == null) {
             sender.sendMessage(ChatColor.AQUA + "The map viewer has not started yet");
             return;
@@ -51,28 +52,28 @@ public class Commands implements CommandHandler {
     }
 
     @Command("thinkmap force-generate")
-    public void forceGen(@HasPermission(value = "thinkmap.force-generate", wildcard = true) CommandSender sender) {
+    @HasPermission(value = "thinkmap.force-generate", wildcard = true)
+    public void forceGen(CommandSender sender) {
         forceGen(sender, 2);
     }
 
     @Command("thinkmap force-generate ?")
-    public void forceGen(@HasPermission(value = "thinkmap.force-generate", wildcard = true) CommandSender sender,
-                         @Range(min = 1) int regionsPerCycle) {
+    @HasPermission(value = "thinkmap.force-generate", wildcard = true)
+    public void forceGen(CommandSender sender, @Range(min = 1) int regionsPerCycle) {
         for (World world : plugin.getServer().getWorlds()) {
             forceGen(sender, world, regionsPerCycle);
         }
     }
 
     @Command("thinkmap force-generate ?")
-    public void forceGen(@HasPermission(value = "thinkmap.force-generate", wildcard = true) CommandSender sender,
-                         World target) {
+    @HasPermission(value = "thinkmap.force-generate", wildcard = true)
+    public void forceGen(CommandSender sender, World target) {
         forceGen(sender, target, 2);
     }
 
     @Command("thinkmap force-generate ? ?")
-    public void forceGen(@HasPermission(value = "thinkmap.force-generate", wildcard = true) final CommandSender sender,
-                         final World world,
-                         @Range(min = 1) final int regionsPerCycle) {
+    @HasPermission(value = "thinkmap.force-generate", wildcard = true)
+    public void forceGen(final CommandSender sender, final World world, @Range(min = 1) final int regionsPerCycle) {
         sender.sendMessage("Generating world data for " + world.getName() + " - Please wait, this may cause lag");
         new BukkitRunnable() {
 
