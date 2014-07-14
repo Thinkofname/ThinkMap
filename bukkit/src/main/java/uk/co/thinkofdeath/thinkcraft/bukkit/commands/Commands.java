@@ -16,6 +16,7 @@
 
 package uk.co.thinkofdeath.thinkcraft.bukkit.commands;
 
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -34,6 +35,19 @@ public class Commands implements CommandHandler {
 
     public Commands(ThinkMapPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @Command("thinkmap user count")
+    public void count(@HasPermission({"thinkmap.*", "thinkmap.user.count"}) CommandSender sender) {
+        if (plugin.getWebHandler() == null) {
+            sender.sendMessage(ChatColor.AQUA + "The map viewer has not started yet");
+            return;
+        }
+        int count = plugin.getWebHandler().getChannelGroup().size();
+        sender.sendMessage(ChatColor.AQUA + "There are "
+                + count
+                + " user" + (count != 1 ? "s" : "")
+                + " currently connected to the map viewer");
     }
 
     @Command("thinkmap force-generate")

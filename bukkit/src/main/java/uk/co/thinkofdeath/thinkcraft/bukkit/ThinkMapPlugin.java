@@ -276,7 +276,7 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
     }
 
     public WebHandler getWebHandler() {
-        return this.webHandler;
+        return webHandler;
     }
 
     public File getResourceDir() {
