@@ -38,7 +38,7 @@ public class Commands implements CommandHandler {
     }
 
     @Command("thinkmap user count")
-    public void count(@HasPermission({"thinkmap.*", "thinkmap.user.count"}) CommandSender sender) {
+    public void count(@HasPermission(value = "thinkmap.user.count", wildcard = true) CommandSender sender) {
         if (plugin.getWebHandler() == null) {
             sender.sendMessage(ChatColor.AQUA + "The map viewer has not started yet");
             return;
@@ -51,12 +51,12 @@ public class Commands implements CommandHandler {
     }
 
     @Command("thinkmap force-generate")
-    public void forceGen(@HasPermission({"thinkmap.*", "thinkmap.force-generate"}) CommandSender sender) {
+    public void forceGen(@HasPermission(value = "thinkmap.force-generate", wildcard = true) CommandSender sender) {
         forceGen(sender, 2);
     }
 
     @Command("thinkmap force-generate ?")
-    public void forceGen(@HasPermission({"thinkmap.*", "thinkmap.force-generate"}) CommandSender sender,
+    public void forceGen(@HasPermission(value = "thinkmap.force-generate", wildcard = true) CommandSender sender,
                          @Range(min = 1) int regionsPerCycle) {
         for (World world : plugin.getServer().getWorlds()) {
             forceGen(sender, world, regionsPerCycle);
@@ -64,13 +64,13 @@ public class Commands implements CommandHandler {
     }
 
     @Command("thinkmap force-generate ?")
-    public void forceGen(@HasPermission({"thinkmap.*", "thinkmap.force-generate"}) CommandSender sender,
+    public void forceGen(@HasPermission(value = "thinkmap.force-generate", wildcard = true) CommandSender sender,
                          World target) {
         forceGen(sender, target, 2);
     }
 
     @Command("thinkmap force-generate ? ?")
-    public void forceGen(@HasPermission({"thinkmap.*", "thinkmap.force-generate"}) final CommandSender sender,
+    public void forceGen(@HasPermission(value = "thinkmap.force-generate", wildcard = true) final CommandSender sender,
                          final World world,
                          @Range(min = 1) final int regionsPerCycle) {
         sender.sendMessage("Generating world data for " + world.getName() + " - Please wait, this may cause lag");
