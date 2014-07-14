@@ -36,26 +36,27 @@ public class Commands implements CommandHandler {
         this.plugin = plugin;
     }
 
-    @Command("thinkmap forcegen")
-    public void forceGen(@HasPermission("thinkmap.forcegen") CommandSender sender) {
+    @Command("thinkmap force-generate")
+    public void forceGen(@HasPermission({"thinkmap.*", "thinkmap.force-generate"}) CommandSender sender) {
         forceGen(sender, 2);
     }
 
-    @Command("thinkmap forcegen ?")
-    public void forceGen(@HasPermission("thinkmap.forcegen") CommandSender sender,
+    @Command("thinkmap force-generate ?")
+    public void forceGen(@HasPermission({"thinkmap.*", "thinkmap.force-generate"}) CommandSender sender,
                          @Range(min = 1) int regionsPerCycle) {
         for (World world : plugin.getServer().getWorlds()) {
             forceGen(sender, world, regionsPerCycle);
         }
     }
 
-    @Command("thinkmap forcegen ?")
-    public void forceGen(@HasPermission("thinkmap.forcegen") CommandSender sender, World target) {
+    @Command("thinkmap force-generate ?")
+    public void forceGen(@HasPermission({"thinkmap.*", "thinkmap.force-generate"}) CommandSender sender,
+                         World target) {
         forceGen(sender, target, 2);
     }
 
-    @Command("thinkmap forcegen ? ?")
-    public void forceGen(@HasPermission("thinkmap.forcegen") final CommandSender sender,
+    @Command("thinkmap force-generate ? ?")
+    public void forceGen(@HasPermission({"thinkmap.*", "thinkmap.force-generate"}) final CommandSender sender,
                          final World world,
                          @Range(min = 1) final int regionsPerCycle) {
         sender.sendMessage("Generating world data for " + world.getName() + " - Please wait, this may cause lag");
