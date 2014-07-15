@@ -47,12 +47,12 @@
         <dependency>
             <groupId>uk.co.thinkofdeath</groupId>
             <artifactId>command-base</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>0.1</version>
         </dependency>
         <dependency>
             <groupId>uk.co.thinkofdeath</groupId>
             <artifactId>command-bukkit</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>0.1</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
