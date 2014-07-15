@@ -19,6 +19,7 @@ package uk.co.thinkofdeath.thinkcraft.bukkit.web;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import org.bukkit.Location;
 import uk.co.thinkofdeath.thinkcraft.bukkit.ThinkMapPlugin;
@@ -65,6 +66,8 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<BinaryWebSocke
                     }
                 });
                 break;
+            default:
+                throw new DecoderException("Could not handle packet");
         }
         msg.release();
     }

@@ -72,9 +72,7 @@ public class Commands implements CommandHandler {
     public void forceGen(final CommandSender sender, final World world, @Range(min = 1) final int regionsPerCycle) {
         sender.sendMessage("Generating world data for " + world.getName() + " - Please wait, this may cause lag");
         new BukkitRunnable() {
-
-            private int w = 0;
-            private int r = 0;
+            private int currentRegion = 0;
 
             @Override
             public void run() {
@@ -89,8 +87,8 @@ public class Commands implements CommandHandler {
                 }
                 String[] regions = worldFolder.list();
                 int count = 0;
-                for (; r < regions.length; r++) {
-                    String region = regions[r];
+                for (; currentRegion < regions.length; currentRegion++) {
+                    String region = regions[currentRegion];
                     if (!region.endsWith(".mca")) {
                         continue;
                     }
@@ -110,12 +108,12 @@ public class Commands implements CommandHandler {
                             }
                         }
                     }
-                    sender.sendMessage(String.format("Progress: %d/%d", r, regions.length));
+                    sender.sendMessage(String.format("Progress: %d/%d", currentRegion, regions.length));
                     if (count++ > regionsPerCycle) {
                         return;
                     }
                 }
-                r = 0;
+                currentRegion = 0;
                 sender.sendMessage("Complete");
                 cancel();
             }

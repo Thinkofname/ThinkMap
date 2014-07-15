@@ -75,7 +75,9 @@ public class ChunkManager {
                     ByteBuf data = Unpooled.buffer();
                     gzipChunk(snapshot, data);
                     File worldFolder = new File(plugin.getWorldDir(), world.getName());
-                    worldFolder.mkdirs();
+                    if (!worldFolder.exists() && !worldFolder.mkdirs()) {
+                        throw new RuntimeException("Failed to create world folder");
+                    }
 
                     // Lock the world for writing
                     Lock lock = worldLock.writeLock();
@@ -166,7 +168,7 @@ public class ChunkManager {
                     }
                     region.seek(offset * 4096);
                     byte[] data = new byte[size];
-                    region.read(data);
+                    region.readFully(data);
                     return Unpooled.wrappedBuffer(data);
                 } catch (FileNotFoundException e) {
                     return null;

@@ -161,7 +161,9 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
             @Override
             public void run() {
                 try {
-                    blockInfo.getParentFile().mkdirs();
+                    if (!blockInfo.getParentFile().exists() && !blockInfo.getParentFile().mkdirs()) {
+                        throw new RuntimeException("Failed to create " + blockInfo.getParentFile());
+                    }
                     TextureFactory textureFactory = new BufferedTextureFactory();
                     getLogger().info("Downloading textures. This may take some time");
                     TextureProvider textureProvider =
@@ -268,7 +270,7 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
     }
 
     public Date getStartUpDate() {
-        return startUpDate;
+        return new Date(startUpDate.getTime());
     }
 
     public PluginConfiguration getConfiguration() {
