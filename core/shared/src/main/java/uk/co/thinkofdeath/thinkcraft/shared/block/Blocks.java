@@ -34,15 +34,15 @@ public final class Blocks {
     }
 
 
-    public static Block getAIR() {
+    public static Block AIR() {
         return AIR;
     }
 
-    public static Block getNULL_BLOCK() {
+    public static Block NULL_BLOCK() {
         return NULL_BLOCK;
     }
 
-    public static Block getMISSING_BLOCK() {
+    public static Block MISSING_BLOCK() {
         return MISSING_BLOCK;
     }
 }

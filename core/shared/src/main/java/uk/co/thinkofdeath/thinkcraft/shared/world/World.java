@@ -176,10 +176,10 @@ public abstract class World {
      */
     public Block getBlock(int x, int y, int z) {
         if (y < 0 || y > 255) {
-            return Blocks.getAIR();
+            return Blocks.AIR();
         }
         Chunk chunk = getChunk(x >> 4, z >> 4);
-        if (chunk == null) return Blocks.getNULL_BLOCK();
+        if (chunk == null) return Blocks.NULL_BLOCK();
         return chunk.getBlock(x & 0xF, y, z & 0xF);
     }
 
