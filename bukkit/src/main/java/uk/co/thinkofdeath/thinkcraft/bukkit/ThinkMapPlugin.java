@@ -139,78 +139,81 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
         );
 
         // Resource loading
-        final File blockInfo = new File(
-                resourceDir,
-                "blocks.json");
+        File blockInfo = new File(resourceDir, "blocks.json");
         if (blockInfo.exists()) {
             webHandler.start();
         } else {
-            String resourcePack = configuration.getResourcePackName();
-            final File resourceFile = new File(getDataFolder(), resourcePack + ".zip");
-            if (!resourceFile.exists()) {
-                getLogger().log(Level.SEVERE, "Unable to find the resource pack "
-                        + configuration.getResourcePackName());
-                resourcePack = "";
-            }
-            final String finalResourcePack = resourcePack;
-            getServer().getScheduler().runTaskAsynchronously(this, new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        blockInfo.getParentFile().mkdirs();
-                        TextureFactory textureFactory = new BufferedTextureFactory();
-                        getLogger().info("Downloading textures. This may take some time");
-                        TextureProvider textureProvider =
-                                new MojangTextureProvider(MINECRAFT_VERSION, textureFactory);
-
-                        try (InputStream in =
-                                     getClassLoader().getResourceAsStream("textures/missing_texture.png")) {
-                            ((MojangTextureProvider) textureProvider).addTexture("missing_texture",
-                                    textureFactory.fromInputStream(in));
-                        }
-
-                        if (finalResourcePack.length() > 0) {
-                            textureProvider = new JoinedProvider(
-                                    new ZipTextureProvider(
-                                            new FileInputStream(resourceFile), textureFactory
-                                    ),
-                                    textureProvider
-                            );
-                        }
-
-                        TextureStitcher stitcher = new TextureStitcher(textureProvider, textureFactory);
-                        getLogger().info("Stitching textures. The mapviewer will start after this " +
-                                "completes");
-                        long start = System.currentTimeMillis();
-                        StitchResult result = stitcher.stitch();
-                        // Save the result
-                        Gson gson = new GsonBuilder()
-                                .registerTypeAdapter(TextureDetails.class,
-                                        new TextureDetailsSerializer())
-                                .create();
-                        HashMap<String, Object> info = new HashMap<>();
-                        info.put("textures", result.getDetails());
-                        info.put("textureImages", result.getOutput().length);
-                        info.put("virtualCount", result.getVirtualCount());
-                        FileUtils.writeStringToFile(
-                                blockInfo,
-                                gson.toJson(info)
-                        );
-                        int i = 0;
-                        for (Texture texture : result.getOutput()) {
-                            ImageIO.write(((BufferedTexture) texture).getImage(), "PNG",
-                                    new File(resourceDir, "blocks_" + (i++) + ".png"));
-                        }
-                        getLogger().info("Stitching complete in " + (System.currentTimeMillis() -
-                                start) + "ms");
-
-                        webHandler.start();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
+            loadResources();
         }
+    }
+
+    private void loadResources() {
+        final File blockInfo = new File(resourceDir, "blocks.json");
+        String resourcePack = configuration.getResourcePackName();
+        final File resourceFile = new File(getDataFolder(), resourcePack + ".zip");
+        if (!resourceFile.exists()) {
+            getLogger().log(Level.SEVERE, "Unable to find the resource pack "
+                    + configuration.getResourcePackName());
+            resourcePack = "";
+        }
+        final String finalResourcePack = resourcePack;
+        getServer().getScheduler().runTaskAsynchronously(this, new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    blockInfo.getParentFile().mkdirs();
+                    TextureFactory textureFactory = new BufferedTextureFactory();
+                    getLogger().info("Downloading textures. This may take some time");
+                    TextureProvider textureProvider =
+                            new MojangTextureProvider(MINECRAFT_VERSION, textureFactory);
+
+                    try (InputStream in =
+                                 getClassLoader().getResourceAsStream("textures/missing_texture.png")) {
+                        ((MojangTextureProvider) textureProvider).addTexture("missing_texture",
+                                textureFactory.fromInputStream(in));
+                    }
+
+                    if (finalResourcePack.length() > 0) {
+                        textureProvider = new JoinedProvider(
+                                new ZipTextureProvider(
+                                        new FileInputStream(resourceFile), textureFactory
+                                ),
+                                textureProvider
+                        );
+                    }
+
+                    TextureStitcher stitcher = new TextureStitcher(textureProvider, textureFactory);
+                    getLogger().info("Stitching textures. The mapviewer will start after this " +
+                            "completes");
+                    long start = System.currentTimeMillis();
+                    StitchResult result = stitcher.stitch();
+                    // Save the result
+                    Gson gson = new GsonBuilder()
+                            .registerTypeAdapter(TextureDetails.class,
+                                    new TextureDetailsSerializer())
+                            .create();
+                    HashMap<String, Object> info = new HashMap<>();
+                    info.put("textures", result.getDetails());
+                    info.put("textureImages", result.getOutput().length);
+                    info.put("virtualCount", result.getVirtualCount());
+                    FileUtils.writeStringToFile(
+                            blockInfo,
+                            gson.toJson(info)
+                    );
+                    int i = 0;
+                    for (Texture texture : result.getOutput()) {
+                        ImageIO.write(((BufferedTexture) texture).getImage(), "PNG",
+                                new File(resourceDir, "blocks_" + (i++) + ".png"));
+                    }
+                    getLogger().info("Stitching complete in " + (System.currentTimeMillis() -
+                            start) + "ms");
+
+                    webHandler.start();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 
     @Override
