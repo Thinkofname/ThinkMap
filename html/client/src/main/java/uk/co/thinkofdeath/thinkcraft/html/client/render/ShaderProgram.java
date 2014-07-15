@@ -153,7 +153,7 @@ public abstract class ShaderProgram {
     /**
      * Thrown when a shader fails to compile
      */
-    private class ShaderError extends RuntimeException {
+    private static class ShaderError extends RuntimeException {
         public ShaderError(String shaderInfoLog) {
             super(shaderInfoLog);
         }

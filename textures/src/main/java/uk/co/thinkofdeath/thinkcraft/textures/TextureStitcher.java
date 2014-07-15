@@ -188,7 +188,7 @@ public class TextureStitcher {
         return position;
     }
 
-    private class StitchedTexture {
+    private static class StitchedTexture {
 
         private final Texture texture;
 

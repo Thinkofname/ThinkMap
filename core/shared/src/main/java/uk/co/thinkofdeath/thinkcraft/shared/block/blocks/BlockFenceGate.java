@@ -93,8 +93,8 @@ public class BlockFenceGate extends BlockFactory {
                 door.addFace(new ModelFace(Face.BACK, texture, 9, 6, 4, 3, 7));
 
                 boolean open = getState(OPEN);
-                model.join(door.clone().rotateY(open ? 90 : 0), -7, 0, 0);
-                model.join(door.clone().rotateY(180 - (open ? 90 : 0)), 7, 0, 0);
+                model.join(door.duplicate().rotateY(open ? 90 : 0), -7, 0, 0);
+                model.join(door.duplicate().rotateY(180 - (open ? 90 : 0)), 7, 0, 0);
                 model.rotateY(getState(FACING).getClockwiseRotation() * 90);
                 model.realignTextures();
             }

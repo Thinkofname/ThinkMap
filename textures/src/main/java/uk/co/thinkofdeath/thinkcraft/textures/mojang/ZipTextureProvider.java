@@ -73,7 +73,7 @@ public class ZipTextureProvider implements TextureProvider {
                         textures.put(name, factory.fromInputStream(new NoCloseStream(in)));
                     } else if (entry.getName().endsWith(".png.mcmeta")) {
                         MojangMetadata metadata = gson.fromJson(
-                                new InputStreamReader(new NoCloseStream(in)),
+                                new InputStreamReader(new NoCloseStream(in), "UTF-8"),
                                 MojangMetadata.class);
                         String name = entry.getName().substring(
                                 "assets/minecraft/textures/blocks/".length(),

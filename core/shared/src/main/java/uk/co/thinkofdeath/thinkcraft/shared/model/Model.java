@@ -137,12 +137,12 @@ public class Model {
 
         int count = 1;
 
-        int pox = 0;
-        int poy = 0;
-        int poz = 0;
-        int nox = 0;
-        int noy = 0;
-        int noz = 0;
+        int pox;
+        int poy;
+        int poz;
+        int nox;
+        int noy;
+        int noz;
 
         switch (face) {
             case TOP:
@@ -181,6 +181,8 @@ public class Model {
                 poz = -1;
                 noz = -2;
                 break;
+            default:
+                throw new UnsupportedOperationException("Unsupported face");
         }
         for (int ox = nox; ox <= pox; ox++) {
             for (int oy = noy; oy <= poy; oy++) {
@@ -221,15 +223,11 @@ public class Model {
             if (idx != -1) {
                 int nIDX = (idx + Math.round(deg / 90)) % rotationHelperY.size();
                 face.setFace(rotationHelperY.get(nIDX));
-                if (idx == (nIDX + 2) % rotationHelperY.size()) {
-                    face.offset = 16 - face.offset;
-                }
             }
         }
         return this;
     }
 
-    // TODO: Check
     private static final List<Face> rotationHelperX = Arrays.asList(
             Face.BACK,
             Face.BOTTOM,
@@ -254,15 +252,11 @@ public class Model {
             if (idx != -1) {
                 int nIDX = (idx + Math.round(deg / 90)) % rotationHelperX.size();
                 face.setFace(rotationHelperX.get(nIDX));
-                if (idx == (nIDX + 2) % rotationHelperX.size()) {
-                    face.offset = 16 - face.offset;
-                }
             }
         }
         return this;
     }
 
-    // TODO: Check
     private static final List<Face> rotationHelperZ = Arrays.asList(
             Face.LEFT,
             Face.TOP,
@@ -287,9 +281,6 @@ public class Model {
             if (idx != -1) {
                 int nIDX = (idx + Math.round(deg / 90)) % rotationHelperZ.size();
                 face.setFace(rotationHelperZ.get(nIDX));
-                if (idx == (nIDX + 2) % rotationHelperZ.size()) {
-                    face.offset = 16 - face.offset;
-                }
             }
         }
         return this;
@@ -384,7 +375,7 @@ public class Model {
             newFace.b = face.b;
             faces.add(newFace);
             for (int i = 0; i < 4; i++) {
-                ModelVertex newVertex = face.vertices[i].clone();
+                ModelVertex newVertex = face.vertices[i].duplicate();
                 newVertex.setX(newVertex.getX() + (offsetX / 16));
                 newVertex.setY(newVertex.getY() + (offsetY / 16));
                 newVertex.setZ(newVertex.getZ() + (offsetZ / 16));
@@ -399,8 +390,8 @@ public class Model {
      *
      * @return The copy
      */
-    public Model clone() {
-        return clone(NO_REPLACE_TEXTURE);
+    public Model duplicate() {
+        return duplicate(NO_REPLACE_TEXTURE);
     }
 
     /**
@@ -410,7 +401,7 @@ public class Model {
      *         The TextureGetter to use for replacing the textures
      * @return The copy
      */
-    public Model clone(TextureGetter textureGetter) {
+    public Model duplicate(TextureGetter textureGetter) {
         Model model = new Model();
         for (ModelFace face : faces) {
             ModelFace newFace = new ModelFace(face.getFace());
@@ -420,7 +411,7 @@ public class Model {
             newFace.b = face.b;
             model.faces.add(newFace);
             for (int i = 0; i < 4; i++) {
-                newFace.vertices[i] = face.vertices[i].clone();
+                newFace.vertices[i] = face.vertices[i].duplicate();
             }
         }
         return model;

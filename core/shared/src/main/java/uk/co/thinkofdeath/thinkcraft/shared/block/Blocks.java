@@ -20,9 +20,9 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
 
 public final class Blocks {
 
-    public static Block AIR;
-    public static Block NULL_BLOCK;
-    public static Block MISSING_BLOCK;
+    private static Block AIR;
+    private static Block NULL_BLOCK;
+    private static Block MISSING_BLOCK;
 
     /**
      * Called to load the static values after the blocks have been registered
@@ -31,5 +31,18 @@ public final class Blocks {
         AIR = blockRegistry.get("minecraft:air", new StateMap());
         NULL_BLOCK = blockRegistry.get("thinkmap:null");
         MISSING_BLOCK = blockRegistry.get("thinkmap:missing_block");
+    }
+
+
+    public static Block getAIR() {
+        return AIR;
+    }
+
+    public static Block getNULL_BLOCK() {
+        return NULL_BLOCK;
+    }
+
+    public static Block getMISSING_BLOCK() {
+        return MISSING_BLOCK;
     }
 }

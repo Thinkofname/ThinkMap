@@ -126,6 +126,8 @@ public class BlockPoweredRail extends BlockFactory {
                                 }));
                         model.rotateY(180);
                         break;
+                    default:
+                        throw new UnsupportedOperationException("Unsupported shape");
                 }
             }
             return model;

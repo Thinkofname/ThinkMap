@@ -24,7 +24,6 @@ import java.util.Arrays;
 public class EnumState<T extends Enum<T>> implements BlockState<T> {
 
     private final T[] states;
-    private Class<T> e;
 
     /**
      * A creates an Enum factory for the given enum
@@ -34,7 +33,6 @@ public class EnumState<T extends Enum<T>> implements BlockState<T> {
     }
 
     public EnumState(Class<T> e, Test<T> predicate) {
-        this.e = e;
         if (predicate == null) {
             states = e.getEnumConstants();
         } else {

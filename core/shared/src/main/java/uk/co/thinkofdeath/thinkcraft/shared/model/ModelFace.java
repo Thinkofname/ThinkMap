@@ -69,12 +69,6 @@ public class ModelFace {
     int r = 255;
     int g = 255;
     int b = 255;
-    // Position
-    float x = 0;
-    float y = 0;
-    float width = 16;
-    float height = 16;
-    float offset = 0;
 
     /**
      * Creates a blank model face
@@ -138,7 +132,7 @@ public class ModelFace {
         this.cullable = cullable;
         // Copy the default face vertices over
         for (int i = 0; i < 4; i++) {
-            vertices[i] = defaultFaces[face.ordinal()][i].clone();
+            vertices[i] = defaultFaces[face.ordinal()][i].duplicate();
         }
         setOffset(offset);
         setSize(x, y, width, height);
@@ -151,7 +145,6 @@ public class ModelFace {
      *         The offset of the face (relative to its direction)
      */
     public void setOffset(float offset) {
-        this.offset = offset;
         switch (face) {
             case TOP:
             case BOTTOM:
@@ -174,6 +167,8 @@ public class ModelFace {
                     vertex.setZ(offset / 16);
                 }
                 break;
+            default:
+                throw new UnsupportedOperationException("Unsupported face");
         }
     }
 
@@ -190,10 +185,6 @@ public class ModelFace {
      *         The height of the face (relative to its direction)
      */
     public void setSize(float x, float y, float width, float height) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
         switch (face) {
             case TOP:
             case BOTTOM:
@@ -210,6 +201,8 @@ public class ModelFace {
                 // X, Y
                 sizeIndex(0, 1, x, y, width, height);
                 break;
+            default:
+                throw new UnsupportedOperationException("Unsupported face");
         }
         setTextureSize(x, y, width, height);
     }

@@ -85,7 +85,7 @@ public class WorkerChunk extends Chunk {
 
                         Block block = blockRegistry.get(id, dataVal);
                         if (block == null) {
-                            block = Blocks.MISSING_BLOCK;
+                            block = Blocks.getMISSING_BLOCK();
                         }
 
                         if (!blockIdMap.containsKey(block)) {
@@ -100,7 +100,7 @@ public class WorkerChunk extends Chunk {
                         chunkSection.getSkyLight().set(idx, sky);
                         idx++;
 
-                        if (block != Blocks.AIR) {
+                        if (block != Blocks.getAIR()) {
                             chunkSection.increaseCount();
                         }
                         if (light != 0) {

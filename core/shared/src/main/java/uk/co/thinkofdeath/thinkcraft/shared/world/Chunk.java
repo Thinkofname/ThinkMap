@@ -42,8 +42,8 @@ public abstract class Chunk {
         this.z = z;
 
         // Always have air as the first block
-        blockIdMap.put(Blocks.AIR, 0);
-        idBlockMap.put(0, Blocks.AIR);
+        blockIdMap.put(Blocks.getAIR(), 0);
+        idBlockMap.put(0, Blocks.getAIR());
     }
 
     /**
@@ -115,7 +115,7 @@ public abstract class Chunk {
     public Block getBlock(int x, int y, int z) {
         ChunkSection section = sections[y >> 4];
         if (section == null) {
-            return Blocks.AIR;
+            return Blocks.getAIR();
         }
         return idBlockMap.get(section.getBlocks().get(x | (z << 4) | ((y & 0xF) << 8)));
     }
@@ -123,7 +123,7 @@ public abstract class Chunk {
     public void setBlock(int x, int y, int z, Block block) {
         ChunkSection section = sections[y >> 4];
         if (section == null) {
-            if (block == Blocks.AIR) {
+            if (block == Blocks.getAIR()) {
                 return;
             }
             section = sections[y >> 4] = new ChunkSection();

@@ -104,6 +104,8 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
                 TUint8Array data = (TUint8Array) message.getMessage();
                 DynamicBuffer.POOL.free(data);
                 break;
+            default:
+                throw new UnsupportedOperationException("Unknown message type: " + message.getType());
         }
     }
 

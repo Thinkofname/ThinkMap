@@ -19,6 +19,7 @@ package uk.co.thinkofdeath.thinkcraft.shared.support;
 import uk.co.thinkofdeath.thinkcraft.shared.world.Chunk;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class ChunkMap<T extends Chunk> implements Iterable<T> {
 
@@ -198,6 +199,9 @@ public class ChunkMap<T extends Chunk> implements Iterable<T> {
 
             @Override
             public T next() {
+                if (index > entries.length) {
+                    throw new NoSuchElementException();
+                }
                 T val = entries[index].value;
                 index++;
                 while (index < entries.length && entries[index] == null) {

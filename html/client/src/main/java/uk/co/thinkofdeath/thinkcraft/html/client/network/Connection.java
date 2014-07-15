@@ -109,6 +109,8 @@ public class Connection implements EventListener {
             case 3: // Time update
                 handler.onTimeUpdate(reader.getInt32(1));
                 break;
+            default:
+                throw new RuntimeException("Unhandled packet");
         }
     }
 }

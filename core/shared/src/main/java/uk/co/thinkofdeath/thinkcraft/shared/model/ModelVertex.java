@@ -145,7 +145,7 @@ public class ModelVertex extends JavaScriptObject {
      *
      * @return A copy
      */
-    public final native ModelVertex clone()/*-{
+    public final native ModelVertex duplicate()/*-{
         return new Float32Array(this);
     }-*/;
 

@@ -29,7 +29,7 @@ public class Texture {
     private final int virtualX;
     private final int virtualY;
 
-    public Texture(String name, int posX, int posY, int size, int width, int frameCount,
+    Texture(String name, int posX, int posY, int size, int width, int frameCount,
                    int[] frames, int frameTime, int virtualX, int virtualY) {
         this.name = name;
         this.posX = posX;
