@@ -67,7 +67,7 @@ public class ChunkManager {
             activeChunks.remove(chunkKey(chunk.getX(), chunk.getZ()));
         }
         final ChunkSnapshot snapshot = chunk.getChunkSnapshot();
-        plugin.getChunkExecutor().execute(new FutureTask<Void>(new Runnable() {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
             @Override
             public void run() {
@@ -143,7 +143,7 @@ public class ChunkManager {
                     e.printStackTrace();
                 }
             }
-        }, null));
+        });
     }
 
     private Future<ByteBuf> getChunkData(final int x, final int z) {
@@ -175,7 +175,7 @@ public class ChunkManager {
                 }
             }
         });
-        plugin.getChunkExecutor().execute(task);
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, task);
         return task;
     }
 

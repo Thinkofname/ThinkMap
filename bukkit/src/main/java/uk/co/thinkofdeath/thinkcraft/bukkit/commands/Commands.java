@@ -40,10 +40,6 @@ public class Commands implements CommandHandler {
     @Command("thinkmap user count")
     @HasPermission(value = "thinkmap.user.count", wildcard = true)
     public void count(CommandSender sender) {
-        if (plugin.getWebHandler() == null) {
-            sender.sendMessage(ChatColor.AQUA + "The map viewer has not started yet");
-            return;
-        }
         int count = plugin.getWebHandler().getChannelGroup().size();
         sender.sendMessage(ChatColor.AQUA + "There are "
                 + count

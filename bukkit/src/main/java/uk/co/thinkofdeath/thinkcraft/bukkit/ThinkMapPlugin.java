@@ -45,23 +45,20 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
+    // Only needs to be changed when assets we use update
     public static final String MINECRAFT_VERSION = "1.7.9";
     public static final int RESOURCE_VERSION = 2;
     public static final int WORLD_VERSION = 1;
 
-    private final Map<String, ChunkManager> chunkManagers = new HashMap<String, ChunkManager>();
-    private WebHandler webHandler;
+    private final Map<String, ChunkManager> chunkManagers = new HashMap<>();
+    private final WebHandler webHandler = new WebHandler(this);
     private World targetWorld;
     private PluginConfiguration configuration;
 
-    private final ExecutorService chunkExecutor = Executors.newFixedThreadPool(4);
     private final BukkitCommandManager commandManager = new BukkitCommandManager(this);
 
     private File resourceDir;
@@ -105,30 +102,34 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
             }
         }
 
+        // Clear out old resources
         if (configuration.getResourceVersion() != RESOURCE_VERSION) {
             getLogger().info("Deleting ThinkMap-Resources due to a format update");
             configuration.setResourceVersion(RESOURCE_VERSION);
             try {
                 FileUtils.deleteDirectory(new File(getDataFolder(), "resources"));
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
 
+        // Clear out old Think-worlds
         if (configuration.getWorldVersion() != WORLD_VERSION) {
             getLogger().info("Deleting ThinkMap-Worlds due to a format update");
             configuration.setWorldVersion(WORLD_VERSION);
             try {
                 FileUtils.deleteDirectory(worldDir);
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
+
+        // Save the updated config
 
         try {
             configuration.save();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         resourceDir = new File(getDataFolder(),
@@ -142,7 +143,6 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
                 resourceDir,
                 "blocks.json");
         if (blockInfo.exists()) {
-            webHandler = new WebHandler(this);
             webHandler.start();
         } else {
             String resourcePack = configuration.getResourcePackName();
@@ -204,7 +204,6 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
                         getLogger().info("Stitching complete in " + (System.currentTimeMillis() -
                                 start) + "ms");
 
-                        webHandler = new WebHandler(ThinkMapPlugin.this);
                         webHandler.start();
                     } catch (IOException e) {
                         throw new RuntimeException(e);
@@ -216,20 +215,6 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     @Override
     public void onDisable() {
-        if (webHandler != null) {
-            webHandler.interrupt();
-        }
-        chunkExecutor.shutdown();
-        try {
-            chunkExecutor.awaitTermination(5, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        chunkExecutor.shutdownNow();
-    }
-
-    public ExecutorService getChunkExecutor() {
-        return chunkExecutor;
     }
 
     public File getWorldDir() {
@@ -257,12 +242,8 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
     }
 
     public void sendAll(BinaryWebSocketFrame frame) {
-        if (getWebHandler() == null) {
-            return;
-        }
         getWebHandler().getChannelGroup().writeAndFlush(frame);
     }
-
 
     public World getTargetWorld() {
         if (targetWorld == null) {

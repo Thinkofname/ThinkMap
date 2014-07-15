@@ -26,16 +26,20 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import uk.co.thinkofdeath.thinkcraft.bukkit.ThinkMapPlugin;
 
-public class WebHandler extends Thread {
+public class WebHandler implements Runnable {
 
-    private ThinkMapPlugin plugin;
+
+    private final ChannelGroup channels =
+            new DefaultChannelGroup("ThinkMap Connections", GlobalEventExecutor.INSTANCE);
+    private final ThinkMapPlugin plugin;
 
     public WebHandler(ThinkMapPlugin plugin) {
         this.plugin = plugin;
     }
 
-    private final ChannelGroup channels = new DefaultChannelGroup("ThinkMap Connections",
-            GlobalEventExecutor.INSTANCE);
+    public void start() {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, this);
+    }
 
     @Override
     public void run() {
@@ -54,7 +58,7 @@ public class WebHandler extends Thread {
 
             channel.closeFuture().sync();
         } catch (InterruptedException e) {
-            interrupt();
+            Thread.currentThread().interrupt();
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
