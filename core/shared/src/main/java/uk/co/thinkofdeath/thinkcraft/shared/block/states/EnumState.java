@@ -19,6 +19,7 @@ package uk.co.thinkofdeath.thinkcraft.shared.block.states;
 import uk.co.thinkofdeath.thinkcraft.shared.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class EnumState<T extends Enum<T>> implements BlockState<T> {
 
@@ -44,7 +45,7 @@ public class EnumState<T extends Enum<T>> implements BlockState<T> {
                     consts.add(v);
                 }
             }
-            states = consts.toArray((T[]) new Object[consts.size()]);
+            states = consts.toArray(Arrays.copyOf(vals, consts.size()));
         }
     }
 
