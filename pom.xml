@@ -29,6 +29,7 @@
         <profile>
             <id>web</id>
             <modules>
+                <module>protocol</module>
                 <module>core</module>
                 <module>html</module>
                 <module>textures</module>
@@ -38,14 +39,12 @@
         <profile>
             <id>desktop</id>
             <modules>
+                <module>protocol</module>
                 <module>core</module>
                 <module>desktop</module>
             </modules>
         </profile>
     </profiles>
-    <modules>
-        <module>protocol</module>
-    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
