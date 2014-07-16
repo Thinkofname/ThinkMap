@@ -21,16 +21,16 @@ import elemental.html.ArrayBuffer;
 
 // Because GWT's version of DataView is wrong and we
 // only need big endian
-public class DataReader extends JavaScriptObject {
+public class DataStream extends JavaScriptObject {
 
-    protected DataReader() {
+    protected DataStream() {
     }
 
-    public static final native DataReader create(ArrayBuffer buffer)/*-{
+    public static final native DataStream create(ArrayBuffer buffer)/*-{
         return new DataView(buffer);
     }-*/;
 
-    public static final native DataReader create(ArrayBuffer buffer, int offset)/*-{
+    public static final native DataStream create(ArrayBuffer buffer, int offset)/*-{
         return new DataView(buffer, offset);
     }-*/;
 
@@ -60,5 +60,9 @@ public class DataReader extends JavaScriptObject {
 
     public final native void setFloat32(int offset, float val, boolean littleEndian)/*-{
         this.setFloat32(offset, val, littleEndian);
+    }-*/;
+
+    public final native void setInt32(int offset, int val, boolean littleEndian)/*-{
+        this.setInt32(offset, val, littleEndian);
     }-*/;
 }

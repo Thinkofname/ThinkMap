@@ -22,9 +22,12 @@ import elemental.events.EventListener;
 import elemental.events.MessageEvent;
 import elemental.html.ArrayBuffer;
 import elemental.html.WebSocket;
-import elemental.js.util.Json;
-import uk.co.thinkofdeath.thinkcraft.html.shared.settings.ClientSettings;
-import uk.co.thinkofdeath.thinkcraft.shared.support.DataReader;
+import uk.co.thinkofdeath.thinkcraft.protocol.ClientPacketHandler;
+import uk.co.thinkofdeath.thinkcraft.protocol.Packet;
+import uk.co.thinkofdeath.thinkcraft.protocol.Packets;
+import uk.co.thinkofdeath.thinkcraft.protocol.ServerPacketHandler;
+import uk.co.thinkofdeath.thinkcraft.protocol.packets.InitConnection;
+import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
 
 /**
  * Manages a connection between the client and the Bukkit plugin. Fires events based on messages received.
@@ -33,7 +36,7 @@ public class Connection implements EventListener {
 
     private final WebSocket webSocket;
     private final String address;
-    private final ConnectionHandler handler;
+    private final ServerPacketHandler handler;
 
     /**
      * Creates a connect to the plugin at the address. Calls the callback once the connection succeeds.
@@ -45,7 +48,7 @@ public class Connection implements EventListener {
      * @param callback
      *         The Runnable to call once the connection is completed
      */
-    public Connection(String address, ConnectionHandler handler, final Runnable callback) {
+    public Connection(String address, ServerPacketHandler handler, final Runnable callback) {
         this.address = address;
         this.handler = handler;
         webSocket = Browser.getWindow().newWebSocket("ws://" + address + "/server");
@@ -55,7 +58,7 @@ public class Connection implements EventListener {
             @Override
             public void handleEvent(Event evt) {
                 System.out.println("Connected to server");
-                send(Browser.getWindow().newUint8Array(1).getBuffer());
+                send(new InitConnection());
                 if (callback != null) callback.run();
             }
         });
@@ -77,6 +80,16 @@ public class Connection implements EventListener {
         this.@uk.co.thinkofdeath.thinkcraft.html.client.network.Connection::webSocket.send(buffer);
     }-*/;
 
+    public void send(Packet<ClientPacketHandler> packet) {
+        DataPacketStream packetStream = new DataPacketStream();
+        packetStream.writeInt(Packets.getClientPacketId(packet));
+        packet.write(packetStream);
+        TUint8Array data = packetStream.getBuffer().getArray();
+        TUint8Array out = TUint8Array.create(data.length());
+        out.set(data);
+        send(out.getBuffer());
+    }
+
     /**
      * Internal method to receive websocket messages
      *
@@ -86,31 +99,11 @@ public class Connection implements EventListener {
     @Override
     public void handleEvent(Event evt) {
         MessageEvent event = (MessageEvent) evt;
-        DataReader reader = DataReader.create((ArrayBuffer) event.getData());
 
-        switch (reader.getUint8(0)) {
-            case 0: // Client settings
-                StringBuilder builder = new StringBuilder();
-                for (int i = 1; i < reader.getLength(); i++) {
-                    builder.append((char) reader.getUint8(i));
-                }
-                handler.onSettings(Json.<ClientSettings>parse(builder.toString()));
-                break;
-            case 1: // Set position
-                handler.onSetPosition(reader.getInt32(1), reader.getUint8(5), reader.getInt32(6));
-                break;
-            case 2: // Message
-                builder = new StringBuilder();
-                for (int i = 1; i < reader.getLength(); i++) {
-                    builder.append((char) reader.getUint8(i));
-                }
-                handler.onMessage(builder.toString());
-                break;
-            case 3: // Time update
-                handler.onTimeUpdate(reader.getInt32(1));
-                break;
-            default:
-                throw new RuntimeException("Unhandled packet");
-        }
+        DataPacketStream packetStream = new DataPacketStream((ArrayBuffer) event.getData());
+        int id = packetStream.readUByte();
+        Packet<ServerPacketHandler> packet = Packets.createServerPacket(id);
+        packet.read(packetStream);
+        packet.handle(handler);
     }
 }

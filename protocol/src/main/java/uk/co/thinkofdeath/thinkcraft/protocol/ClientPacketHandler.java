@@ -14,21 +14,10 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.html.shared.settings;
+package uk.co.thinkofdeath.thinkcraft.protocol;
 
-import com.google.gwt.core.client.JavaScriptObject;
+import uk.co.thinkofdeath.thinkcraft.protocol.packets.InitConnection;
 
-public class ClientSettings extends JavaScriptObject {
-    protected ClientSettings() {
-    }
-
-    public native static ClientSettings create(boolean hideOres)/*-{
-        return {
-            hideOres: hideOres
-        };
-    }-*/;
-
-    public final native boolean areOresHidden()/*-{
-        return this.hideOres;
-    }-*/;
+public interface ClientPacketHandler extends PacketHandler {
+    void handle(InitConnection initConnection);
 }

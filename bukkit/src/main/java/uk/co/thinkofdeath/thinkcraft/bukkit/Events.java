@@ -16,15 +16,12 @@
 
 package uk.co.thinkofdeath.thinkcraft.bukkit;
 
-import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
-import uk.co.thinkofdeath.thinkcraft.bukkit.web.Packets;
 
 public class Events implements Listener {
 
@@ -47,15 +44,5 @@ public class Events implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChunkUnload(ChunkUnloadEvent event) {
         plugin.getChunkManager(event.getWorld()).deactivateChunk(event.getChunk());
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onChat(AsyncPlayerChatEvent event) {
-        String msg = String.format(
-                event.getFormat(),
-                event.getPlayer().getDisplayName(),
-                event.getMessage()
-        );
-        plugin.sendAll(new BinaryWebSocketFrame(Packets.writeChatMessage(msg)));
     }
 }

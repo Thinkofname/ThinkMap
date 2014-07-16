@@ -24,11 +24,11 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import uk.co.thinkofdeath.thinkcraft.bukkit.ThinkMapPlugin;
 
-public class ServerHandler extends ChannelInitializer<SocketChannel> {
+public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> {
 
     private final ThinkMapPlugin plugin;
 
-    public ServerHandler(ThinkMapPlugin plugin) {
+    public ServerChannelInitializer(ThinkMapPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -39,6 +39,10 @@ public class ServerHandler extends ChannelInitializer<SocketChannel> {
         pipeline.addLast("aggregator", new HttpObjectAggregator(65536));
         pipeline.addLast("handler", new HTTPHandler(plugin));
         pipeline.addLast("websocket", new WebSocketServerProtocolHandler("/server"));
-        pipeline.addLast("websocket-handler", new WebSocketHandler(plugin));
+        pipeline.addLast("packet-decoder", new PacketDecoder());
+        pipeline.addLast("packet-encoder", new PacketEncoder());
+        pipeline.addLast("packet-handler", new ClientHandler(socketChannel, plugin));
+
+        plugin.getWebHandler().getChannelGroup().add(socketChannel);
     }
 }

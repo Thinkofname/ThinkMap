@@ -14,21 +14,27 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.html.shared.settings;
+package uk.co.thinkofdeath.thinkcraft.protocol;
 
-import com.google.gwt.core.client.JavaScriptObject;
+public interface PacketStream {
 
-public class ClientSettings extends JavaScriptObject {
-    protected ClientSettings() {
-    }
+    void writeString(String str);
 
-    public native static ClientSettings create(boolean hideOres)/*-{
-        return {
-            hideOres: hideOres
-        };
-    }-*/;
+    String readString();
 
-    public final native boolean areOresHidden()/*-{
-        return this.hideOres;
-    }-*/;
+    void writeInt(int i);
+
+    int readInt();
+
+    void writeUByte(int b);
+
+    int readUByte();
+
+    void writeByte(byte b);
+
+    byte readByte();
+
+    void writeBoolean(boolean b);
+
+    boolean readBoolean();
 }

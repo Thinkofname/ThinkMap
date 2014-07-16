@@ -18,7 +18,6 @@ package uk.co.thinkofdeath.thinkcraft.bukkit;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -30,9 +29,11 @@ import uk.co.thinkofdeath.thinkcraft.bukkit.config.PluginConfiguration;
 import uk.co.thinkofdeath.thinkcraft.bukkit.textures.BufferedTexture;
 import uk.co.thinkofdeath.thinkcraft.bukkit.textures.BufferedTextureFactory;
 import uk.co.thinkofdeath.thinkcraft.bukkit.textures.TextureDetailsSerializer;
-import uk.co.thinkofdeath.thinkcraft.bukkit.web.Packets;
 import uk.co.thinkofdeath.thinkcraft.bukkit.web.WebHandler;
 import uk.co.thinkofdeath.thinkcraft.bukkit.world.ChunkManager;
+import uk.co.thinkofdeath.thinkcraft.protocol.Packet;
+import uk.co.thinkofdeath.thinkcraft.protocol.ServerPacketHandler;
+import uk.co.thinkofdeath.thinkcraft.protocol.packets.TimeUpdate;
 import uk.co.thinkofdeath.thinkcraft.textures.*;
 import uk.co.thinkofdeath.thinkcraft.textures.mojang.MojangTextureProvider;
 import uk.co.thinkofdeath.thinkcraft.textures.mojang.ZipTextureProvider;
@@ -220,6 +221,7 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     @Override
     public void onDisable() {
+        getWebHandler().getChannelGroup().close();
     }
 
     public File getWorldDir() {
@@ -240,13 +242,10 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
     @Override
     public void run() {
         if (targetWorld == null) return;
-        final BinaryWebSocketFrame frame = new BinaryWebSocketFrame(
-                Packets.writeTimeUpdate((int) targetWorld.getTime())
-        );
-        sendAll(frame);
+        sendAll(new TimeUpdate((int) targetWorld.getTime()));
     }
 
-    public void sendAll(BinaryWebSocketFrame frame) {
+    public void sendAll(Packet<ServerPacketHandler> frame) {
         getWebHandler().getChannelGroup().writeAndFlush(frame);
     }
 

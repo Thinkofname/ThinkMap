@@ -25,7 +25,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.Blocks;
 import uk.co.thinkofdeath.thinkcraft.shared.building.ModelBuilder;
 import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 import uk.co.thinkofdeath.thinkcraft.shared.model.PositionedModel;
-import uk.co.thinkofdeath.thinkcraft.shared.support.DataReader;
+import uk.co.thinkofdeath.thinkcraft.shared.support.DataStream;
 import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkBuildReply;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage;
@@ -54,7 +54,7 @@ public class WorkerChunk extends Chunk {
         BlockRegistry blockRegistry = world.getMapViewer().getBlockRegistry();
 
         TUint8Array byteData = TUint8Array.create(data, 0, data.getByteLength());
-        DataReader dataReader = DataReader.create(data);
+        DataStream dataStream = DataStream.create(data);
 
         // TODO: Rewrite chunk format
 
@@ -63,7 +63,7 @@ public class WorkerChunk extends Chunk {
         // we requested we can ignore them
 
         // Bit mask of what sections actually exist in the chunk
-        int sectionMask = dataReader.getUint16(8);
+        int sectionMask = dataStream.getUint16(8);
 
         // Current offset into the buffer
         int offset = 10;
@@ -77,7 +77,7 @@ public class WorkerChunk extends Chunk {
             for (int oy = 0; oy < 16; oy++) {
                 for (int oz = 0; oz < 16; oz++) {
                     for (int ox = 0; ox < 16; ox++) {
-                        int id = dataReader.getUint16(offset);
+                        int id = dataStream.getUint16(offset);
                         int dataVal = byteData.get(offset + 2);
                         int light = byteData.get(offset + 3);
                         int sky = byteData.get(offset + 4);

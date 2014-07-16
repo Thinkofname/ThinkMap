@@ -49,7 +49,7 @@ public class WebHandler implements Runnable {
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup).
                     channel(NioServerSocketChannel.class).
-                    childHandler(new ServerHandler(plugin));
+                    childHandler(new ServerChannelInitializer(plugin));
 
             Channel channel = bootstrap.bind(
                     plugin.getConfiguration().getAddress(),

@@ -27,7 +27,6 @@ import elemental.xml.XMLHttpRequest;
 import uk.co.thinkofdeath.thinkcraft.html.client.feature.FeatureHandler;
 import uk.co.thinkofdeath.thinkcraft.html.client.input.InputManager;
 import uk.co.thinkofdeath.thinkcraft.html.client.network.Connection;
-import uk.co.thinkofdeath.thinkcraft.html.client.network.ConnectionHandler;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.Camera;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.Renderer;
 import uk.co.thinkofdeath.thinkcraft.html.client.texture.VirtualTexture;
@@ -37,6 +36,10 @@ import uk.co.thinkofdeath.thinkcraft.html.client.world.ClientWorld;
 import uk.co.thinkofdeath.thinkcraft.html.shared.NativeLib;
 import uk.co.thinkofdeath.thinkcraft.html.shared.TextureMap;
 import uk.co.thinkofdeath.thinkcraft.html.shared.settings.ClientSettings;
+import uk.co.thinkofdeath.thinkcraft.protocol.ServerPacketHandler;
+import uk.co.thinkofdeath.thinkcraft.protocol.packets.ServerSettings;
+import uk.co.thinkofdeath.thinkcraft.protocol.packets.SpawnPosition;
+import uk.co.thinkofdeath.thinkcraft.protocol.packets.TimeUpdate;
 import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockRegistry;
@@ -49,7 +52,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, IMapViewer {
+public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler, IMapViewer {
 
     /**
      * The max distance (in chunks) the client can see
@@ -162,30 +165,11 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
     }
 
     @Override
-    public void onTimeUpdate(int currentTime) {
-        getWorld().setTimeOfDay(currentTime);
-    }
+    public void handle(ServerSettings serverSettings) {
+        clientSettings = ClientSettings.create(serverSettings.areOresHidden());
 
-    @Override
-    public void onSetPosition(int x, int y, int z) {
-        Camera camera = getCamera();
-        camera.setX(x);
-        camera.setY(y + 2);
-        camera.setZ(z);
-        shouldUpdateWorld = true;
-    }
-
-    @Override
-    public void onMessage(String message) {
-        System.out.println("Message: " + message);
-        // TODO
-    }
-
-    @Override
-    public void onSettings(ClientSettings settings) {
-        clientSettings = settings;
         // Sync to workers
-        getWorkerPool().sendMessage("settings", settings, new Object[0], true);
+        getWorkerPool().sendMessage("settings", clientSettings, new Object[0], true);
         handleSettings();
 
         getBlockRegistry().init();
@@ -194,6 +178,20 @@ public class MapViewer implements EntryPoint, EventListener, ConnectionHandler, 
         for (TextureLoadHandler handler : earlyTextures) {
             handler.load();
         }
+    }
+
+    @Override
+    public void handle(SpawnPosition spawnPosition) {
+        Camera camera = getCamera();
+        camera.setX(spawnPosition.getX());
+        camera.setY(spawnPosition.getY() + 2);
+        camera.setZ(spawnPosition.getZ());
+        shouldUpdateWorld = true;
+    }
+
+    @Override
+    public void handle(TimeUpdate timeUpdate) {
+        getWorld().setTimeOfDay(timeUpdate.getCurrentTime());
     }
 
     private void handleSettings() {

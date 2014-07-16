@@ -43,6 +43,9 @@
             </modules>
         </profile>
     </profiles>
+    <modules>
+        <module>protocol</module>
+    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

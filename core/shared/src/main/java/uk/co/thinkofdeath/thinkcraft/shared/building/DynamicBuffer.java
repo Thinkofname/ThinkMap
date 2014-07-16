@@ -17,17 +17,18 @@
 package uk.co.thinkofdeath.thinkcraft.shared.building;
 
 import elemental.html.ArrayBuffer;
-import uk.co.thinkofdeath.thinkcraft.shared.support.DataReader;
+import uk.co.thinkofdeath.thinkcraft.shared.support.DataStream;
 import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
 
 public class DynamicBuffer {
 
     private static final boolean IS_LITTLE_ENDIAN =
-            (DataReader.create(createEndianTestBuffer()).getInt8(0) == 1);
+            (DataStream.create(createEndianTestBuffer()).getInt8(0) == 1);
     public static final BufferPool POOL = new BufferPool();
+    private final boolean littleEndian;
 
     private TUint8Array buffer;
-    private DataReader dataReader;
+    private DataStream dataStream;
     private int offset = 0;
 
     /**
@@ -37,9 +38,14 @@ public class DynamicBuffer {
      *         The starting size of the buffer
      */
     public DynamicBuffer(int size) {
+        this(size, IS_LITTLE_ENDIAN);
+    }
+
+    public DynamicBuffer(int size, boolean littleEndian) {
+        this.littleEndian = littleEndian;
         if (size < 16) size = 16;
         buffer = POOL.alloc(size);
-        dataReader = DataReader.create(buffer.getBuffer());
+        dataStream = DataStream.create(buffer.getBuffer());
     }
 
     /**
@@ -65,8 +71,16 @@ public class DynamicBuffer {
         if (offset + 1 >= buffer.length()) {
             resize();
         }
-        dataReader.setUint16(offset, val, IS_LITTLE_ENDIAN);
+        dataStream.setUint16(offset, val, littleEndian);
         offset += 2;
+    }
+
+    public void addInt(int val) {
+        if (offset + 3 >= buffer.length()) {
+            resize();
+        }
+        dataStream.setInt32(offset, val, littleEndian);
+        offset += 4;
     }
 
     /**
@@ -79,14 +93,14 @@ public class DynamicBuffer {
         if (offset + 3 >= buffer.length()) {
             resize();
         }
-        dataReader.setFloat32(offset, val, IS_LITTLE_ENDIAN);
+        dataStream.setFloat32(offset, val, littleEndian);
         offset += 4;
     }
 
     // Doubles the size of the buffer
     private void resize() {
         buffer = POOL.resize(buffer, buffer.length() * 2);
-        dataReader = DataReader.create(buffer.getBuffer());
+        dataStream = DataStream.create(buffer.getBuffer());
     }
 
     /**
