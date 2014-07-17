@@ -32,6 +32,7 @@ public class WebHandler implements Runnable {
     private final ChannelGroup channels =
             new DefaultChannelGroup("ThinkMap Connections", GlobalEventExecutor.INSTANCE);
     private final ThinkMapPlugin plugin;
+    private Channel channel;
 
     public WebHandler(ThinkMapPlugin plugin) {
         this.plugin = plugin;
@@ -51,7 +52,7 @@ public class WebHandler implements Runnable {
                     channel(NioServerSocketChannel.class).
                     childHandler(new ServerChannelInitializer(plugin));
 
-            Channel channel = bootstrap.bind(
+            channel = bootstrap.bind(
                     plugin.getConfiguration().getAddress(),
                     plugin.getConfiguration().getPort()
             ).sync().channel();
@@ -67,5 +68,9 @@ public class WebHandler implements Runnable {
 
     public ChannelGroup getChannelGroup() {
         return channels;
+    }
+
+    public Channel getChannel() {
+        return channel;
     }
 }

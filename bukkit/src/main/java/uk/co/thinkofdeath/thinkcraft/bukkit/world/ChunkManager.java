@@ -33,8 +33,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -148,37 +146,32 @@ public class ChunkManager {
         });
     }
 
-    private Future<ByteBuf> getChunkData(final int x, final int z) {
-        FutureTask<ByteBuf> task = new FutureTask<>(new Callable<ByteBuf>() {
-            @Override
-            public ByteBuf call() throws Exception {
-                File worldFolder = new File(plugin.getWorldDir(), world.getName());
-                Lock lock = worldLock.readLock();
-                lock.lock();
-                try (RandomAccessFile region = new RandomAccessFile(new File(worldFolder,
-                        String.format("region_%d-%d.dat", x >> 5, z >> 5)
-                ), "r")) {
-                    if (region.length() < 4096 * 3) return null;
-                    int id = ((x & 0x1F) | ((z & 0x1F) << 5));
-                    region.seek(8 * id);
-                    int offset = region.readInt();
-                    int size = region.readInt();
-                    if (offset == 0) {
-                        return null;
-                    }
-                    region.seek(offset * 4096);
-                    byte[] data = new byte[size];
-                    region.readFully(data);
-                    return Unpooled.wrappedBuffer(data);
-                } catch (FileNotFoundException e) {
-                    return null;
-                } finally {
-                    lock.unlock();
-                }
+    private ByteBuf getChunkData(final int x, final int z) {
+        File worldFolder = new File(plugin.getWorldDir(), world.getName());
+        Lock lock = worldLock.readLock();
+        lock.lock();
+        try (RandomAccessFile region = new RandomAccessFile(new File(worldFolder,
+                String.format("region_%d-%d.dat", x >> 5, z >> 5)
+        ), "r")) {
+            if (region.length() < 4096 * 3) return null;
+            int id = ((x & 0x1F) | ((z & 0x1F) << 5));
+            region.seek(8 * id);
+            int offset = region.readInt();
+            int size = region.readInt();
+            if (offset == 0) {
+                return null;
             }
-        });
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, task);
-        return task;
+            region.seek(offset * 4096);
+            byte[] data = new byte[size];
+            region.readFully(data);
+            return Unpooled.wrappedBuffer(data);
+        } catch (FileNotFoundException e) {
+            return null;
+        } catch (IOException e) {
+            return null;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public boolean getChunkBytes(final int x, final int z, ByteBuf out) {
@@ -202,14 +195,7 @@ public class ChunkManager {
             }
         }
         if (chunk == null) {
-            ByteBuf data = null;
-            try {
-                data = getChunkData(x, z).get();
-            } catch (InterruptedException e) {
-                Thread.interrupted();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
+            ByteBuf data = getChunkData(x, z);
             if (data == null) {
                 return false;
             }

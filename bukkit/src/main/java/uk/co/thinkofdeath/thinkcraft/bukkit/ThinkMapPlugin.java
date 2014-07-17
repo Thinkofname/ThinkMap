@@ -18,6 +18,7 @@ package uk.co.thinkofdeath.thinkcraft.bukkit;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.netty.channel.Channel;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -222,6 +223,10 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
     @Override
     public void onDisable() {
         getWebHandler().getChannelGroup().close();
+        Channel channel = getWebHandler().getChannel();
+        if (channel != null) {
+            channel.close();
+        }
     }
 
     public File getWorldDir() {
