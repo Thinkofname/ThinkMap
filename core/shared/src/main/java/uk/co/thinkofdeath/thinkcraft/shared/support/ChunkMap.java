@@ -183,38 +183,7 @@ public class ChunkMap<T extends Chunk> implements Iterable<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return new Iterator<T>() {
-            private int index = 0;
-
-            {
-                while (index < entries.length && entries[index] == null) {
-                    index++;
-                }
-            }
-
-            @Override
-            public boolean hasNext() {
-                return index < entries.length;
-            }
-
-            @Override
-            public T next() {
-                if (index > entries.length) {
-                    throw new NoSuchElementException();
-                }
-                T val = entries[index].value;
-                index++;
-                while (index < entries.length && entries[index] == null) {
-                    index++;
-                }
-                return val;
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException("remove");
-            }
-        };
+        return new ChunkIterator();
     }
 
     private static class Entry<T> {
@@ -227,6 +196,40 @@ public class ChunkMap<T extends Chunk> implements Iterable<T> {
             this.x = x;
             this.z = z;
             this.value = value;
+        }
+    }
+
+    private class ChunkIterator implements Iterator<T> {
+
+        private int index = 0;
+
+        public ChunkIterator() {
+            while (index < entries.length && entries[index] == null) {
+                index++;
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return index < entries.length;
+        }
+
+        @Override
+        public T next() {
+            if (index >= entries.length) {
+                throw new NoSuchElementException();
+            }
+            T val = entries[index].value;
+            index++;
+            while (index < entries.length && entries[index] == null) {
+                index++;
+            }
+            return val;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("remove");
         }
     }
 }
