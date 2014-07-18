@@ -109,7 +109,7 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
                 sendHttpResponse(context, request, response);
                 return;
             }
-            out.writeBytes("Chunk not found".getBytes(Charsets.UTF_8));
+            out.writeBytes(new byte[1]); // The chunk doesn't exist
             DefaultFullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, out);
             response.headers().add("Access-Control-Allow-Origin", "*");
             sendHttpResponse(context, request, response);

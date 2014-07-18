@@ -86,16 +86,16 @@ public class ChunkManager {
             @Override
             public void run() {
                 try {
+                    // Lock the world for writing
+                    Lock lock = worldLock.writeLock();
+                    lock.lock();
+
                     File worldFolder = new File(plugin.getWorldDir(), world.getName());
                     if (!worldFolder.exists() && !worldFolder.mkdirs()) {
                         throw new RuntimeException("Failed to create world folder");
                     }
 
                     ByteBuf data = allocator.buffer();
-
-                    // Lock the world for writing
-                    Lock lock = worldLock.writeLock();
-                    lock.lock();
 
                     try (RandomAccessFile region = new RandomAccessFile(new File(worldFolder,
                             String.format("region_%d-%d.dat", snapshot.getX() >> 5, snapshot.getZ() >> 5)
@@ -263,24 +263,32 @@ public class ChunkManager {
                 count++;
             }
         }
-        ByteBuf data = allocator.buffer(16 * 16 * 16 * 5 * count);
-        data.writeInt(chunk.getX());
-        data.writeInt(chunk.getZ());
+        ByteBuf data = allocator.buffer(16 * 16 * 16 * 4 * count + 3);
+        data.writeByte(1); // The chunk exists
         data.writeShort(mask);
+        int offset = 0;
+        int blockDataOffset = 16 * 16 * 16 * 2 * count;
+        int skyDataOffset = blockDataOffset + 16 * 16 * 16 * count;
         for (int i = 0; i < 16; i++) {
             if (!chunk.isSectionEmpty(i)) {
                 for (int oy = 0; oy < 16; oy++) {
                     for (int oz = 0; oz < 16; oz++) {
                         for (int ox = 0; ox < 16; ox++) {
-                            data.writeShort(chunk.getBlockTypeId(ox, oy + i * 16, oz));
-                            data.writeByte(chunk.getBlockData(ox, oy + i * 16, oz));
-                            data.writeByte(chunk.getBlockEmittedLight(ox, oy + i * 16, oz));
-                            data.writeByte(chunk.getBlockSkyLight(ox, oy + i * 16, oz));
+                            int y = oy + (i << 4);
+                            int id = chunk.getBlockTypeId(ox, y, oz);
+                            int dValue = chunk.getBlockData(ox, y, oz);
+                            data.setShort((offset << 1) + 3, (id << 4) | dValue);
+
+                            data.setByte(blockDataOffset + offset + 3, chunk.getBlockEmittedLight(ox, y, oz));
+                            data.setByte(skyDataOffset + offset + 3, chunk.getBlockSkyLight(ox, y, oz));
+
+                            offset++;
                         }
                     }
                 }
             }
         }
+        data.writerIndex(16 * 16 * 16 * 4 * count + 3);
         try {
             GZIPOutputStream gzip = new GZIPOutputStream(new ByteBufOutputStream(out));
             byte[] bytes = new byte[data.readableBytes()];

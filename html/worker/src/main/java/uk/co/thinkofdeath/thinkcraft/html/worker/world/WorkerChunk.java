@@ -56,17 +56,16 @@ public class WorkerChunk extends Chunk {
         TUint8Array byteData = TUint8Array.create(data, 0, data.getByteLength());
         DataStream dataStream = DataStream.create(data);
 
-        // TODO: Rewrite chunk format
-
-        // First 8 bytes are two ints (x, z)
-        // but since we already know which chunk
-        // we requested we can ignore them
-
         // Bit mask of what sections actually exist in the chunk
-        int sectionMask = dataStream.getUint16(8);
+        int sectionMask = dataStream.getUint16(1);
 
         // Current offset into the buffer
-        int offset = 10;
+        int offset = 0;
+
+        int count = Integer.bitCount(sectionMask);
+
+        int blockDataOffset = 16 * 16 * 16 * 2 * count;
+        int skyDataOffset = blockDataOffset + 16 * 16 * 16 * count;
 
         for (int i = 0; i < 16; i++) {
             if ((sectionMask & (1 << i)) == 0) {
@@ -77,13 +76,12 @@ public class WorkerChunk extends Chunk {
             for (int oy = 0; oy < 16; oy++) {
                 for (int oz = 0; oz < 16; oz++) {
                     for (int ox = 0; ox < 16; ox++) {
-                        int id = dataStream.getUint16(offset);
-                        int dataVal = byteData.get(offset + 2);
-                        int light = byteData.get(offset + 3);
-                        int sky = byteData.get(offset + 4);
-                        offset += 5;
+                        int id = dataStream.getUint16((offset << 1) + 3);
+                        int light = byteData.get(blockDataOffset + offset + 3);
+                        int sky = byteData.get(skyDataOffset + offset + 3);
+                        offset++;
 
-                        Block block = blockRegistry.get(id, dataVal);
+                        Block block = blockRegistry.get(id >> 4, id & 0xF);
                         if (block == null) {
                             block = Blocks.MISSING_BLOCK();
                         }

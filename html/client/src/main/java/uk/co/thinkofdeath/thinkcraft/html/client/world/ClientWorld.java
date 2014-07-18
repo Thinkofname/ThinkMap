@@ -22,6 +22,7 @@ import elemental.events.EventListener;
 import elemental.html.ArrayBuffer;
 import elemental.xml.XMLHttpRequest;
 import uk.co.thinkofdeath.thinkcraft.html.client.MapViewer;
+import uk.co.thinkofdeath.thinkcraft.shared.support.DataStream;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkBuildMessage;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadMessage;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkUnloadMessage;
@@ -184,12 +185,8 @@ public class ClientWorld extends World {
                     // Got the chunk successfully, move on
                     // to processing the chunk
                     ArrayBuffer data = (ArrayBuffer) xmlHttpRequest.getResponse();
-                    // Hacky way of detecting a missing chunk. A 404
-                    // error was used in the past but you can't always
-                    // catch the error before the browser does.
-                    // TODO: Support errors better when the sending
-                    // format changes
-                    if (data.getByteLength() <= 15) {
+                    DataStream dataStream = DataStream.create(data);
+                    if (dataStream.getInt8(0) == 0) {
                         loadingChunks.remove(key);
                         return;
                     }
