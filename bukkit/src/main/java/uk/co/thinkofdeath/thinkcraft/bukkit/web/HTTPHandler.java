@@ -101,7 +101,7 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
         if (request.getMethod() == POST && request.getUri().equals("/chunk")) {
             String[] args = request.content().toString(Charsets.UTF_8).split(":");
-            ByteBuf out = Unpooled.buffer();
+            ByteBuf out = context.alloc().buffer();
             if (plugin.getChunkManager(plugin.getTargetWorld()).getChunkBytes(Integer.parseInt(args[0]), Integer.parseInt(args[1]), out)) {
                 FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, out);
                 response.headers().add("Content-Encoding", "gzip");
@@ -157,12 +157,12 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
             sendHttpResponse(context, request, new DefaultFullHttpResponse(HTTP_1_1, NOT_FOUND));
             return;
         }
-        ByteBufOutputStream out = new ByteBufOutputStream(Unpooled.buffer());
+        ByteBufOutputStream out = new ByteBufOutputStream(context.alloc().buffer());
         IOUtils.copy(stream, out);
         stream.close();
+        ByteBuf buffer = out.buffer();
         out.close();
 
-        ByteBuf buffer = out.buffer();
         if (request.getUri().equals("/index.html")) {
             String page = buffer.toString(Charsets.UTF_8);
             page = page.replaceAll("%SERVERPORT%", Integer.toString(plugin.getConfiguration().getPort()));
@@ -191,9 +191,7 @@ public class HTTPHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     public void sendHttpResponse(ChannelHandlerContext context, FullHttpRequest request, FullHttpResponse response) {
         if (response.getStatus().code() != 200) {
-            ByteBuf buf = Unpooled.copiedBuffer(response.getStatus().toString(), CharsetUtil.UTF_8);
-            response.content().writeBytes(buf);
-            buf.release();
+            response.content().writeBytes(response.getStatus().toString().getBytes(CharsetUtil.UTF_8));
         }
         setContentLength(response, response.content().readableBytes());
 

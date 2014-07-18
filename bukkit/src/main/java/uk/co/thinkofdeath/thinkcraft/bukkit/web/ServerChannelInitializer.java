@@ -16,6 +16,7 @@
 
 package uk.co.thinkofdeath.thinkcraft.bukkit.web;
 
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -42,6 +43,8 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
         pipeline.addLast("packet-decoder", new PacketDecoder());
         pipeline.addLast("packet-encoder", new PacketEncoder());
         pipeline.addLast("packet-handler", new ClientHandler(socketChannel, plugin));
+
+        socketChannel.config().setAllocator(PooledByteBufAllocator.DEFAULT);
 
         plugin.getWebHandler().getChannelGroup().add(socketChannel);
     }

@@ -19,8 +19,9 @@ package uk.co.thinkofdeath.thinkcraft.bukkit.world;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufOutputStream;
-import io.netty.buffer.Unpooled;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.util.ReferenceCountUtil;
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
@@ -33,6 +34,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -44,38 +47,51 @@ public class ChunkManager {
     private final World world;
     private final TLongSet activeChunks = new TLongHashSet();
     private final ReadWriteLock worldLock = new ReentrantReadWriteLock();
+    private final ByteBufAllocator allocator = PooledByteBufAllocator.DEFAULT;
 
     public ChunkManager(ThinkMapPlugin plugin, World world) {
         this.plugin = plugin;
         this.world = world;
     }
 
-    private static long chunkKey(int x, int z) {
-        return ((long) x << 32) | z & 0xFFFFFFFL;
-    }
-
+    /**
+     * Marks the chunk as active so that the map viewer will
+     * grab a live copy of the chunk when the client requests it
+     *
+     * @param chunk
+     *         The chunk to mark as active
+     */
     public void activateChunk(Chunk chunk) {
         synchronized (activeChunks) {
             activeChunks.add(chunkKey(chunk.getX(), chunk.getZ()));
         }
     }
 
+    /**
+     * Marks the as inactive so the map viewer will use a
+     * cached version of the chunk
+     *
+     * @param chunk
+     *         The chunk to mark as inactive
+     */
     public void deactivateChunk(Chunk chunk) {
+        // Stop the map viewer from requesting live versions
         synchronized (activeChunks) {
             activeChunks.remove(chunkKey(chunk.getX(), chunk.getZ()));
         }
+        // Grab a final copy to save to the region file
         final ChunkSnapshot snapshot = chunk.getChunkSnapshot();
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
             @Override
             public void run() {
                 try {
-                    ByteBuf data = Unpooled.buffer();
-                    gzipChunk(snapshot, data);
                     File worldFolder = new File(plugin.getWorldDir(), world.getName());
                     if (!worldFolder.exists() && !worldFolder.mkdirs()) {
                         throw new RuntimeException("Failed to create world folder");
                     }
+
+                    ByteBuf data = allocator.buffer();
 
                     // Lock the world for writing
                     Lock lock = worldLock.writeLock();
@@ -84,8 +100,12 @@ public class ChunkManager {
                     try (RandomAccessFile region = new RandomAccessFile(new File(worldFolder,
                             String.format("region_%d-%d.dat", snapshot.getX() >> 5, snapshot.getZ() >> 5)
                     ), "rw")) {
+                        // Save and compress the chunk
+                        gzipChunk(snapshot, data);
+
                         if (region.length() < 4096 * 3) {
-                            // Init header
+                            // Init header with enough space for size + location
+                            // with a little bit extra for expansion
                             region.seek(4096 * 3);
                             region.writeByte(0);
                         }
@@ -94,16 +114,23 @@ public class ChunkManager {
                         int offset = region.readInt();
                         int size = region.readInt();
                         if (offset != 0) {
+                            // Try and reuse the old space
                             if (data.readableBytes() < ((size / 4096) + 1) * 4096) {
                                 size = data.readableBytes();
                                 region.seek(8 * id);
                                 region.writeInt(offset);
                                 region.writeInt(size);
                                 region.seek(offset * 4096);
-                                region.write(data.array());
+                                byte[] bytes = new byte[data.readableBytes()];
+                                data.readBytes(bytes);
+                                region.write(bytes);
                                 return;
                             }
                         }
+
+                        // Search for a new location
+
+                        // Fill in the used spaces first
                         boolean[] usedSpace = new boolean[(int) ((region.length() / 4096) + 1)];
                         usedSpace[0] = usedSpace[1] = usedSpace[2] = true;
                         for (int i = 0; i < 32 * 32; i++) {
@@ -117,6 +144,8 @@ public class ChunkManager {
                         }
                         offset = usedSpace.length;
                         size = data.readableBytes();
+                        // Search though every location until a location with a large enough
+                        // space is found
                         search:
                         for (int i = 2; i < usedSpace.length; i++) {
                             if (!usedSpace[i]) {
@@ -131,7 +160,9 @@ public class ChunkManager {
                             }
                         }
                         region.seek(offset * 4096);
-                        region.write(data.array());
+                        byte[] bytes = new byte[data.readableBytes()];
+                        data.readBytes(bytes);
+                        region.write(bytes);
                         region.seek(8 * id);
                         region.writeInt(offset);
                         region.writeInt(size);
@@ -140,13 +171,14 @@ public class ChunkManager {
                         ReferenceCountUtil.release(data);
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
             }
         });
     }
 
-    private ByteBuf getChunkData(final int x, final int z) {
+    // Reads the chunk data for the location
+    private byte[] getChunkData(final int x, final int z) {
         File worldFolder = new File(plugin.getWorldDir(), world.getName());
         Lock lock = worldLock.readLock();
         lock.lock();
@@ -155,16 +187,17 @@ public class ChunkManager {
         ), "r")) {
             if (region.length() < 4096 * 3) return null;
             int id = ((x & 0x1F) | ((z & 0x1F) << 5));
+            // Read the header
             region.seek(8 * id);
             int offset = region.readInt();
             int size = region.readInt();
-            if (offset == 0) {
+            if (offset == 0) { // No entry
                 return null;
             }
             region.seek(offset * 4096);
             byte[] data = new byte[size];
             region.readFully(data);
-            return Unpooled.wrappedBuffer(data);
+            return data;
         } catch (FileNotFoundException e) {
             return null;
         } catch (IOException e) {
@@ -174,9 +207,12 @@ public class ChunkManager {
         }
     }
 
+    // Gets the gzip'd chunk data for the location and stores it
+    // in out, returns false if the chunk wasn't loaded for any reason
     public boolean getChunkBytes(final int x, final int z, ByteBuf out) {
         ChunkSnapshot chunk = null;
         boolean shouldGrabChunk;
+        // Check if the chunk is already loaded
         synchronized (activeChunks) {
             shouldGrabChunk = activeChunks.contains(chunkKey(x, z));
         }
@@ -185,28 +221,39 @@ public class ChunkManager {
                 chunk = plugin.getServer().getScheduler().callSyncMethod(plugin, new Callable<ChunkSnapshot>() {
                     @Override
                     public ChunkSnapshot call() throws Exception {
-                        return world.getChunkAt(x, z).getChunkSnapshot(false, true, false);
+                        synchronized (activeChunks) {
+                            // Double check to prevent a race where a chunk could unload
+                            // between the first check and grabbing the chunk
+                            if (activeChunks.contains(chunkKey(x, z))) {
+                                return world.getChunkAt(x, z).getChunkSnapshot(false, true, false);
+                            } else {
+                                return null;
+                            }
+                        }
                     }
-                }).get();
+                }).get(2, TimeUnit.SECONDS); // Time-out is encase the plugin is disabled
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } catch (ExecutionException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
+            } catch (TimeoutException e) {
+                plugin.getLogger().warning("Failed to load chunk on time. Time out");
             }
         }
-        if (chunk == null) {
-            ByteBuf data = getChunkData(x, z);
+        if (chunk == null) { // Inactive chunk
+            byte[] data = getChunkData(x, z);
             if (data == null) {
                 return false;
             }
             out.writeBytes(data);
-            data.release();
             return true;
         }
+        // Active chunk
         gzipChunk(chunk, out);
         return true;
     }
 
+    // Gzips a ChunkSnapshot and stores it in out
     private void gzipChunk(ChunkSnapshot chunk, ByteBuf out) {
         int mask = 0;
         int count = 0;
@@ -216,7 +263,7 @@ public class ChunkManager {
                 count++;
             }
         }
-        ByteBuf data = Unpooled.buffer(16 * 16 * 16 * 5 * count);
+        ByteBuf data = allocator.buffer(16 * 16 * 16 * 5 * count);
         data.writeInt(chunk.getX());
         data.writeInt(chunk.getZ());
         data.writeShort(mask);
@@ -236,11 +283,19 @@ public class ChunkManager {
         }
         try {
             GZIPOutputStream gzip = new GZIPOutputStream(new ByteBufOutputStream(out));
-            gzip.write(data.array());
+            byte[] bytes = new byte[data.readableBytes()];
+            data.readBytes(bytes);
+            gzip.write(bytes);
             gzip.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException();
+        } finally {
+            data.release();
         }
-        data.release();
+    }
+
+    // Used for the activeChunks set
+    private static long chunkKey(int x, int z) {
+        return ((long) x << 32) | z & 0xFFFFFFFL;
     }
 }

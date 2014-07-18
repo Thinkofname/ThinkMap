@@ -127,7 +127,6 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
         }
 
         // Save the updated config
-
         try {
             configuration.save();
         } catch (IOException e) {
@@ -140,7 +139,8 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
                         "default" : configuration.getResourcePackName())
         );
 
-        // Resource loading
+        // If this file exists then the resources are already
+        // done (since this is the last step
         File blockInfo = new File(resourceDir, "blocks.json");
         if (blockInfo.exists()) {
             webHandler.start();
@@ -150,33 +150,45 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
     }
 
     private void loadResources() {
-        final File blockInfo = new File(resourceDir, "blocks.json");
+        // Check if the resource pack exists
+        // A value of "" (blank string) means that the
+        // default resource pack should be used
         String resourcePack = configuration.getResourcePackName();
         final File resourceFile = new File(getDataFolder(), resourcePack + ".zip");
-        if (!resourceFile.exists()) {
+        if (resourcePack.length() > 0 && !resourceFile.exists()) {
             getLogger().log(Level.SEVERE, "Unable to find the resource pack "
                     + configuration.getResourcePackName());
             resourcePack = "";
         }
+
+        // Stitching the textures is a slow progress so
+        // we do it async to prevent blocking the server.
+        // During this time the web-server will not be running
         final String finalResourcePack = resourcePack;
         getServer().getScheduler().runTaskAsynchronously(this, new Runnable() {
             @Override
             public void run() {
                 try {
+                    File blockInfo = new File(resourceDir, "blocks.json");
+                    // Try and create the target location
                     if (!blockInfo.getParentFile().exists() && !blockInfo.getParentFile().mkdirs()) {
                         throw new RuntimeException("Failed to create " + blockInfo.getParentFile());
                     }
+                    // Use BufferedImages as the texture backend
                     TextureFactory textureFactory = new BufferedTextureFactory();
                     getLogger().info("Downloading textures. This may take some time");
-                    TextureProvider textureProvider =
-                            new MojangTextureProvider(MINECRAFT_VERSION, textureFactory);
+                    TextureProvider textureProvider = new MojangTextureProvider(MINECRAFT_VERSION, textureFactory);
 
+                    // Add in our missing texture to the resources (not part of vanilla)
                     try (InputStream in =
                                  getClassLoader().getResourceAsStream("textures/missing_texture.png")) {
                         ((MojangTextureProvider) textureProvider).addTexture("missing_texture",
                                 textureFactory.fromInputStream(in));
                     }
 
+                    // If we are using a resource pack we chain the packs together
+                    // (vanilla + the pack) so that if the pack is missing textures
+                    // it will use vanilla's textures as a fallback
                     if (finalResourcePack.length() > 0) {
                         textureProvider = new JoinedProvider(
                                 new ZipTextureProvider(
@@ -186,16 +198,28 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
                         );
                     }
 
+                    // Begin stitching the textures
+                    // TODO: Remove the timer?
                     TextureStitcher stitcher = new TextureStitcher(textureProvider, textureFactory);
                     getLogger().info("Stitching textures. The mapviewer will start after this " +
                             "completes");
                     long start = System.currentTimeMillis();
                     StitchResult result = stitcher.stitch();
-                    // Save the result
+                    // Save the result into the resources folder
+                    Texture[] output = result.getOutput();
+                    for (int i = 0; i < output.length; i++) {
+                        Texture texture = output[i];
+                        ImageIO.write(((BufferedTexture) texture).getImage(), "PNG",
+                                new File(resourceDir, "blocks_" + (i++) + ".png"));
+                    }
+
+                    // We only use this here so no point in turning this
+                    // into a field
                     Gson gson = new GsonBuilder()
                             .registerTypeAdapter(TextureDetails.class,
                                     new TextureDetailsSerializer())
                             .create();
+                    // Append some extra information
                     HashMap<String, Object> info = new HashMap<>();
                     info.put("textures", result.getDetails());
                     info.put("textureImages", result.getOutput().length);
@@ -204,14 +228,10 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
                             blockInfo,
                             gson.toJson(info)
                     );
-                    int i = 0;
-                    for (Texture texture : result.getOutput()) {
-                        ImageIO.write(((BufferedTexture) texture).getImage(), "PNG",
-                                new File(resourceDir, "blocks_" + (i++) + ".png"));
-                    }
-                    getLogger().info("Stitching complete in " + (System.currentTimeMillis() -
-                            start) + "ms");
 
+                    getLogger().info("Stitching complete in " + (System.currentTimeMillis() - start) + "ms");
+
+                    // Start the web-server as it wasn't started earlier
                     webHandler.start();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -222,15 +242,13 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     @Override
     public void onDisable() {
+        // Shutdown the internal web server to prevent
+        // bukkit from complaining on reload
         getWebHandler().getChannelGroup().close();
         Channel channel = getWebHandler().getChannel();
         if (channel != null) {
             channel.close();
         }
-    }
-
-    public File getWorldDir() {
-        return worldDir;
     }
 
     public ChunkManager getChunkManager(World world) {
@@ -246,14 +264,27 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     @Override
     public void run() {
-        if (targetWorld == null) return;
+        if (getTargetWorld() == null) return;
         sendAll(new TimeUpdate((int) targetWorld.getTime()));
     }
 
-    public void sendAll(Packet<ServerPacketHandler> frame) {
-        getWebHandler().getChannelGroup().writeAndFlush(frame);
+    /**
+     * Sends a packet to all viewer
+     *
+     * @param packet
+     *         The packet to send
+     */
+    public void sendAll(Packet<ServerPacketHandler> packet) {
+        getWebHandler().getChannelGroup().writeAndFlush(packet);
     }
 
+    /**
+     * Returns the current target world of the map viewer
+     *
+     * @return The target world
+     * @deprecated This will be removed once multiple worlds are supported
+     */
+    @Deprecated
     public World getTargetWorld() {
         if (targetWorld == null) {
             targetWorld = getServer().getWorlds().get(0);
@@ -261,22 +292,60 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
         return targetWorld;
     }
 
+    /**
+     * Sets the target world for the map viewer
+     *
+     * @param targetWorld
+     *         The target world
+     * @deprecated This will be removed once multiple worlds are supported
+     */
+    @Deprecated
     public void setTargetWorld(World targetWorld) {
         this.targetWorld = targetWorld;
     }
 
+    /**
+     * The location in which the ThinkMap world copies are stored
+     *
+     * @return The location of the directory
+     */
+    public File getWorldDir() {
+        return worldDir;
+    }
+
+    /**
+     * Returns the web handler for this instance
+     *
+     * @return The web handler
+     */
     public WebHandler getWebHandler() {
         return webHandler;
     }
 
+    /**
+     * Returns the location of the resources used by the client
+     *
+     * @return The location of the resources
+     */
     public File getResourceDir() {
         return resourceDir;
     }
 
+    /**
+     * Returns the date that map viewer started up at
+     * (used for caching)
+     *
+     * @return The start up date
+     */
     public Date getStartUpDate() {
         return new Date(startUpDate.getTime());
     }
 
+    /**
+     * Returns the configuration for the map viewer
+     *
+     * @return The configuration
+     */
     public PluginConfiguration getConfiguration() {
         return configuration;
     }

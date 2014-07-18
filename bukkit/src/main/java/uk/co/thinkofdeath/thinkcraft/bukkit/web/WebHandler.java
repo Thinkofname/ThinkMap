@@ -48,9 +48,9 @@ public class WebHandler implements Runnable {
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
-            bootstrap.group(bossGroup, workerGroup).
-                    channel(NioServerSocketChannel.class).
-                    childHandler(new ServerChannelInitializer(plugin));
+            bootstrap.group(bossGroup, workerGroup)
+                    .channel(NioServerSocketChannel.class)
+                    .childHandler(new ServerChannelInitializer(plugin));
 
             channel = bootstrap.bind(
                     plugin.getConfiguration().getAddress(),

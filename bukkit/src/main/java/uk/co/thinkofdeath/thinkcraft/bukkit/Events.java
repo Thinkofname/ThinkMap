@@ -21,7 +21,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
-import org.bukkit.event.world.WorldLoadEvent;
 
 public class Events implements Listener {
 
@@ -32,17 +31,16 @@ public class Events implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onWorldLoad(WorldLoadEvent event) {
-        if (plugin.getTargetWorld() == null) plugin.setTargetWorld(event.getWorld());
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChunkLoad(ChunkLoadEvent event) {
+        // Mark the chunk as active so that the map viewer start grabbing the live
+        // version instead of the cached one
         plugin.getChunkManager(event.getWorld()).activateChunk(event.getChunk());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChunkUnload(ChunkUnloadEvent event) {
+        // Save the chunk in its current state and use it instead of loading
+        // the chunk
         plugin.getChunkManager(event.getWorld()).deactivateChunk(event.getChunk());
     }
 }
