@@ -26,16 +26,25 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import uk.co.thinkofdeath.thinkcraft.bukkit.ThinkMapPlugin;
 
+import java.util.regex.Pattern;
+
 public class WebHandler implements Runnable {
 
 
     private final ChannelGroup channels =
             new DefaultChannelGroup("ThinkMap Connections", GlobalEventExecutor.INSTANCE);
     private final ThinkMapPlugin plugin;
+    private final EndPointManager endPointManager = new EndPointManager();
     private Channel channel;
 
     public WebHandler(ThinkMapPlugin plugin) {
         this.plugin = plugin;
+
+        endPointManager.setDefault(new InternalWebServer(plugin));
+        endPointManager.add(Pattern.compile("/resources/.*"), new ResourcesServer(plugin));
+
+        endPointManager.add("/chunk", new ChunkEndPoint(plugin));
+        endPointManager.add("/server", new ServerEndPoint());
     }
 
     public void start() {
@@ -64,6 +73,10 @@ public class WebHandler implements Runnable {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
+    }
+
+    public EndPointManager getEndPointManager() {
+        return endPointManager;
     }
 
     public ChannelGroup getChannelGroup() {
