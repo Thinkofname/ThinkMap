@@ -20,7 +20,7 @@ import elemental.util.Timer;
 import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Blocks;
-import uk.co.thinkofdeath.thinkcraft.shared.support.ChunkMap;
+import uk.co.thinkofdeath.thinkcraft.shared.util.ChunkMap;
 
 public abstract class World {
 

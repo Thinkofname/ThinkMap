@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.shared.support;
+package uk.co.thinkofdeath.thinkcraft.shared.util;
 
 import uk.co.thinkofdeath.thinkcraft.shared.world.Chunk;
 
