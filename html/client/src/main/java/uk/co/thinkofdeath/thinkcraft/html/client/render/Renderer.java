@@ -22,8 +22,8 @@ import uk.co.thinkofdeath.thinkcraft.html.client.MapViewer;
 import uk.co.thinkofdeath.thinkcraft.html.client.debug.Debug;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.shaders.ChunkShader;
 import uk.co.thinkofdeath.thinkcraft.html.client.texture.VirtualTexture;
+import uk.co.thinkofdeath.thinkcraft.html.shared.utils.JsUtils;
 import uk.co.thinkofdeath.thinkcraft.shared.model.PositionedModel;
-import uk.co.thinkofdeath.thinkcraft.shared.support.JsUtils;
 import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
 import uk.co.thinkofdeath.thinkcraft.shared.vector.Matrix4;
 

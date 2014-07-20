@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.shared.support;
+package uk.co.thinkofdeath.thinkcraft.html.shared.utils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -26,12 +26,5 @@ public class JsUtils {
             return comparator.@java.util.Comparator::compare(Ljava/lang/Object;Ljava/lang/Object;)(a, b);
         };
         list.@java.util.ArrayList::array.sort(jsComp);
-    }-*/;
-
-    public static native <T> void sort(T[] o, Comparator<T> comparator)/*-{
-        var jsComp = function (a, b) {
-            return comparator.@java.util.Comparator::compare(Ljava/lang/Object;Ljava/lang/Object;)(a, b);
-        };
-        o.sort(jsComp);
     }-*/;
 }
