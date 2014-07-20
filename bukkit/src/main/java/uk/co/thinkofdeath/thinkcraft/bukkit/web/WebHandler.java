@@ -43,8 +43,8 @@ public class WebHandler implements Runnable {
         endPointManager.setDefault(new InternalWebServer(plugin));
         endPointManager.add(Pattern.compile("/resources/.*"), new ResourcesServer(plugin));
 
-        endPointManager.add("/chunk", new ChunkEndPoint(plugin));
-        endPointManager.add("/server", new ServerEndPoint());
+        endPointManager.add("/server/chunk", new ChunkEndPoint(plugin));
+        endPointManager.add("/server/ws", new ServerEndPoint());
     }
 
     public void start() {

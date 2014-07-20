@@ -175,7 +175,7 @@ public class ClientWorld extends World {
             return;
         }
         final XMLHttpRequest xmlHttpRequest = Browser.getWindow().newXMLHttpRequest();
-        xmlHttpRequest.open("POST", "http://" + mapViewer.getConnection().getAddress() + "/chunk", true);
+        xmlHttpRequest.open("POST", "http://" + mapViewer.getConnection().getAddress() + "/server/chunk", true);
         xmlHttpRequest.setResponseType("arraybuffer");
         xmlHttpRequest.setOnreadystatechange(new EventListener() {
             @Override

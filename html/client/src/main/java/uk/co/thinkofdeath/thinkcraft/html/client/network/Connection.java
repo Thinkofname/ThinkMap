@@ -51,7 +51,7 @@ public class Connection implements EventListener {
     public Connection(String address, ServerPacketHandler handler, final Runnable callback) {
         this.address = address;
         this.handler = handler;
-        webSocket = Browser.getWindow().newWebSocket("ws://" + address + "/server");
+        webSocket = Browser.getWindow().newWebSocket("ws://" + address + "/server/ws");
         // Work in binary instead of strings
         webSocket.setBinaryType("arraybuffer");
         webSocket.setOnopen(new EventListener() {
