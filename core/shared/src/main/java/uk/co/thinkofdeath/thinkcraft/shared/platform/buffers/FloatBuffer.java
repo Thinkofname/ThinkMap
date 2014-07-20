@@ -14,19 +14,26 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.html.shared;
+package uk.co.thinkofdeath.thinkcraft.shared.platform.buffers;
 
-public class NativeLib {
-
-    private NativeLib() {
-
-    }
+public interface FloatBuffer extends Buffer {
 
     /**
-     * Sets up the native lib overrides and features
+     * Sets the value at the index
+     *
+     * @param index
+     *         The index
+     * @param value
+     *         The value
      */
-    public static void init() {
-        System.setOut(new JavascriptConsolePrinter(false));
-        System.setErr(new JavascriptConsolePrinter(true));
-    }
+    public void set(int index, float value);
+
+    /**
+     * Gets the value at the index
+     *
+     * @param index
+     *         The index
+     * @return The value
+     */
+    public float get(int index);
 }

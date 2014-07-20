@@ -24,40 +24,40 @@ public class ModelFace {
 
     private static final ModelVertex[][] defaultFaces = {
             { // Top
-                    ModelVertex.create(0, 0, 0, 0, 0),
-                    ModelVertex.create(1, 0, 0, 1, 0),
-                    ModelVertex.create(0, 0, 1, 0, 1),
-                    ModelVertex.create(1, 0, 1, 1, 1)
+                    new ModelVertex(0, 0, 0, 0, 0),
+                    new ModelVertex(1, 0, 0, 1, 0),
+                    new ModelVertex(0, 0, 1, 0, 1),
+                    new ModelVertex(1, 0, 1, 1, 1)
             },
             { // Bottom
-                    ModelVertex.create(0, 0, 0, 0, 0),
-                    ModelVertex.create(0, 0, 1, 0, 1),
-                    ModelVertex.create(1, 0, 0, 1, 0),
-                    ModelVertex.create(1, 0, 1, 1, 1)
+                    new ModelVertex(0, 0, 0, 0, 0),
+                    new ModelVertex(0, 0, 1, 0, 1),
+                    new ModelVertex(1, 0, 0, 1, 0),
+                    new ModelVertex(1, 0, 1, 1, 1)
             },
             { // Left
-                    ModelVertex.create(0, 0, 0, 1, 1),
-                    ModelVertex.create(0, 0, 1, 0, 1),
-                    ModelVertex.create(0, 1, 0, 1, 0),
-                    ModelVertex.create(0, 1, 1, 0, 0),
+                    new ModelVertex(0, 0, 0, 1, 1),
+                    new ModelVertex(0, 0, 1, 0, 1),
+                    new ModelVertex(0, 1, 0, 1, 0),
+                    new ModelVertex(0, 1, 1, 0, 0),
             },
             { // Right
-                    ModelVertex.create(0, 0, 0, 0, 1),
-                    ModelVertex.create(0, 1, 0, 0, 0),
-                    ModelVertex.create(0, 0, 1, 1, 1),
-                    ModelVertex.create(0, 1, 1, 1, 0)
+                    new ModelVertex(0, 0, 0, 0, 1),
+                    new ModelVertex(0, 1, 0, 0, 0),
+                    new ModelVertex(0, 0, 1, 1, 1),
+                    new ModelVertex(0, 1, 1, 1, 0)
             },
             { // Front
-                    ModelVertex.create(0, 0, 0, 0, 1),
-                    ModelVertex.create(0, 1, 0, 0, 0),
-                    ModelVertex.create(1, 0, 0, 1, 1),
-                    ModelVertex.create(1, 1, 0, 1, 0)
+                    new ModelVertex(0, 0, 0, 0, 1),
+                    new ModelVertex(0, 1, 0, 0, 0),
+                    new ModelVertex(1, 0, 0, 1, 1),
+                    new ModelVertex(1, 1, 0, 1, 0)
             },
             { // Back
-                    ModelVertex.create(0, 0, 0, 1, 1),
-                    ModelVertex.create(1, 0, 0, 0, 1),
-                    ModelVertex.create(0, 1, 0, 1, 0),
-                    ModelVertex.create(1, 1, 0, 0, 0)
+                    new ModelVertex(0, 0, 0, 1, 1),
+                    new ModelVertex(1, 0, 0, 0, 1),
+                    new ModelVertex(0, 1, 0, 1, 0),
+                    new ModelVertex(1, 1, 0, 0, 0)
             }
     };
 

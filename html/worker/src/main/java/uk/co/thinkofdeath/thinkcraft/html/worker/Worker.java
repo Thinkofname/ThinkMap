@@ -22,7 +22,7 @@ import elemental.events.Event;
 import elemental.events.EventListener;
 import elemental.events.MessageEvent;
 import elemental.html.WorkerGlobalScope;
-import uk.co.thinkofdeath.thinkcraft.html.shared.NativeLib;
+import uk.co.thinkofdeath.thinkcraft.html.shared.JavascriptLib;
 import uk.co.thinkofdeath.thinkcraft.html.shared.TextureMap;
 import uk.co.thinkofdeath.thinkcraft.html.shared.settings.ClientSettings;
 import uk.co.thinkofdeath.thinkcraft.html.worker.world.WorkerChunk;
@@ -50,7 +50,7 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
 
     @Override
     public void onModuleLoad() {
-        NativeLib.init();
+        JavascriptLib.init();
         setOnmessage(this);
     }
 

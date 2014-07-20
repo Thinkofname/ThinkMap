@@ -16,12 +16,12 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.model;
 
-import com.google.gwt.core.client.JavaScriptObject;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.FloatBuffer;
 
-public class ModelVertex extends JavaScriptObject {
+public class ModelVertex {
 
-    protected ModelVertex() {
-    }
+    private final FloatBuffer buffer = Platform.createFloatBuffer(5);
 
     /**
      * Creates a model vertex initialed to the passed values
@@ -36,21 +36,23 @@ public class ModelVertex extends JavaScriptObject {
      *         The x position of the texture for this vertex
      * @param textureY
      *         The y position of the texture for this vertex
-     * @return The created model vertex
      */
-    public static native ModelVertex create(float x, float y, float z, float textureX,
-                                            float textureY)/*-{
-        return new Float32Array([x, y, z, textureX, textureY]);
-    }-*/;
+    public ModelVertex(float x, float y, float z, float textureX, float textureY) {
+        setX(x);
+        setY(y);
+        setZ(z);
+        setTextureX(textureX);
+        setTextureY(textureY);
+    }
 
     /**
      * Returns the position of this vertex on the x axis
      *
      * @return The position on the x axis
      */
-    public final native float getX()/*-{
-        return this[0];
-    }-*/;
+    public float getX() {
+        return buffer.get(0);
+    }
 
     /**
      * Sets the position of this vertex on the x axis
@@ -58,18 +60,18 @@ public class ModelVertex extends JavaScriptObject {
      * @param x
      *         The new position on the x axis
      */
-    public final native void setX(float x)/*-{
-        this[0] = x;
-    }-*/;
+    public void setX(float x) {
+        buffer.set(0, x);
+    }
 
     /**
      * Returns the position of this vertex on the y axis
      *
      * @return The position on the y axis
      */
-    public final native float getY()/*-{
-        return this[1];
-    }-*/;
+    public float getY() {
+        return buffer.get(1);
+    }
 
     /**
      * Sets the position of this vertex on the y axis
@@ -77,18 +79,18 @@ public class ModelVertex extends JavaScriptObject {
      * @param y
      *         The new position on the y axis
      */
-    public final native void setY(float y)/*-{
-        this[1] = y;
-    }-*/;
+    public void setY(float y) {
+        buffer.set(1, y);
+    }
 
     /**
      * Returns the position of this vertex on the z axis
      *
      * @return The position on the z axis
      */
-    public final native float getZ()/*-{
-        return this[2];
-    }-*/;
+    public float getZ() {
+        return buffer.get(2);
+    }
 
     /**
      * Sets the position of this vertex on the z axis
@@ -96,9 +98,9 @@ public class ModelVertex extends JavaScriptObject {
      * @param z
      *         The new position on the z axis
      */
-    public final native void setZ(float z)/*-{
-        this[2] = z;
-    }-*/;
+    public void setZ(float z) {
+        buffer.set(2, z);
+    }
 
 
     /**
@@ -106,9 +108,9 @@ public class ModelVertex extends JavaScriptObject {
      *
      * @return The texture position on the x axis
      */
-    public final native float getTextureX()/*-{
-        return this[3];
-    }-*/;
+    public float getTextureX() {
+        return buffer.get(3);
+    }
 
     /**
      * Sets the texture position of this vertex on the x axis
@@ -116,9 +118,9 @@ public class ModelVertex extends JavaScriptObject {
      * @param x
      *         The new texture position on the x axis
      */
-    public final native void setTextureX(float x)/*-{
-        this[3] = x;
-    }-*/;
+    public void setTextureX(float x) {
+        buffer.set(3, x);
+    }
 
 
     /**
@@ -126,9 +128,9 @@ public class ModelVertex extends JavaScriptObject {
      *
      * @return The texture position on the x axis
      */
-    public final native float getTextureY()/*-{
-        return this[4];
-    }-*/;
+    public float getTextureY() {
+        return buffer.get(4);
+    }
 
     /**
      * Sets the texture position of this vertex on the y axis
@@ -136,25 +138,25 @@ public class ModelVertex extends JavaScriptObject {
      * @param y
      *         The new texture position on the y axis
      */
-    public final native void setTextureY(float y)/*-{
-        this[4] = y;
-    }-*/;
+    public void setTextureY(float y) {
+        buffer.set(4, y);
+    }
 
     /**
      * Creates a copy of this vertex
      *
      * @return A copy
      */
-    public final native ModelVertex duplicate()/*-{
-        return new Float32Array(this);
-    }-*/;
+    public ModelVertex duplicate() {
+        return new ModelVertex(getX(), getY(), getZ(), getTextureX(), getTextureY());
+    }
 
     // Raw access methods
-    final native float getRaw(int i)/*-{
-        return this[i];
-    }-*/;
+    float getRaw(int i) {
+        return buffer.get(i);
+    }
 
-    final native void setRaw(int i, float v)/*-{
-        this[i] = v;
-    }-*/;
+    void setRaw(int i, float v) {
+        buffer.set(i, v);
+    }
 }

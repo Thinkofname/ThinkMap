@@ -33,7 +33,7 @@ import uk.co.thinkofdeath.thinkcraft.html.client.texture.VirtualTexture;
 import uk.co.thinkofdeath.thinkcraft.html.client.worker.WorkerPool;
 import uk.co.thinkofdeath.thinkcraft.html.client.world.ClientChunk;
 import uk.co.thinkofdeath.thinkcraft.html.client.world.ClientWorld;
-import uk.co.thinkofdeath.thinkcraft.html.shared.NativeLib;
+import uk.co.thinkofdeath.thinkcraft.html.shared.JavascriptLib;
 import uk.co.thinkofdeath.thinkcraft.html.shared.TextureMap;
 import uk.co.thinkofdeath.thinkcraft.html.shared.settings.ClientSettings;
 import uk.co.thinkofdeath.thinkcraft.protocol.ServerPacketHandler;
@@ -84,7 +84,7 @@ public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler
      * Entry point to the program
      */
     public void onModuleLoad() {
-        NativeLib.init();
+        JavascriptLib.init();
         // Feature detection
         if (!featureHandler.detect()) return;
         // Atlas to look up position of textures
