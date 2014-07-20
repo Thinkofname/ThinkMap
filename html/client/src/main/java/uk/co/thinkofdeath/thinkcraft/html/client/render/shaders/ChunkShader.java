@@ -77,7 +77,7 @@ public class ChunkShader extends ShaderProgram {
      *         The matrix to use
      */
     public void setPerspectiveMatrix(Matrix4 matrix) {
-        gl.uniformMatrix4fv(perspectiveMatrix, false, (Float32Array) matrix.getStorage());
+        gl.uniformMatrix4fv(perspectiveMatrix, false, (Float32Array) matrix.getStorage().getRaw());
     }
 
     /**
@@ -87,7 +87,7 @@ public class ChunkShader extends ShaderProgram {
      *         The matrix to use
      */
     public void setViewMatrix(Matrix4 matrix) {
-        gl.uniformMatrix4fv(viewMatrix, false, (Float32Array) matrix.getStorage());
+        gl.uniformMatrix4fv(viewMatrix, false, (Float32Array) matrix.getStorage().getRaw());
     }
 
     /**

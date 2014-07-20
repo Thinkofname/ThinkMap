@@ -16,23 +16,25 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.vector;
 
-import java.util.Arrays;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.FloatBuffer;
 
 public class Matrix4 {
 
-    private float[] values = new float[4 * 4];
+    private FloatBuffer buffer = Platform.createFloatBuffer(4 * 4);
 
     public Matrix4() {
         identity();
     }
 
     public void identity() {
-        Arrays.fill(values, 0);
-        values[k(0, 0)]
-                = values[k(1, 1)]
-                = values[k(2, 2)]
-                = values[k(3, 3)]
-                = 1;
+        for (int i = 0; i < 16; i++) {
+            buffer.set(i, 0);
+        }
+        buffer.set(k(0, 0), 1);
+        buffer.set(k(1, 1), 1);
+        buffer.set(k(2, 2), 1);
+        buffer.set(k(3, 3), 1);
     }
 
     private static int k(int x, int y) {
@@ -42,141 +44,143 @@ public class Matrix4 {
     public void perspective(float fovy, float aspect, float near, float far) {
         float invDepth = 1 / (near - far);
 
-        values[k(1, 1)] = (float) (1 / Math.tan(0.5f * fovy));
-        values[k(0, 0)] = values[k(1, 1)] / aspect;
-        values[k(2, 2)] = (far + near) * invDepth;
-        values[k(3, 2)] = 2 * (far * near) * invDepth;
-        values[k(2, 3)] = -1;
-        values[k(3, 3)] = 0;
+        buffer.set(k(1, 1), (float) (1 / Math.tan(0.5f * fovy)));
+        buffer.set(k(0, 0), buffer.get(k(1, 1)) / aspect);
+        buffer.set(k(2, 2), (far + near) * invDepth);
+        buffer.set(k(3, 2), 2 * (far * near) * invDepth);
+        buffer.set(k(2, 3), -1);
+        buffer.set(k(3, 3), 0);
     }
 
     public void scale(float x, float y, float z) {
-        values[0] *= x;
-        values[1] *= x;
-        values[2] *= x;
-        values[3] *= x;
-        values[4] *= y;
-        values[5] *= y;
-        values[6] *= y;
-        values[8] *= y;
-        values[9] *= z;
-        values[10] *= z;
-        values[11] *= z;
-        values[12] *= z;
+        buffer.set(0, buffer.get(0) * x);
+        buffer.set(1, buffer.get(1) * x);
+        buffer.set(2, buffer.get(2) * x);
+        buffer.set(3, buffer.get(3) * x);
+        buffer.set(4, buffer.get(4) * y);
+        buffer.set(5, buffer.get(5) * y);
+        buffer.set(6, buffer.get(6) * y);
+        buffer.set(8, buffer.get(8) * y);
+        buffer.set(9, buffer.get(9) * z);
+        buffer.set(10, buffer.get(10) * z);
+        buffer.set(11, buffer.get(11) * z);
+        buffer.set(12, buffer.get(12) * z);
     }
 
     public void translate(float x, float y, float z) {
-        values[0] += values[3] * x;
-        values[1] += values[3] * y;
-        values[2] += values[3] * z;
+        buffer.set(0, buffer.get(0) + buffer.get(3) * x);
+        buffer.set(1, buffer.get(1) + buffer.get(3) * y);
+        buffer.set(2, buffer.get(2) + buffer.get(3) * z);
 
-        values[4] += values[7] * x;
-        values[5] += values[7] * y;
-        values[6] += values[7] * z;
+        buffer.set(4, buffer.get(4) + buffer.get(7) * x);
+        buffer.set(5, buffer.get(5) + buffer.get(7) * y);
+        buffer.set(6, buffer.get(6) + buffer.get(7) * z);
 
-        values[8] += values[11] * x;
-        values[9] += values[11] * y;
-        values[10] += values[11] * z;
+        buffer.set(8, buffer.get(8) + buffer.get(11) * x);
+        buffer.set(9, buffer.get(9) + buffer.get(11) * y);
+        buffer.set(10, buffer.get(10) + buffer.get(11) * z);
 
-        values[12] += values[15] * x;
-        values[13] += values[15] * y;
-        values[14] += values[15] * z;
+        buffer.set(12, buffer.get(12) + buffer.get(15) * x);
+        buffer.set(13, buffer.get(13) + buffer.get(15) * y);
+        buffer.set(14, buffer.get(14) + buffer.get(15) * z);
     }
 
     public void rotateX(float ang) {
         float c = (float) Math.cos(ang);
         float s = (float) Math.sin(ang);
 
-        float t = values[1];
-        values[1] = t * c + values[2] * s;
-        values[2] = t * -s + values[2] * c;
+        float t = buffer.get(1);
+        buffer.set(1, t * c + buffer.get(2) * s);
+        buffer.set(2, t * -s + buffer.get(2) * c);
 
-        t = values[5];
-        values[5] = t * c + values[6] * s;
-        values[6] = t * -s + values[6] * c;
+        t = buffer.get(5);
+        buffer.set(5, t * c + buffer.get(6) * s);
+        buffer.set(6, t * -s + buffer.get(6) * c);
 
-        t = values[9];
-        values[9] = t * c + values[10] * s;
-        values[10] = t * -s + values[10] * c;
+        t = buffer.get(9);
+        buffer.set(9, t * c + buffer.get(10) * s);
+        buffer.set(10, t * -s + buffer.get(10) * c);
 
-        t = values[13];
-        values[13] = t * c + values[14] * s;
-        values[14] = t * -s + values[14] * c;
+        t = buffer.get(13);
+        buffer.set(13, t * c + buffer.get(14) * s);
+        buffer.set(14, t * -s + buffer.get(14) * c);
     }
 
     public void rotateY(float ang) {
         float c = (float) Math.cos(ang);
         float s = (float) Math.sin(ang);
 
-        float t = values[0];
-        values[0] = t * c + values[2] * -s;
-        values[2] = t * s + values[2] * c;
+        float t = buffer.get(0);
+        buffer.set(0, t * c + buffer.get(2) * -s);
+        buffer.set(2, t * s + buffer.get(2) * c);
 
-        t = values[4];
-        values[4] = t * c + values[6] * -s;
-        values[6] = t * s + values[6] * c;
+        t = buffer.get(4);
+        buffer.set(4, t * c + buffer.get(6) * -s);
+        buffer.set(6, t * s + buffer.get(6) * c);
 
-        t = values[8];
-        values[8] = t * c + values[10] * -s;
-        values[10] = t * s + values[10] * c;
+        t = buffer.get(8);
+        buffer.set(8, t * c + buffer.get(10) * -s);
+        buffer.set(10, t * s + buffer.get(10) * c);
 
-        t = values[12];
-        values[12] = t * c + values[14] * -s;
-        values[14] = t * s + values[14] * c;
+        t = buffer.get(12);
+        buffer.set(12, t * c + buffer.get(14) * -s);
+        buffer.set(14, t * s + buffer.get(14) * c);
     }
 
     public void rotateZ(float ang) {
         float c = (float) Math.cos(ang);
         float s = (float) Math.sin(ang);
 
-        float t = values[0];
-        values[0] = t * c + values[1] * s;
-        values[1] = t * -s + values[1] * c;
+        float t = buffer.get(0);
+        buffer.set(0, t * c + buffer.get(1) * s);
+        buffer.set(1, t * -s + buffer.get(1) * c);
 
-        t = values[4];
-        values[4] = t * c + values[5] * s;
-        values[5] = t * -s + values[5] * c;
+        t = buffer.get(4);
+        buffer.set(4, t * c + buffer.get(5) * s);
+        buffer.set(5, t * -s + buffer.get(5) * c);
 
-        t = values[8];
-        values[8] = t * c + values[9] * s;
-        values[9] = t * -s + values[9] * c;
+        t = buffer.get(8);
+        buffer.set(8, t * c + buffer.get(9) * s);
+        buffer.set(9, t * -s + buffer.get(9) * c);
 
-        t = values[12];
-        values[12] = t * c + values[13] * s;
-        values[13] = t * -s + values[13] * c;
+        t = buffer.get(12);
+        buffer.set(12, t * c + buffer.get(13) * s);
+        buffer.set(13, t * -s + buffer.get(13) * c);
     }
 
     public void multiply(Matrix4 other) {
-        float[] vals = values;
-        float[] ovals = other.values;
-        vals = Arrays.copyOf(vals, vals.length);
+        FloatBuffer ovals = other.buffer;
+        FloatBuffer vals = Platform.createFloatBuffer(4 * 4);
+        for (int i = 0; i < 16; i++) {
+            vals.set(i, vals.get(i));
+        }
 
-        values[0] = vals[0] * ovals[0] + vals[1] * ovals[4] + vals[2] * ovals[8] + vals[3] * ovals[12];
-        values[1] = vals[0] * ovals[1] + vals[1] * ovals[5] + vals[2] * ovals[9] + vals[3] * ovals[13];
-        values[2] = vals[0] * ovals[2] + vals[1] * ovals[6] + vals[2] * ovals[10] + vals[3] * ovals[14];
-        values[3] = vals[0] * ovals[3] + vals[1] * ovals[7] + vals[2] * ovals[11] + vals[3] * ovals[15];
+        buffer.set(0, vals.get(0) * ovals.get(0) + vals.get(1) * ovals.get(4) + vals.get(2) * ovals.get(8) + vals.get(3) * ovals.get(12));
+        buffer.set(1, vals.get(0) * ovals.get(1) + vals.get(1) * ovals.get(5) + vals.get(2) * ovals.get(9) + vals.get(3) * ovals.get(13));
+        buffer.set(2, vals.get(0) * ovals.get(2) + vals.get(1) * ovals.get(6) + vals.get(2) * ovals.get(10) + vals.get(3) * ovals.get(14));
+        buffer.set(3, vals.get(0) * ovals.get(3) + vals.get(1) * ovals.get(7) + vals.get(2) * ovals.get(11) + vals.get(3) * ovals.get(15));
 
-        values[4] = vals[4] * ovals[0] + vals[5] * ovals[4] + vals[6] * ovals[8] + vals[7] * ovals[12];
-        values[5] = vals[4] * ovals[1] + vals[5] * ovals[5] + vals[6] * ovals[9] + vals[7] * ovals[13];
-        values[6] = vals[4] * ovals[2] + vals[5] * ovals[6] + vals[6] * ovals[10] + vals[7] * ovals[14];
-        values[7] = vals[4] * ovals[3] + vals[5] * ovals[7] + vals[6] * ovals[11] + vals[7] * ovals[15];
+        buffer.set(4, vals.get(4) * ovals.get(0) + vals.get(5) * ovals.get(4) + vals.get(6) * ovals.get(8) + vals.get(7) * ovals.get(12));
+        buffer.set(5, vals.get(4) * ovals.get(1) + vals.get(5) * ovals.get(5) + vals.get(6) * ovals.get(9) + vals.get(7) * ovals.get(13));
+        buffer.set(6, vals.get(4) * ovals.get(2) + vals.get(5) * ovals.get(6) + vals.get(6) * ovals.get(10) + vals.get(7) * ovals.get(14));
+        buffer.set(7, vals.get(4) * ovals.get(3) + vals.get(5) * ovals.get(7) + vals.get(6) * ovals.get(11) + vals.get(7) * ovals.get(15));
 
-        values[8] = vals[8] * ovals[0] + vals[9] * ovals[4] + vals[10] * ovals[8] + vals[11] * ovals[12];
-        values[9] = vals[8] * ovals[1] + vals[9] * ovals[5] + vals[10] * ovals[9] + vals[11] * ovals[13];
-        values[10] = vals[8] * ovals[2] + vals[9] * ovals[6] + vals[10] * ovals[10] + vals[11] * ovals[14];
-        values[11] = vals[8] * ovals[3] + vals[9] * ovals[7] + vals[10] * ovals[11] + vals[11] * ovals[15];
+        buffer.set(8, vals.get(8) * ovals.get(0) + vals.get(9) * ovals.get(4) + vals.get(10) * ovals.get(8) + vals.get(11) * ovals.get(12));
+        buffer.set(9, vals.get(8) * ovals.get(1) + vals.get(9) * ovals.get(5) + vals.get(10) * ovals.get(9) + vals.get(11) * ovals.get(13));
+        buffer.set(10, vals.get(8) * ovals.get(2) + vals.get(9) * ovals.get(6) + vals.get(10) * ovals.get(10) + vals.get(11) * ovals.get(14));
+        buffer.set(11, vals.get(8) * ovals.get(3) + vals.get(9) * ovals.get(7) + vals.get(10) * ovals.get(11) + vals.get(11) * ovals.get(15));
 
-        values[12] = vals[12] * ovals[0] + vals[13] * ovals[4] + vals[14] * ovals[8] + vals[15] * ovals[12];
-        values[13] = vals[12] * ovals[1] + vals[13] * ovals[5] + vals[14] * ovals[9] + vals[15] * ovals[13];
-        values[14] = vals[12] * ovals[2] + vals[13] * ovals[6] + vals[14] * ovals[10] + vals[15] * ovals[14];
-        values[15] = vals[12] * ovals[3] + vals[13] * ovals[7] + vals[14] * ovals[11] + vals[15] * ovals[15];
+        buffer.set(12, vals.get(12) * ovals.get(0) + vals.get(13) * ovals.get(4) + vals.get(14) * ovals.get(8) + vals.get(15) * ovals.get(12));
+        buffer.set(13, vals.get(12) * ovals.get(1) + vals.get(13) * ovals.get(5) + vals.get(14) * ovals.get(9) + vals.get(15) * ovals.get(13));
+        buffer.set(14, vals.get(12) * ovals.get(2) + vals.get(13) * ovals.get(6) + vals.get(14) * ovals.get(10) + vals.get(15) * ovals.get(14));
+        buffer.set(15, vals.get(12) * ovals.get(3) + vals.get(13) * ovals.get(7) + vals.get(14) * ovals.get(11) + vals.get(15) * ovals.get(15));
     }
 
     public float get(int i) {
-        return values[i];
+        return buffer.get(i);
     }
 
-    public Object getStorage() {
-        return values;
+    public FloatBuffer getStorage() {
+        return buffer;
     }
 }

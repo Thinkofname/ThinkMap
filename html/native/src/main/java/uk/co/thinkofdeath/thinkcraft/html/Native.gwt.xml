@@ -23,7 +23,4 @@
     <inherits name="uk.co.thinkofdeath.thinkcraft.Shared"/>
 
     <source path="shared"/>
-
-    <!-- Faster/native alternatives -->
-    <super-source path="overrides"/>
 </module>
