@@ -17,7 +17,6 @@
 package uk.co.thinkofdeath.thinkcraft.html.worker.world;
 
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.JsArrayInteger;
 import elemental.html.ArrayBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockRegistry;
@@ -27,6 +26,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 import uk.co.thinkofdeath.thinkcraft.shared.model.PositionedModel;
 import uk.co.thinkofdeath.thinkcraft.shared.support.DataStream;
 import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
+import uk.co.thinkofdeath.thinkcraft.shared.util.IntMap;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkBuildReply;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.WorkerMessage;
@@ -152,9 +152,9 @@ public class WorkerChunk extends Chunk {
 
         message.setNextId(nextId);
 
-        JsArrayInteger keys = idBlockMap.keys();
-        for (int i = 0; i < keys.length(); i++) {
-            int key = keys.get(i);
+        IntMap.IntIterator it = idBlockMap.intIterator();
+        while (it.hasNext()) {
+            int key = it.next();
             message.addIdBlockMapping(key, idBlockMap.get(key));
         }
 

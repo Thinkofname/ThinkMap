@@ -34,7 +34,7 @@ public class ChunkMap<T extends Chunk> implements Iterable<T> {
     }
 
     public ChunkMap(int capacity) {
-        capacity = nextPowerOfTwo(capacity);
+        capacity = MathUtils.nextPowerOfTwo(capacity);
         allocate(capacity);
     }
 
@@ -87,16 +87,6 @@ public class ChunkMap<T extends Chunk> implements Iterable<T> {
         return size;
     }
 
-    private static int nextPowerOfTwo(int num) {
-        if (num == 0) return 1;
-        num--;
-        num |= num >> 1;
-        num |= num >> 2;
-        num |= num >> 4;
-        num |= num >> 8;
-        return ((num | num >> 16) + 1);
-    }
-
     private void allocate(int capacity) {
         entries = new Entry[capacity];
         mask = capacity - 1;
@@ -107,8 +97,7 @@ public class ChunkMap<T extends Chunk> implements Iterable<T> {
     private void resize() {
         Entry<T>[] oldEntries = entries;
         allocate(entries.length << 1);
-        for (int i = 0; i < oldEntries.length; i++) {
-            Entry<T> entry = oldEntries[i];
+        for (Entry<T> entry : oldEntries) {
             if (entry != null) {
                 insert(entry);
             }

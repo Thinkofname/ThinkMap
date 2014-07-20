@@ -18,7 +18,7 @@ package uk.co.thinkofdeath.thinkcraft.shared.world;
 
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Blocks;
-import uk.co.thinkofdeath.thinkcraft.shared.support.IntMap;
+import uk.co.thinkofdeath.thinkcraft.shared.util.IntMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +29,7 @@ public abstract class Chunk {
     // TODO: Fix the leaking as the blocks are never removed
     // from these maps
     protected final Map<Block, Integer> blockIdMap = new HashMap<>();
-    protected final IntMap<Block> idBlockMap = IntMap.create();
+    protected final IntMap<Block> idBlockMap = new IntMap<>();
     private final World world;
     protected int nextId = 1;
     private int x;

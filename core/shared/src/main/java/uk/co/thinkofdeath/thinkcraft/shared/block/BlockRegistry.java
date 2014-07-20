@@ -24,7 +24,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.enums.TreeVariant2;
 import uk.co.thinkofdeath.thinkcraft.shared.block.enums.WoodenSlabType;
 import uk.co.thinkofdeath.thinkcraft.shared.block.helpers.BlockModels;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
-import uk.co.thinkofdeath.thinkcraft.shared.support.IntMap;
+import uk.co.thinkofdeath.thinkcraft.shared.util.IntMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +34,7 @@ public class BlockRegistry {
     private IMapViewer mapViewer;
     private Map<String, Block> blockMap = new HashMap<>();
     private Map<String, IntMap<Block>> blockStateMap = new HashMap<>();
-    private IntMap<Block> legacyMap = IntMap.create();
+    private IntMap<Block> legacyMap = new IntMap<>(256 * 16);
 
     /**
      * Creates a block registry which contains all the known blocks
@@ -151,7 +151,7 @@ public class BlockRegistry {
             blockMap.put(block.toString(), block);
             // State lookup
             if (!blockStateMap.containsKey(key)) {
-                blockStateMap.put(key, IntMap.<Block>create());
+                blockStateMap.put(key, new IntMap<Block>());
             }
             blockStateMap.get(key).put(block.state.asInt(), block);
             // Legacy support

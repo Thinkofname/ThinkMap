@@ -153,7 +153,7 @@ public class ClientChunk extends Chunk {
     private native void extractChunk(ChunkLoadedMessage chunkLoadedMessage)/*-{
         this.@uk.co.thinkofdeath.thinkcraft.shared.world.Chunk::nextId = chunkLoadedMessage.nextId;
 
-        var idmap = this.@uk.co.thinkofdeath.thinkcraft.shared.world.Chunk::idBlockMap;
+        var idMap = this.@uk.co.thinkofdeath.thinkcraft.shared.world.Chunk::idBlockMap;
         var blockMap = this.@uk.co.thinkofdeath.thinkcraft.shared.world.Chunk::blockIdMap;
         for (var key in chunkLoadedMessage.idmap) {
             if (chunkLoadedMessage.idmap.hasOwnProperty(key)) {
@@ -162,8 +162,7 @@ public class ClientChunk extends Chunk {
                 var name = val[0];
                 var raw = val[1]
                 var block = this.@uk.co.thinkofdeath.thinkcraft.html.client.world.ClientChunk::_js_toBlock(Ljava/lang/String;I)(name, raw);
-                idmap[k] = block;
-                idmap.$keys.push(k);
+                idMap.@uk.co.thinkofdeath.thinkcraft.shared.util.IntMap::put(ILjava/lang/Object;)(k, block);
                 blockMap.@java.util.Map::put(Ljava/lang/Object;Ljava/lang/Object;)(block, @java.lang.Integer::valueOf(I)(k));
             }
         }
