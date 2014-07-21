@@ -179,7 +179,10 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
                         new Object[]{renderObject.data.getBuffer()}, false);
                 renderObject.data = null;
             }
-            if (!frustum.isSphereInside((renderObject.x << 4) + 8, (renderObject.y << 4) + 8, (renderObject.z << 4) + 8, 10)) {
+            if (!frustum.isSphereInside(
+                    (renderObject.x << 4) + 8,
+                    (renderObject.y << 4) + 8,
+                    (renderObject.z << 4) + 8, 12)) {
                 continue;
             }
             chunkShader.setOffset(renderObject.x, renderObject.z);
@@ -222,7 +225,7 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
             if (!frustum.isSphereInside(
                     (sortableRenderObject.getX() << 4) + 8,
                     (sortableRenderObject.getY() << 4) + 8,
-                    (sortableRenderObject.getZ() << 4) + 8, 10)) {
+                    (sortableRenderObject.getZ() << 4) + 8, 12)) {
                 continue;
             }
 
@@ -273,6 +276,14 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         for (int i = sortableRenderObjects.size() - 1; i >= 0; i--) {
             SortableRenderObject sortableRenderObject = sortableRenderObjects.get(i);
             if (sortableRenderObject.count == 0 || sortableRenderObject.buffer == null) continue;
+
+            if (!frustum.isSphereInside(
+                    (sortableRenderObject.getX() << 4) + 8,
+                    (sortableRenderObject.getY() << 4) + 8,
+                    (sortableRenderObject.getZ() << 4) + 8, 12)) {
+                continue;
+            }
+
             gl.bindBuffer(ARRAY_BUFFER, sortableRenderObject.buffer);
             chunkShaderAlpha.setOffset(sortableRenderObject.getX(), sortableRenderObject.getZ());
             gl.vertexAttribPointer(chunkShaderAlpha.getPosition(), 3, UNSIGNED_SHORT, false, 22, 0);
