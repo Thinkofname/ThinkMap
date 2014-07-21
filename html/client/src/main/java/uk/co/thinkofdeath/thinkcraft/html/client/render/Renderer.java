@@ -219,6 +219,13 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         for (int i = 0, sortableRenderObjectsSize = sortableRenderObjects.size(); i < sortableRenderObjectsSize; i++) {
             SortableRenderObject sortableRenderObject = sortableRenderObjects.get(i);
 
+            if (!frustum.isSphereInside(
+                    (sortableRenderObject.getX() << 4) + 8,
+                    (sortableRenderObject.getY() << 4) + 8,
+                    (sortableRenderObject.getZ() << 4) + 8, 10)) {
+                continue;
+            }
+
             if (moved) {
                 sortableRenderObject.needResort = true;
             }
