@@ -182,7 +182,7 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
             if (!frustum.isSphereInside(
                     (renderObject.x << 4) + 8,
                     (renderObject.y << 4) + 8,
-                    (renderObject.z << 4) + 8, 12)) {
+                    (renderObject.z << 4) + 8, 16)) {
                 continue;
             }
             chunkShader.setOffset(renderObject.x, renderObject.z);
@@ -225,7 +225,7 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
             if (!frustum.isSphereInside(
                     (sortableRenderObject.getX() << 4) + 8,
                     (sortableRenderObject.getY() << 4) + 8,
-                    (sortableRenderObject.getZ() << 4) + 8, 12)) {
+                    (sortableRenderObject.getZ() << 4) + 8, 16)) {
                 continue;
             }
 
@@ -280,7 +280,7 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
             if (!frustum.isSphereInside(
                     (sortableRenderObject.getX() << 4) + 8,
                     (sortableRenderObject.getY() << 4) + 8,
-                    (sortableRenderObject.getZ() << 4) + 8, 12)) {
+                    (sortableRenderObject.getZ() << 4) + 8, 16)) {
                 continue;
             }
 
