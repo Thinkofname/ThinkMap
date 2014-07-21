@@ -150,30 +150,42 @@ public class Matrix4 {
 
     public void multiply(Matrix4 other) {
         FloatBuffer ovals = other.buffer;
-        FloatBuffer vals = Platform.createFloatBuffer(4 * 4);
-        for (int i = 0; i < 16; i++) {
-            vals.set(i, vals.get(i));
-        }
 
-        buffer.set(0, vals.get(0) * ovals.get(0) + vals.get(1) * ovals.get(4) + vals.get(2) * ovals.get(8) + vals.get(3) * ovals.get(12));
-        buffer.set(1, vals.get(0) * ovals.get(1) + vals.get(1) * ovals.get(5) + vals.get(2) * ovals.get(9) + vals.get(3) * ovals.get(13));
-        buffer.set(2, vals.get(0) * ovals.get(2) + vals.get(1) * ovals.get(6) + vals.get(2) * ovals.get(10) + vals.get(3) * ovals.get(14));
-        buffer.set(3, vals.get(0) * ovals.get(3) + vals.get(1) * ovals.get(7) + vals.get(2) * ovals.get(11) + vals.get(3) * ovals.get(15));
+        float b0 = buffer.get(0);
+        float b1 = buffer.get(1);
+        float b2 = buffer.get(2);
+        float b3 = buffer.get(3);
+        buffer.set(0, b0 * ovals.get(0) + b1 * ovals.get(4) + b2 * ovals.get(8) + b3 * ovals.get(12));
+        buffer.set(1, b0 * ovals.get(1) + b1 * ovals.get(5) + b2 * ovals.get(9) + b3 * ovals.get(13));
+        buffer.set(2, b0 * ovals.get(2) + b1 * ovals.get(6) + b2 * ovals.get(10) + b3 * ovals.get(14));
+        buffer.set(3, b0 * ovals.get(3) + b1 * ovals.get(7) + b2 * ovals.get(11) + b3 * ovals.get(15));
 
-        buffer.set(4, vals.get(4) * ovals.get(0) + vals.get(5) * ovals.get(4) + vals.get(6) * ovals.get(8) + vals.get(7) * ovals.get(12));
-        buffer.set(5, vals.get(4) * ovals.get(1) + vals.get(5) * ovals.get(5) + vals.get(6) * ovals.get(9) + vals.get(7) * ovals.get(13));
-        buffer.set(6, vals.get(4) * ovals.get(2) + vals.get(5) * ovals.get(6) + vals.get(6) * ovals.get(10) + vals.get(7) * ovals.get(14));
-        buffer.set(7, vals.get(4) * ovals.get(3) + vals.get(5) * ovals.get(7) + vals.get(6) * ovals.get(11) + vals.get(7) * ovals.get(15));
+        b0 = buffer.get(4);
+        b1 = buffer.get(5);
+        b2 = buffer.get(6);
+        b3 = buffer.get(7);
+        buffer.set(4, b0 * ovals.get(0) + b1 * ovals.get(4) + b2 * ovals.get(8) + b3 * ovals.get(12));
+        buffer.set(5, b0 * ovals.get(1) + b1 * ovals.get(5) + b2 * ovals.get(9) + b3 * ovals.get(13));
+        buffer.set(6, b0 * ovals.get(2) + b1 * ovals.get(6) + b2 * ovals.get(10) + b3 * ovals.get(14));
+        buffer.set(7, b0 * ovals.get(3) + b1 * ovals.get(7) + b2 * ovals.get(11) + b3 * ovals.get(15));
 
-        buffer.set(8, vals.get(8) * ovals.get(0) + vals.get(9) * ovals.get(4) + vals.get(10) * ovals.get(8) + vals.get(11) * ovals.get(12));
-        buffer.set(9, vals.get(8) * ovals.get(1) + vals.get(9) * ovals.get(5) + vals.get(10) * ovals.get(9) + vals.get(11) * ovals.get(13));
-        buffer.set(10, vals.get(8) * ovals.get(2) + vals.get(9) * ovals.get(6) + vals.get(10) * ovals.get(10) + vals.get(11) * ovals.get(14));
-        buffer.set(11, vals.get(8) * ovals.get(3) + vals.get(9) * ovals.get(7) + vals.get(10) * ovals.get(11) + vals.get(11) * ovals.get(15));
+        b0 = buffer.get(8);
+        b1 = buffer.get(9);
+        b2 = buffer.get(10);
+        b3 = buffer.get(11);
+        buffer.set(8, b0 * ovals.get(0) + b1 * ovals.get(4) + b2 * ovals.get(8) + b3 * ovals.get(12));
+        buffer.set(9, b0 * ovals.get(1) + b1 * ovals.get(5) + b2 * ovals.get(9) + b3 * ovals.get(13));
+        buffer.set(10, b0 * ovals.get(2) + b1 * ovals.get(6) + b2 * ovals.get(10) + b3 * ovals.get(14));
+        buffer.set(11, b0 * ovals.get(3) + b1 * ovals.get(7) + b2 * ovals.get(11) + b3 * ovals.get(15));
 
-        buffer.set(12, vals.get(12) * ovals.get(0) + vals.get(13) * ovals.get(4) + vals.get(14) * ovals.get(8) + vals.get(15) * ovals.get(12));
-        buffer.set(13, vals.get(12) * ovals.get(1) + vals.get(13) * ovals.get(5) + vals.get(14) * ovals.get(9) + vals.get(15) * ovals.get(13));
-        buffer.set(14, vals.get(12) * ovals.get(2) + vals.get(13) * ovals.get(6) + vals.get(14) * ovals.get(10) + vals.get(15) * ovals.get(14));
-        buffer.set(15, vals.get(12) * ovals.get(3) + vals.get(13) * ovals.get(7) + vals.get(14) * ovals.get(11) + vals.get(15) * ovals.get(15));
+        b0 = buffer.get(12);
+        b1 = buffer.get(13);
+        b2 = buffer.get(14);
+        b3 = buffer.get(15);
+        buffer.set(12, b0 * ovals.get(0) + b1 * ovals.get(4) + b2 * ovals.get(8) + b3 * ovals.get(12));
+        buffer.set(13, b0 * ovals.get(1) + b1 * ovals.get(5) + b2 * ovals.get(9) + b3 * ovals.get(13));
+        buffer.set(14, b0 * ovals.get(2) + b1 * ovals.get(6) + b2 * ovals.get(10) + b3 * ovals.get(14));
+        buffer.set(15, b0 * ovals.get(3) + b1 * ovals.get(7) + b2 * ovals.get(11) + b3 * ovals.get(15));
     }
 
     public float get(int i) {
