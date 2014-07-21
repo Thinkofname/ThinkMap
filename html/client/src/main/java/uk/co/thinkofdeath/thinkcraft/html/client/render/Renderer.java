@@ -25,6 +25,7 @@ import uk.co.thinkofdeath.thinkcraft.html.client.texture.VirtualTexture;
 import uk.co.thinkofdeath.thinkcraft.html.shared.utils.JsUtils;
 import uk.co.thinkofdeath.thinkcraft.shared.model.PositionedModel;
 import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
+import uk.co.thinkofdeath.thinkcraft.shared.vector.Frustum;
 import uk.co.thinkofdeath.thinkcraft.shared.vector.Matrix4;
 
 import java.util.ArrayList;
@@ -48,6 +49,9 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
     // Matrices
     private final Matrix4 perspectiveMatrix = new Matrix4();
     private final Matrix4 viewMatrix = new Matrix4();
+    private final Matrix4 combinedMatrix = new Matrix4();
+
+    private final Frustum frustum = new Frustum();
 
     // Textures
     private final WebGLTexture[] blockTextures;
@@ -147,6 +151,11 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         viewMatrix.rotateY(-camera.getRotationY());
         viewMatrix.rotateX(-camera.getRotationX());
 
+        combinedMatrix.identity();
+        combinedMatrix.copy(viewMatrix);
+        combinedMatrix.multiply(perspectiveMatrix);
+        frustum.fromMatrix(combinedMatrix);
+
 
         chunkShader.use();
 
@@ -169,6 +178,9 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
                 mapViewer.getWorkerPool().sendMessage(renderObject.sender, "pool:free", renderObject.data,
                         new Object[]{renderObject.data.getBuffer()}, false);
                 renderObject.data = null;
+            }
+            if (!frustum.isSphereInside((renderObject.x << 4) + 8, (renderObject.y << 4) + 8, (renderObject.z << 4) + 8, 10)) {
+                continue;
             }
             chunkShader.setOffset(renderObject.x, renderObject.z);
 

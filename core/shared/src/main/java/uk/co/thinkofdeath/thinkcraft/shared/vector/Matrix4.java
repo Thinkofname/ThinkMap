@@ -188,6 +188,12 @@ public class Matrix4 {
         buffer.set(15, b0 * ovals.get(3) + b1 * ovals.get(7) + b2 * ovals.get(11) + b3 * ovals.get(15));
     }
 
+    public void copy(Matrix4 other) {
+        for (int i = 0; i < 16; i++) {
+            buffer.set(i, other.get(i));
+        }
+    }
+
     public float get(int i) {
         return buffer.get(i);
     }

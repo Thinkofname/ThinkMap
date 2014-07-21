@@ -86,6 +86,9 @@ public class Debug {
                                 double x2, double y2, double z2,
                                 int r, int g, int b) {
         if (!enabled) return;
+        if (count >= MAX_LINES) {
+            return;
+        }
         int offset = count * (4 * 3 + 4) * 2;
         int offsetF = count * 4 * 2;
         floatView.set(offsetF, (float) x1);

@@ -57,7 +57,7 @@ public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler
     /**
      * The max distance (in chunks) the client can see
      */
-    public final static int VIEW_DISTANCE = 4;
+    public final static int VIEW_DISTANCE = 6;
     private static final int NUMBER_OF_WORKERS = 4;
 
     private final BlockRegistry blockRegistry = new BlockRegistry(this);
