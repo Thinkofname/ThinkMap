@@ -195,19 +195,7 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
             }
 
             if (renderObject != null) {
-                if (renderObject.data != null) {
-                    if (renderObject.buffer == null) {
-                        renderObject.buffer = gl.createBuffer();
-                    }
-                    gl.bindBuffer(ARRAY_BUFFER, renderObject.buffer);
-                    gl.bufferData(ARRAY_BUFFER, (ArrayBufferView) renderObject.data, STATIC_DRAW);
-
-                    mapViewer.getWorkerPool().sendMessage(renderObject.sender, "pool:free", renderObject.data,
-                            new Object[]{renderObject.data.getBuffer()}, false);
-                    renderObject.data = null;
-                }
                 chunkShader.setOffset(renderObject.x, renderObject.z);
-
                 gl.bindBuffer(ARRAY_BUFFER, renderObject.buffer);
                 gl.vertexAttribPointer(chunkShader.getPosition(), 3, UNSIGNED_SHORT, false, 22, 0);
                 gl.vertexAttribPointer(chunkShader.getColour(), 4, UNSIGNED_BYTE, true, 22, 6);
@@ -386,6 +374,17 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
     public void removeSortable(SortableRenderObject sortableRenderObject) {
         sortableRenderObjects.remove(sortableRenderObject);
         gl.deleteBuffer(sortableRenderObject.buffer);
+    }
+
+    public void updateChunkObject(ChunkRenderObject renderObject, TUint8Array data, int sender) {
+        if (renderObject.buffer == null) {
+            renderObject.buffer = gl.createBuffer();
+        }
+        renderObject.triangleCount = data.length() / 22;
+        gl.bindBuffer(ARRAY_BUFFER, renderObject.buffer);
+        gl.bufferData(ARRAY_BUFFER, (ArrayBufferView) data, STATIC_DRAW);
+
+        mapViewer.getWorkerPool().sendMessage(sender, "pool:free", data, new Object[]{data.getBuffer()}, false);
     }
 
     /**
