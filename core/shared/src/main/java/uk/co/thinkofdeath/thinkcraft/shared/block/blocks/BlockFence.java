@@ -156,7 +156,7 @@ public class BlockFence extends BlockFactory {
                 BlockImpl fence = (BlockImpl) block;
                 return fence.factory == this.factory;
             }
-            return false;
+            return block.isSolid();
         }
     }
 }
