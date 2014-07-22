@@ -74,6 +74,10 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
     // Sorters
     private final SortableSorter sortableSorter = new SortableSorter(camera);
 
+    // Reused vars
+    private final PositionChunkSectionSet visited = new PositionChunkSectionSet();
+    private final Stack<Position> toVisit = new Stack<>();
+
     /**
      * Creates a Renderer that handles almost anything that is displayed to the user
      *
@@ -168,9 +172,8 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         chunkShader.setBlockTexture(textureLocations);
         chunkShader.setScale(timeScale);
 
-        // TODO: Optimize
-        PositionChunkSectionSet visited = new PositionChunkSectionSet();
-        Stack<Position> toVisit = new Stack<>();
+        visited.clear();
+        toVisit.clear();
         Position root = new Position((int) camera.getX() >> 4, (int) camera.getY() >> 4, (int) camera.getZ() >> 4);
         toVisit.push(root);
         visited.add(root.getX(), root.getY(), root.getZ());

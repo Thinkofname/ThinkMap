@@ -37,4 +37,8 @@ public class PositionChunkSectionSet {
         boolean[] vals = map.get(x, z);
         return vals != null && vals[y];
     }
+
+    public void clear() {
+        map.clear();
+    }
 }

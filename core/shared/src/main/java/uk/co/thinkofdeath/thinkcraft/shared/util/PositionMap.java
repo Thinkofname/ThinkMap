@@ -16,6 +16,7 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.util;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -166,6 +167,12 @@ public class PositionMap<T> implements Iterable<T> {
             }
             index = (index + 1) & mask;
         }
+    }
+
+    public void clear() {
+        Arrays.fill(entries, null);
+        maximumDistanceFromIdeal = 0;
+        size = 0;
     }
 
     @Override
