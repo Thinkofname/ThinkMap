@@ -651,7 +651,11 @@ public class BlockRegistry {
                 .create(), 137);
 
         // TODO: beacon
-        // TODO: cobblestone_wall
+
+        register("minecraft", "cobblestone_wall", new BlockBuilder(new BlockWall(mapViewer))
+                .solid(false)
+                .create(), 139);
+
         // TODO: flower_pot
 
         register("minecraft", "carrots", new BlockBuilder(new BlockCrop(mapViewer, "carrots", false))

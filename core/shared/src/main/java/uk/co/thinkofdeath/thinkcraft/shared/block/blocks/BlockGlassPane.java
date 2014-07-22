@@ -99,9 +99,6 @@ public class BlockGlassPane extends BlockFactory {
 
                 if (north || south) {
 
-                    //z = north ? 0 : 8;
-                    //z2 = south ? 16 : 8;
-
                     model.addFace(new ModelFace(Face.LEFT, texture, z, 0, z2 - z, 16, 9));
                     model.addFace(new ModelFace(Face.RIGHT, texture, z, 0, z2 - z, 16, 7));
                 }
