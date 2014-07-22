@@ -18,8 +18,6 @@ package uk.co.thinkofdeath.thinkcraft.shared.util;
 
 public class PositionChunkSectionSet {
 
-    private static final Object EXISTS = new Object();
-
     private final PositionMap<boolean[]> map = new PositionMap<>();
 
     public PositionChunkSectionSet() {
