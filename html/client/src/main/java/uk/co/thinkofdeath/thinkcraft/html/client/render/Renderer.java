@@ -65,7 +65,6 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
     // Objects
     private final ChunkShader chunkShader;
     private final ChunkShader chunkShaderAlpha;
-    private final ArrayList<ChunkRenderObject> renderObjectList = new ArrayList<>();
 
     private final ArrayList<SortableRenderObject> sortableRenderObjects = new ArrayList<>();
 
@@ -73,7 +72,6 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
     private double currentFrame;
 
     // Sorters
-    private final ChunkSorter chunkSorter = new ChunkSorter(camera);
     private final SortableSorter sortableSorter = new SortableSorter(camera);
 
     /**
@@ -388,23 +386,12 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
     }
 
     /**
-     * Adds a chunk object to the renderer
-     *
-     * @param renderObject
-     *         The object to render
-     */
-    public void postChunkObject(ChunkRenderObject renderObject) {
-        renderObjectList.add(renderObject);
-    }
-
-    /**
      * Removes a chunk object from the renderer
      *
      * @param renderObject
      *         The object to remove
      */
     public void removeChunkObject(ChunkRenderObject renderObject) {
-        renderObjectList.remove(renderObject);
         gl.deleteBuffer(renderObject.buffer);
         renderObject.buffer = null;
     }
