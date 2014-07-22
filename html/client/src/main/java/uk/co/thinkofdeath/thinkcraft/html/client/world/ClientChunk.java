@@ -17,6 +17,7 @@
 package uk.co.thinkofdeath.thinkcraft.html.client.world;
 
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsArrayInteger;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.ChunkRenderObject;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.SortableRenderObject;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
@@ -79,8 +80,7 @@ public class ClientChunk extends Chunk {
         return true;
     }
 
-    public void setTransparentModels(int i, JsArray<PositionedModel> trans, TUint8Array transData,
-                                     int sender) {
+    public void setTransparentModels(int i, JsArray<PositionedModel> trans, TUint8Array transData, int sender) {
         if (sortableRenderObjects[i] != null) {
             TUint8Array data = sortableRenderObjects[i].getData();
             world.mapViewer.getWorkerPool().sendMessage(sender, "pool:free", data,
@@ -104,6 +104,13 @@ public class ClientChunk extends Chunk {
         }
     }
 
+    public void updateAccess(int sectionNumber, JsArrayInteger accessData) {
+        ChunkSection section = sections[sectionNumber];
+        for (int j = 0; j < accessData.length(); j++) {
+            section.getSideAccess()[j] = accessData.get(j);
+        }
+    }
+
     /**
      * Creates and fills this chunk's WebGL buffer
      *
@@ -119,7 +126,7 @@ public class ClientChunk extends Chunk {
             }
         } else {
             if (renderObjects[sectionNumber] == null) {
-                renderObjects[sectionNumber] = new ChunkRenderObject(getX(), sectionNumber, getZ());
+                renderObjects[sectionNumber] = new ChunkRenderObject(this, getX(), sectionNumber, getZ());
                 world.mapViewer.getRenderer().postChunkObject(renderObjects[sectionNumber]);
             }
             renderObjects[sectionNumber].load(data, sender);
@@ -148,6 +155,10 @@ public class ClientChunk extends Chunk {
                 world.mapViewer.getRenderer().removeSortable(sortableRenderObject);
             }
         }
+    }
+
+    public ChunkRenderObject[] getRenderObjects() {
+        return renderObjects;
     }
 
     private native void extractChunk(ChunkLoadedMessage chunkLoadedMessage)/*-{

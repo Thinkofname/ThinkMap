@@ -20,13 +20,13 @@ import elemental.util.Timer;
 import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Blocks;
-import uk.co.thinkofdeath.thinkcraft.shared.util.ChunkMap;
+import uk.co.thinkofdeath.thinkcraft.shared.util.PositionMap;
 
 public abstract class World {
 
     private final IMapViewer mapViewer;
     private int timeOfDay = 6000;
-    private ChunkMap<Chunk> chunks = new ChunkMap<>();
+    private PositionMap<Chunk> chunks = new PositionMap<>();
 
     protected World(IMapViewer mapViewer) {
         this.mapViewer = mapViewer;
@@ -85,7 +85,7 @@ public abstract class World {
      *
      * @return Every chunk in the world
      */
-    public ChunkMap<Chunk> getChunks() {
+    public PositionMap<Chunk> getChunks() {
         return chunks;
     }
 

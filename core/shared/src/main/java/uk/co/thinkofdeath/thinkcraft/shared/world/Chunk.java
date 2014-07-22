@@ -187,4 +187,8 @@ public abstract class Chunk {
     public boolean hasSection(int i) {
         return sections[i] != null;
     }
+
+    public ChunkSection getSection(int y) {
+        return sections[y];
+    }
 }

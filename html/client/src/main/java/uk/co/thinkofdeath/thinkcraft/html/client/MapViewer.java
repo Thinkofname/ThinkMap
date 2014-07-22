@@ -269,6 +269,9 @@ public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler
                 if (chunk != null) {
                     if (chunk.checkAndSetBuildNumber(chunkBuildReply.getBuildNumber(),
                             chunkBuildReply.getSectionNumber())) {
+                        chunk.updateAccess(
+                                chunkBuildReply.getSectionNumber(),
+                                chunkBuildReply.getAccessData());
                         chunk.fillBuffer(
                                 chunkBuildReply.getSectionNumber(),
                                 chunkBuildReply.getData(),
@@ -279,6 +282,7 @@ public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler
                                 chunkBuildReply.getTrans(),
                                 chunkBuildReply.getTransData(),
                                 sender);
+
                     }
                 }
                 break;

@@ -22,13 +22,19 @@ import uk.co.thinkofdeath.thinkcraft.html.client.MapViewer;
 import uk.co.thinkofdeath.thinkcraft.html.client.debug.Debug;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.shaders.ChunkShader;
 import uk.co.thinkofdeath.thinkcraft.html.client.texture.VirtualTexture;
+import uk.co.thinkofdeath.thinkcraft.html.client.world.ClientChunk;
 import uk.co.thinkofdeath.thinkcraft.html.shared.utils.JsUtils;
+import uk.co.thinkofdeath.thinkcraft.shared.Face;
+import uk.co.thinkofdeath.thinkcraft.shared.Position;
 import uk.co.thinkofdeath.thinkcraft.shared.model.PositionedModel;
 import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
+import uk.co.thinkofdeath.thinkcraft.shared.util.PositionChunkSectionSet;
 import uk.co.thinkofdeath.thinkcraft.shared.vector.Frustum;
 import uk.co.thinkofdeath.thinkcraft.shared.vector.Matrix4;
+import uk.co.thinkofdeath.thinkcraft.shared.world.ChunkSection;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 import static elemental.html.WebGLRenderingContext.*;
 
@@ -164,36 +170,75 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         chunkShader.setBlockTexture(textureLocations);
         chunkShader.setScale(timeScale);
 
-        // TODO: Think about grouping objects from the same chunk to save setOffset calls
-        JsUtils.sort(renderObjectList, chunkSorter);
-        for (int i = 0, renderObjectListSize = renderObjectList.size(); i < renderObjectListSize; i++) {
-            ChunkRenderObject renderObject = renderObjectList.get(i);
-            if (renderObject.data != null) {
-                if (renderObject.buffer == null) {
-                    renderObject.buffer = gl.createBuffer();
-                }
-                gl.bindBuffer(ARRAY_BUFFER, renderObject.buffer);
-                gl.bufferData(ARRAY_BUFFER, (ArrayBufferView) renderObject.data, STATIC_DRAW);
+        // TODO: Optimize
+        PositionChunkSectionSet visited = new PositionChunkSectionSet();
+        Stack<Position> toVisit = new Stack<>();
+        Position root = new Position((int) camera.getX() >> 4, (int) camera.getY() >> 4, (int) camera.getZ() >> 4);
+        toVisit.push(root);
+        visited.add(root.getX(), root.getY(), root.getZ());
 
-                mapViewer.getWorkerPool().sendMessage(renderObject.sender, "pool:free", renderObject.data,
-                        new Object[]{renderObject.data.getBuffer()}, false);
-                renderObject.data = null;
-            }
-            if (!frustum.isSphereInside(
-                    (renderObject.x << 4) + 8,
-                    (renderObject.y << 4) + 8,
-                    (renderObject.z << 4) + 8, 16)) {
+        while (!toVisit.isEmpty()) {
+            Position position = toVisit.pop();
+            if (position.getY() < 0 || position.getY() > 15 || !mapViewer.getWorld().isLoaded(position.getX(), position.getZ())) {
                 continue;
             }
-            chunkShader.setOffset(renderObject.x, renderObject.z);
 
-            gl.bindBuffer(ARRAY_BUFFER, renderObject.buffer);
-            gl.vertexAttribPointer(chunkShader.getPosition(), 3, UNSIGNED_SHORT, false, 22, 0);
-            gl.vertexAttribPointer(chunkShader.getColour(), 4, UNSIGNED_BYTE, true, 22, 6);
-            gl.vertexAttribPointer(chunkShader.getTexturePosition(), 2, UNSIGNED_SHORT, false, 22, 10);
-            gl.vertexAttribPointer(chunkShader.getTextureDetails(), 3, UNSIGNED_SHORT, false, 22, 14);
-            gl.vertexAttribPointer(chunkShader.getLighting(), 2, UNSIGNED_BYTE, false, 22, 20);
-            gl.drawArrays(TRIANGLES, 0, renderObject.triangleCount);
+            ClientChunk chunk = (ClientChunk) mapViewer.getWorld().getChunk(position.getX(), position.getZ());
+            ChunkRenderObject renderObject = chunk.getRenderObjects()[position.getY()];
+
+            if (!frustum.isSphereInside(
+                    (position.getX() << 4) + 8,
+                    (position.getY() << 4) + 8,
+                    (position.getZ() << 4) + 8, 16)) {
+                continue;
+            }
+
+            if (renderObject != null) {
+                if (renderObject.data != null) {
+                    if (renderObject.buffer == null) {
+                        renderObject.buffer = gl.createBuffer();
+                    }
+                    gl.bindBuffer(ARRAY_BUFFER, renderObject.buffer);
+                    gl.bufferData(ARRAY_BUFFER, (ArrayBufferView) renderObject.data, STATIC_DRAW);
+
+                    mapViewer.getWorkerPool().sendMessage(renderObject.sender, "pool:free", renderObject.data,
+                            new Object[]{renderObject.data.getBuffer()}, false);
+                    renderObject.data = null;
+                }
+                chunkShader.setOffset(renderObject.x, renderObject.z);
+
+                gl.bindBuffer(ARRAY_BUFFER, renderObject.buffer);
+                gl.vertexAttribPointer(chunkShader.getPosition(), 3, UNSIGNED_SHORT, false, 22, 0);
+                gl.vertexAttribPointer(chunkShader.getColour(), 4, UNSIGNED_BYTE, true, 22, 6);
+                gl.vertexAttribPointer(chunkShader.getTexturePosition(), 2, UNSIGNED_SHORT, false, 22, 10);
+                gl.vertexAttribPointer(chunkShader.getTextureDetails(), 3, UNSIGNED_SHORT, false, 22, 14);
+                gl.vertexAttribPointer(chunkShader.getLighting(), 2, UNSIGNED_BYTE, false, 22, 20);
+                gl.drawArrays(TRIANGLES, 0, renderObject.triangleCount);
+            }
+
+            int dx = ((int) camera.getX() >> 4) - position.getX();
+            int dy = ((int) camera.getY() >> 4) - position.getY();
+            int dz = ((int) camera.getZ() >> 4) - position.getZ();
+
+            ChunkSection section = position.equals(root) ? null : chunk.getSection(position.getY());
+            if (position.equals(root) || dx < 0) { // Right
+                checkAndGoto(section, position, Face.RIGHT, visited, toVisit);
+            }
+            if (position.equals(root) || dx > 0) { // Left
+                checkAndGoto(section, position, Face.LEFT, visited, toVisit);
+            }
+            if (position.equals(root) || dy < 0) { // Bottom
+                checkAndGoto(section, position, Face.BOTTOM, visited, toVisit);
+            }
+            if (position.equals(root) || dy > 0) { // Top
+                checkAndGoto(section, position, Face.TOP, visited, toVisit);
+            }
+            if (position.equals(root) || dz < 0) { // Back
+                checkAndGoto(section, position, Face.BACK, visited, toVisit);
+            }
+            if (position.equals(root) || dz > 0) { // Front
+                checkAndGoto(section, position, Face.FRONT, visited, toVisit);
+            }
         }
         chunkShader.disable();
 
@@ -225,7 +270,8 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
             if (!frustum.isSphereInside(
                     (sortableRenderObject.getX() << 4) + 8,
                     (sortableRenderObject.getY() << 4) + 8,
-                    (sortableRenderObject.getZ() << 4) + 8, 16)) {
+                    (sortableRenderObject.getZ() << 4) + 8, 16)
+                    || !visited.contains(sortableRenderObject.getX(), sortableRenderObject.getY(), sortableRenderObject.getZ())) {
                 continue;
             }
 
@@ -280,7 +326,8 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
             if (!frustum.isSphereInside(
                     (sortableRenderObject.getX() << 4) + 8,
                     (sortableRenderObject.getY() << 4) + 8,
-                    (sortableRenderObject.getZ() << 4) + 8, 16)) {
+                    (sortableRenderObject.getZ() << 4) + 8, 16)
+                    || !visited.contains(sortableRenderObject.getX(), sortableRenderObject.getY(), sortableRenderObject.getZ())) {
                 continue;
             }
 
@@ -301,6 +348,22 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         Debug.render(gl, perspectiveMatrix, viewMatrix);
 
         RendererUtils.requestAnimationFrame(this);
+    }
+
+    private void checkAndGoto(ChunkSection section, Position position, Face face, PositionChunkSectionSet visited, Stack<Position> toVisit) {
+        for (Face other : Face.values()) {
+            if (other != face && (section == null || section.canAccessSide(face, other))) {
+                Position nextPosition = new Position(
+                        position.getX() + other.getOffsetX(),
+                        position.getY() + other.getOffsetY(),
+                        position.getZ() + other.getOffsetZ()
+                );
+                if (!visited.contains(nextPosition.getX(), nextPosition.getY(), nextPosition.getZ())) {
+                    toVisit.push(nextPosition);
+                    visited.add(nextPosition.getX(), nextPosition.getY(), nextPosition.getZ());
+                }
+            }
+        }
     }
 
     /**

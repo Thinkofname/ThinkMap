@@ -17,10 +17,12 @@
 package uk.co.thinkofdeath.thinkcraft.html.client.render;
 
 import elemental.html.WebGLBuffer;
+import uk.co.thinkofdeath.thinkcraft.html.client.world.ClientChunk;
 import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
 
 public class ChunkRenderObject {
 
+    final ClientChunk chunk;
     final int x;
     final int y;
     final int z;
@@ -33,6 +35,8 @@ public class ChunkRenderObject {
     /**
      * Creates a new chunk render object used by the render to render a chunk section
      *
+     * @param chunk
+     *         The owner of this object
      * @param x
      *         The x position of the chunk
      * @param y
@@ -40,7 +44,8 @@ public class ChunkRenderObject {
      * @param z
      *         The z position of the chunk
      */
-    public ChunkRenderObject(int x, int y, int z) {
+    public ChunkRenderObject(ClientChunk chunk, int x, int y, int z) {
+        this.chunk = chunk;
         this.x = x;
         this.y = y;
         this.z = z;

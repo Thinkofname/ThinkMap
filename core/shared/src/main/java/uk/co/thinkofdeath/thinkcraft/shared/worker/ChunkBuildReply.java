@@ -18,6 +18,7 @@ package uk.co.thinkofdeath.thinkcraft.shared.worker;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsArrayInteger;
 import uk.co.thinkofdeath.thinkcraft.shared.model.PositionedModel;
 import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
 
@@ -36,14 +37,22 @@ public class ChunkBuildReply extends JavaScriptObject {
      *         The section number
      * @param buildNumber
      *         The build number
+     * @param accessData
+     *         The section's access data
+     * @param data
+     *         The non-transparent block data
+     * @param transData
+     *         The transparent block data
      * @param modelJsArray
+     *         The transparent block models
      * @return The message
      */
-    public static native ChunkBuildReply create(int x, int z, int i, int buildNumber,
-                                                TUint8Array data, TUint8Array transData,
-                                                JsArray<PositionedModel> modelJsArray)/*-{
-        return {x: x, z: z, i: i, buildNumber: buildNumber, data: data,
-            transData: transData, trans: modelJsArray};
+    public static native ChunkBuildReply create(
+            int x, int z, int i, int buildNumber, JsArrayInteger accessData,
+            TUint8Array data, TUint8Array transData, JsArray<PositionedModel> modelJsArray
+    )/*-{
+        return {x: x, z: z, i: i, buildNumber: buildNumber, accessData: accessData,
+            data: data, transData: transData, trans: modelJsArray};
     }-*/;
 
     /**
@@ -97,5 +106,9 @@ public class ChunkBuildReply extends JavaScriptObject {
 
     public final native JsArray<PositionedModel> getTrans()/*-{
         return this.trans;
+    }-*/;
+
+    public final native JsArrayInteger getAccessData()/*-{
+        return this.accessData;
     }-*/;
 }

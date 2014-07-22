@@ -16,6 +16,7 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.world;
 
+import uk.co.thinkofdeath.thinkcraft.shared.Face;
 import uk.co.thinkofdeath.thinkcraft.shared.support.TUint16Array;
 import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
 
@@ -33,6 +34,7 @@ public class ChunkSection {
     private TUint8Array light;
     private TUint8Array sky;
     private TUint8Array buffer;
+    private int[] sideAccess = new int[Face.values().length];
 
     // Number of non-zero things in this chunk
     private int count = 0;
@@ -108,5 +110,23 @@ public class ChunkSection {
      */
     public int getCount() {
         return count;
+    }
+
+    public void setSideAccess(Face face, Face other, boolean canAccess) {
+        int bit = 1 << other.ordinal();
+        sideAccess[face.ordinal()] &= ~bit;
+        sideAccess[face.ordinal()] |= canAccess ? bit : 0;
+    }
+
+    public boolean canAccessSide(Face face, Face other) {
+        int bit = 1 << other.ordinal();
+        return (sideAccess[face.ordinal()] & bit) != 0;
+    }
+
+    /**
+     * Internal use
+     */
+    public int[] getSideAccess() {
+        return sideAccess;
     }
 }

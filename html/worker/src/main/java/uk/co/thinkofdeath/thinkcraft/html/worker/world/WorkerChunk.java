@@ -17,7 +17,9 @@
 package uk.co.thinkofdeath.thinkcraft.html.worker.world;
 
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsArrayInteger;
 import elemental.html.ArrayBuffer;
+import uk.co.thinkofdeath.thinkcraft.shared.Face;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockRegistry;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Blocks;
@@ -199,12 +201,136 @@ public class WorkerChunk extends Chunk {
             }
         }
 
+        // Compute face access
+        updateSideAccess(sectionNumber);
+
         TUint8Array data = builder.toTypedArray();
         TUint8Array transData = transBuilder.toTypedArray();
+        JsArrayInteger accessData = (JsArrayInteger) JsArrayInteger.createArray();
+        int[] ad = sections[sectionNumber].getSideAccess();
+        for (int i = 0; i < ad.length; i++) {
+            accessData.set(i, ad[i]);
+        }
         world.worker.postMessage(WorkerMessage.create("chunk:build",
-                ChunkBuildReply.create(getX(), getZ(), sectionNumber, buildNumber, data,
-                        transData, modelJsArray),
-                false
+                ChunkBuildReply.create(
+                        getX(), getZ(), sectionNumber, buildNumber,
+                        accessData, data,
+                        transData, modelJsArray
+                ), false
         ), new Object[]{data.getBuffer(), transData.getBuffer()});
+    }
+
+    private void updateSideAccess(int sectionNumber) {
+        ChunkSection section = sections[sectionNumber];
+        Face[] faces = Face.values();
+        for (int i = 0; i < faces.length; i++) {
+            section.getSideAccess()[i] = 0;
+        }
+        boolean[] checked = new boolean[16 * 16 * 16];
+        for (int y = 0; y < 16; y++) {
+            for (int z = 0; z < 16; z++) {
+                for (int x = 0; x < 16; x++) {
+                    int key = keyBlockSection(x, y, z);
+                    if (checked[key]) {
+                        continue;
+                    }
+                    Block block = getBlock(x, (sectionNumber << 4) + y, z);
+                    if (!block.isRenderable() || !block.isSolid()) {
+                        int[] toCheck = new int[16 * 16 * 16];
+                        int pointer = 0;
+                        toCheck[pointer++] = key;
+                        checked[key] = true;
+                        boolean[] visitedFaces = new boolean[faces.length];
+                        while (pointer > 0) {
+                            int val = toCheck[--pointer];
+                            int bx = val & 0xF;
+                            int bz = (val >> 4) & 0xF;
+                            int by = val >> 8;
+
+                            if (bx == 0) {
+                                visitedFaces[Face.RIGHT.ordinal()] = true;
+                            } else if (bx == 15) {
+                                visitedFaces[Face.LEFT.ordinal()] = true;
+                            }
+                            if (by == 0) {
+                                visitedFaces[Face.BOTTOM.ordinal()] = true;
+                            } else if (by == 15) {
+                                visitedFaces[Face.TOP.ordinal()] = true;
+                            }
+                            if (bz == 0) {
+                                visitedFaces[Face.BACK.ordinal()] = true;
+                            } else if (bz == 15) {
+                                visitedFaces[Face.FRONT.ordinal()] = true;
+                            }
+
+                            int nKey;
+                            // X
+                            if (bx > 0 && !checked[nKey = keyBlockSection(bx - 1, by, bz)]) {
+                                Block b = getBlock(bx - 1, (sectionNumber << 4) + by, bz);
+                                if (!b.isRenderable() || !b.isSolid()) {
+                                    toCheck[pointer++] = nKey;
+                                }
+                                checked[nKey] = true;
+                            }
+                            if (bx < 15 && !checked[nKey = keyBlockSection(bx + 1, by, bz)]) {
+                                Block b = getBlock(bx + 1, (sectionNumber << 4) + by, bz);
+                                if (!b.isRenderable() || !b.isSolid()) {
+                                    checked[nKey] = true;
+                                    toCheck[pointer++] = nKey;
+                                }
+                                checked[nKey] = true;
+                            }
+                            // Y
+                            if (by > 0 && !checked[nKey = keyBlockSection(bx, by - 1, bz)]) {
+                                Block b = getBlock(bx, (sectionNumber << 4) + by - 1, bz);
+                                if (!b.isRenderable() || !b.isSolid()) {
+                                    toCheck[pointer++] = nKey;
+                                }
+                                checked[nKey] = true;
+                            }
+                            if (by < 15 && !checked[nKey = keyBlockSection(bx, by + 1, bz)]) {
+                                Block b = getBlock(bx, (sectionNumber << 4) + by + 1, bz);
+                                if (!b.isRenderable() || !b.isSolid()) {
+                                    checked[nKey] = true;
+                                    toCheck[pointer++] = nKey;
+                                }
+                                checked[nKey] = true;
+                            }
+                            // Z
+                            if (bz > 0 && !checked[nKey = keyBlockSection(bx, by, bz - 1)]) {
+                                Block b = getBlock(bx, (sectionNumber << 4) + by, bz - 1);
+                                if (!b.isRenderable() || !b.isSolid()) {
+                                    toCheck[pointer++] = nKey;
+                                }
+                                checked[nKey] = true;
+                            }
+                            if (bz < 15 && !checked[nKey = keyBlockSection(bx, by, bz + 1)]) {
+                                Block b = getBlock(bx, (sectionNumber << 4) + by, bz + 1);
+                                if (!b.isRenderable() || !b.isSolid()) {
+                                    checked[nKey] = true;
+                                    toCheck[pointer++] = nKey;
+                                }
+                                checked[nKey] = true;
+                            }
+                        }
+                        for (int i = 0; i < visitedFaces.length; i++) {
+                            if (visitedFaces[i]) {
+                                Face face = faces[i];
+                                for (int j = 0; j < visitedFaces.length; j++) {
+                                    if (visitedFaces[j]) {
+                                        Face other = faces[j];
+                                        section.setSideAccess(face, other, true);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static int keyBlockSection(int x, int y, int z) {
+        return x | (z << 4) | (y << 8);
     }
 }

@@ -16,12 +16,10 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.util;
 
-import uk.co.thinkofdeath.thinkcraft.shared.world.Chunk;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class ChunkMap<T extends Chunk> implements Iterable<T> {
+public class PositionMap<T> implements Iterable<T> {
 
     private int size;
     private int resizeThreshold;
@@ -29,11 +27,11 @@ public class ChunkMap<T extends Chunk> implements Iterable<T> {
     private int mask;
     private int maximumDistanceFromIdeal;
 
-    public ChunkMap() {
+    public PositionMap() {
         this(200);
     }
 
-    public ChunkMap(int capacity) {
+    public PositionMap(int capacity) {
         capacity = MathUtils.nextPowerOfTwo(capacity);
         allocate(capacity);
     }
