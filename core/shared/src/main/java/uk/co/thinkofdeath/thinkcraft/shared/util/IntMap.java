@@ -16,6 +16,7 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.util;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -27,6 +28,7 @@ import java.util.NoSuchElementException;
 public class IntMap<T> implements Iterable<T> {
 
     private Object[] values;
+    private int size = 0;
 
     public IntMap() {
         this(16);
@@ -50,6 +52,18 @@ public class IntMap<T> implements Iterable<T> {
         return (T) values[key];
     }
 
+    public T remove(int key) {
+        if (key >= values.length) {
+            return null;
+        }
+        T val = (T) values[key];
+        values[key] = null;
+        if (val != null) {
+            size--;
+        }
+        return val;
+    }
+
     /**
      * Stores a value into the map
      *
@@ -64,7 +78,18 @@ public class IntMap<T> implements Iterable<T> {
             values = new Object[MathUtils.nextPowerOfTwo(key)];
             System.arraycopy(old, 0, values, 0, old.length);
         }
+        if (values[key] == null) {
+            size++;
+        }
         values[key] = value;
+    }
+
+    public void clear() {
+        Arrays.fill(values, null);
+    }
+
+    public int size() {
+        return size;
     }
 
     @Override

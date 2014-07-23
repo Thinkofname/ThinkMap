@@ -28,13 +28,13 @@ import uk.co.thinkofdeath.thinkcraft.shared.Face;
 import uk.co.thinkofdeath.thinkcraft.shared.Position;
 import uk.co.thinkofdeath.thinkcraft.shared.model.PositionedModel;
 import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
+import uk.co.thinkofdeath.thinkcraft.shared.util.IntMap;
 import uk.co.thinkofdeath.thinkcraft.shared.util.PositionChunkSectionSet;
 import uk.co.thinkofdeath.thinkcraft.shared.vector.Frustum;
 import uk.co.thinkofdeath.thinkcraft.shared.vector.Matrix4;
 import uk.co.thinkofdeath.thinkcraft.shared.world.ChunkSection;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 import static elemental.html.WebGLRenderingContext.*;
 
@@ -76,7 +76,8 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
 
     // Reused vars
     private final PositionChunkSectionSet visited = new PositionChunkSectionSet();
-    private final Stack<Position> toVisit = new Stack<>();
+    private final IntMap<Position> toVisit = new IntMap<>();
+    private int toVisitPosition = 0;
 
     /**
      * Creates a Renderer that handles almost anything that is displayed to the user
@@ -175,11 +176,11 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         visited.clear();
         toVisit.clear();
         Position root = new Position((int) camera.getX() >> 4, (int) camera.getY() >> 4, (int) camera.getZ() >> 4);
-        toVisit.push(root);
+        toVisit.put(toVisitPosition++, root);
         visited.add(root.getX(), root.getY(), root.getZ());
 
-        while (!toVisit.isEmpty()) {
-            Position position = toVisit.pop();
+        while (toVisit.size() != 0) {
+            Position position = toVisit.remove(--toVisitPosition);
             boolean start = position.equals(root);
             if (position.getY() < 0 || position.getY() > 15 || !mapViewer.getWorld().isLoaded(position.getX(), position.getZ())) {
                 continue;
@@ -212,22 +213,22 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
 
             ChunkSection section = start ? null : chunk.getSection(position.getY());
             if (start || dx < 0) { // Right
-                checkAndGoto(section, position, Face.RIGHT, visited, toVisit, dx, dy, dz, start);
+                checkAndGoto(section, position, Face.RIGHT, dx, dy, dz, start);
             }
             if (start || dx > 0) { // Left
-                checkAndGoto(section, position, Face.LEFT, visited, toVisit, dx, dy, dz, start);
+                checkAndGoto(section, position, Face.LEFT, dx, dy, dz, start);
             }
             if (start || dy < 0) { // Bottom
-                checkAndGoto(section, position, Face.BOTTOM, visited, toVisit, dx, dy, dz, start);
+                checkAndGoto(section, position, Face.BOTTOM, dx, dy, dz, start);
             }
             if (start || dy > 0) { // Top
-                checkAndGoto(section, position, Face.TOP, visited, toVisit, dx, dy, dz, start);
+                checkAndGoto(section, position, Face.TOP, dx, dy, dz, start);
             }
             if (start || dz < 0) { // Back
-                checkAndGoto(section, position, Face.BACK, visited, toVisit, dx, dy, dz, start);
+                checkAndGoto(section, position, Face.BACK, dx, dy, dz, start);
             }
             if (start || dz > 0) { // Front
-                checkAndGoto(section, position, Face.FRONT, visited, toVisit, dx, dy, dz, start);
+                checkAndGoto(section, position, Face.FRONT, dx, dy, dz, start);
             }
         }
         chunkShader.disable();
@@ -340,8 +341,7 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         RendererUtils.requestAnimationFrame(this);
     }
 
-    private void checkAndGoto(ChunkSection section, Position position, Face face, PositionChunkSectionSet visited, Stack<Position> toVisit,
-                              int dx, int dy, int dz, boolean always) {
+    private void checkAndGoto(ChunkSection section, Position position, Face face, int dx, int dy, int dz, boolean always) {
         for (Face other : Face.values()) {
             if (other != face && (section == null || section.canAccessSide(face, other))) {
                 if ((face.getOffsetX() != 0 && -dx == other.getOffsetX() || dx == 0)
@@ -354,7 +354,7 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
                             position.getZ() + other.getOffsetZ()
                     );
                     if (!visited.contains(nextPosition.getX(), nextPosition.getY(), nextPosition.getZ())) {
-                        toVisit.push(nextPosition);
+                        toVisit.put(toVisitPosition++, nextPosition);
                         visited.add(nextPosition.getX(), nextPosition.getY(), nextPosition.getZ());
                     }
                 }
