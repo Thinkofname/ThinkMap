@@ -173,6 +173,126 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         chunkShader.setBlockTexture(textureLocations);
         chunkShader.setScale(timeScale);
 
+        renderChunks();
+
+        chunkShader.disable();
+
+        gl.enable(BLEND);
+        gl.blendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
+        chunkShaderAlpha.use();
+        chunkShaderAlpha.setPerspectiveMatrix(perspectiveMatrix);
+        chunkShaderAlpha.setViewMatrix(viewMatrix);
+        chunkShaderAlpha.setBlockTexture(textureLocations);
+        chunkShaderAlpha.setScale(timeScale);
+
+        JsUtils.sort(sortableRenderObjects, sortableSorter);
+        updateTransparentSections();
+        renderTransparentSections();
+
+        chunkShaderAlpha.disable();
+        gl.disable(BLEND);
+
+        // Debug hook
+        Debug.render(gl, perspectiveMatrix, viewMatrix);
+
+        RendererUtils.requestAnimationFrame(this);
+    }
+
+    private void renderTransparentSections() {
+        for (int i = sortableRenderObjects.size() - 1; i >= 0; i--) {
+            SortableRenderObject sortableRenderObject = sortableRenderObjects.get(i);
+            if (sortableRenderObject.count == 0 || sortableRenderObject.buffer == null) continue;
+
+            if (!frustum.isSphereInside(
+                    (sortableRenderObject.getX() << 4) + 8,
+                    (sortableRenderObject.getY() << 4) + 8,
+                    (sortableRenderObject.getZ() << 4) + 8, 16)
+                    || !visited.contains(sortableRenderObject.getX(), sortableRenderObject.getY(), sortableRenderObject.getZ())) {
+                continue;
+            }
+
+            gl.bindBuffer(ARRAY_BUFFER, sortableRenderObject.buffer);
+            chunkShaderAlpha.setOffset(sortableRenderObject.getX(), sortableRenderObject.getZ());
+            gl.vertexAttribPointer(chunkShaderAlpha.getPosition(), 3, UNSIGNED_SHORT, false, 22, 0);
+            gl.vertexAttribPointer(chunkShaderAlpha.getColour(), 4, UNSIGNED_BYTE, true, 22, 6);
+            gl.vertexAttribPointer(chunkShaderAlpha.getTexturePosition(), 2, UNSIGNED_SHORT, false, 22, 10);
+            gl.vertexAttribPointer(chunkShaderAlpha.getTextureDetails(), 4, UNSIGNED_SHORT, false, 22, 14);
+            gl.vertexAttribPointer(chunkShaderAlpha.getLighting(), 2, UNSIGNED_BYTE, false, 22, 20);
+            gl.drawArrays(TRIANGLES, 0, sortableRenderObject.count);
+        }
+    }
+
+    private void updateTransparentSections() {
+        int nx = (int) camera.getX();
+        int ny = (int) camera.getY();
+        int nz = (int) camera.getZ();
+
+        boolean moved = false;
+        if (cx != nx || cy != ny || cz != nz) {
+            cx = nx;
+            cy = ny;
+            cz = nz;
+            moved = true;
+        }
+        int updates = 0;
+
+        for (int i = 0, sortableRenderObjectsSize = sortableRenderObjects.size(); i < sortableRenderObjectsSize; i++) {
+            SortableRenderObject sortableRenderObject = sortableRenderObjects.get(i);
+
+            if (!frustum.isSphereInside(
+                    (sortableRenderObject.getX() << 4) + 8,
+                    (sortableRenderObject.getY() << 4) + 8,
+                    (sortableRenderObject.getZ() << 4) + 8, 16)
+                    || !visited.contains(sortableRenderObject.getX(), sortableRenderObject.getY(), sortableRenderObject.getZ())) {
+                continue;
+            }
+
+            if (moved) {
+                sortableRenderObject.needResort = true;
+            }
+
+            boolean forceUpdate = false;
+
+            if (sortableRenderObject.buffer == null) {
+                sortableRenderObject.buffer = gl.createBuffer();
+                sortableRenderObject.needResort = true;
+                forceUpdate = true;
+            }
+
+            boolean update = sortableRenderObject.needResort && updates < TRANSPARENT_UPDATES_LIMIT;
+
+            if (update || forceUpdate) {
+                updates++;
+                sortableRenderObject.needResort = false;
+
+                ArrayList<PositionedModel> models = sortableRenderObject.getModels();
+                JsUtils.sort(models, new ModelSorter(
+                        sortableRenderObject.getX(),
+                        sortableRenderObject.getZ(),
+                        camera));
+
+                int offset = 0;
+                TUint8Array temp = sortableRenderObject.tempArray;
+                TUint8Array data = sortableRenderObject.getData();
+                for (PositionedModel model : models) {
+                    temp.set(offset, data.subarray(model.getStart(),
+                            model.getStart() + model.getLength()));
+                    offset += model.getLength();
+                }
+
+                gl.bindBuffer(ARRAY_BUFFER, sortableRenderObject.buffer);
+                gl.bufferData(ARRAY_BUFFER, (ArrayBufferView) temp,
+                        DYNAMIC_DRAW);
+                sortableRenderObject.count = temp.length() / 22;
+            }
+
+            if (updates >= TRANSPARENT_UPDATES_LIMIT && !moved) {
+                break;
+            }
+        }
+    }
+
+    private void renderChunks() {
         visited.clear();
         toVisit.clear();
         Position root = new Position((int) camera.getX() >> 4, (int) camera.getY() >> 4, (int) camera.getZ() >> 4);
@@ -231,114 +351,6 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
                 checkAndGoto(section, position, Face.FRONT, dx, dy, dz, start);
             }
         }
-        chunkShader.disable();
-
-        gl.enable(BLEND);
-        gl.blendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
-        chunkShaderAlpha.use();
-        chunkShaderAlpha.setPerspectiveMatrix(perspectiveMatrix);
-        chunkShaderAlpha.setViewMatrix(viewMatrix);
-        chunkShaderAlpha.setBlockTexture(textureLocations);
-        chunkShaderAlpha.setScale(timeScale);
-
-        int nx = (int) camera.getX();
-        int ny = (int) camera.getY();
-        int nz = (int) camera.getZ();
-
-        boolean moved = false;
-        if (cx != nx || cy != ny || cz != nz) {
-            cx = nx;
-            cy = ny;
-            cz = nz;
-            moved = true;
-        }
-        int updates = 0;
-
-        JsUtils.sort(sortableRenderObjects, sortableSorter);
-        for (int i = 0, sortableRenderObjectsSize = sortableRenderObjects.size(); i < sortableRenderObjectsSize; i++) {
-            SortableRenderObject sortableRenderObject = sortableRenderObjects.get(i);
-
-            if (!frustum.isSphereInside(
-                    (sortableRenderObject.getX() << 4) + 8,
-                    (sortableRenderObject.getY() << 4) + 8,
-                    (sortableRenderObject.getZ() << 4) + 8, 16)
-                    || !visited.contains(sortableRenderObject.getX(), sortableRenderObject.getY(), sortableRenderObject.getZ())) {
-                continue;
-            }
-
-            if (moved) {
-                sortableRenderObject.needResort = true;
-            }
-
-            boolean forceUpdate = false;
-
-            if (sortableRenderObject.buffer == null) {
-                sortableRenderObject.buffer = gl.createBuffer();
-                sortableRenderObject.needResort = true;
-                forceUpdate = true;
-            }
-
-            boolean update = sortableRenderObject.needResort && updates < TRANSPARENT_UPDATES_LIMIT;
-
-            if (update || forceUpdate) {
-                updates++;
-                sortableRenderObject.needResort = false;
-
-                ArrayList<PositionedModel> models = sortableRenderObject.getModels();
-                JsUtils.sort(models, new ModelSorter(
-                        sortableRenderObject.getX(),
-                        sortableRenderObject.getZ(),
-                        camera));
-
-                int offset = 0;
-                TUint8Array temp = sortableRenderObject.tempArray;
-                TUint8Array data = sortableRenderObject.getData();
-                for (PositionedModel model : models) {
-                    temp.set(offset, data.subarray(model.getStart(),
-                            model.getStart() + model.getLength()));
-                    offset += model.getLength();
-                }
-
-                gl.bindBuffer(ARRAY_BUFFER, sortableRenderObject.buffer);
-                gl.bufferData(ARRAY_BUFFER, (ArrayBufferView) temp,
-                        DYNAMIC_DRAW);
-                sortableRenderObject.count = temp.length() / 22;
-            }
-
-            if (updates >= TRANSPARENT_UPDATES_LIMIT && !moved) {
-                break;
-            }
-        }
-
-        for (int i = sortableRenderObjects.size() - 1; i >= 0; i--) {
-            SortableRenderObject sortableRenderObject = sortableRenderObjects.get(i);
-            if (sortableRenderObject.count == 0 || sortableRenderObject.buffer == null) continue;
-
-            if (!frustum.isSphereInside(
-                    (sortableRenderObject.getX() << 4) + 8,
-                    (sortableRenderObject.getY() << 4) + 8,
-                    (sortableRenderObject.getZ() << 4) + 8, 16)
-                    || !visited.contains(sortableRenderObject.getX(), sortableRenderObject.getY(), sortableRenderObject.getZ())) {
-                continue;
-            }
-
-            gl.bindBuffer(ARRAY_BUFFER, sortableRenderObject.buffer);
-            chunkShaderAlpha.setOffset(sortableRenderObject.getX(), sortableRenderObject.getZ());
-            gl.vertexAttribPointer(chunkShaderAlpha.getPosition(), 3, UNSIGNED_SHORT, false, 22, 0);
-            gl.vertexAttribPointer(chunkShaderAlpha.getColour(), 4, UNSIGNED_BYTE, true, 22, 6);
-            gl.vertexAttribPointer(chunkShaderAlpha.getTexturePosition(), 2, UNSIGNED_SHORT, false, 22, 10);
-            gl.vertexAttribPointer(chunkShaderAlpha.getTextureDetails(), 4, UNSIGNED_SHORT, false, 22, 14);
-            gl.vertexAttribPointer(chunkShaderAlpha.getLighting(), 2, UNSIGNED_BYTE, false, 22, 20);
-            gl.drawArrays(TRIANGLES, 0, sortableRenderObject.count);
-        }
-
-        chunkShaderAlpha.disable();
-        gl.disable(BLEND);
-
-        // Debug hook
-        Debug.render(gl, perspectiveMatrix, viewMatrix);
-
-        RendererUtils.requestAnimationFrame(this);
     }
 
     private void checkAndGoto(ChunkSection section, Position position, Face face, int dx, int dy, int dz, boolean always) {
