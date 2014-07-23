@@ -280,11 +280,13 @@ public class BlockRegistry {
         register("minecraft", "tallgrass", new BlockBuilder(new BlockTallGrass(mapViewer))
                 .solid(false)
                 .collidable(false)
+                .smoothLighting(false)
                 .create(), 31);
         register("minecraft", "deadbush", new BlockBuilder(mapViewer)
                 .model(BlockModels.createCross(mapViewer.getTexture("deadbush")))
                 .solid(false)
                 .collidable(false)
+                .smoothLighting(false)
                 .create(), 32);
         register("minecraft", "piston", new BlockBuilder(new BlockPiston(mapViewer, "normal"))
                 .solid(false)
@@ -303,20 +305,24 @@ public class BlockRegistry {
                 .model(BlockModels.createCross(mapViewer.getTexture("flower_dandelion")))
                 .solid(false)
                 .collidable(false)
+                .smoothLighting(false)
                 .create(), 37);
         register("minecraft", "red_flower", new BlockBuilder(new BlockFlowers(mapViewer))
                 .solid(false)
                 .collidable(false)
+                .smoothLighting(false)
                 .create(), 38);
         register("minecraft", "brown_mushroom", new BlockBuilder(mapViewer)
                 .model(BlockModels.createCross(mapViewer.getTexture("mushroom_brown")))
                 .solid(false)
                 .collidable(false)
+                .smoothLighting(false)
                 .create(), 39);
         register("minecraft", "red_mushroom", new BlockBuilder(mapViewer)
                 .model(BlockModels.createCross(mapViewer.getTexture("mushroom_red")))
                 .solid(false)
                 .collidable(false)
+                .smoothLighting(false)
                 .create(), 40);
         register("minecraft", "gold_block", new BlockBuilder(mapViewer)
                 .texture("gold_block")
