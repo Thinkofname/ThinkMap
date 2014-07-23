@@ -36,6 +36,11 @@ public class Model {
         public boolean shouldRenderAgainst(Block other) {
             return true;
         }
+
+        @Override
+        public boolean useSmoothLighting() {
+            return true;
+        }
     };
     private static final TextureGetter NO_REPLACE_TEXTURE = new TextureGetter() {
         @Override
@@ -106,7 +111,8 @@ public class Model {
                 LightInfo light = calculateLight(chunk.getWorld(), x, y, z,
                         (chunk.getX() << 4) + x + vertex.getX(),
                         y + vertex.getY(),
-                        (chunk.getZ() << 4) + z + vertex.getZ(), face.getFace());
+                        (chunk.getZ() << 4) + z + vertex.getZ(), face.getFace(),
+                        renderChecker.useSmoothLighting());
                 builder
                         .position(x + vertex.getX(), y + vertex.getY(), z + vertex.getZ())
                         .colour(face.r, face.g, face.b)
@@ -120,7 +126,8 @@ public class Model {
                 LightInfo light = calculateLight(chunk.getWorld(), x, y, z,
                         (chunk.getX() << 4) + x + vertex.getX(),
                         y + vertex.getY(),
-                        (chunk.getZ() << 4) + z + vertex.getZ(), face.getFace());
+                        (chunk.getZ() << 4) + z + vertex.getZ(), face.getFace(),
+                        renderChecker.useSmoothLighting());
                 builder
                         .position(x + vertex.getX(), y + vertex.getY(), z + vertex.getZ())
                         .colour(face.r, face.g, face.b)
@@ -131,9 +138,12 @@ public class Model {
         }
     }
 
-    public static LightInfo calculateLight(World world, int origX, int origY, int origZ, float x, float y, float z, Face face) {
+    private static LightInfo calculateLight(World world, int origX, int origY, int origZ, float x, float y, float z, Face face, boolean smooth) {
         int emittedLight = world.getEmittedLight(origX, origY, origZ);
         int skyLight = world.getSkyLight(origX, origY, origZ);
+        if (!smooth) {
+            return new LightInfo(emittedLight, skyLight);
+        }
 
         int count = 1;
 
@@ -444,6 +454,8 @@ public class Model {
          * @return Whether it should render
          */
         public boolean shouldRenderAgainst(Block other);
+
+        public boolean useSmoothLighting();
     }
 
     /**

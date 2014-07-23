@@ -112,4 +112,9 @@ public class BlockBuilder {
         block.model = model;
         return this;
     }
+
+    public BlockBuilder smoothLighting(boolean smoothLighting) {
+        block.smoothLighting = smoothLighting;
+        return this;
+    }
 }

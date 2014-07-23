@@ -45,6 +45,7 @@ public class Block implements Model.RenderChecker {
     private Texture texture;
     protected boolean allowSelf;
     protected Model model;
+    private boolean smoothLighting;
     // Cache value since it doesn't change
     private String toString;
 
@@ -58,6 +59,7 @@ public class Block implements Model.RenderChecker {
         texture = factory.getTexture();
         allowSelf = factory.allowSelf;
         model = factory.model;
+        smoothLighting = factory.smoothLighting;
     }
 
     /**
@@ -236,5 +238,10 @@ public class Block implements Model.RenderChecker {
     @Override
     public boolean shouldRenderAgainst(Block other) {
         return !other.isSolid() && (allowSelf || other != this);
+    }
+
+    @Override
+    public boolean useSmoothLighting() {
+        return smoothLighting;
     }
 }

@@ -38,6 +38,7 @@ public class BlockFactory {
     boolean transparent = false;
     String texture;
     Model model;
+    boolean smoothLighting = true;
     boolean allowSelf;
     protected IMapViewer mapViewer;
 
