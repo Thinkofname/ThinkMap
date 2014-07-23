@@ -16,10 +16,10 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.world;
 
-import elemental.util.Timer;
 import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Blocks;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
 import uk.co.thinkofdeath.thinkcraft.shared.util.PositionMap;
 
 public abstract class World {
@@ -30,12 +30,12 @@ public abstract class World {
 
     protected World(IMapViewer mapViewer) {
         this.mapViewer = mapViewer;
-        new Timer() {
+        Platform.runRepeated(new Runnable() {
             @Override
             public void run() {
                 tick();
             }
-        }.scheduleRepeating(1000 / 20);
+        }, 1000 / 20);
     }
 
     /**

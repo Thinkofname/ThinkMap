@@ -51,4 +51,22 @@ public abstract class Platform {
      * @see #createFloatBuffer(int)
      */
     public abstract FloatBuffer newFloatBuffer(int size);
+
+    /**
+     * Runs the passed runnable repeatedly at the interval
+     * specified
+     *
+     * @param runnable
+     *         The runnable to run
+     * @param timeMS
+     *         The interval in milliseconds
+     */
+    public static void runRepeated(Runnable runnable, int timeMS) {
+        platform.repeatTask(runnable, timeMS);
+    }
+
+    /**
+     * @see #runRepeated(Runnable, int)
+     */
+    public abstract void repeatTask(Runnable runnable, int timeMS);
 }
