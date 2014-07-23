@@ -180,6 +180,7 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
 
         while (!toVisit.isEmpty()) {
             Position position = toVisit.pop();
+            boolean start = position.equals(root);
             if (position.getY() < 0 || position.getY() > 15 || !mapViewer.getWorld().isLoaded(position.getX(), position.getZ())) {
                 continue;
             }
@@ -187,7 +188,7 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
             ClientChunk chunk = (ClientChunk) mapViewer.getWorld().getChunk(position.getX(), position.getZ());
             ChunkRenderObject renderObject = chunk.getRenderObjects()[position.getY()];
 
-            if (!frustum.isSphereInside(
+            if (!start && !frustum.isSphereInside(
                     (position.getX() << 4) + 8,
                     (position.getY() << 4) + 8,
                     (position.getZ() << 4) + 8, 16)) {
@@ -205,28 +206,28 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
                 gl.drawArrays(TRIANGLES, 0, renderObject.triangleCount);
             }
 
-            int dx = ((int) camera.getX() >> 4) - position.getX();
-            int dy = ((int) camera.getY() >> 4) - position.getY();
-            int dz = ((int) camera.getZ() >> 4) - position.getZ();
+            int dx = (int) Math.signum(((int) camera.getX() >> 4) - position.getX());
+            int dy = (int) Math.signum(((int) camera.getY() >> 4) - position.getY());
+            int dz = (int) Math.signum(((int) camera.getZ() >> 4) - position.getZ());
 
-            ChunkSection section = position.equals(root) ? null : chunk.getSection(position.getY());
-            if (position.equals(root) || dx < 0) { // Right
-                checkAndGoto(section, position, Face.RIGHT, visited, toVisit);
+            ChunkSection section = start ? null : chunk.getSection(position.getY());
+            if (start || dx < 0) { // Right
+                checkAndGoto(section, position, Face.RIGHT, visited, toVisit, dx, dy, dz, start);
             }
-            if (position.equals(root) || dx > 0) { // Left
-                checkAndGoto(section, position, Face.LEFT, visited, toVisit);
+            if (start || dx > 0) { // Left
+                checkAndGoto(section, position, Face.LEFT, visited, toVisit, dx, dy, dz, start);
             }
-            if (position.equals(root) || dy < 0) { // Bottom
-                checkAndGoto(section, position, Face.BOTTOM, visited, toVisit);
+            if (start || dy < 0) { // Bottom
+                checkAndGoto(section, position, Face.BOTTOM, visited, toVisit, dx, dy, dz, start);
             }
-            if (position.equals(root) || dy > 0) { // Top
-                checkAndGoto(section, position, Face.TOP, visited, toVisit);
+            if (start || dy > 0) { // Top
+                checkAndGoto(section, position, Face.TOP, visited, toVisit, dx, dy, dz, start);
             }
-            if (position.equals(root) || dz < 0) { // Back
-                checkAndGoto(section, position, Face.BACK, visited, toVisit);
+            if (start || dz < 0) { // Back
+                checkAndGoto(section, position, Face.BACK, visited, toVisit, dx, dy, dz, start);
             }
-            if (position.equals(root) || dz > 0) { // Front
-                checkAndGoto(section, position, Face.FRONT, visited, toVisit);
+            if (start || dz > 0) { // Front
+                checkAndGoto(section, position, Face.FRONT, visited, toVisit, dx, dy, dz, start);
             }
         }
         chunkShader.disable();
@@ -339,17 +340,23 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         RendererUtils.requestAnimationFrame(this);
     }
 
-    private void checkAndGoto(ChunkSection section, Position position, Face face, PositionChunkSectionSet visited, Stack<Position> toVisit) {
+    private void checkAndGoto(ChunkSection section, Position position, Face face, PositionChunkSectionSet visited, Stack<Position> toVisit,
+                              int dx, int dy, int dz, boolean always) {
         for (Face other : Face.values()) {
             if (other != face && (section == null || section.canAccessSide(face, other))) {
-                Position nextPosition = new Position(
-                        position.getX() + other.getOffsetX(),
-                        position.getY() + other.getOffsetY(),
-                        position.getZ() + other.getOffsetZ()
-                );
-                if (!visited.contains(nextPosition.getX(), nextPosition.getY(), nextPosition.getZ())) {
-                    toVisit.push(nextPosition);
-                    visited.add(nextPosition.getX(), nextPosition.getY(), nextPosition.getZ());
+                if ((face.getOffsetX() != 0 && -dx == other.getOffsetX() || dx == 0)
+                        || (other.getOffsetY() != 0 && -dy == other.getOffsetY() || dy == 0)
+                        || (other.getOffsetZ() != 0 && -dz == other.getOffsetZ() || dz == 0)
+                        || always) {
+                    Position nextPosition = new Position(
+                            position.getX() + other.getOffsetX(),
+                            position.getY() + other.getOffsetY(),
+                            position.getZ() + other.getOffsetZ()
+                    );
+                    if (!visited.contains(nextPosition.getX(), nextPosition.getY(), nextPosition.getZ())) {
+                        toVisit.push(nextPosition);
+                        visited.add(nextPosition.getX(), nextPosition.getY(), nextPosition.getZ());
+                    }
                 }
             }
         }
