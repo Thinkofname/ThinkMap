@@ -80,7 +80,7 @@ public class ChunkManager {
             activeChunks.remove(chunkKey(chunk.getX(), chunk.getZ()));
         }
         // Grab a final copy to save to the region file
-        final ChunkSnapshot snapshot = chunk.getChunkSnapshot();
+        final ChunkSnapshot snapshot = chunk.getChunkSnapshot(false, true, false);
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
             @Override
@@ -263,7 +263,7 @@ public class ChunkManager {
                 count++;
             }
         }
-        ByteBuf data = allocator.buffer(16 * 16 * 16 * 4 * count + 3);
+        ByteBuf data = allocator.buffer(16 * 16 * 16 * 4 * count + 3 + 256);
         data.writeByte(1); // The chunk exists
         data.writeShort(mask);
         int offset = 0;
@@ -288,7 +288,12 @@ public class ChunkManager {
                 }
             }
         }
-        data.writerIndex(16 * 16 * 16 * 4 * count + 3);
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                data.setByte(skyDataOffset + offset + 3 + x + z * 16, ThinkBiome.bukkitToId(chunk.getBiome(x, z)));
+            }
+        }
+        data.writerIndex(data.capacity());
         try {
             GZIPOutputStream gzip = new GZIPOutputStream(new ByteBufOutputStream(out));
             byte[] bytes = new byte[data.readableBytes()];

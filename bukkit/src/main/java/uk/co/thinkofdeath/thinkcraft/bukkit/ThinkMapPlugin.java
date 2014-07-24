@@ -54,7 +54,7 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
     // Only needs to be changed when assets we use update
     public static final String MINECRAFT_VERSION = "1.7.9";
     public static final int RESOURCE_VERSION = 2;
-    public static final int WORLD_VERSION = 2;
+    public static final int WORLD_VERSION = 3;
 
     private final Map<String, ChunkManager> chunkManagers = new HashMap<>();
     private final WebHandler webHandler = new WebHandler(this);
