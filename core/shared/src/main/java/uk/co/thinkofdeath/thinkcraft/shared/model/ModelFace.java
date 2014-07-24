@@ -283,8 +283,6 @@ public class ModelFace {
 
     /**
      * Allows for iterating over this face's vertices.
-     * <p/>
-     * TODO: Java 8 lambdas
      *
      * @param it
      *         The interface to handle each vertex

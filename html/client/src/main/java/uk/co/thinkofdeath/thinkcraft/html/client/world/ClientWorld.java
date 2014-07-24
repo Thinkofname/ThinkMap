@@ -71,12 +71,11 @@ public class ClientWorld extends World {
                 if (task.getChunk().isUnloaded()) {
                     continue;
                 }
-                mapViewer.getWorkerPool().sendMessage("chunk:build",
-                        ChunkBuildMessage.create(task.getChunk().getX(), task.getChunk().getZ(),
+                mapViewer.getWorkerPool().sendMessage(
+                        new ChunkBuildMessage(task.getChunk().getX(), task.getChunk().getZ(),
                                 task.getSectionNumber(),
                                 task.getBuildNumber()),
-                        new Object[0]
-                );
+                        false);
             }
         }
     }
@@ -94,11 +93,9 @@ public class ClientWorld extends World {
     void requestBuild(ClientChunk chunk, int sectionNumber, int buildNumber) {
         if (mapViewer.getWorkerPool().hasFreeWorker(MAX_WORKER_TASKS)) {
             // Send straight away
-            mapViewer.getWorkerPool().sendMessage("chunk:build",
-                    ChunkBuildMessage.create(chunk.getX(), chunk.getZ(), sectionNumber,
-                            buildNumber),
-                    new Object[0]
-            );
+            mapViewer.getWorkerPool().sendMessage(
+                    new ChunkBuildMessage(chunk.getX(), chunk.getZ(), sectionNumber, buildNumber),
+                    false);
             return;
         }
         // Queue for later
@@ -190,8 +187,7 @@ public class ClientWorld extends World {
                         loadingChunks.remove(key);
                         return;
                     }
-                    mapViewer.getWorkerPool().sendMessage("chunk:load",
-                            ChunkLoadMessage.create(x, z, data), new Object[0], true);
+                    mapViewer.getWorkerPool().sendMessage(new ChunkLoadMessage(x, z, data), true);
                 } else {
                     // Request failed (e.g. non-existing chunk)
                     // remove from the loadingChunks set so
@@ -249,10 +245,7 @@ public class ClientWorld extends World {
     @Override
     public void unloadChunk(int x, int z) {
         super.unloadChunk(x, z);
-        mapViewer.getWorkerPool().sendMessage("chunk:unload",
-                ChunkUnloadMessage.create(x, z),
-                new Object[0],
-                true);
+        mapViewer.getWorkerPool().sendMessage(new ChunkUnloadMessage(x, z), true);
         for (int i = 0; i < 16; i++) {
             String buildKey = buildKey(x, z, i);
             if (taskMap.containsKey(buildKey)) {

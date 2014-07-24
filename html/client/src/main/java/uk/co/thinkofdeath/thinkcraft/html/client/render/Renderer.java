@@ -32,6 +32,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.util.IntMap;
 import uk.co.thinkofdeath.thinkcraft.shared.util.PositionChunkSectionSet;
 import uk.co.thinkofdeath.thinkcraft.shared.vector.Frustum;
 import uk.co.thinkofdeath.thinkcraft.shared.vector.Matrix4;
+import uk.co.thinkofdeath.thinkcraft.shared.worker.FreeMessage;
 import uk.co.thinkofdeath.thinkcraft.shared.world.ChunkSection;
 
 import java.util.ArrayList;
@@ -97,7 +98,6 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
 
         gl = RendererUtils.getContext(canvas);
 
-        // TODO: Give a nicer error
         if (gl == null) throw new UnsupportedOperationException("WebGL not supported");
 
         onResize(); // Setup canvas
@@ -403,7 +403,7 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         gl.bindBuffer(ARRAY_BUFFER, renderObject.buffer);
         gl.bufferData(ARRAY_BUFFER, (ArrayBufferView) data, STATIC_DRAW);
 
-        mapViewer.getWorkerPool().sendMessage(sender, "pool:free", data, new Object[]{data.getBuffer()}, false);
+        mapViewer.getWorkerPool().sendMessage(sender, new FreeMessage(data), false, data.getBuffer());
     }
 
     /**

@@ -31,7 +31,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
 import uk.co.thinkofdeath.thinkcraft.shared.util.IntMap;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkBuildReply;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage;
-import uk.co.thinkofdeath.thinkcraft.shared.worker.WorkerMessage;
+import uk.co.thinkofdeath.thinkcraft.shared.worker.Messages;
 import uk.co.thinkofdeath.thinkcraft.shared.world.Chunk;
 import uk.co.thinkofdeath.thinkcraft.shared.world.ChunkSection;
 
@@ -135,13 +135,13 @@ public class WorkerChunk extends Chunk {
         if (reply) {
             sendChunk();
         } else {
-            world.worker.postMessage(WorkerMessage.create("null", null, false));
+            world.worker.sendMessage(Messages.NULL, false);
         }
     }
 
     // Sends the chunk back to the requester
     private void sendChunk() {
-        ChunkLoadedMessage message = ChunkLoadedMessage.create(getX(), getZ());
+        ChunkLoadedMessage message = new ChunkLoadedMessage(getX(), getZ());
         ArrayList<Object> buffers = new ArrayList<>();
         // Copy sections
         for (int i = 0; i < 16; i++) {
@@ -160,9 +160,7 @@ public class WorkerChunk extends Chunk {
             message.addIdBlockMapping(key, idBlockMap.get(key));
         }
 
-        world.worker.postMessage(
-                WorkerMessage.create("chunk:loaded", message, false),
-                buffers.toArray(new Object[buffers.size()]));
+        world.worker.sendMessage(message, false, buffers.toArray(new Object[buffers.size()]));
     }
 
     /**
@@ -211,13 +209,12 @@ public class WorkerChunk extends Chunk {
         for (int i = 0; i < ad.length; i++) {
             accessData.set(i, ad[i]);
         }
-        world.worker.postMessage(WorkerMessage.create("chunk:build",
-                ChunkBuildReply.create(
+        world.worker.sendMessage(
+                new ChunkBuildReply(
                         getX(), getZ(), sectionNumber, buildNumber,
                         accessData, data,
                         transData, modelJsArray
-                ), false
-        ), new Object[]{data.getBuffer(), transData.getBuffer()});
+                ), false, data.getBuffer(), transData.getBuffer());
     }
 
     private void updateSideAccess(int sectionNumber) {

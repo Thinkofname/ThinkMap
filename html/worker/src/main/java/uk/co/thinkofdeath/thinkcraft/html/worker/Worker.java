@@ -24,6 +24,7 @@ import elemental.events.MessageEvent;
 import elemental.html.WorkerGlobalScope;
 import uk.co.thinkofdeath.thinkcraft.html.shared.JavascriptLib;
 import uk.co.thinkofdeath.thinkcraft.html.shared.TextureMap;
+import uk.co.thinkofdeath.thinkcraft.html.shared.serialize.JsObjectSerializer;
 import uk.co.thinkofdeath.thinkcraft.html.shared.settings.ClientSettings;
 import uk.co.thinkofdeath.thinkcraft.html.worker.world.WorkerChunk;
 import uk.co.thinkofdeath.thinkcraft.html.worker.world.WorkerWorld;
@@ -32,15 +33,12 @@ import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockRegistry;
 import uk.co.thinkofdeath.thinkcraft.shared.building.DynamicBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
-import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkBuildMessage;
-import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadMessage;
-import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkUnloadMessage;
-import uk.co.thinkofdeath.thinkcraft.shared.worker.WorkerMessage;
+import uk.co.thinkofdeath.thinkcraft.shared.worker.*;
 import uk.co.thinkofdeath.thinkcraft.shared.world.World;
 
 import java.util.HashMap;
 
-public class Worker implements EntryPoint, EventListener, IMapViewer {
+public class Worker implements EntryPoint, EventListener, IMapViewer, MessageHandler {
 
     private final BlockRegistry blockRegistry = new BlockRegistry(this);
     private final WorkerWorld world = new WorkerWorld(this);
@@ -51,62 +49,15 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
     @Override
     public void onModuleLoad() {
         JavascriptLib.init();
-        setOnmessage(this);
+        setOnMessage(this);
     }
 
     @Override
     public void handleEvent(Event evt) {
         MessageEvent event = (MessageEvent) evt;
-        WorkerMessage message = (WorkerMessage) event.getData();
-
-        switch (message.getType()) {
-            case "chunk:load":
-                ChunkLoadMessage chunkLoadMessage = (ChunkLoadMessage) message.getMessage();
-                WorkerChunk c = new WorkerChunk(world,
-                        chunkLoadMessage.getX(), chunkLoadMessage.getZ(),
-                        chunkLoadMessage.getData(), message.getReturn());
-                world.addChunk(c);
-                c.postAdd();
-                break;
-            case "chunk:unload":
-                ChunkUnloadMessage chunkUnloadMessage = (ChunkUnloadMessage) message.getMessage();
-                world.unloadChunk(chunkUnloadMessage.getX(), chunkUnloadMessage.getZ());
-                postMessage(WorkerMessage.create("null", null, false));
-                break;
-            case "chunk:build":
-                ChunkBuildMessage chunkBuildMessage = (ChunkBuildMessage) message.getMessage();
-                WorkerChunk chunk = (WorkerChunk) world.getChunk(chunkBuildMessage.getX(),
-                        chunkBuildMessage.getZ());
-                if (chunk != null) {
-                    chunk.build(chunkBuildMessage.getSectionNumber(),
-                            chunkBuildMessage.getBuildNumber());
-                } else {
-                    postMessage(WorkerMessage.create("null", null, false));
-                }
-                break;
-            case "textures":
-                TextureMap tmap = (TextureMap) message.getMessage();
-                tmap.forEach(new TextureMap.Looper() {
-                    @Override
-                    public void forEach(String k, Texture v) {
-                        textures.put(k, v);
-                    }
-                });
-                postMessage(WorkerMessage.create("null", null, false));
-                break;
-            case "settings":
-                clientSettings = (ClientSettings) message.getMessage();
-                handleSettings();
-                getBlockRegistry().init();
-                postMessage(WorkerMessage.create("null", null, false));
-                break;
-            case "pool:free":
-                TUint8Array data = (TUint8Array) message.getMessage();
-                DynamicBuffer.POOL.free(data);
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown message type: " + message.getType());
-        }
+        JsObjectSerializer serializer = JsObjectSerializer.from(event.getData());
+        Message message = Messages.read(serializer);
+        message.handle(this);
     }
 
     private void handleSettings() {
@@ -158,15 +109,12 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
         return $wnd;
     }-*/;
 
-    /**
-     * Posts a message back to the creator of this worker
-     *
-     * @param message
-     *         The message to send
-     */
-    public native void postMessage(Object message)/*-{
-        $wnd.postMessage(message);
-    }-*/;
+    public void sendMessage(WorkerMessage message, boolean reply, Object... transferables) {
+        JsObjectSerializer serializer = JsObjectSerializer.newInstance();
+        message.setReturn(reply);
+        Messages.write(message, serializer);
+        postMessage(serializer, transferables);
+    }
 
     /**
      * Posts a message back to the creator of this worker and transfers all of the transferables
@@ -176,15 +124,78 @@ public class Worker implements EntryPoint, EventListener, IMapViewer {
      * @param transferables
      *         The transferables to send
      */
-    public native void postMessage(Object message, Object[] transferables)/*-{
-        $wnd.postMessage(message, transferables);
+    private native void postMessage(JsObjectSerializer message, Object[] transferables)/*-{
+        self.postMessage(message, transferables);
     }-*/;
 
-    private native void setOnmessage(EventListener eventListener)/*-{
+    private native void setOnMessage(EventListener eventListener)/*-{
         self.onmessage = @elemental.js.dom.JsElementalMixinBase::getHandlerFor(Lelemental/events/EventListener;)(eventListener);
     }-*/;
 
     private native void importScripts(String script)/*-{
         importScripts(script);
     }-*/;
+
+    @Override
+    public void handle(ChunkBuildMessage chunkBuildMessage) {
+        WorkerChunk chunk = (WorkerChunk) world.getChunk(chunkBuildMessage.getX(),
+                chunkBuildMessage.getZ());
+        if (chunk != null) {
+            chunk.build(chunkBuildMessage.getSectionNumber(),
+                    chunkBuildMessage.getBuildNumber());
+        } else {
+            sendMessage(Messages.NULL, false);
+        }
+    }
+
+    @Override
+    public void handle(ChunkUnloadMessage chunkUnloadMessage) {
+        world.unloadChunk(chunkUnloadMessage.getX(), chunkUnloadMessage.getZ());
+        sendMessage(Messages.NULL, false);
+    }
+
+    @Override
+    public void handle(ChunkBuildReply chunkBuildReply) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void handle(ChunkLoadMessage chunkLoadMessage) {
+        WorkerChunk c = new WorkerChunk(world,
+                chunkLoadMessage.getX(), chunkLoadMessage.getZ(),
+                chunkLoadMessage.getData(), chunkLoadMessage.getReturn());
+        world.addChunk(c);
+        c.postAdd();
+    }
+
+    @Override
+    public void handle(ChunkLoadedMessage chunkLoadedMessage) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void handle(ClientSettingsMessage clientSettingsMessage) {
+        clientSettings = ClientSettings.create(clientSettingsMessage.areOresHidden());
+        handleSettings();
+        getBlockRegistry().init();
+        sendMessage(Messages.NULL, false);
+    }
+
+    @Override
+    public void handle(TextureMessage textureMessage) {
+        TextureMap tmap = (TextureMap) textureMessage.getValue();
+        tmap.forEach(new TextureMap.Looper() {
+            @Override
+            public void forEach(String k, Texture v) {
+                textures.put(k, v);
+            }
+        });
+        sendMessage(Messages.NULL, false);
+    }
+
+    @Override
+    public void handle(FreeMessage freeMessage) {
+        TUint8Array data = (TUint8Array) freeMessage.getValue();
+        DynamicBuffer.POOL.free(data);
+    }
 }

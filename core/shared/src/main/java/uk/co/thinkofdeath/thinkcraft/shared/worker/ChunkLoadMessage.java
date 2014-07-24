@@ -16,11 +16,17 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.worker;
 
-import com.google.gwt.core.client.JavaScriptObject;
 import elemental.html.ArrayBuffer;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.ReadSerializer;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.WriteSerializer;
 
-public class ChunkLoadMessage extends JavaScriptObject {
-    protected ChunkLoadMessage() {
+public class ChunkLoadMessage extends WorkerMessage {
+
+    private int x;
+    private int z;
+    private ArrayBuffer data;
+
+    ChunkLoadMessage() {
     }
 
     /**
@@ -32,36 +38,63 @@ public class ChunkLoadMessage extends JavaScriptObject {
      *         The z position of the chunk
      * @param data
      *         The data of the chunk
-     * @return The message
      */
-    public static native ChunkLoadMessage create(int x, int z, ArrayBuffer data)/*-{
-        return {x: x, z: z, data: data};
-    }-*/;
+    public ChunkLoadMessage(int x, int z, ArrayBuffer data) {
+
+        this.x = x;
+        this.z = z;
+        this.data = data;
+    }
 
     /**
      * Returns the x position of the requested chunk
      *
      * @return The x position
      */
-    public final native int getX()/*-{
-        return this.x;
-    }-*/;
+    public int getX() {
+        return x;
+    }
 
     /**
      * Returns the z position of the requested chunk
      *
      * @return The z position
      */
-    public final native int getZ()/*-{
-        return this.z;
-    }-*/;
+    public int getZ() {
+        return z;
+    }
 
     /**
      * Returns the data needed to load this chunk
      *
      * @return The data
      */
-    public final native ArrayBuffer getData()/*-{
-        return this.data;
-    }-*/;
+    public ArrayBuffer getData() {
+        return data;
+    }
+
+    @Override
+    public void serialize(WriteSerializer serializer) {
+        super.serialize(serializer);
+        serializer.putInt("x", x);
+        serializer.putInt("z", z);
+        serializer.putTemp("data", data);
+    }
+
+    @Override
+    protected void read(ReadSerializer serializer) {
+        x = serializer.getInt("x");
+        z = serializer.getInt("z");
+        data = (ArrayBuffer) serializer.getTemp("data");
+    }
+
+    @Override
+    protected WorkerMessage create() {
+        return new ChunkLoadMessage();
+    }
+
+    @Override
+    public void handle(MessageHandler handler) {
+        handler.handle(this);
+    }
 }

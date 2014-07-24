@@ -18,10 +18,18 @@ package uk.co.thinkofdeath.thinkcraft.shared.worker;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.ReadSerializer;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.WriteSerializer;
 import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
 
-public class ChunkLoadedMessage extends JavaScriptObject {
-    protected ChunkLoadedMessage() {
+public class ChunkLoadedMessage extends WorkerMessage {
+
+    private int x;
+    private int z;
+    private JavaScriptObject nativeVoodoo = JavaScriptObject.createObject();
+    private int nextId;
+
+    ChunkLoadedMessage() {
     }
 
     /**
@@ -31,10 +39,17 @@ public class ChunkLoadedMessage extends JavaScriptObject {
      *         The x position of the loaded chunk
      * @param z
      *         The y position of the loaded chunk
-     * @return The created message
      */
-    public static native ChunkLoadedMessage create(int x, int z)/*-{
-        return {x: x, z: z, sections: [], nextId: 0, idmap: [], blockmap: {}};
+    public ChunkLoadedMessage(int x, int z) {
+        this.x = x;
+        this.z = z;
+        initVoodoo();
+    }
+
+    private native void initVoodoo()/*-{
+        var that = this.@uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage::nativeVoodoo;
+        that.sections = [];
+        that.idmap = [];
     }-*/;
 
     /**
@@ -42,18 +57,18 @@ public class ChunkLoadedMessage extends JavaScriptObject {
      *
      * @return The x position
      */
-    public final native int getX()/*-{
-        return this.x;
-    }-*/;
+    public int getX() {
+        return x;
+    }
 
     /**
      * Gets the z position of the loaded chunk
      *
      * @return The z position
      */
-    public final native int getZ()/*-{
-        return this.z;
-    }-*/;
+    public int getZ() {
+        return z;
+    }
 
     /**
      * Sets the section for this message
@@ -66,7 +81,8 @@ public class ChunkLoadedMessage extends JavaScriptObject {
      *         Data buffer
      */
     public final native void setSection(int i, int count, TUint8Array buffer)/*-{
-        this.sections[i] = {
+        var that = this.@uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage::nativeVoodoo;
+        that.sections[i] = {
             count: count,
             buffer: buffer
         };
@@ -78,9 +94,13 @@ public class ChunkLoadedMessage extends JavaScriptObject {
      * @param nextId
      *         The next id
      */
-    public final native void setNextId(int nextId)/*-{
+    public void setNextId(int nextId) {
         this.nextId = nextId;
-    }-*/;
+    }
+
+    public int getNextId() {
+        return nextId;
+    }
 
     /**
      * Adds an id -> block mapping to the message
@@ -91,9 +111,37 @@ public class ChunkLoadedMessage extends JavaScriptObject {
      *         The block
      */
     public final native void addIdBlockMapping(int key, Block value)/*-{
-        this.idmap[key] = [
+        var that = this.@uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage::nativeVoodoo;
+        that.idmap[key] = [
             value.@uk.co.thinkofdeath.thinkcraft.shared.block.Block::fullName,
             value.@uk.co.thinkofdeath.thinkcraft.shared.block.Block::state.@uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap::asInt()()
         ];
     }-*/;
+
+    @Override
+    public void serialize(WriteSerializer serializer) {
+        super.serialize(serializer);
+        serializer.putInt("x", x);
+        serializer.putInt("z", z);
+        serializer.putInt("nextId", nextId);
+        serializer.putTemp("nativeVoodoo", nativeVoodoo);
+    }
+
+    @Override
+    protected void read(ReadSerializer serializer) {
+        x = serializer.getInt("x");
+        z = serializer.getInt("z");
+        nextId = serializer.getInt("nextId");
+        nativeVoodoo = (JavaScriptObject) serializer.getTemp("nativeVoodoo");
+    }
+
+    @Override
+    protected WorkerMessage create() {
+        return new ChunkLoadedMessage();
+    }
+
+    @Override
+    public void handle(MessageHandler handler) {
+        handler.handle(this);
+    }
 }

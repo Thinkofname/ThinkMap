@@ -22,6 +22,9 @@ import elemental.events.EventListener;
 import elemental.events.MessageEvent;
 import elemental.html.Worker;
 import uk.co.thinkofdeath.thinkcraft.html.client.MapViewer;
+import uk.co.thinkofdeath.thinkcraft.html.shared.serialize.JsObjectSerializer;
+import uk.co.thinkofdeath.thinkcraft.shared.worker.Message;
+import uk.co.thinkofdeath.thinkcraft.shared.worker.Messages;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.WorkerMessage;
 
 import java.util.ArrayList;
@@ -66,32 +69,14 @@ public class WorkerPool {
     }
 
     /**
-     * Alias for sendMessage(type, msg, transferables, false);
-     *
-     * @param type
-     *         The message type
-     * @param msg
-     *         The message to send
-     * @param transferables
-     *         Array of transferable objects (ArrayBuffers and MessagePorts)
-     */
-    public void sendMessage(String type, Object msg, Object[] transferables) {
-        sendMessage(type, msg, transferables, false);
-    }
-
-    /**
      * Sends the message to a free worker. If all is set then all workers will get the message but only one will reply
      *
-     * @param type
-     *         The message type
      * @param msg
      *         The message to send
-     * @param transferables
-     *         Array of transferable objects (ArrayBuffers and MessagePorts)
      * @param all
-     *         Whether to send to all workers
+     * @param transferables
      */
-    public void sendMessage(String type, Object msg, Object[] transferables, boolean all) {
+    public void sendMessage(WorkerMessage msg, boolean all, Object... transferables) {
         PooledWorker lowestWorker = workers.get(0);
         for (int i = 1; i < workers.size(); i++) {
             if (lowestWorker.noOfTasks > workers.get(i).noOfTasks) {
@@ -99,23 +84,30 @@ public class WorkerPool {
             }
         }
 
+        JsObjectSerializer serializer = JsObjectSerializer.newInstance();
+        Messages.write(msg, serializer);
+
         if (all) {
             for (PooledWorker worker : workers) {
                 worker.noOfTasks++;
-                postMessage(worker.worker, WorkerMessage.create(type, msg, worker == lowestWorker), transferables);
+                serializer.putBoolean("return", worker == lowestWorker);
+                postMessage(worker.worker, serializer, transferables);
             }
         } else {
             lowestWorker.noOfTasks++;
-            postMessage(lowestWorker.worker, WorkerMessage.create(type, msg, true), transferables);
+            serializer.putBoolean("return", true);
+            postMessage(lowestWorker.worker, serializer, transferables);
         }
     }
 
-    public void sendMessage(int target, String type, Object msg, Object[] transferables, boolean reply) {
+    public void sendMessage(int target, WorkerMessage msg, boolean reply, Object... transferables) {
         PooledWorker worker = workers.get(target);
         if (reply) {
             worker.noOfTasks++;
         }
-        postMessage(worker.worker, WorkerMessage.create(type, msg, reply), transferables);
+        JsObjectSerializer serializer = JsObjectSerializer.newInstance();
+        Messages.write(msg, serializer);
+        postMessage(worker.worker, serializer, transferables);
     }
 
     /**
@@ -152,8 +144,12 @@ public class WorkerPool {
         @Override
         public void handleEvent(Event evt) {
             noOfTasks--;
-            WorkerMessage message = (WorkerMessage) ((MessageEvent) evt).getData();
-            mapViewer.handleWorkerMessage(message, id);
+            JsObjectSerializer serializer = JsObjectSerializer.from(((MessageEvent) evt).getData());
+            Message message = Messages.read(serializer);
+            if (message instanceof WorkerMessage) {
+                ((WorkerMessage) message).setSender(id);
+            }
+            message.handle(mapViewer.getMessageHandler());
         }
     }
 }

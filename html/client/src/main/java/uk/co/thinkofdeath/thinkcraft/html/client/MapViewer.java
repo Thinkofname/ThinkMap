@@ -31,7 +31,6 @@ import uk.co.thinkofdeath.thinkcraft.html.client.render.Camera;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.Renderer;
 import uk.co.thinkofdeath.thinkcraft.html.client.texture.VirtualTexture;
 import uk.co.thinkofdeath.thinkcraft.html.client.worker.WorkerPool;
-import uk.co.thinkofdeath.thinkcraft.html.client.world.ClientChunk;
 import uk.co.thinkofdeath.thinkcraft.html.client.world.ClientWorld;
 import uk.co.thinkofdeath.thinkcraft.html.shared.JavascriptLib;
 import uk.co.thinkofdeath.thinkcraft.html.shared.TextureMap;
@@ -43,9 +42,9 @@ import uk.co.thinkofdeath.thinkcraft.protocol.packets.TimeUpdate;
 import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockRegistry;
-import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkBuildReply;
-import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage;
-import uk.co.thinkofdeath.thinkcraft.shared.worker.WorkerMessage;
+import uk.co.thinkofdeath.thinkcraft.shared.worker.ClientSettingsMessage;
+import uk.co.thinkofdeath.thinkcraft.shared.worker.MessageHandler;
+import uk.co.thinkofdeath.thinkcraft.shared.worker.TextureMessage;
 import uk.co.thinkofdeath.thinkcraft.shared.world.World;
 
 import java.util.ArrayList;
@@ -64,6 +63,7 @@ public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler
     private final WorkerPool workerPool = new WorkerPool(this, NUMBER_OF_WORKERS);
     private final InputManager inputManager = new InputManager(this);
     private final FeatureHandler featureHandler = new FeatureHandler();
+    private final MessageHandler messageHandler = new WorkerMessageHandler(this);
 
     private ClientSettings clientSettings;
 
@@ -112,7 +112,7 @@ public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler
                 }
             });
             // Sync to workers
-            getWorkerPool().sendMessage("textures", tmap, new Object[0], true);
+            getWorkerPool().sendMessage(new TextureMessage(tmap), true);
             noTextures = tmap.getNumberVirtuals();
             virtualTextures = new VirtualTexture[noTextures];
             for (int i = 0; i < noTextures; i++) {
@@ -169,7 +169,7 @@ public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler
         clientSettings = ClientSettings.create(serverSettings.areOresHidden());
 
         // Sync to workers
-        getWorkerPool().sendMessage("settings", clientSettings, new Object[0], true);
+        getWorkerPool().sendMessage(new ClientSettingsMessage(clientSettings.areOresHidden()), true);
         handleSettings();
 
         getBlockRegistry().init();
@@ -249,48 +249,8 @@ public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler
         return renderer;
     }
 
-    /**
-     * Processes a message from a worker
-     *
-     * @param message
-     *         The message to process
-     */
-    public void handleWorkerMessage(WorkerMessage message, int sender) {
-        switch (message.getType()) {
-            case "chunk:loaded":
-                ChunkLoadedMessage chunkLoadedMessage = (ChunkLoadedMessage) message.getMessage();
-                world.addChunk(new ClientChunk(world, chunkLoadedMessage));
-                break;
-            case "null":
-                break;
-            case "chunk:build":
-                ChunkBuildReply chunkBuildReply = (ChunkBuildReply) message.getMessage();
-                ClientChunk chunk = (ClientChunk) world.getChunk(chunkBuildReply.getX(), chunkBuildReply.getZ());
-                if (chunk != null) {
-                    if (chunk.checkAndSetBuildNumber(chunkBuildReply.getBuildNumber(),
-                            chunkBuildReply.getSectionNumber())) {
-                        chunk.updateAccess(
-                                chunkBuildReply.getSectionNumber(),
-                                chunkBuildReply.getAccessData());
-                        chunk.fillBuffer(
-                                chunkBuildReply.getSectionNumber(),
-                                chunkBuildReply.getData(),
-                                sender);
-
-                        chunk.setTransparentModels(
-                                chunkBuildReply.getSectionNumber(),
-                                chunkBuildReply.getTrans(),
-                                chunkBuildReply.getTransData(),
-                                sender);
-
-                    }
-                }
-                break;
-            default:
-                System.err.println("Unhandled message: " + message.getType());
-                System.err.println(message.getMessage());
-                break;
-        }
+    public MessageHandler getMessageHandler() {
+        return messageHandler;
     }
 
     @Override

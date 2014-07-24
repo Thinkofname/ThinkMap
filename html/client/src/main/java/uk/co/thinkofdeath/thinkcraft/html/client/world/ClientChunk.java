@@ -24,6 +24,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.model.PositionedModel;
 import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage;
+import uk.co.thinkofdeath.thinkcraft.shared.worker.FreeMessage;
 import uk.co.thinkofdeath.thinkcraft.shared.world.Chunk;
 import uk.co.thinkofdeath.thinkcraft.shared.world.ChunkSection;
 
@@ -57,6 +58,7 @@ public class ClientChunk extends Chunk {
         }
 
         extractChunk(chunkLoadedMessage);
+        nextId = chunkLoadedMessage.getNextId();
     }
 
     /**
@@ -83,8 +85,7 @@ public class ClientChunk extends Chunk {
     public void setTransparentModels(int i, JsArray<PositionedModel> trans, TUint8Array transData, int sender) {
         if (sortableRenderObjects[i] != null) {
             TUint8Array data = sortableRenderObjects[i].getData();
-            world.mapViewer.getWorkerPool().sendMessage(sender, "pool:free", data,
-                    new Object[]{data.getBuffer()}, false);
+            world.mapViewer.getWorkerPool().sendMessage(sender, new FreeMessage(data), false, data.getBuffer());
         }
         if (sortableRenderObjects[i] != null && trans.length() == 0) {
             world.mapViewer.getRenderer().removeSortable(sortableRenderObjects[i]);
@@ -161,14 +162,13 @@ public class ClientChunk extends Chunk {
     }
 
     private native void extractChunk(ChunkLoadedMessage chunkLoadedMessage)/*-{
-        this.@uk.co.thinkofdeath.thinkcraft.shared.world.Chunk::nextId = chunkLoadedMessage.nextId;
-
+        var that = chunkLoadedMessage.@uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage::nativeVoodoo;
         var idMap = this.@uk.co.thinkofdeath.thinkcraft.shared.world.Chunk::idBlockMap;
         var blockMap = this.@uk.co.thinkofdeath.thinkcraft.shared.world.Chunk::blockIdMap;
-        for (var key in chunkLoadedMessage.idmap) {
-            if (chunkLoadedMessage.idmap.hasOwnProperty(key)) {
+        for (var key in that.idmap) {
+            if (that.idmap.hasOwnProperty(key)) {
                 var k = parseInt(key);
-                var val = chunkLoadedMessage.idmap[k];
+                var val = that.idmap[k];
                 var name = val[0];
                 var raw = val[1]
                 var block = this.@uk.co.thinkofdeath.thinkcraft.html.client.world.ClientChunk::_js_toBlock(Ljava/lang/String;I)(name, raw);
@@ -184,7 +184,8 @@ public class ClientChunk extends Chunk {
     }
 
     private native ChunkSection extractSection(ChunkLoadedMessage message, int i)/*-{
-        var jssection = message.sections[i];
+        var that = message.@uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage::nativeVoodoo;
+        var jssection = that.sections[i];
         if (jssection == null) {
             return null;
         }

@@ -16,52 +16,52 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.worker;
 
-import com.google.gwt.core.client.JavaScriptObject;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.ReadSerializer;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.WriteSerializer;
 
-public class WorkerMessage extends JavaScriptObject {
+public abstract class WorkerMessage implements Message {
 
-    protected WorkerMessage() {
+    private boolean ret;
+    private int sender;
+
+    WorkerMessage() {
     }
-
-    /**
-     * Creates a worker message which can be sent between a worker and a browser
-     *
-     * @param type
-     *         Type of message
-     * @param msg
-     *         The actual message
-     * @param ret
-     *         Whether the worker/browser can reply
-     * @return The created message
-     */
-    public static native WorkerMessage create(String type, Object msg, boolean ret)/*-{
-        return {type: type, msg: msg, ret: ret};
-    }-*/;
-
-    /**
-     * Returns the type of this message
-     *
-     * @return Type of the message
-     */
-    public final native String getType()/*-{
-        return this.type;
-    }-*/;
-
-    /**
-     * Returns the message
-     *
-     * @return The message
-     */
-    public final native Object getMessage()/*-{
-        return this.msg;
-    }-*/;
 
     /**
      * Returns whether this message should be replied to
      *
      * @return Whether this message should be replied to
      */
-    public final native boolean getReturn()/*-{
-        return this.ret;
-    }-*/;
+    public boolean getReturn() {
+        return ret;
+    }
+
+    public void setReturn(boolean ret) {
+        this.ret = ret;
+    }
+
+    public void setSender(int sender) {
+        this.sender = sender;
+    }
+
+    public int getSender() {
+        return sender;
+    }
+
+    @Override
+    public void serialize(WriteSerializer serializer) {
+        serializer.putBoolean("return", ret);
+    }
+
+    protected abstract void read(ReadSerializer serializer);
+
+    protected abstract WorkerMessage create();
+
+    @Override
+    public Message deserialize(ReadSerializer serializer) {
+        WorkerMessage message = create();
+        message.ret = serializer.getBoolean("return");
+        message.read(serializer);
+        return message;
+    }
 }

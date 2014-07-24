@@ -19,61 +19,36 @@ package uk.co.thinkofdeath.thinkcraft.shared.worker;
 import uk.co.thinkofdeath.thinkcraft.shared.serializing.ReadSerializer;
 import uk.co.thinkofdeath.thinkcraft.shared.serializing.WriteSerializer;
 
-public class ChunkUnloadMessage extends WorkerMessage {
+@Deprecated
+public class TextureMessage extends WorkerMessage {
 
-    private int x;
-    private int z;
+    private Object value;
 
-    ChunkUnloadMessage() {
+    TextureMessage() {
     }
 
-    /**
-     * Creates a new chunk unload message
-     *
-     * @param x
-     *         The x position of the chunk
-     * @param z
-     *         The z position of the chunk
-     */
-    public ChunkUnloadMessage(int x, int z) {
-        this.x = x;
-        this.z = z;
+    public TextureMessage(Object value) {
+        this.value = value;
     }
 
-    /**
-     * Returns the x position of the chunk
-     *
-     * @return The x position
-     */
-    public int getX() {
-        return x;
-    }
-
-    /**
-     * Returns the z position of the chunk
-     *
-     * @return The z position
-     */
-    public int getZ() {
-        return z;
+    public Object getValue() {
+        return value;
     }
 
     @Override
     public void serialize(WriteSerializer serializer) {
         super.serialize(serializer);
-        serializer.putInt("x", x);
-        serializer.putInt("z", z);
+        serializer.putTemp("value", value);
     }
 
     @Override
     protected void read(ReadSerializer serializer) {
-        x = serializer.getInt("x");
-        z = serializer.getInt("z");
+        value = serializer.getTemp("value");
     }
 
     @Override
     protected WorkerMessage create() {
-        return new ChunkUnloadMessage();
+        return new TextureMessage();
     }
 
     @Override

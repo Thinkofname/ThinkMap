@@ -16,10 +16,17 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.worker;
 
-import com.google.gwt.core.client.JavaScriptObject;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.ReadSerializer;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.WriteSerializer;
 
-public class ChunkBuildMessage extends JavaScriptObject {
-    protected ChunkBuildMessage() {
+public class ChunkBuildMessage extends WorkerMessage {
+
+    private int x;
+    private int z;
+    private int sectionNumber;
+    private int buildNumber;
+
+    ChunkBuildMessage() {
     }
 
     /**
@@ -29,49 +36,78 @@ public class ChunkBuildMessage extends JavaScriptObject {
      *         The x position of the chunk
      * @param z
      *         The z position of the chunk
-     * @param i
+     * @param sectionNumber
      *         The section number
      * @param buildNumber
      *         The build number
-     * @return The message
      */
-    public static native ChunkBuildMessage create(int x, int z, int i, int buildNumber)/*-{
-        return {x: x, z: z, i: i, buildNumber: buildNumber};
-    }-*/;
+    public ChunkBuildMessage(int x, int z, int sectionNumber, int buildNumber) {
+        this.x = x;
+        this.z = z;
+        this.sectionNumber = sectionNumber;
+        this.buildNumber = buildNumber;
+    }
 
     /**
      * Returns the x position of the chunk
      *
      * @return The x position
      */
-    public final native int getX()/*-{
-        return this.x;
-    }-*/;
+    public int getX() {
+        return x;
+    }
 
     /**
      * Returns the z position of the chunk
      *
      * @return The z position
      */
-    public final native int getZ()/*-{
-        return this.z;
-    }-*/;
+    public int getZ() {
+        return z;
+    }
 
     /**
      * Returns the section number of the chunk
      *
      * @return The section number
      */
-    public final native int getSectionNumber()/*-{
-        return this.i;
-    }-*/;
+    public int getSectionNumber() {
+        return sectionNumber;
+    }
 
     /**
      * Returns this build's build number
      *
      * @return The build number
      */
-    public final native int getBuildNumber()/*-{
-        return this.buildNumber;
-    }-*/;
+    public int getBuildNumber() {
+        return buildNumber;
+    }
+
+    @Override
+    public void serialize(WriteSerializer serializer) {
+        super.serialize(serializer);
+        serializer.putInt("x", x);
+        serializer.putInt("z", z);
+        serializer.putInt("sectionNumber", sectionNumber);
+        serializer.putInt("buildNumber", buildNumber);
+    }
+
+    @Override
+    protected void read(ReadSerializer serializer) {
+        x = serializer.getInt("x");
+        z = serializer.getInt("z");
+        sectionNumber = serializer.getInt("sectionNumber");
+        buildNumber = serializer.getInt("buildNumber");
+    }
+
+    @Override
+    protected WorkerMessage create() {
+        return new ChunkBuildMessage();
+    }
+
+    @Override
+    public void handle(MessageHandler handler) {
+        handler.handle(this);
+    }
 }
