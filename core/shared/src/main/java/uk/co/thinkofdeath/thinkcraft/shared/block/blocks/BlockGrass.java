@@ -21,14 +21,20 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockFactory;
+import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
+import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
 import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
+import uk.co.thinkofdeath.thinkcraft.shared.world.World;
 
 public class BlockGrass extends BlockFactory {
 
+    private final StateKey<Boolean> SNOW = stateAllocator.alloc("snow", new BooleanState());
+
     private final Texture grassTop;
     private final Texture grassSide;
+    private final Texture grassSideSnow;
     private final Texture grassSideOverlay;
     private final Texture dirt;
 
@@ -37,6 +43,7 @@ public class BlockGrass extends BlockFactory {
 
         grassTop = iMapViewer.getTexture("grass_top");
         grassSide = iMapViewer.getTexture("grass_side");
+        grassSideSnow = iMapViewer.getTexture("grass_side_snowed");
         grassSideOverlay = iMapViewer.getTexture("grass_side_overlay");
         dirt = iMapViewer.getTexture("dirt");
     }
@@ -52,23 +59,44 @@ public class BlockGrass extends BlockFactory {
         }
 
         @Override
+        public int getLegacyData() {
+            if (getState(SNOW)) {
+                return -1;
+            }
+            return 0;
+        }
+
+        @Override
         public Model getModel() {
             if (model == null) {
                 model = super.getModel();
 
                 // Add on the overlay
-                int colour = getColour(Face.TOP);
+                if (!getState(SNOW)) {
+                    int colour = getColour(Face.TOP);
 
-                model.addFace(new ModelFace(Face.LEFT, grassSideOverlay, 0, 0, 16, 16, 16, true)
-                        .colour((colour >> 16) & 0xFF, (colour >> 8) & 0xFF, colour & 0xFF));
-                model.addFace(new ModelFace(Face.RIGHT, grassSideOverlay, 0, 0, 16, 16, 0, true)
-                        .colour((colour >> 16) & 0xFF, (colour >> 8) & 0xFF, colour & 0xFF));
-                model.addFace(new ModelFace(Face.FRONT, grassSideOverlay, 0, 0, 16, 16, 16, true)
-                        .colour((colour >> 16) & 0xFF, (colour >> 8) & 0xFF, colour & 0xFF));
-                model.addFace(new ModelFace(Face.BACK, grassSideOverlay, 0, 0, 16, 16, 0, true)
-                        .colour((colour >> 16) & 0xFF, (colour >> 8) & 0xFF, colour & 0xFF));
+                    model.addFace(new ModelFace(Face.LEFT, grassSideOverlay, 0, 0, 16, 16, 16, true)
+                            .colour((colour >> 16) & 0xFF, (colour >> 8) & 0xFF, colour & 0xFF));
+                    model.addFace(new ModelFace(Face.RIGHT, grassSideOverlay, 0, 0, 16, 16, 0, true)
+                            .colour((colour >> 16) & 0xFF, (colour >> 8) & 0xFF, colour & 0xFF));
+                    model.addFace(new ModelFace(Face.FRONT, grassSideOverlay, 0, 0, 16, 16, 16, true)
+                            .colour((colour >> 16) & 0xFF, (colour >> 8) & 0xFF, colour & 0xFF));
+                    model.addFace(new ModelFace(Face.BACK, grassSideOverlay, 0, 0, 16, 16, 0, true)
+                            .colour((colour >> 16) & 0xFF, (colour >> 8) & 0xFF, colour & 0xFF));
+                }
             }
             return model;
+        }
+
+        @Override
+        public Block update(World world, int x, int y, int z) {
+            StateMap stateMap = new StateMap();
+            if (world.getBlock(x, y + 1, z).getFullName().equals("minecraft:snow_layer")) {
+                stateMap.set(SNOW, true);
+            } else {
+                stateMap.set(SNOW, false);
+            }
+            return mapViewer.getBlockRegistry().get(fullName, stateMap);
         }
 
         @Override
@@ -79,7 +107,7 @@ public class BlockGrass extends BlockFactory {
                 case BOTTOM:
                     return dirt;
                 default:
-                    return grassSide;
+                    return getState(SNOW) ? grassSideSnow : grassSide;
             }
         }
 
