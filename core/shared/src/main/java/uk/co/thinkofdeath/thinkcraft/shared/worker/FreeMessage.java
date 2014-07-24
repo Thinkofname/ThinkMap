@@ -48,7 +48,7 @@ public class FreeMessage extends WorkerMessage {
 
     @Override
     protected WorkerMessage create() {
-        return new TextureMessage();
+        return new FreeMessage();
     }
 
     @Override
