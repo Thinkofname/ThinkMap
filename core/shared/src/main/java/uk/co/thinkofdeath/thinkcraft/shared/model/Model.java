@@ -49,6 +49,7 @@ public class Model {
     };
 
     public static Map<Integer, Integer> grassBiomeColors = new HashMap<>();
+    public static Map<Integer, Integer> foliageBiomeColors = new HashMap<>();
 
     private List<ModelFace> faces = new ArrayList<>();
 
@@ -113,6 +114,18 @@ public class Model {
                 int idx = bx | (by << 8);
                 if (grassBiomeColors.containsKey(idx)) {
                     int colour = grassBiomeColors.get(idx);
+                    face.r = (colour >> 16) & 0xFF;
+                    face.g = (colour >> 8) & 0xFF;
+                    face.b = colour & 0xFF;
+                }
+            } else if (face.foliageBiomeColour) {
+                Biome biome = chunk.getBiome(x, z);
+                double moisture = biome.getMoisture() * biome.getTemperature();
+                int bx = (int) ((1.0 - biome.getTemperature()) * 255.0);
+                int by = (int) ((1.0 - moisture) * 255.0);
+                int idx = bx | (by << 8);
+                if (foliageBiomeColors.containsKey(idx)) {
+                    int colour = foliageBiomeColors.get(idx);
                     face.r = (colour >> 16) & 0xFF;
                     face.g = (colour >> 8) & 0xFF;
                     face.b = colour & 0xFF;

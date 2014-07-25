@@ -113,6 +113,7 @@ public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler
                 }
             });
             tmap.copyGrassColormap(Model.grassBiomeColors);
+            tmap.copyFoliageColormap(Model.foliageBiomeColors);
             // Sync to workers
             getWorkerPool().sendMessage(new TextureMessage(tmap), true);
             noTextures = tmap.getNumberVirtuals();

@@ -70,6 +70,7 @@ public class ModelFace {
     int g = 255;
     int b = 255;
     boolean grassBiomeColour;
+    boolean foliageBiomeColour;
 
     /**
      * Creates a blank model face
@@ -296,6 +297,11 @@ public class ModelFace {
 
     public ModelFace useGrassBiomeColour() {
         grassBiomeColour = true;
+        return this;
+    }
+
+    public ModelFace useFoliageBiomeColour() {
+        foliageBiomeColour = true;
         return this;
     }
 

@@ -47,6 +47,7 @@ public class ZipTextureProvider implements TextureProvider {
 
     private static final HashMap<String, String> whitelistedResources = new HashMap<String, String>() {{
         put("assets/minecraft/textures/colormap/grass.png", "grass_colormap");
+        put("assets/minecraft/textures/colormap/foliage.png", "foliage_colormap");
     }};
 
     private final ArrayList<String> textureNames = new ArrayList<>();

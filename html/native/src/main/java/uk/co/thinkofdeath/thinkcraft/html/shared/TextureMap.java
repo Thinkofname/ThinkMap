@@ -46,6 +46,19 @@ public class TextureMap extends JavaScriptObject {
         }
     }-*/;
 
+    public final native void copyFoliageColormap(Map<Integer, Integer> target)/*-{
+        for (key in this.foliageColormap) {
+            if (this.foliageColormap.hasOwnProperty(key)) {
+                var position = parseInt(key);
+                var colour = parseInt(this.foliageColormap[key]);
+                target.@java.util.Map::put(Ljava/lang/Object;Ljava/lang/Object;)(
+                    @java.lang.Integer::valueOf(I)(position),
+                    @java.lang.Integer::valueOf(I)(colour)
+                );
+            }
+        }
+    }-*/;
+
     public final native void forEach(Looper looper)/*-{
         for (key in this.textures) {
             if (this.textures.hasOwnProperty(key)) {

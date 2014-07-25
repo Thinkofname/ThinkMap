@@ -225,6 +225,7 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
                     info.put("textureImages", result.getOutput().length);
                     info.put("virtualCount", result.getVirtualCount());
                     info.put("grassColormap", ColormapParser.parse(textureProvider, textureFactory, "grass_colormap"));
+                    info.put("foliageColormap", ColormapParser.parse(textureProvider, textureFactory, "foliage_colormap"));
                     FileUtils.writeStringToFile(
                             blockInfo,
                             gson.toJson(info)

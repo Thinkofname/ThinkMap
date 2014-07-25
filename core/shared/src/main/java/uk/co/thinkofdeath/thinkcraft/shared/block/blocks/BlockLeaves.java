@@ -26,6 +26,8 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.states.BooleanState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
+import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
+import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
 
 public class BlockLeaves extends BlockFactory {
 
@@ -59,6 +61,18 @@ public class BlockLeaves extends BlockFactory {
         @Override
         public Texture getTexture(Face face) {
             return textures[getState(VARIANT).ordinal()];
+        }
+
+        @Override
+        public Model getModel() {
+            if (model == null) {
+                model = super.getModel();
+
+                for (ModelFace face : model.getFaces()) {
+                    face.useFoliageBiomeColour();
+                }
+            }
+            return model;
         }
 
         @Override

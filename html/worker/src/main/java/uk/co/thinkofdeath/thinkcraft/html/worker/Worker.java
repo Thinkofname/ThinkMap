@@ -192,6 +192,7 @@ public class Worker implements EntryPoint, EventListener, IMapViewer, MessageHan
             }
         });
         tmap.copyGrassColormap(Model.grassBiomeColors);
+        tmap.copyFoliageColormap(Model.foliageBiomeColors);
         sendMessage(Messages.NULL, false);
     }
 
