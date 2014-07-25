@@ -759,6 +759,7 @@ public class BlockRegistry {
                 .texture("ice_packed")
                 .create(), 174);
         register("minecraft", "double_plant", new BlockBuilder(new BlockDoubleFlowers(mapViewer))
+                .smoothLighting(false)
                 .solid(false)
                 .collidable(false)
                 .create(), 175);
