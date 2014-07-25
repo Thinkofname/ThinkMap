@@ -30,7 +30,7 @@ public class Debug {
     private static final boolean enabled = false;
     private static boolean init = false;
 
-    private static final int MAX_LINES = 50000;
+    private static final int MAX_LINES = 100000;
     private static DebugShader shader;
 
     private static WebGLBuffer buffer;

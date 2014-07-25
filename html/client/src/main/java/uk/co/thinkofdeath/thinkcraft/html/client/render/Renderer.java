@@ -301,7 +301,15 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
 
         while (toVisit.size() != 0) {
             Position position = toVisit.remove(--toVisitPosition);
-            boolean start = position.equals(root);
+
+            boolean special = false;
+            int sdx = position.getX() - root.getX();
+            int sdy = position.getY() - root.getY();
+            int sdz = position.getZ() - root.getZ();
+            if (sdx * sdx + sdy * sdy + sdz * sdz <= 1) {
+                special = true;
+            }
+
             if (position.getY() < 0 || position.getY() > 15 || !mapViewer.getWorld().isLoaded(position.getX(), position.getZ())) {
                 continue;
             }
@@ -309,7 +317,7 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
             ClientChunk chunk = (ClientChunk) mapViewer.getWorld().getChunk(position.getX(), position.getZ());
             ChunkRenderObject renderObject = chunk.getRenderObjects()[position.getY()];
 
-            if (!start && !frustum.isSphereInside(
+            if (!special && !frustum.isSphereInside(
                     (position.getX() << 4) + 8,
                     (position.getY() << 4) + 8,
                     (position.getZ() << 4) + 8, 16)) {
@@ -331,24 +339,24 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
             int dy = (int) Math.signum(((int) camera.getY() >> 4) - position.getY());
             int dz = (int) Math.signum(((int) camera.getZ() >> 4) - position.getZ());
 
-            ChunkSection section = start ? null : chunk.getSection(position.getY());
-            if (start || dx < 0) { // Right
-                checkAndGoto(section, position, Face.RIGHT, dx, dy, dz, start);
+            ChunkSection section = special ? null : chunk.getSection(position.getY());
+            if (special || dx < 0) { // Right
+                checkAndGoto(section, position, Face.RIGHT, dx, dy, dz, special);
             }
-            if (start || dx > 0) { // Left
-                checkAndGoto(section, position, Face.LEFT, dx, dy, dz, start);
+            if (special || dx > 0) { // Left
+                checkAndGoto(section, position, Face.LEFT, dx, dy, dz, special);
             }
-            if (start || dy < 0) { // Bottom
-                checkAndGoto(section, position, Face.BOTTOM, dx, dy, dz, start);
+            if (special || dy < 0) { // Bottom
+                checkAndGoto(section, position, Face.BOTTOM, dx, dy, dz, special);
             }
-            if (start || dy > 0) { // Top
-                checkAndGoto(section, position, Face.TOP, dx, dy, dz, start);
+            if (special || dy > 0) { // Top
+                checkAndGoto(section, position, Face.TOP, dx, dy, dz, special);
             }
-            if (start || dz < 0) { // Back
-                checkAndGoto(section, position, Face.BACK, dx, dy, dz, start);
+            if (special || dz < 0) { // Back
+                checkAndGoto(section, position, Face.BACK, dx, dy, dz, special);
             }
-            if (start || dz > 0) { // Front
-                checkAndGoto(section, position, Face.FRONT, dx, dy, dz, start);
+            if (special || dz > 0) { // Front
+                checkAndGoto(section, position, Face.FRONT, dx, dy, dz, special);
             }
         }
     }
@@ -356,9 +364,9 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
     private void checkAndGoto(ChunkSection section, Position position, Face face, int dx, int dy, int dz, boolean always) {
         for (Face other : Face.values()) {
             if (other != face && (section == null || section.canAccessSide(face, other))) {
-                if ((face.getOffsetX() != 0 && -dx == other.getOffsetX() || dx == 0)
-                        || (other.getOffsetY() != 0 && -dy == other.getOffsetY() || dy == 0)
-                        || (other.getOffsetZ() != 0 && -dz == other.getOffsetZ() || dz == 0)
+                if ((face.getOffsetX() != 0 && (-dx == other.getOffsetX() || dx == 0))
+                        || (other.getOffsetY() != 0 && (-dy == other.getOffsetY() || dy == 0))
+                        || (other.getOffsetZ() != 0 && (-dz == other.getOffsetZ() || dz == 0))
                         || always) {
                     Position nextPosition = new Position(
                             position.getX() + other.getOffsetX(),
