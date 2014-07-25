@@ -71,6 +71,7 @@ public class BlockLeaves extends BlockFactory {
                 for (ModelFace face : model.getFaces()) {
                     face.useFoliageBiomeColour();
                 }
+                model.forceShade();
             }
             return model;
         }

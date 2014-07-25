@@ -52,6 +52,7 @@ public class Model {
     public static Map<Integer, Integer> foliageBiomeColors = new HashMap<>();
 
     private List<ModelFace> faces = new ArrayList<>();
+    private boolean forceShade;
 
     /**
      * Creates a new model
@@ -139,7 +140,8 @@ public class Model {
                         (chunk.getX() << 4) + x + vertex.getX(),
                         y + vertex.getY(),
                         (chunk.getZ() << 4) + z + vertex.getZ(), face.getFace(),
-                        renderChecker.useSmoothLighting());
+                        renderChecker.useSmoothLighting(),
+                        forceShade);
                 builder
                         .position(x + vertex.getX(), y + vertex.getY(), z + vertex.getZ())
                         .colour(face.r, face.g, face.b)
@@ -154,7 +156,8 @@ public class Model {
                         (chunk.getX() << 4) + x + vertex.getX(),
                         y + vertex.getY(),
                         (chunk.getZ() << 4) + z + vertex.getZ(), face.getFace(),
-                        renderChecker.useSmoothLighting());
+                        renderChecker.useSmoothLighting(),
+                        forceShade);
                 builder
                         .position(x + vertex.getX(), y + vertex.getY(), z + vertex.getZ())
                         .colour(face.r, face.g, face.b)
@@ -165,7 +168,10 @@ public class Model {
         }
     }
 
-    private static LightInfo calculateLight(World world, int origX, int origY, int origZ, float x, float y, float z, Face face, boolean smooth) {
+    private static LightInfo calculateLight(World world,
+                                            int origX, int origY, int origZ,
+                                            float x, float y, float z,
+                                            Face face, boolean smooth, boolean forceShade) {
         int emittedLight = world.getEmittedLight(origX, origY, origZ);
         int skyLight = world.getSkyLight(origX, origY, origZ);
         if (!smooth) {
@@ -229,7 +235,14 @@ public class Model {
                     int bz = (int) (z + oz);
                     count++;
                     emittedLight += world.getEmittedLight(bx, by, bz);
-                    skyLight += world.getSkyLight(bx, by, bz);
+                    if (!forceShade) {
+                        skyLight += world.getSkyLight(bx, by, bz);
+                    } else {
+                        Block block = world.getBlock(bx, by, bz);
+                        if (!block.isRenderable()) {
+                            skyLight += 15;
+                        }
+                    }
                 }
             }
         }
@@ -466,6 +479,10 @@ public class Model {
 
     public List<ModelFace> getFaces() {
         return faces;
+    }
+
+    public void forceShade() {
+        forceShade = true;
     }
 
     /**
