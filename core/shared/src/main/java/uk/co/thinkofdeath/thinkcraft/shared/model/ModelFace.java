@@ -69,6 +69,7 @@ public class ModelFace {
     int r = 255;
     int g = 255;
     int b = 255;
+    boolean grassBiomeColour;
 
     /**
      * Creates a blank model face
@@ -278,6 +279,23 @@ public class ModelFace {
         this.r = r;
         this.g = g;
         this.b = b;
+        return this;
+    }
+
+    public int getRed() {
+        return r;
+    }
+
+    public int getGreen() {
+        return g;
+    }
+
+    public int getBlue() {
+        return b;
+    }
+
+    public ModelFace useGrassBiomeColour() {
+        grassBiomeColour = true;
         return this;
     }
 

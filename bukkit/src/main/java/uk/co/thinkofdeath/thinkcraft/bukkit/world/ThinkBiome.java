@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 public enum ThinkBiome {
     // Snowy
+    FROZEN_OCEAN(Biome.FROZEN_OCEAN, 10),
     FROZEN_RIVER(Biome.FROZEN_RIVER, 11),
     ICE_PLAINS(Biome.ICE_PLAINS, 12),
     ICE_PLAINS_SPIKES(Biome.ICE_PLAINS_SPIKES, 140),

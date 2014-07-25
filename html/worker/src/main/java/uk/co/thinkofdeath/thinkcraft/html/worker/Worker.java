@@ -32,6 +32,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockRegistry;
 import uk.co.thinkofdeath.thinkcraft.shared.building.DynamicBuffer;
+import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.*;
 import uk.co.thinkofdeath.thinkcraft.shared.world.World;
@@ -190,6 +191,7 @@ public class Worker implements EntryPoint, EventListener, IMapViewer, MessageHan
                 textures.put(k, v);
             }
         });
+        tmap.copyGrassColormap(Model.grassBiomeColors);
         sendMessage(Messages.NULL, false);
     }
 

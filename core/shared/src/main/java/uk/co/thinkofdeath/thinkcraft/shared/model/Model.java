@@ -22,12 +22,11 @@ import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.building.ModelBuilder;
 import uk.co.thinkofdeath.thinkcraft.shared.vector.Vector3;
+import uk.co.thinkofdeath.thinkcraft.shared.world.Biome;
 import uk.co.thinkofdeath.thinkcraft.shared.world.Chunk;
 import uk.co.thinkofdeath.thinkcraft.shared.world.World;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Model {
 
@@ -48,6 +47,8 @@ public class Model {
             return texture;
         }
     };
+
+    public static Map<Integer, Integer> grassBiomeColors = new HashMap<>();
 
     private List<ModelFace> faces = new ArrayList<>();
 
@@ -102,6 +103,19 @@ public class Model {
                         (chunk.getZ() << 4) + z + face.getFace().getOffsetZ()
                 ))) {
                     continue;
+                }
+            }
+            if (face.grassBiomeColour) {
+                Biome biome = chunk.getBiome(x, z);
+                double moisture = biome.getMoisture() * biome.getTemperature();
+                int bx = (int) ((1.0 - biome.getTemperature()) * 255.0);
+                int by = (int) ((1.0 - moisture) * 255.0);
+                int idx = bx | (by << 8);
+                if (grassBiomeColors.containsKey(idx)) {
+                    int colour = grassBiomeColors.get(idx);
+                    face.r = (colour >> 16) & 0xFF;
+                    face.g = (colour >> 8) & 0xFF;
+                    face.b = colour & 0xFF;
                 }
             }
             Texture texture = face.texture;
@@ -440,7 +454,6 @@ public class Model {
     public List<ModelFace> getFaces() {
         return faces;
     }
-
 
     /**
      * Used for checking whether this model can render against certain blocks

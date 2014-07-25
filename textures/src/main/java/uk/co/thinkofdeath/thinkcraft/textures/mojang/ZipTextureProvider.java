@@ -23,6 +23,7 @@ import uk.co.thinkofdeath.thinkcraft.textures.TextureFactory;
 import uk.co.thinkofdeath.thinkcraft.textures.TextureMetadata;
 import uk.co.thinkofdeath.thinkcraft.textures.TextureProvider;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,19 +34,25 @@ import java.util.zip.ZipInputStream;
 
 public class ZipTextureProvider implements TextureProvider {
 
-    private ArrayList<String> textureNames = new ArrayList<>();
-    private HashMap<String, Texture> textures = new HashMap<>();
-    private HashMap<String, TextureMetadata> metadata = new HashMap<>();
-    private final Gson gson = new GsonBuilder()
+    private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(MojangMetadata.class, new MojangMetadataDeserializer())
             .registerTypeAdapter(MojangMetadataAnimation.class, new MojangMetadataAnimationDeserializer())
             .create();
 
-    private final HashMap<String, String> whitelistedTextures = new HashMap<String, String>() {{
+    private static final HashMap<String, String> whitelistedTextures = new HashMap<String, String>() {{
         put("assets/minecraft/textures/entity/chest/normal.png", "chest_normal");
         put("assets/minecraft/textures/entity/chest/ender.png", "chest_ender");
         put("assets/minecraft/textures/entity/chest/trapped.png", "chest_trapped");
     }};
+
+    private static final HashMap<String, String> whitelistedResources = new HashMap<String, String>() {{
+        put("assets/minecraft/textures/colormap/grass.png", "grass_colormap");
+    }};
+
+    private final ArrayList<String> textureNames = new ArrayList<>();
+    private final HashMap<String, Texture> textures = new HashMap<>();
+    private final HashMap<String, TextureMetadata> metadata = new HashMap<>();
+    private final HashMap<String, byte[]> resources = new HashMap<>();
 
     public ZipTextureProvider(InputStream inputStream, TextureFactory factory) {
         fromStream(inputStream, factory);
@@ -61,6 +68,27 @@ public class ZipTextureProvider implements TextureProvider {
                             String name = whitelistedTextures.get(entry.getName());
                             textureNames.add(name);
                             textures.put(name, factory.fromInputStream(new NoCloseStream(in)));
+                        } else if (whitelistedResources.containsKey(entry.getName())) {
+                            String name = whitelistedResources.get(entry.getName());
+                            byte[] data;
+                            if (entry.getSize() != -1) {
+                                data = new byte[(int) entry.getSize()];
+                                int position = 0;
+                                int lastRead;
+                                while ((lastRead = in.read(data, position, data.length - position)) != -1) {
+                                    position += lastRead;
+                                }
+                            } else {
+                                try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+                                    byte[] buffer = new byte[4092];
+                                    int lastRead;
+                                    while ((lastRead = in.read(buffer)) != -1) {
+                                        outputStream.write(buffer, 0, lastRead);
+                                    }
+                                    data = outputStream.toByteArray();
+                                }
+                            }
+                            resources.put(name, data);
                         }
                         continue;
                     }
@@ -109,6 +137,11 @@ public class ZipTextureProvider implements TextureProvider {
     @Override
     public TextureMetadata getMetadata(String name) {
         return metadata.get(name);
+    }
+
+    @Override
+    public byte[] getResource(String name) {
+        return resources.get(name);
     }
 
     private static class NoCloseStream extends InputStream {

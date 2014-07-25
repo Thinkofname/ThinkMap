@@ -32,6 +32,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.util.IntMap;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkBuildReply;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.Messages;
+import uk.co.thinkofdeath.thinkcraft.shared.world.Biome;
 import uk.co.thinkofdeath.thinkcraft.shared.world.Chunk;
 import uk.co.thinkofdeath.thinkcraft.shared.world.ChunkSection;
 
@@ -113,6 +114,11 @@ public class WorkerChunk extends Chunk {
                 }
             }
         }
+        for (int bx = 0; bx < 16; bx++) {
+            for (int bz = 0; bz < 16; bz++) {
+                setBiome(bx, bz, Biome.getById(dataStream.getUint8(skyDataOffset + offset + 3 + bx + bz * 16)));
+            }
+        }
         this.reply = reply;
     }
 
@@ -141,7 +147,7 @@ public class WorkerChunk extends Chunk {
 
     // Sends the chunk back to the requester
     private void sendChunk() {
-        ChunkLoadedMessage message = new ChunkLoadedMessage(getX(), getZ());
+        ChunkLoadedMessage message = new ChunkLoadedMessage(getX(), getZ(), biomes);
         ArrayList<Object> buffers = new ArrayList<>();
         // Copy sections
         for (int i = 0; i < 16; i++) {

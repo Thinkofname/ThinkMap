@@ -63,4 +63,15 @@ public class JoinedProvider implements TextureProvider {
         }
         return null;
     }
+
+    @Override
+    public byte[] getResource(String name) {
+        for (TextureProvider provider : providers) {
+            byte[] resource = provider.getResource(name);
+            if (resource != null) {
+                return resource;
+            }
+        }
+        return null;
+    }
 }

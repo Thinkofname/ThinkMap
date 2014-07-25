@@ -19,6 +19,8 @@ package uk.co.thinkofdeath.thinkcraft.html.shared;
 import com.google.gwt.core.client.JavaScriptObject;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 
+import java.util.Map;
+
 public class TextureMap extends JavaScriptObject {
     protected TextureMap() {
     }
@@ -29,6 +31,19 @@ public class TextureMap extends JavaScriptObject {
 
     public final native int getNumberVirtuals()/*-{
         return this.virtualCount;
+    }-*/;
+
+    public final native void copyGrassColormap(Map<Integer, Integer> target)/*-{
+        for (key in this.grassColormap) {
+            if (this.grassColormap.hasOwnProperty(key)) {
+                var position = parseInt(key);
+                var colour = parseInt(this.grassColormap[key]);
+                target.@java.util.Map::put(Ljava/lang/Object;Ljava/lang/Object;)(
+                    @java.lang.Integer::valueOf(I)(position),
+                    @java.lang.Integer::valueOf(I)(colour)
+                );
+            }
+        }
     }-*/;
 
     public final native void forEach(Looper looper)/*-{

@@ -42,6 +42,7 @@ import uk.co.thinkofdeath.thinkcraft.protocol.packets.TimeUpdate;
 import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockRegistry;
+import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ClientSettingsMessage;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.MessageHandler;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.TextureMessage;
@@ -111,6 +112,7 @@ public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler
                     textures.put(k, v);
                 }
             });
+            tmap.copyGrassColormap(Model.grassBiomeColors);
             // Sync to workers
             getWorkerPool().sendMessage(new TextureMessage(tmap), true);
             noTextures = tmap.getNumberVirtuals();

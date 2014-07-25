@@ -28,6 +28,7 @@ public class ChunkLoadedMessage extends WorkerMessage {
     private int z;
     private JavaScriptObject nativeVoodoo = JavaScriptObject.createObject();
     private int nextId;
+    private int[] biomes = new int[256];
 
     ChunkLoadedMessage() {
     }
@@ -40,9 +41,10 @@ public class ChunkLoadedMessage extends WorkerMessage {
      * @param z
      *         The y position of the loaded chunk
      */
-    public ChunkLoadedMessage(int x, int z) {
+    public ChunkLoadedMessage(int x, int z, int[] biomes) {
         this.x = x;
         this.z = z;
+        System.arraycopy(biomes, 0, this.biomes, 0, 256);
         initVoodoo();
     }
 
@@ -102,6 +104,10 @@ public class ChunkLoadedMessage extends WorkerMessage {
         return nextId;
     }
 
+    public int[] getBiomes() {
+        return biomes;
+    }
+
     /**
      * Adds an id -> block mapping to the message
      *
@@ -125,6 +131,10 @@ public class ChunkLoadedMessage extends WorkerMessage {
         serializer.putInt("z", z);
         serializer.putInt("nextId", nextId);
         serializer.putTemp("nativeVoodoo", nativeVoodoo);
+        // FixME
+        for (int i = 0; i < 256; i++) {
+            serializer.putInt("biome[" + i + "]", biomes[i]);
+        }
     }
 
     @Override
@@ -133,6 +143,10 @@ public class ChunkLoadedMessage extends WorkerMessage {
         z = serializer.getInt("z");
         nextId = serializer.getInt("nextId");
         nativeVoodoo = (JavaScriptObject) serializer.getTemp("nativeVoodoo");
+        // FixME
+        for (int i = 0; i < 256; i++) {
+            biomes[i] = serializer.getInt("biome[" + i + "]");
+        }
     }
 
     @Override

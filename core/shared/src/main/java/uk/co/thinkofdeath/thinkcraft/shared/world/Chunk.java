@@ -35,6 +35,7 @@ public abstract class Chunk {
     private int x;
     private int z;
     private boolean unloaded = false;
+    protected int[] biomes = new int[256];
 
     protected Chunk(World world, int x, int z) {
         this.world = world;
@@ -173,6 +174,14 @@ public abstract class Chunk {
             return 15;
         }
         return section.getSkyLight().get(x | (z << 4) | ((y & 0xF) << 8));
+    }
+
+    public void setBiome(int x, int z, Biome biome) {
+        biomes[x | (z << 4)] = biome.getId();
+    }
+
+    public Biome getBiome(int x, int z) {
+        return Biome.getById(biomes[x | (z << 4)]);
     }
 
     /**
