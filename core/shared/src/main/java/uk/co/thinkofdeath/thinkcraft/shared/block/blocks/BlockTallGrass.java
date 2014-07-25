@@ -27,6 +27,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.states.EnumState;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateKey;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
 import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
+import uk.co.thinkofdeath.thinkcraft.shared.model.ModelFace;
 
 public class BlockTallGrass extends BlockFactory {
 
@@ -62,6 +63,12 @@ public class BlockTallGrass extends BlockFactory {
                     colour = 0xA7D389;
                 }
                 model = BlockModels.createCross(getTexture(Face.FRONT), colour);
+
+                if (getState(TYPE) != TallGrassType.DEADBUSH) {
+                    for (ModelFace face : model.getFaces()) {
+                        face.useGrassBiomeColour();
+                    }
+                }
             }
             return model;
         }

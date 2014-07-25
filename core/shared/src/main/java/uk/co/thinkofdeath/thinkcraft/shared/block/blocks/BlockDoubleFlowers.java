@@ -69,12 +69,19 @@ public class BlockDoubleFlowers extends BlockFactory {
             if (model == null) {
                 model = BlockModels.createCross(getTexture(Face.FRONT), getState(TYPE).getColour());
 
-                if (getState(TYPE) == DoubleFlowerType.SUNFLOWER && getState(TOP)) {
+                DoubleFlowerType type = getState(TYPE);
+                if (type == DoubleFlowerType.SUNFLOWER && getState(TOP)) {
                     Model flower = new Model();
                     flower.addFace(new ModelFace(Face.LEFT, sunflowerFront, 0, 0, 16, 16, 8));
                     flower.addFace(new ModelFace(Face.RIGHT, sunflowerBack, 0, 0, 16, 16, 8));
                     flower.rotateZ(-22.5f);
                     model.join(flower, 2, 0, 0);
+                }
+
+                if (type == DoubleFlowerType.GRASS || type == DoubleFlowerType.FERN) {
+                    for (ModelFace face : model.getFaces()) {
+                        face.useGrassBiomeColour();
+                    }
                 }
             }
             return model;
