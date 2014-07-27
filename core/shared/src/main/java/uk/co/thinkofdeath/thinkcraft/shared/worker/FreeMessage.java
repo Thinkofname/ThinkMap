@@ -16,8 +16,7 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.worker;
 
-import uk.co.thinkofdeath.thinkcraft.shared.serializing.ReadSerializer;
-import uk.co.thinkofdeath.thinkcraft.shared.serializing.WriteSerializer;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.Serializer;
 
 @Deprecated
 public class FreeMessage extends WorkerMessage {
@@ -36,13 +35,13 @@ public class FreeMessage extends WorkerMessage {
     }
 
     @Override
-    public void serialize(WriteSerializer serializer) {
+    public void serialize(Serializer serializer) {
         super.serialize(serializer);
         serializer.putTemp("value", value);
     }
 
     @Override
-    protected void read(ReadSerializer serializer) {
+    protected void read(Serializer serializer) {
         value = serializer.getTemp("value");
     }
 

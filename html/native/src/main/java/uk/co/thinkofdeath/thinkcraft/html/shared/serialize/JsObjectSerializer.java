@@ -17,6 +17,7 @@
 package uk.co.thinkofdeath.thinkcraft.html.shared.serialize;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.ArraySerializer;
 import uk.co.thinkofdeath.thinkcraft.shared.serializing.Serializer;
 
 public class JsObjectSerializer extends JavaScriptObject implements Serializer {
@@ -52,6 +53,11 @@ public class JsObjectSerializer extends JavaScriptObject implements Serializer {
     }-*/;
 
     @Override
+    public final native ArraySerializer<?> getArray(String name)/*-{
+        return this[name];
+    }-*/;
+
+    @Override
     public final native Object getTemp(String name)/*-{
         return this[name];
     }-*/;
@@ -77,12 +83,12 @@ public class JsObjectSerializer extends JavaScriptObject implements Serializer {
     }-*/;
 
     @Override
-    public final native void putTemp(String name, Object value)/*-{
+    public final native void putArray(String name, ArraySerializer<?> value)/*-{
         this[name] = value;
     }-*/;
 
     @Override
-    public final native JsObjectSerializer create()/*-{
-        return {};
+    public final native void putTemp(String name, Object value)/*-{
+        this[name] = value;
     }-*/;
 }

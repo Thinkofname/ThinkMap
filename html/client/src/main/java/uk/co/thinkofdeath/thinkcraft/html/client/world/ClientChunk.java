@@ -59,6 +59,8 @@ public class ClientChunk extends Chunk {
 
         extractChunk(chunkLoadedMessage);
         nextId = chunkLoadedMessage.getNextId();
+
+        biomes = chunkLoadedMessage.getBiomes();
     }
 
     /**

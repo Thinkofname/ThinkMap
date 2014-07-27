@@ -18,8 +18,9 @@ package uk.co.thinkofdeath.thinkcraft.shared.worker;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
-import uk.co.thinkofdeath.thinkcraft.shared.serializing.ReadSerializer;
-import uk.co.thinkofdeath.thinkcraft.shared.serializing.WriteSerializer;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.IntArraySerializer;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.Serializer;
 import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
 
 public class ChunkLoadedMessage extends WorkerMessage {
@@ -125,27 +126,30 @@ public class ChunkLoadedMessage extends WorkerMessage {
     }-*/;
 
     @Override
-    public void serialize(WriteSerializer serializer) {
+    public void serialize(Serializer serializer) {
         super.serialize(serializer);
         serializer.putInt("x", x);
         serializer.putInt("z", z);
         serializer.putInt("nextId", nextId);
         serializer.putTemp("nativeVoodoo", nativeVoodoo);
-        // FixME
+
+        IntArraySerializer b = Platform.workerSerializers().createIntArray();
         for (int i = 0; i < 256; i++) {
-            serializer.putInt("biome[" + i + "]", biomes[i]);
+            b.add(biomes[i]);
         }
+        serializer.putArray("biomes", b);
     }
 
     @Override
-    protected void read(ReadSerializer serializer) {
+    protected void read(Serializer serializer) {
         x = serializer.getInt("x");
         z = serializer.getInt("z");
         nextId = serializer.getInt("nextId");
         nativeVoodoo = (JavaScriptObject) serializer.getTemp("nativeVoodoo");
-        // FixME
+
+        IntArraySerializer b = (IntArraySerializer) serializer.getArray("biomes");
         for (int i = 0; i < 256; i++) {
-            biomes[i] = serializer.getInt("biome[" + i + "]");
+            biomes[i] = b.getInt(i);
         }
     }
 

@@ -16,9 +16,19 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.serializing;
 
-public interface Serializable<V> {
+public interface IntArraySerializer extends ArraySerializer<Integer> {
 
-    public void serialize(Serializer serializer);
+    /**
+     * Adds the element to the array
+     */
+    void add(int v);
 
-    public V deserialize(Serializer serializer);
+    /**
+     * Returns the element at the index
+     *
+     * @param i
+     *         The index
+     * @return The element
+     */
+    int getInt(int i);
 }

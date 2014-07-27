@@ -18,22 +18,31 @@ package uk.co.thinkofdeath.thinkcraft.html.shared;
 
 import elemental.util.Timer;
 import uk.co.thinkofdeath.thinkcraft.html.shared.buffer.JavascriptFloatBuffer;
+import uk.co.thinkofdeath.thinkcraft.html.shared.serialize.JsSerializerFactory;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.FloatBuffer;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.SerializerFactory;
 
 public class JavascriptPlatform extends Platform {
     @Override
-    public FloatBuffer newFloatBuffer(int size) {
+    protected FloatBuffer newFloatBuffer(int size) {
         return new JavascriptFloatBuffer(size);
     }
 
     @Override
-    public void repeatTask(final Runnable runnable, int timeMS) {
+    protected void repeatTask(final Runnable runnable, int timeMS) {
         new Timer() {
             @Override
             public void run() {
                 runnable.run();
             }
         }.scheduleRepeating(timeMS);
+    }
+
+    private JsSerializerFactory serializerFactory = new JsSerializerFactory();
+
+    @Override
+    protected SerializerFactory serializersWorker() {
+        return serializerFactory;
     }
 }

@@ -14,11 +14,25 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.shared.serializing;
+package uk.co.thinkofdeath.thinkcraft.html.shared.serialize;
 
-public interface Serializable<V> {
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.BooleanArraySerializer;
 
-    public void serialize(Serializer serializer);
+public class JsBooleanArray extends JsArraySerializer<Boolean> implements BooleanArraySerializer {
+    protected JsBooleanArray() {
+    }
 
-    public V deserialize(Serializer serializer);
+    public static native JsBooleanArray create()/*-{
+        return [];
+    }-*/;
+
+    @Override
+    public final native void add(boolean v)/*-{
+        this.push(v);
+    }-*/;
+
+    @Override
+    public final native boolean getBoolean(int i)/*-{
+        return this[i];
+    }-*/;
 }

@@ -16,9 +16,26 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.serializing;
 
-public interface Serializable<V> {
+public interface ArraySerializer<V> {
 
-    public void serialize(Serializer serializer);
+    /**
+     * Adds the element to the array
+     */
+    void add(V v);
 
-    public V deserialize(Serializer serializer);
+    /**
+     * Returns the element at the index
+     *
+     * @param i
+     *         The index
+     * @return The element
+     */
+    V get(int i);
+
+    /**
+     * Returns the number of elements in the array
+     *
+     * @return The number of elements
+     */
+    int size();
 }

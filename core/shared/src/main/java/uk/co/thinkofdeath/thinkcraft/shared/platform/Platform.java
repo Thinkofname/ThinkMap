@@ -17,6 +17,7 @@
 package uk.co.thinkofdeath.thinkcraft.shared.platform;
 
 import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.FloatBuffer;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.SerializerFactory;
 
 /**
  * Handles Platform specific code
@@ -50,7 +51,7 @@ public abstract class Platform {
     /**
      * @see #createFloatBuffer(int)
      */
-    public abstract FloatBuffer newFloatBuffer(int size);
+    protected abstract FloatBuffer newFloatBuffer(int size);
 
     /**
      * Runs the passed runnable repeatedly at the interval
@@ -68,5 +69,20 @@ public abstract class Platform {
     /**
      * @see #runRepeated(Runnable, int)
      */
-    public abstract void repeatTask(Runnable runnable, int timeMS);
+    protected abstract void repeatTask(Runnable runnable, int timeMS);
+
+    /**
+     * Returns a serializer factory which creates worker safe
+     * serializers
+     *
+     * @return The worker safe serializer factory
+     */
+    public static SerializerFactory workerSerializers() {
+        return platform.serializersWorker();
+    }
+
+    /**
+     * @see #workerSerializers()
+     */
+    protected abstract SerializerFactory serializersWorker();
 }

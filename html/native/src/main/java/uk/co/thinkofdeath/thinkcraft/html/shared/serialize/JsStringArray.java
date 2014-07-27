@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.shared.serializing;
+package uk.co.thinkofdeath.thinkcraft.html.shared.serialize;
 
-public interface WriteSerializer {
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.StringArraySerializer;
 
-    void putString(String name, String value);
+public class JsStringArray extends JsArraySerializer<String> implements StringArraySerializer {
+    protected JsStringArray() {
+    }
 
-    void putInt(String name, int value);
-
-    void putBoolean(String name, boolean value);
-
-    void putSub(String name, Serializer value);
-
-    // TODO: Burn this
-    @Deprecated
-    void putTemp(String name, Object value);
-
-    WriteSerializer create();
+    public static native JsStringArray create()/*-{
+        return [];
+    }-*/;
 }

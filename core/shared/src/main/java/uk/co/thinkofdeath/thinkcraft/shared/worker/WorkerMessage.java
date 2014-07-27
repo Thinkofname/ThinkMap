@@ -16,8 +16,7 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.worker;
 
-import uk.co.thinkofdeath.thinkcraft.shared.serializing.ReadSerializer;
-import uk.co.thinkofdeath.thinkcraft.shared.serializing.WriteSerializer;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.Serializer;
 
 public abstract class WorkerMessage implements Message {
 
@@ -49,16 +48,16 @@ public abstract class WorkerMessage implements Message {
     }
 
     @Override
-    public void serialize(WriteSerializer serializer) {
+    public void serialize(Serializer serializer) {
         serializer.putBoolean("return", ret);
     }
 
-    protected abstract void read(ReadSerializer serializer);
+    protected abstract void read(Serializer serializer);
 
     protected abstract WorkerMessage create();
 
     @Override
-    public Message deserialize(ReadSerializer serializer) {
+    public Message deserialize(Serializer serializer) {
         WorkerMessage message = create();
         message.ret = serializer.getBoolean("return");
         message.read(serializer);

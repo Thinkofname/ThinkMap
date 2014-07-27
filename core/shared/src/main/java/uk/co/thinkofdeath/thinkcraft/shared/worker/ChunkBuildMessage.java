@@ -16,8 +16,7 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.worker;
 
-import uk.co.thinkofdeath.thinkcraft.shared.serializing.ReadSerializer;
-import uk.co.thinkofdeath.thinkcraft.shared.serializing.WriteSerializer;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.Serializer;
 
 public class ChunkBuildMessage extends WorkerMessage {
 
@@ -85,7 +84,7 @@ public class ChunkBuildMessage extends WorkerMessage {
     }
 
     @Override
-    public void serialize(WriteSerializer serializer) {
+    public void serialize(Serializer serializer) {
         super.serialize(serializer);
         serializer.putInt("x", x);
         serializer.putInt("z", z);
@@ -94,7 +93,7 @@ public class ChunkBuildMessage extends WorkerMessage {
     }
 
     @Override
-    protected void read(ReadSerializer serializer) {
+    protected void read(Serializer serializer) {
         x = serializer.getInt("x");
         z = serializer.getInt("z");
         sectionNumber = serializer.getInt("sectionNumber");

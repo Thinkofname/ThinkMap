@@ -16,8 +16,7 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.worker;
 
-import uk.co.thinkofdeath.thinkcraft.shared.serializing.ReadSerializer;
-import uk.co.thinkofdeath.thinkcraft.shared.serializing.WriteSerializer;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.Serializer;
 
 public class ClientSettingsMessage extends WorkerMessage {
 
@@ -35,13 +34,13 @@ public class ClientSettingsMessage extends WorkerMessage {
     }
 
     @Override
-    public void serialize(WriteSerializer serializer) {
+    public void serialize(Serializer serializer) {
         super.serialize(serializer);
         serializer.putBoolean("oresHidden", oresHidden);
     }
 
     @Override
-    protected void read(ReadSerializer serializer) {
+    protected void read(Serializer serializer) {
         oresHidden = serializer.getBoolean("oresHidden");
     }
 

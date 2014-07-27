@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.shared.serializing;
+package uk.co.thinkofdeath.thinkcraft.html.shared.serialize;
 
-public interface Serializable<V> {
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.ArraySerializer;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.ArraySerializerArraySerializer;
 
-    public void serialize(Serializer serializer);
+public class JsArraySerializerArray extends JsArraySerializer<ArraySerializer<?>> implements ArraySerializerArraySerializer {
+    protected JsArraySerializerArray() {
+    }
 
-    public V deserialize(Serializer serializer);
+    public static native JsArraySerializerArray create()/*-{
+        return [];
+    }-*/;
 }

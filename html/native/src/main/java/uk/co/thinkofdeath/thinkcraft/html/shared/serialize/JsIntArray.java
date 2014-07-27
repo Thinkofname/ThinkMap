@@ -14,19 +14,25 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.shared.serializing;
+package uk.co.thinkofdeath.thinkcraft.html.shared.serialize;
 
-public interface ReadSerializer {
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.IntArraySerializer;
 
-    String getString(String name);
+public class JsIntArray extends JsArraySerializer<Integer> implements IntArraySerializer {
+    protected JsIntArray() {
+    }
 
-    int getInt(String name);
+    public static native JsIntArray create()/*-{
+        return [];
+    }-*/;
 
-    boolean getBoolean(String name);
+    @Override
+    public final native void add(int v)/*-{
+        this.push(v);
+    }-*/;
 
-    ReadSerializer getSub(String name);
-
-    // TODO: Burn this
-    @Deprecated
-    Object getTemp(String name);
+    @Override
+    public final native int getInt(int i)/*-{
+        return this[i];
+    }-*/;
 }

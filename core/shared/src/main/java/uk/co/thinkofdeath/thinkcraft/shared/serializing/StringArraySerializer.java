@@ -16,9 +16,5 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.serializing;
 
-public interface Serializable<V> {
-
-    public void serialize(Serializer serializer);
-
-    public V deserialize(Serializer serializer);
+public interface StringArraySerializer extends ArraySerializer<String> {
 }

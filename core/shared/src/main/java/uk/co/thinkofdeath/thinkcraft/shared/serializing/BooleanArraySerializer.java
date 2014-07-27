@@ -16,9 +16,19 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.serializing;
 
-public interface Serializable<V> {
+public interface BooleanArraySerializer extends ArraySerializer<Boolean> {
 
-    public void serialize(Serializer serializer);
+    /**
+     * Adds the element to the array
+     */
+    void add(boolean v);
 
-    public V deserialize(Serializer serializer);
+    /**
+     * Returns the element at the index
+     *
+     * @param i
+     *         The index
+     * @return The element
+     */
+    boolean getBoolean(int i);
 }

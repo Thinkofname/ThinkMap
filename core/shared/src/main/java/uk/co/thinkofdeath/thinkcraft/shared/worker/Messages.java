@@ -16,8 +16,7 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.worker;
 
-import uk.co.thinkofdeath.thinkcraft.shared.serializing.ReadSerializer;
-import uk.co.thinkofdeath.thinkcraft.shared.serializing.WriteSerializer;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.Serializer;
 
 import java.util.HashMap;
 
@@ -33,7 +32,7 @@ public class Messages {
 
         register("chunk:build", new ChunkBuildMessage());
         register("chunk:unload", new ChunkUnloadMessage());
-        register("chunk:breply", new ChunkBuildReply());
+        register("chunk:build-reply", new ChunkBuildReply());
         register("chunk:load", new ChunkLoadMessage());
         register("chunk:loaded", new ChunkLoadedMessage());
 
@@ -42,12 +41,12 @@ public class Messages {
         register("pool:free", new FreeMessage()); // TODO: Fixme
     }
 
-    public static Message read(ReadSerializer serializer) {
+    public static Message read(Serializer serializer) {
         Message message = messages.get(serializer.getString("$id"));
         return message.deserialize(serializer);
     }
 
-    public static void write(Message message, WriteSerializer serializer) {
+    public static void write(Message message, Serializer serializer) {
         serializer.putString("$id", idByClass.get(message.getClass()));
         message.serialize(serializer);
     }
@@ -64,7 +63,7 @@ public class Messages {
         }
 
         @Override
-        protected void read(ReadSerializer serializer) {
+        protected void read(Serializer serializer) {
 
         }
 
@@ -74,7 +73,7 @@ public class Messages {
         }
 
         @Override
-        public Message deserialize(ReadSerializer serializer) {
+        public Message deserialize(Serializer serializer) {
             return NULL;
         }
     }
