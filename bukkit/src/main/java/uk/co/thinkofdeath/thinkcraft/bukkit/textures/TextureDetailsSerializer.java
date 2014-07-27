@@ -17,7 +17,7 @@
 package uk.co.thinkofdeath.thinkcraft.bukkit.textures;
 
 import com.google.gson.*;
-import uk.co.thinkofdeath.thinkcraft.textures.TextureDetails;
+import uk.co.thinkofdeath.thinkcraft.resources.TextureDetails;
 
 import java.lang.reflect.Type;
 

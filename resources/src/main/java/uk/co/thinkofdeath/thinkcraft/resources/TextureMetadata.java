@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.textures;
+package uk.co.thinkofdeath.thinkcraft.resources;
 
-public interface Texture {
+public interface TextureMetadata {
 
-    public int getWidth();
+    public int getFrameTime();
 
-    public int getHeight();
-
-    public int[] getPixels(int x, int y, int w, int h);
-
-    public void setPixels(int[] data, int x, int y, int w, int h);
+    public int[] getFrames();
 }

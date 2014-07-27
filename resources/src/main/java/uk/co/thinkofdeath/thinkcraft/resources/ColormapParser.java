@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.textures;
+package uk.co.thinkofdeath.thinkcraft.resources;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
@@ -38,7 +38,7 @@ public class ColormapParser {
         add(0 | (255 << 8));
     }};
 
-    public static Map<Integer, Integer> parse(TextureProvider provider, TextureFactory factory, String name) {
+    public static Map<Integer, Integer> parse(ResourceProvider provider, TextureFactory factory, String name) {
         Texture texture = factory.fromInputStream(new ByteArrayInputStream(provider.getResource(name)));
         if (texture.getWidth() != 256 || texture.getHeight() != 256) {
             throw new RuntimeException("Invalid colormap");

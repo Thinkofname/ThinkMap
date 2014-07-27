@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.textures;
+package uk.co.thinkofdeath.thinkcraft.resources;
 
 /**
  * Stores information about the name/location of a texture

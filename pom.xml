@@ -35,7 +35,7 @@
                 <module>protocol</module>
                 <module>core</module>
                 <module>html</module>
-                <module>textures</module>
+                <module>resources</module>
                 <module>bukkit</module>
             </modules>
         </profile>

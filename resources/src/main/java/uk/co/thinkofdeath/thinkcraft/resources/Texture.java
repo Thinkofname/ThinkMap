@@ -14,26 +14,15 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.textures;
+package uk.co.thinkofdeath.thinkcraft.resources;
 
-import java.util.HashMap;
-import java.util.Map;
+public interface Texture {
 
-public class StitchResult {
+    public int getWidth();
 
-    Texture[] output;
-    Map<String, TextureDetails> details = new HashMap<>();
-    int virtualCount;
+    public int getHeight();
 
-    public Texture[] getOutput() {
-        return output;
-    }
+    public int[] getPixels(int x, int y, int w, int h);
 
-    public Map<String, TextureDetails> getDetails() {
-        return details;
-    }
-
-    public int getVirtualCount() {
-        return virtualCount;
-    }
+    public void setPixels(int[] data, int x, int y, int w, int h);
 }

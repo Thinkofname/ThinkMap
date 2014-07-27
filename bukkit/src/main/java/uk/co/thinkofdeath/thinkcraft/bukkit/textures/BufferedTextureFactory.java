@@ -16,8 +16,8 @@
 
 package uk.co.thinkofdeath.thinkcraft.bukkit.textures;
 
-import uk.co.thinkofdeath.thinkcraft.textures.Texture;
-import uk.co.thinkofdeath.thinkcraft.textures.TextureFactory;
+import uk.co.thinkofdeath.thinkcraft.resources.Texture;
+import uk.co.thinkofdeath.thinkcraft.resources.TextureFactory;
 
 import java.io.InputStream;
 

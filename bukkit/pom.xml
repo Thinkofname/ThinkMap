@@ -41,7 +41,7 @@
     <dependencies>
         <dependency>
             <groupId>uk.co.thinkofdeath.thinkcraft</groupId>
-            <artifactId>textures</artifactId>
+            <artifactId>resources</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

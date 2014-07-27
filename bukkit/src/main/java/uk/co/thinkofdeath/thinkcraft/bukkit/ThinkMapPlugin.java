@@ -35,9 +35,9 @@ import uk.co.thinkofdeath.thinkcraft.bukkit.world.ChunkManager;
 import uk.co.thinkofdeath.thinkcraft.protocol.Packet;
 import uk.co.thinkofdeath.thinkcraft.protocol.ServerPacketHandler;
 import uk.co.thinkofdeath.thinkcraft.protocol.packets.TimeUpdate;
-import uk.co.thinkofdeath.thinkcraft.textures.*;
-import uk.co.thinkofdeath.thinkcraft.textures.mojang.MojangTextureProvider;
-import uk.co.thinkofdeath.thinkcraft.textures.mojang.ZipTextureProvider;
+import uk.co.thinkofdeath.thinkcraft.resources.*;
+import uk.co.thinkofdeath.thinkcraft.resources.mojang.MojangResourceProvider;
+import uk.co.thinkofdeath.thinkcraft.resources.mojang.ZipResourceProvider;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -177,12 +177,12 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
                     // Use BufferedImages as the texture backend
                     TextureFactory textureFactory = new BufferedTextureFactory();
                     getLogger().info("Downloading textures. This may take some time");
-                    TextureProvider textureProvider = new MojangTextureProvider(MINECRAFT_VERSION, textureFactory);
+                    ResourceProvider resourceProvider = new MojangResourceProvider(MINECRAFT_VERSION, textureFactory);
 
                     // Add in our missing texture to the resources (not part of vanilla)
                     try (InputStream in =
                                  getClassLoader().getResourceAsStream("textures/missing_texture.png")) {
-                        ((MojangTextureProvider) textureProvider).addTexture("missing_texture",
+                        ((MojangResourceProvider) resourceProvider).addTexture("missing_texture",
                                 textureFactory.fromInputStream(in));
                     }
 
@@ -190,17 +190,17 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
                     // (vanilla + the pack) so that if the pack is missing textures
                     // it will use vanilla's textures as a fallback
                     if (finalResourcePack.length() > 0) {
-                        textureProvider = new JoinedProvider(
-                                new ZipTextureProvider(
+                        resourceProvider = new JoinedResourceProvider(
+                                new ZipResourceProvider(
                                         new FileInputStream(resourceFile), textureFactory
                                 ),
-                                textureProvider
+                                resourceProvider
                         );
                     }
 
                     // Begin stitching the textures
                     // TODO: Remove the timer?
-                    TextureStitcher stitcher = new TextureStitcher(textureProvider, textureFactory);
+                    TextureStitcher stitcher = new TextureStitcher(resourceProvider, textureFactory);
                     getLogger().info("Stitching textures. The mapviewer will start after this " +
                             "completes");
                     long start = System.currentTimeMillis();
@@ -224,8 +224,8 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
                     info.put("textures", result.getDetails());
                     info.put("textureImages", result.getOutput().length);
                     info.put("virtualCount", result.getVirtualCount());
-                    info.put("grassColormap", ColormapParser.parse(textureProvider, textureFactory, "grass_colormap"));
-                    info.put("foliageColormap", ColormapParser.parse(textureProvider, textureFactory, "foliage_colormap"));
+                    info.put("grassColormap", ColormapParser.parse(resourceProvider, textureFactory, "grass_colormap"));
+                    info.put("foliageColormap", ColormapParser.parse(resourceProvider, textureFactory, "foliage_colormap"));
                     FileUtils.writeStringToFile(
                             blockInfo,
                             gson.toJson(info)

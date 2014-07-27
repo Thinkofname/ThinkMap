@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.textures.mojang;
+package uk.co.thinkofdeath.thinkcraft.resources;
 
-public class MojangMetadataAnimation {
+public interface ResourceProvider {
 
-    int[] frames;
-    int frametime;
+    public String[] getTextures();
+
+    public Texture getTexture(String name);
+
+    public TextureMetadata getMetadata(String name);
+
+    public byte[] getResource(String name);
 }

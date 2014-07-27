@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.textures.mojang;
+package uk.co.thinkofdeath.thinkcraft.resources.mojang;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;

@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.textures;
+package uk.co.thinkofdeath.thinkcraft.resources;
 
-public interface TextureProvider {
+import java.io.InputStream;
 
-    public String[] getTextures();
+public interface TextureFactory {
 
-    public Texture getTexture(String name);
+    public Texture fromInputStream(InputStream inputStream);
 
-    public TextureMetadata getMetadata(String name);
-
-    public byte[] getResource(String name);
+    public Texture create(int w, int h);
 }

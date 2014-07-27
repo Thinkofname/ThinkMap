@@ -16,7 +16,7 @@
 
 package uk.co.thinkofdeath.thinkcraft.bukkit.textures;
 
-import uk.co.thinkofdeath.thinkcraft.textures.Texture;
+import uk.co.thinkofdeath.thinkcraft.resources.Texture;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

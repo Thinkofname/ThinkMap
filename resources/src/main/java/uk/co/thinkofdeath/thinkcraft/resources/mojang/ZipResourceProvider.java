@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.textures.mojang;
+package uk.co.thinkofdeath.thinkcraft.resources.mojang;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import uk.co.thinkofdeath.thinkcraft.textures.Texture;
-import uk.co.thinkofdeath.thinkcraft.textures.TextureFactory;
-import uk.co.thinkofdeath.thinkcraft.textures.TextureMetadata;
-import uk.co.thinkofdeath.thinkcraft.textures.TextureProvider;
+import uk.co.thinkofdeath.thinkcraft.resources.ResourceProvider;
+import uk.co.thinkofdeath.thinkcraft.resources.Texture;
+import uk.co.thinkofdeath.thinkcraft.resources.TextureFactory;
+import uk.co.thinkofdeath.thinkcraft.resources.TextureMetadata;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class ZipTextureProvider implements TextureProvider {
+public class ZipResourceProvider implements ResourceProvider {
 
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(MojangMetadata.class, new MojangMetadataDeserializer())
@@ -55,7 +55,7 @@ public class ZipTextureProvider implements TextureProvider {
     private final HashMap<String, TextureMetadata> metadata = new HashMap<>();
     private final HashMap<String, byte[]> resources = new HashMap<>();
 
-    public ZipTextureProvider(InputStream inputStream, TextureFactory factory) {
+    public ZipResourceProvider(InputStream inputStream, TextureFactory factory) {
         fromStream(inputStream, factory);
     }
 
@@ -117,7 +117,7 @@ public class ZipTextureProvider implements TextureProvider {
         }
     }
 
-    public ZipTextureProvider() {
+    public ZipResourceProvider() {
     }
 
     public void addTexture(String name, Texture texture) {

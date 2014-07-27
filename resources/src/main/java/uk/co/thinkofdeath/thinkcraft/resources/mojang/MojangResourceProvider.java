@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.textures.mojang;
+package uk.co.thinkofdeath.thinkcraft.resources.mojang;
 
-import uk.co.thinkofdeath.thinkcraft.textures.TextureFactory;
+import uk.co.thinkofdeath.thinkcraft.resources.TextureFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-public class MojangTextureProvider extends ZipTextureProvider {
+public class MojangResourceProvider extends ZipResourceProvider {
 
     private static final String JAR_LOCATION =
             "http://s3.amazonaws.com/Minecraft.Download/versions/%1$s/%1$s.jar";
 
-    public MojangTextureProvider(String version, TextureFactory factory) {
+    public MojangResourceProvider(String version, TextureFactory factory) {
         try {
             InputStream inputStream = new URL(String.format(JAR_LOCATION, version))
                     .openConnection().getInputStream();

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.textures;
+package uk.co.thinkofdeath.thinkcraft.resources;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,12 +24,12 @@ public class TextureStitcher {
 
     private static final int TEXTURE_SIZE = 1024;
 
-    private final TextureProvider provider;
+    private final ResourceProvider provider;
     private final TextureFactory textureFactory;
     private final ArrayList<StitchedTexture> textures = new ArrayList<>();
     private final ArrayList<StitchedTexture> virtualTextures = new ArrayList<>();
 
-    public TextureStitcher(TextureProvider provider, TextureFactory textureFactory) {
+    public TextureStitcher(ResourceProvider provider, TextureFactory textureFactory) {
         this.provider = provider;
         this.textureFactory = textureFactory;
     }

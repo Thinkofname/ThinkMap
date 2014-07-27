@@ -14,11 +14,20 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.textures;
+package uk.co.thinkofdeath.thinkcraft.resources.mojang;
 
-public interface TextureMetadata {
+import uk.co.thinkofdeath.thinkcraft.resources.TextureMetadata;
 
-    public int getFrameTime();
+public class MojangMetadata implements TextureMetadata {
+    MojangMetadataAnimation animation;
 
-    public int[] getFrames();
+    @Override
+    public int getFrameTime() {
+        return animation.frametime == 0 ? 1 : animation.frametime;
+    }
+
+    @Override
+    public int[] getFrames() {
+        return animation.frames;
+    }
 }

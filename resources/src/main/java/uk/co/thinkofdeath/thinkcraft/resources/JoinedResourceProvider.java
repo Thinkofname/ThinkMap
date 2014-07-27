@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.textures;
+package uk.co.thinkofdeath.thinkcraft.resources;
 
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class JoinedProvider implements TextureProvider {
+public class JoinedResourceProvider implements ResourceProvider {
 
-    private TextureProvider[] providers;
+    private ResourceProvider[] providers;
 
     /**
      * Joins the providers in a way where if one texture is missing then the next one will be checked. The first argument is checked first and then on.
@@ -29,14 +29,14 @@ public class JoinedProvider implements TextureProvider {
      * @param providers
      *         The providers to join
      */
-    public JoinedProvider(TextureProvider... providers) {
+    public JoinedResourceProvider(ResourceProvider... providers) {
         this.providers = providers;
     }
 
     @Override
     public String[] getTextures() {
         HashSet<String> textures = new HashSet<>();
-        for (TextureProvider provider : providers) {
+        for (ResourceProvider provider : providers) {
             textures.addAll(Arrays.asList(provider.getTextures()));
         }
         return textures.toArray(new String[textures.size()]);
@@ -44,7 +44,7 @@ public class JoinedProvider implements TextureProvider {
 
     @Override
     public Texture getTexture(String name) {
-        for (TextureProvider provider : providers) {
+        for (ResourceProvider provider : providers) {
             Texture texture = provider.getTexture(name);
             if (texture != null) {
                 return texture;
@@ -55,7 +55,7 @@ public class JoinedProvider implements TextureProvider {
 
     @Override
     public TextureMetadata getMetadata(String name) {
-        for (TextureProvider provider : providers) {
+        for (ResourceProvider provider : providers) {
             TextureMetadata metadata = provider.getMetadata(name);
             if (metadata != null) {
                 return metadata;
@@ -66,7 +66,7 @@ public class JoinedProvider implements TextureProvider {
 
     @Override
     public byte[] getResource(String name) {
-        for (TextureProvider provider : providers) {
+        for (ResourceProvider provider : providers) {
             byte[] resource = provider.getResource(name);
             if (resource != null) {
                 return resource;
