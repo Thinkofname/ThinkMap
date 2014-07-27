@@ -399,7 +399,11 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
      *         The object to remove
      */
     public void removeSortable(SortableRenderObject sortableRenderObject) {
+        int oldSize = sortableRenderObjects.size();
         sortableRenderObjects.remove(sortableRenderObject);
+        if (oldSize == sortableRenderObjects.size()) {
+            System.out.println("Failed to remove sortable: " + oldSize + " -> " + sortableRenderObjects.size());
+        }
         gl.deleteBuffer(sortableRenderObject.buffer);
     }
 

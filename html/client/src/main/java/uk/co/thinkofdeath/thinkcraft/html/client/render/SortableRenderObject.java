@@ -69,7 +69,11 @@ public class SortableRenderObject {
 
     public void setData(TUint8Array data) {
         this.data = data;
-        tempArray = TUint8Array.create(data.length());
+        if (data != null) {
+            tempArray = TUint8Array.create(data.length());
+        } else {
+            tempArray = null;
+        }
     }
 
     public TUint8Array getData() {

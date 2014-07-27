@@ -88,9 +88,11 @@ public class ClientChunk extends Chunk {
         if (sortableRenderObjects[i] != null) {
             TUint8Array data = sortableRenderObjects[i].getData();
             world.mapViewer.getWorkerPool().sendMessage(sender, new FreeMessage(data), false, data.getBuffer());
+            sortableRenderObjects[i].setData(null);
         }
         if (sortableRenderObjects[i] != null && trans.length() == 0) {
             world.mapViewer.getRenderer().removeSortable(sortableRenderObjects[i]);
+            sortableRenderObjects[i] = null;
             return;
         }
         if (trans.length() > 0) {
