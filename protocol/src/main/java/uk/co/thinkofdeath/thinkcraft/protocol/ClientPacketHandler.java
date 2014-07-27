@@ -17,7 +17,10 @@
 package uk.co.thinkofdeath.thinkcraft.protocol;
 
 import uk.co.thinkofdeath.thinkcraft.protocol.packets.InitConnection;
+import uk.co.thinkofdeath.thinkcraft.protocol.packets.KeepAlive;
 
 public interface ClientPacketHandler extends PacketHandler {
     void handle(InitConnection initConnection);
+
+    void handle(KeepAlive keepAlive);
 }

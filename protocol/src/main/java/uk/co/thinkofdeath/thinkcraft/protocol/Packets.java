@@ -16,10 +16,7 @@
 
 package uk.co.thinkofdeath.thinkcraft.protocol;
 
-import uk.co.thinkofdeath.thinkcraft.protocol.packets.InitConnection;
-import uk.co.thinkofdeath.thinkcraft.protocol.packets.ServerSettings;
-import uk.co.thinkofdeath.thinkcraft.protocol.packets.SpawnPosition;
-import uk.co.thinkofdeath.thinkcraft.protocol.packets.TimeUpdate;
+import uk.co.thinkofdeath.thinkcraft.protocol.packets.*;
 
 import java.util.HashMap;
 
@@ -36,6 +33,7 @@ public class Packets {
 
     static {
         client(new InitConnection());
+        client(new KeepAlive());
 
         server(new ServerSettings());
         server(new TimeUpdate());

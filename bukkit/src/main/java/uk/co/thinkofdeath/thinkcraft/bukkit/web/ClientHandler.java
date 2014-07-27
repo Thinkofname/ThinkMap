@@ -23,10 +23,7 @@ import org.bukkit.Location;
 import uk.co.thinkofdeath.thinkcraft.bukkit.ThinkMapPlugin;
 import uk.co.thinkofdeath.thinkcraft.protocol.ClientPacketHandler;
 import uk.co.thinkofdeath.thinkcraft.protocol.Packet;
-import uk.co.thinkofdeath.thinkcraft.protocol.packets.InitConnection;
-import uk.co.thinkofdeath.thinkcraft.protocol.packets.ServerSettings;
-import uk.co.thinkofdeath.thinkcraft.protocol.packets.SpawnPosition;
-import uk.co.thinkofdeath.thinkcraft.protocol.packets.TimeUpdate;
+import uk.co.thinkofdeath.thinkcraft.protocol.packets.*;
 
 public class ClientHandler extends SimpleChannelInboundHandler<Packet<ClientPacketHandler>> implements ClientPacketHandler {
 
@@ -58,5 +55,10 @@ public class ClientHandler extends SimpleChannelInboundHandler<Packet<ClientPack
                 channel.writeAndFlush(new TimeUpdate((int) plugin.getTargetWorld().getTime()));
             }
         });
+    }
+
+    @Override
+    public void handle(KeepAlive keepAlive) {
+
     }
 }

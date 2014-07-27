@@ -16,6 +16,7 @@
 
 package uk.co.thinkofdeath.thinkcraft.html.client;
 
+import com.google.gwt.core.client.Duration;
 import com.google.gwt.core.client.EntryPoint;
 import elemental.client.Browser;
 import elemental.events.Event;
@@ -36,6 +37,7 @@ import uk.co.thinkofdeath.thinkcraft.html.shared.JavascriptLib;
 import uk.co.thinkofdeath.thinkcraft.html.shared.TextureMap;
 import uk.co.thinkofdeath.thinkcraft.html.shared.settings.ClientSettings;
 import uk.co.thinkofdeath.thinkcraft.protocol.ServerPacketHandler;
+import uk.co.thinkofdeath.thinkcraft.protocol.packets.KeepAlive;
 import uk.co.thinkofdeath.thinkcraft.protocol.packets.ServerSettings;
 import uk.co.thinkofdeath.thinkcraft.protocol.packets.SpawnPosition;
 import uk.co.thinkofdeath.thinkcraft.protocol.packets.TimeUpdate;
@@ -43,6 +45,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockRegistry;
 import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ClientSettingsMessage;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.MessageHandler;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.TextureMessage;
@@ -77,6 +80,7 @@ public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler
     private Renderer renderer;
     private ClientWorld world;
     private boolean shouldUpdateWorld = false;
+    private double lastKeepAlive = Duration.currentTimeMillis();
 
     private int noTextures;
     ArrayList<TextureLoadHandler> earlyTextures = new ArrayList<>();
@@ -93,6 +97,17 @@ public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler
         xhr.open("GET", "http://" + getConfigAdddress() + "/resources/blocks.json", true);
         xhr.setOnload(this);
         xhr.send();
+
+        Platform.runRepeated(new Runnable() {
+            @Override
+            public void run() {
+                if (connection == null) return;
+                if (Duration.currentTimeMillis() - lastKeepAlive > 1000) {
+                    lastKeepAlive = Duration.currentTimeMillis();
+                    connection.send(new KeepAlive());
+                }
+            }
+        }, 1000);
     }
 
     /**
