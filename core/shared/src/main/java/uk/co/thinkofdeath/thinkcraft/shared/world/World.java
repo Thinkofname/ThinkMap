@@ -224,6 +224,22 @@ public abstract class World {
         return chunk.getSkyLight(x & 0xF, y, z & 0xF);
     }
 
+
+    /**
+     * Returns the biome at the location in the world
+     *
+     * @param x
+     *         The position of the block on the x axis
+     * @param z
+     *         The position of the block on the z axis
+     * @return The biome at the location
+     */
+    public Biome getBiome(int x, int z) {
+        Chunk chunk = getChunk(x >> 4, z >> 4);
+        if (chunk == null) return Biome.INVALID;
+        return chunk.getBiome(x & 0xF, z & 0xF);
+    }
+
     /**
      * Sets the time of day for this world
      *

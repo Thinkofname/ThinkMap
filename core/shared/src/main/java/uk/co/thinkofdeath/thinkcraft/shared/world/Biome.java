@@ -90,6 +90,7 @@ public enum Biome {
     private final int id;
     private final double temperature;
     private final double moisture;
+    private final int colorIndex;
 
     Biome(int id) {
         this(id, 0.5, 0.5);
@@ -99,6 +100,10 @@ public enum Biome {
         this.id = id;
         this.temperature = temperature;
         this.moisture = moisture;
+        moisture = getMoisture() * getTemperature();
+        int bx = (int) ((1.0 - getTemperature()) * 255.0);
+        int by = (int) ((1.0 - moisture) * 255.0);
+        colorIndex = bx | (by << 8);
     }
 
     public int getId() {
@@ -111,6 +116,10 @@ public enum Biome {
 
     public double getMoisture() {
         return moisture;
+    }
+
+    public int getColorIndex() {
+        return colorIndex;
     }
 
     public static Biome getById(int id) {

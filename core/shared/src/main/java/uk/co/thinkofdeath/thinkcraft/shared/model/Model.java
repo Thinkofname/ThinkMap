@@ -108,29 +108,21 @@ public class Model {
                 }
             }
             if (face.grassBiomeColour) {
-                Biome biome = chunk.getBiome(x, z);
-                double moisture = biome.getMoisture() * biome.getTemperature();
-                int bx = (int) ((1.0 - biome.getTemperature()) * 255.0);
-                int by = (int) ((1.0 - moisture) * 255.0);
-                int idx = bx | (by << 8);
-                if (grassBiomeColors.containsKey(idx)) {
-                    int colour = grassBiomeColors.get(idx);
-                    face.r = (colour >> 16) & 0xFF;
-                    face.g = (colour >> 8) & 0xFF;
-                    face.b = colour & 0xFF;
-                }
+                int colour = getBiomeColorFor(chunk.getWorld(),
+                        (chunk.getX() << 4) + x,
+                        (chunk.getZ() << 4) + z,
+                        grassBiomeColors);
+                face.r = (colour >> 16) & 0xFF;
+                face.g = (colour >> 8) & 0xFF;
+                face.b = colour & 0xFF;
             } else if (face.foliageBiomeColour) {
-                Biome biome = chunk.getBiome(x, z);
-                double moisture = biome.getMoisture() * biome.getTemperature();
-                int bx = (int) ((1.0 - biome.getTemperature()) * 255.0);
-                int by = (int) ((1.0 - moisture) * 255.0);
-                int idx = bx | (by << 8);
-                if (foliageBiomeColors.containsKey(idx)) {
-                    int colour = foliageBiomeColors.get(idx);
-                    face.r = (colour >> 16) & 0xFF;
-                    face.g = (colour >> 8) & 0xFF;
-                    face.b = colour & 0xFF;
-                }
+                int colour = getBiomeColorFor(chunk.getWorld(),
+                        (chunk.getX() << 4) + x,
+                        (chunk.getZ() << 4) + z,
+                        foliageBiomeColors);
+                face.r = (colour >> 16) & 0xFF;
+                face.g = (colour >> 8) & 0xFF;
+                face.b = colour & 0xFF;
             }
             Texture texture = face.texture;
             // First triangle
@@ -483,6 +475,39 @@ public class Model {
 
     public void forceShade() {
         forceShade = true;
+    }
+
+    private static int getBiomeColorFor(World world, int x, int z, Map<Integer, Integer> colors) {
+        int color = getBiomeColorAt(world, x, z, colors);
+        int r = (color >> 16) & 0xFF;
+        int g = (color >> 8) & 0xFF;
+        int b = color & 0xFF;
+
+        int count = 1;
+        for (int xx = -2; xx <= 2; xx++) {
+            for (int zz = -2; zz <= 2; zz++) {
+                if (xx == 0 && zz == 0) continue;
+                color = getBiomeColorAt(world, x + xx, z + zz, colors);
+                r += (color >> 16) & 0xFF;
+                g += (color >> 8) & 0xFF;
+                b += color & 0xFF;
+                count++;
+            }
+        }
+        r /= count;
+        g /= count;
+        b /= count;
+        return ((r & 0xFF) << 16)
+                | ((g & 0xFF) << 8)
+                | (b & 0xFF);
+    }
+
+    private static int getBiomeColorAt(World world, int x, int z, Map<Integer, Integer> colors) {
+        Biome biome = world.getBiome(x, z);
+        if (colors.containsKey(biome.getColorIndex())) {
+            return colors.get(biome.getColorIndex());
+        }
+        return 0xFF00FF;
     }
 
     /**
