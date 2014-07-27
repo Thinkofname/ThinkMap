@@ -194,6 +194,7 @@ public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler
 
     @Override
     public void handle(TimeUpdate timeUpdate) {
+        if (getWorld() == null) return;
         getWorld().setTimeOfDay(timeUpdate.getCurrentTime());
     }
 
