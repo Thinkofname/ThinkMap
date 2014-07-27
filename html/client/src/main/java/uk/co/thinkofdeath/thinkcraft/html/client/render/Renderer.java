@@ -339,23 +339,13 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
             int dz = (int) Math.signum(((int) camera.getZ() >> 4) - position.getZ());
 
             ChunkSection section = special ? null : chunk.getSection(position.getY());
-            if (special || dx < 0) { // Right
-                checkAndGoto(section, position, Face.RIGHT, dx, dy, dz, special);
-            }
-            if (special || dx > 0) { // Left
-                checkAndGoto(section, position, Face.LEFT, dx, dy, dz, special);
-            }
-            if (special || dy < 0) { // Bottom
-                checkAndGoto(section, position, Face.BOTTOM, dx, dy, dz, special);
-            }
-            if (special || dy > 0) { // Top
-                checkAndGoto(section, position, Face.TOP, dx, dy, dz, special);
-            }
-            if (special || dz < 0) { // Back
-                checkAndGoto(section, position, Face.BACK, dx, dy, dz, special);
-            }
-            if (special || dz > 0) { // Front
-                checkAndGoto(section, position, Face.FRONT, dx, dy, dz, special);
+            for (Face face : Face.values()) {
+                if (special
+                        || (face.getOffsetX() != 0 && dx == face.getOffsetX())
+                        || (face.getOffsetY() != 0 && dy == face.getOffsetY())
+                        || (face.getOffsetZ() != 0 && dz == face.getOffsetZ())) {
+                    checkAndGoto(section, position, face, dx, dy, dz, special);
+                }
             }
         }
     }
@@ -363,7 +353,7 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
     private void checkAndGoto(ChunkSection section, Position position, Face face, int dx, int dy, int dz, boolean always) {
         for (Face other : Face.values()) {
             if (other != face && (section == null || section.canAccessSide(face, other))) {
-                if ((face.getOffsetX() != 0 && (-dx == other.getOffsetX() || dx == 0))
+                if ((other.getOffsetX() != 0 && (-dx == other.getOffsetX() || dx == 0))
                         || (other.getOffsetY() != 0 && (-dy == other.getOffsetY() || dy == 0))
                         || (other.getOffsetZ() != 0 && (-dz == other.getOffsetZ() || dz == 0))
                         || always) {
