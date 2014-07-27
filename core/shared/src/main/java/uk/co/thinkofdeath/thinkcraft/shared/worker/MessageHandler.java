@@ -31,6 +31,4 @@ public interface MessageHandler {
     void handle(ClientSettingsMessage clientSettingsMessage);
 
     void handle(TextureMessage textureMessage);
-
-    void handle(FreeMessage freeMessage);
 }

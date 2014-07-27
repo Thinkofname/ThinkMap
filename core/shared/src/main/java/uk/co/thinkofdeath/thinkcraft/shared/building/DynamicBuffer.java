@@ -24,7 +24,6 @@ public class DynamicBuffer {
 
     private static final boolean IS_LITTLE_ENDIAN =
             (DataStream.create(createEndianTestBuffer()).getInt8(0) == 1);
-    public static final BufferPool POOL = new BufferPool();
     private final boolean littleEndian;
 
     private TUint8Array buffer;
@@ -44,7 +43,7 @@ public class DynamicBuffer {
     public DynamicBuffer(int size, boolean littleEndian) {
         this.littleEndian = littleEndian;
         if (size < 16) size = 16;
-        buffer = POOL.alloc(size);
+        buffer = TUint8Array.create(size);
         dataStream = DataStream.create(buffer.getBuffer());
     }
 
@@ -99,7 +98,9 @@ public class DynamicBuffer {
 
     // Doubles the size of the buffer
     private void resize() {
-        buffer = POOL.resize(buffer, buffer.length() * 2);
+        TUint8Array oldBuffer = buffer;
+        buffer = TUint8Array.create(buffer.length() * 2);
+        buffer.set(oldBuffer);
         dataStream = DataStream.create(buffer.getBuffer());
     }
 

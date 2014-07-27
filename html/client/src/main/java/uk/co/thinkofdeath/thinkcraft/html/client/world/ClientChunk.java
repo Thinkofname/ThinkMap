@@ -24,7 +24,6 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.model.PositionedModel;
 import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage;
-import uk.co.thinkofdeath.thinkcraft.shared.worker.FreeMessage;
 import uk.co.thinkofdeath.thinkcraft.shared.world.Chunk;
 import uk.co.thinkofdeath.thinkcraft.shared.world.ChunkSection;
 
@@ -87,7 +86,6 @@ public class ClientChunk extends Chunk {
     public void setTransparentModels(int i, JsArray<PositionedModel> trans, TUint8Array transData, int sender) {
         if (sortableRenderObjects[i] != null) {
             TUint8Array data = sortableRenderObjects[i].getData();
-            world.mapViewer.getWorkerPool().sendMessage(sender, new FreeMessage(data), false, data.getBuffer());
             sortableRenderObjects[i].setData(null);
         }
         if (sortableRenderObjects[i] != null && trans.length() == 0) {

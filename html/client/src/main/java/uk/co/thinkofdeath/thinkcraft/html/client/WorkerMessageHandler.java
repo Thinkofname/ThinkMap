@@ -81,9 +81,4 @@ public class WorkerMessageHandler implements MessageHandler {
     public void handle(TextureMessage textureMessage) {
         throw new UnsupportedOperationException();
     }
-
-    @Override
-    public void handle(FreeMessage freeMessage) {
-        throw new UnsupportedOperationException();
-    }
 }

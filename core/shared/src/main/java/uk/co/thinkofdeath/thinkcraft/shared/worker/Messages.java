@@ -38,7 +38,6 @@ public class Messages {
 
         register("settings", new ClientSettingsMessage());
         register("textures", new TextureMessage()); // TODO: Fixme
-        register("pool:free", new FreeMessage()); // TODO: Fixme
     }
 
     public static Message read(Serializer serializer) {

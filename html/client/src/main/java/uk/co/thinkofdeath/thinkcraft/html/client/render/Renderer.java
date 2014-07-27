@@ -32,7 +32,6 @@ import uk.co.thinkofdeath.thinkcraft.shared.util.IntMap;
 import uk.co.thinkofdeath.thinkcraft.shared.util.PositionChunkSectionSet;
 import uk.co.thinkofdeath.thinkcraft.shared.vector.Frustum;
 import uk.co.thinkofdeath.thinkcraft.shared.vector.Matrix4;
-import uk.co.thinkofdeath.thinkcraft.shared.worker.FreeMessage;
 import uk.co.thinkofdeath.thinkcraft.shared.world.ChunkSection;
 
 import java.util.ArrayList;
@@ -414,8 +413,6 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         renderObject.triangleCount = data.length() / 22;
         gl.bindBuffer(ARRAY_BUFFER, renderObject.buffer);
         gl.bufferData(ARRAY_BUFFER, (ArrayBufferView) data, STATIC_DRAW);
-
-        mapViewer.getWorkerPool().sendMessage(sender, new FreeMessage(data), false, data.getBuffer());
     }
 
     /**
