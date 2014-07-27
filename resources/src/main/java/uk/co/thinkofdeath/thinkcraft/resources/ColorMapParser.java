@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-public class ColormapParser {
+public class ColorMapParser {
 
     private static final HashSet<Integer> allowedColours = new HashSet<Integer>() {{
         add(255 | (255 << 8));
