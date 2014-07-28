@@ -16,7 +16,7 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.platform;
 
-import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.FloatBuffer;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.BufferAllocator;
 import uk.co.thinkofdeath.thinkcraft.shared.serializing.SerializerFactory;
 
 /**
@@ -38,20 +38,18 @@ public abstract class Platform {
     }
 
     /**
-     * Creates a FloatBuffer of the size passed
+     * Returns the default allocator for this platform
      *
-     * @param size
-     *         The size of the buffer
-     * @return The created FloatBuffer
+     * @return The allocator
      */
-    public static FloatBuffer createFloatBuffer(int size) {
-        return platform.newFloatBuffer(size);
+    public static BufferAllocator alloc() {
+        return platform.allocator();
     }
 
     /**
-     * @see #createFloatBuffer(int)
+     * @see #alloc()
      */
-    protected abstract FloatBuffer newFloatBuffer(int size);
+    protected abstract BufferAllocator allocator();
 
     /**
      * Runs the passed runnable repeatedly at the interval

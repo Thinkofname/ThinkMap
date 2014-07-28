@@ -16,24 +16,12 @@
 
 package uk.co.thinkofdeath.thinkcraft.html.shared.buffer;
 
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.BufferAllocator;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.FloatBuffer;
 
-public class JavascriptFloatBuffer extends JavascriptBuffer implements FloatBuffer {
-
-    protected JavascriptFloatBuffer() {
+public class JsBufferAllocator implements BufferAllocator {
+    @Override
+    public FloatBuffer floatBuffer(int size) {
+        return JavascriptFloatBuffer.create(size);
     }
-
-    public native static JavascriptFloatBuffer create(int size)/*-{
-        return new Float32Array(size);
-    }-*/;
-
-    @Override
-    public final native void set(int index, float value)/*-{
-        this[index] = value;
-    }-*/;
-
-    @Override
-    public final native float get(int index)/*-{
-        return this[index];
-    }-*/;
 }

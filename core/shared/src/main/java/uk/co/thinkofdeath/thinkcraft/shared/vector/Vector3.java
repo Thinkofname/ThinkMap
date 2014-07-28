@@ -21,7 +21,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.FloatBuffer;
 
 public class Vector3 {
 
-    private FloatBuffer values = Platform.createFloatBuffer(3);
+    private FloatBuffer values = Platform.alloc().floatBuffer(3);
 
     public Vector3() {
 

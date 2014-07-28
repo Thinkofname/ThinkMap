@@ -21,7 +21,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.FloatBuffer;
 
 public class Matrix4 {
 
-    private FloatBuffer buffer = Platform.createFloatBuffer(4 * 4);
+    private FloatBuffer buffer = Platform.alloc().floatBuffer(4 * 4);
 
     public Matrix4() {
         identity();

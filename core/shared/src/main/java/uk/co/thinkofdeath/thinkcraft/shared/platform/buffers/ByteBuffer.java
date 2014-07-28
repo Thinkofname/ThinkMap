@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.html.shared.buffer;
+package uk.co.thinkofdeath.thinkcraft.shared.platform.buffers;
 
-import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.FloatBuffer;
+public interface ByteBuffer extends Buffer {
 
-public class JavascriptFloatBuffer extends JavascriptBuffer implements FloatBuffer {
+    /**
+     * Sets the value at the index
+     *
+     * @param index
+     *         The index
+     * @param value
+     *         The value
+     */
+    public void set(int index, int value);
 
-    protected JavascriptFloatBuffer() {
-    }
-
-    public native static JavascriptFloatBuffer create(int size)/*-{
-        return new Float32Array(size);
-    }-*/;
-
-    @Override
-    public final native void set(int index, float value)/*-{
-        this[index] = value;
-    }-*/;
-
-    @Override
-    public final native float get(int index)/*-{
-        return this[index];
-    }-*/;
+    /**
+     * Gets the value at the index
+     *
+     * @param index
+     *         The index
+     * @return The value
+     */
+    public int get(int index);
 }

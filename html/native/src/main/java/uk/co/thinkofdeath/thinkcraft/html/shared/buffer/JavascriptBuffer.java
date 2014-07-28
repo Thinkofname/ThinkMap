@@ -16,18 +16,17 @@
 
 package uk.co.thinkofdeath.thinkcraft.html.shared.buffer;
 
+import com.google.gwt.core.client.JavaScriptObject;
 import elemental.html.ArrayBufferView;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.Buffer;
 
-public abstract class JavascriptBuffer implements Buffer {
+public abstract class JavascriptBuffer extends JavaScriptObject implements Buffer {
 
-    protected ArrayBufferView buffer;
 
-    protected JavascriptBuffer(ArrayBufferView buffer) {
-        this.buffer = buffer;
+    protected JavascriptBuffer() {
     }
 
-    public ArrayBufferView getRaw() {
-        return buffer;
-    }
+    public final native ArrayBufferView getRaw()/*-{
+        return this;
+    }-*/;
 }

@@ -21,7 +21,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.FloatBuffer;
 
 public class ModelVertex {
 
-    private final FloatBuffer buffer = Platform.createFloatBuffer(5);
+    private final FloatBuffer buffer = Platform.alloc().floatBuffer(5);
 
     /**
      * Creates a model vertex initialed to the passed values

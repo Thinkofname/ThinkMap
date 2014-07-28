@@ -14,26 +14,16 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.html.shared.buffer;
+package uk.co.thinkofdeath.thinkcraft.shared.platform.buffers;
 
-import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.FloatBuffer;
+public interface BufferAllocator {
 
-public class JavascriptFloatBuffer extends JavascriptBuffer implements FloatBuffer {
-
-    protected JavascriptFloatBuffer() {
-    }
-
-    public native static JavascriptFloatBuffer create(int size)/*-{
-        return new Float32Array(size);
-    }-*/;
-
-    @Override
-    public final native void set(int index, float value)/*-{
-        this[index] = value;
-    }-*/;
-
-    @Override
-    public final native float get(int index)/*-{
-        return this[index];
-    }-*/;
+    /**
+     * Creates a FloatBuffer of the size passed
+     *
+     * @param size
+     *         The size of the buffer
+     * @return The created FloatBuffer
+     */
+    FloatBuffer floatBuffer(int size);
 }

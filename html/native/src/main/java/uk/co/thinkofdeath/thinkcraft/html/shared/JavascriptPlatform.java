@@ -17,16 +17,19 @@
 package uk.co.thinkofdeath.thinkcraft.html.shared;
 
 import elemental.util.Timer;
-import uk.co.thinkofdeath.thinkcraft.html.shared.buffer.JavascriptFloatBuffer;
+import uk.co.thinkofdeath.thinkcraft.html.shared.buffer.JsBufferAllocator;
 import uk.co.thinkofdeath.thinkcraft.html.shared.serialize.JsSerializerFactory;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
-import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.FloatBuffer;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.BufferAllocator;
 import uk.co.thinkofdeath.thinkcraft.shared.serializing.SerializerFactory;
 
 public class JavascriptPlatform extends Platform {
+
+    private JsBufferAllocator allocator = new JsBufferAllocator();
+
     @Override
-    protected FloatBuffer newFloatBuffer(int size) {
-        return new JavascriptFloatBuffer(size);
+    protected BufferAllocator allocator() {
+        return allocator;
     }
 
     @Override
