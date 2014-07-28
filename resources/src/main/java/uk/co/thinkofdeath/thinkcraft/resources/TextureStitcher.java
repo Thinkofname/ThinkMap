@@ -22,7 +22,7 @@ import java.util.Comparator;
 
 public class TextureStitcher {
 
-    private static final int TEXTURE_SIZE = 1024;
+    private static final int TEXTURE_SIZE = 512;
 
     private final ResourceProvider provider;
     private final TextureFactory textureFactory;

@@ -28,6 +28,8 @@ import java.util.Map;
 
 public class VirtualTexture {
 
+    public static final int TEXTURE_SIZE = 512;
+
     private final MapViewer mapViewer;
     private final int id;
     private final CanvasElement canvas;
@@ -41,19 +43,19 @@ public class VirtualTexture {
         this.mapViewer = mapViewer;
         this.id = id;
         canvas = Browser.getDocument().createCanvasElement();
-        canvas.setWidth(1024);
-        canvas.setHeight(1024);
+        canvas.setWidth(TEXTURE_SIZE);
+        canvas.setHeight(TEXTURE_SIZE);
         ctx = (CanvasRenderingContext2D) canvas.getContext("2d");
 
         ctx.setFillStyle("#FFFFFF");
-        ctx.fillRect(0, 0, 1024, 1024);
+        ctx.fillRect(0, 0, TEXTURE_SIZE, TEXTURE_SIZE);
 
         Map<String, Texture> textures = mapViewer.getTextures();
         final ArrayList<Texture> tx = new ArrayList<>();
         final ArrayList<Texture> animatedTextures = new ArrayList<>();
         // Find relevant textures
         for (Texture t : textures.values()) {
-            if (t.getVirtualY() / 1024 == id) {
+            if (t.getVirtualY() / TEXTURE_SIZE == id) {
                 tx.add(t);
                 if (t.getFrameCount() > 1) {
                     animatedTextures.add(t);
@@ -75,13 +77,13 @@ public class VirtualTexture {
     public void loadTextures(int id) {
         ImageElement imageElement = mapViewer.getImageElements()[id];
         for (Texture texture : textures) {
-            if (texture.getPosY() / 1024 != id) {
+            if (texture.getPosY() / TEXTURE_SIZE != id) {
                 continue;
             }
             // Draw the first frame
-            ctx.clearRect(texture.getVirtualX(), texture.getVirtualY() - this.id * 1024, texture.getSize(), texture.getSize());
-            ctx.drawImage(imageElement, texture.getPosX(), texture.getPosY() - id * 1024, texture.getSize(), texture.getSize(),
-                    texture.getVirtualX(), texture.getVirtualY() - this.id * 1024, texture.getSize(), texture.getSize());
+            ctx.clearRect(texture.getVirtualX(), texture.getVirtualY() - this.id * TEXTURE_SIZE, texture.getSize(), texture.getSize());
+            ctx.drawImage(imageElement, texture.getPosX(), texture.getPosY() - id * TEXTURE_SIZE, texture.getSize(), texture.getSize(),
+                    texture.getVirtualX(), texture.getVirtualY() - this.id * TEXTURE_SIZE, texture.getSize(), texture.getSize());
 
             dirty = true;
         }
@@ -102,13 +104,13 @@ public class VirtualTexture {
                 int total = currentFrame * texture.getSize();
                 int posX = texture.getPosX() + (total % texture.getWidth());
                 int posY = texture.getPosY() + (total / texture.getWidth()) * texture.getSize();
-                int tid = posY / 1024;
+                int tid = posY / TEXTURE_SIZE;
                 ImageElement imageElement = mapViewer.getImageElements()[tid];
-                posY -= 1024 * tid;
+                posY -= TEXTURE_SIZE * tid;
 
-                ctx.clearRect(texture.getVirtualX(), texture.getVirtualY() - id * 1024, texture.getSize(), texture.getSize());
+                ctx.clearRect(texture.getVirtualX(), texture.getVirtualY() - id * TEXTURE_SIZE, texture.getSize(), texture.getSize());
                 ctx.drawImage(imageElement, posX, posY, texture.getSize(), texture.getSize(),
-                        texture.getVirtualX(), texture.getVirtualY() - id * 1024, texture.getSize(), texture.getSize());
+                        texture.getVirtualX(), texture.getVirtualY() - id * TEXTURE_SIZE, texture.getSize(), texture.getSize());
                 dirty = true;
             }
         }

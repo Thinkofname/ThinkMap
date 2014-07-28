@@ -42,8 +42,8 @@ public class TexturePreProcessor {
         if (grassOverlay != null && grass != null) {
             System.out.println("Processing");
             CanvasElement canvasElement = Browser.getDocument().createCanvasElement();
-            canvasElement.setWidth(1024);
-            canvasElement.setHeight(1024);
+            canvasElement.setWidth(VirtualTexture.TEXTURE_SIZE);
+            canvasElement.setHeight(VirtualTexture.TEXTURE_SIZE);
             CanvasRenderingContext2D ctx = (CanvasRenderingContext2D) canvasElement.getContext("2d");
             ctx.drawImage(grassOverlay.imageElement, 0, 0);
 
@@ -52,14 +52,14 @@ public class TexturePreProcessor {
 
             ImageData overlayData = ctx.getImageData(
                     overlay.getPosX(),
-                    overlay.getPosY() - grassOverlay.id * 1024,
+                    overlay.getPosY() - grassOverlay.id * VirtualTexture.TEXTURE_SIZE,
                     overlay.getSize(),
                     overlay.getSize());
             ctx.drawImage(grass.imageElement, 0, 0);
 
             ImageData data = ctx.getImageData(
                     g.getPosX(),
-                    g.getPosY() - grass.id * 1024,
+                    g.getPosY() - grass.id * VirtualTexture.TEXTURE_SIZE,
                     g.getSize(),
                     g.getSize());
 
@@ -74,9 +74,9 @@ public class TexturePreProcessor {
                 }
             }
 
-            int vid = g.getVirtualY() / 1024;
+            int vid = g.getVirtualY() / VirtualTexture.TEXTURE_SIZE;
             VirtualTexture virtualTexture = mapViewer.getVirtualTextures()[vid];
-            virtualTexture.getCtx().putImageData(data, g.getVirtualX(), g.getVirtualY() - vid * 1024);
+            virtualTexture.getCtx().putImageData(data, g.getVirtualX(), g.getVirtualY() - vid * VirtualTexture.TEXTURE_SIZE);
 
             grass = null;
             grassOverlay = null;

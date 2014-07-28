@@ -20,7 +20,7 @@ varying float texture;
 
 const float invPosScale = 1.0 / 256.0;
 const float invIdScale = 1.0 / 32.0;
-const float invTextureSize = 1.0 / 1024.0;
+const float invTextureSize = 1.0 / 512.0;
 
 void main(void) {
     vec3 pos = position;
