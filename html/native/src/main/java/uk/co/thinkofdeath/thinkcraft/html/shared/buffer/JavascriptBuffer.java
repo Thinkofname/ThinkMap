@@ -27,8 +27,7 @@ public abstract class JavascriptBuffer implements Buffer {
         this.buffer = buffer;
     }
 
-    @Override
-    public Object getRaw() {
+    public ArrayBufferView getRaw() {
         return buffer;
     }
 }

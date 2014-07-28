@@ -18,10 +18,4 @@ package uk.co.thinkofdeath.thinkcraft.shared.platform.buffers;
 
 public interface Buffer {
 
-    /**
-     * Returns the underlying platform specific buffer for this
-     *
-     * @return The underlying buffer
-     */
-    public Object getRaw();
 }

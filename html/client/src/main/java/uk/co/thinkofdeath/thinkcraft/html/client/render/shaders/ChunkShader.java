@@ -20,6 +20,7 @@ import elemental.html.Float32Array;
 import elemental.html.Int32Array;
 import elemental.html.WebGLUniformLocation;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.ShaderProgram;
+import uk.co.thinkofdeath.thinkcraft.html.shared.buffer.JavascriptBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.vector.Matrix4;
 
 public class ChunkShader extends ShaderProgram {
@@ -77,7 +78,7 @@ public class ChunkShader extends ShaderProgram {
      *         The matrix to use
      */
     public void setPerspectiveMatrix(Matrix4 matrix) {
-        gl.uniformMatrix4fv(perspectiveMatrix, false, (Float32Array) matrix.getStorage().getRaw());
+        gl.uniformMatrix4fv(perspectiveMatrix, false, (Float32Array) ((JavascriptBuffer) matrix.getStorage()).getRaw());
     }
 
     /**
@@ -87,7 +88,7 @@ public class ChunkShader extends ShaderProgram {
      *         The matrix to use
      */
     public void setViewMatrix(Matrix4 matrix) {
-        gl.uniformMatrix4fv(viewMatrix, false, (Float32Array) matrix.getStorage().getRaw());
+        gl.uniformMatrix4fv(viewMatrix, false, (Float32Array) ((JavascriptBuffer) matrix.getStorage()).getRaw());
     }
 
     /**
