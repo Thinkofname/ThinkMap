@@ -26,4 +26,49 @@ public interface BufferAllocator {
      * @return The created FloatBuffer
      */
     FloatBuffer floatBuffer(int size);
+
+    /**
+     * Creates a copy of the FloatBuffer
+     *
+     * @param other
+     *         The buffer to copy
+     * @return The created FloatBuffer
+     */
+    FloatBuffer floatBuffer(FloatBuffer other);
+
+    /**
+     * Creates a UByteBuffer of the size passed
+     *
+     * @param size
+     *         The size of the buffer
+     * @return The created UByteBuffer
+     */
+    UByteBuffer ubyteBuffer(int size);
+
+    /**
+     * Creates a copy of the UByteBuffer
+     *
+     * @param other
+     *         The buffer to copy
+     * @return The created UByteBuffer
+     */
+    UByteBuffer ubyteBuffer(UByteBuffer other);
+
+    /**
+     * Creates a UShortBuffer of the size passed
+     *
+     * @param size
+     *         The size of the buffer
+     * @return The created UShortBuffer
+     */
+    UShortBuffer ushortBuffer(int size);
+
+    /**
+     * Creates a copy of the UShortBuffer
+     *
+     * @param other
+     *         The buffer to copy
+     * @return The created UShortBuffer
+     */
+    UShortBuffer ushortBuffer(UShortBuffer other);
 }

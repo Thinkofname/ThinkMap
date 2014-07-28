@@ -16,31 +16,31 @@
 
 package uk.co.thinkofdeath.thinkcraft.html.shared.buffer;
 
-import com.google.gwt.core.client.JavaScriptObject;
-import elemental.html.ArrayBufferView;
-import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.Buffer;
 
-public abstract class JavascriptBuffer extends JavaScriptObject implements Buffer {
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UShortBuffer;
 
+public class JavascriptUShortBuffer extends JavascriptBuffer implements UShortBuffer {
 
-    protected JavascriptBuffer() {
+    protected JavascriptUShortBuffer() {
     }
 
-    public final native void set(int offset, Buffer buffer)/*-{
-        this.set(buffer, offset);
+    public native static JavascriptUShortBuffer create(int size)/*-{
+        return new Uint8Array(size);
+    }-*/;
+
+    public native static JavascriptUShortBuffer create(JavascriptUShortBuffer other)/*-{
+        var buf = new Uint8Array(other.length);
+        buf.set(other, 0);
+        return buf;
     }-*/;
 
     @Override
-    public final native int size()/*-{
-        return this.length;
+    public final native void set(int index, int value)/*-{
+        this[index] = value;
     }-*/;
 
     @Override
-    public final native int byteSize()/*-{
-        return this.byteLength;
-    }-*/;
-
-    public final native ArrayBufferView getRaw()/*-{
-        return this;
+    public final native int get(int index)/*-{
+        return this[index];
     }-*/;
 }

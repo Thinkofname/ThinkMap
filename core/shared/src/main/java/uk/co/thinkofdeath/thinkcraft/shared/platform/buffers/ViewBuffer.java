@@ -16,29 +16,8 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.platform.buffers;
 
-public interface Buffer {
-    /**
-     * Copies the values of buffer into this buffer
-     * at the specified offset
-     *
-     * @param offset
-     *         The offset
-     * @param buffer
-     *         The src buffer
-     */
-    void set(int offset, Buffer buffer);
-
-    /**
-     * Returns the number of values in this buffer
-     *
-     * @return The number of values
-     */
-    int size();
-
-    /**
-     * Returns the size of the buffer in bytes
-     *
-     * @return The size in bytes
-     */
-    int byteSize();
+/**
+ * Unaligned access to buffers
+ */
+public interface ViewBuffer {
 }

@@ -16,7 +16,10 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.platform.buffers;
 
-public interface ByteBuffer extends Buffer {
+/**
+ * Stores unsigned shorts
+ */
+public interface UShortBuffer extends Buffer {
 
     /**
      * Sets the value at the index

@@ -16,29 +16,27 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.platform.buffers;
 
-public interface Buffer {
-    /**
-     * Copies the values of buffer into this buffer
-     * at the specified offset
-     *
-     * @param offset
-     *         The offset
-     * @param buffer
-     *         The src buffer
-     */
-    void set(int offset, Buffer buffer);
+/**
+ * Stores unsigned bytes
+ */
+public interface UByteBuffer extends Buffer {
 
     /**
-     * Returns the number of values in this buffer
+     * Sets the value at the index
      *
-     * @return The number of values
+     * @param index
+     *         The index
+     * @param value
+     *         The value
      */
-    int size();
+    public void set(int index, int value);
 
     /**
-     * Returns the size of the buffer in bytes
+     * Gets the value at the index
      *
-     * @return The size in bytes
+     * @param index
+     *         The index
+     * @return The value
      */
-    int byteSize();
+    public int get(int index);
 }

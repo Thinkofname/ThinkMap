@@ -18,10 +18,37 @@ package uk.co.thinkofdeath.thinkcraft.html.shared.buffer;
 
 import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.BufferAllocator;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.FloatBuffer;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UShortBuffer;
 
 public class JsBufferAllocator implements BufferAllocator {
     @Override
     public FloatBuffer floatBuffer(int size) {
         return JavascriptFloatBuffer.create(size);
+    }
+
+    @Override
+    public FloatBuffer floatBuffer(FloatBuffer other) {
+        return JavascriptFloatBuffer.create((JavascriptFloatBuffer) other);
+    }
+
+    @Override
+    public UByteBuffer ubyteBuffer(int size) {
+        return JavascriptUByteBuffer.create(size);
+    }
+
+    @Override
+    public UByteBuffer ubyteBuffer(UByteBuffer other) {
+        return JavascriptUByteBuffer.create((JavascriptUByteBuffer) other);
+    }
+
+    @Override
+    public UShortBuffer ushortBuffer(int size) {
+        return JavascriptUShortBuffer.create(size);
+    }
+
+    @Override
+    public UShortBuffer ushortBuffer(UShortBuffer other) {
+        return JavascriptUShortBuffer.create((JavascriptUShortBuffer) other);
     }
 }
