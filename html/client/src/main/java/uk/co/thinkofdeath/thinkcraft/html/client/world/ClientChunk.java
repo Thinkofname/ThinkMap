@@ -22,7 +22,7 @@ import uk.co.thinkofdeath.thinkcraft.html.client.render.ChunkRenderObject;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.SortableRenderObject;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.model.PositionedModel;
-import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage;
 import uk.co.thinkofdeath.thinkcraft.shared.world.Chunk;
 import uk.co.thinkofdeath.thinkcraft.shared.world.ChunkSection;
@@ -83,9 +83,8 @@ public class ClientChunk extends Chunk {
         return true;
     }
 
-    public void setTransparentModels(int i, JsArray<PositionedModel> trans, TUint8Array transData, int sender) {
+    public void setTransparentModels(int i, JsArray<PositionedModel> trans, UByteBuffer transData, int sender) {
         if (sortableRenderObjects[i] != null) {
-            TUint8Array data = sortableRenderObjects[i].getData();
             sortableRenderObjects[i].setData(null);
         }
         if (sortableRenderObjects[i] != null && trans.length() == 0) {
@@ -122,8 +121,8 @@ public class ClientChunk extends Chunk {
      * @param data
      *         The data
      */
-    public void fillBuffer(int sectionNumber, TUint8Array data, int sender) {
-        if (data.length() == 0) {
+    public void fillBuffer(int sectionNumber, UByteBuffer data, int sender) {
+        if (data.size() == 0) {
             if (renderObjects[sectionNumber] != null) {
                 world.mapViewer.getRenderer().removeChunkObject(renderObjects[sectionNumber]);
             }
@@ -191,7 +190,8 @@ public class ClientChunk extends Chunk {
         if (jssection == null) {
             return null;
         }
-        var section = @uk.co.thinkofdeath.thinkcraft.shared.world.ChunkSection::new(Luk/co/thinkofdeath/thinkcraft/shared/support/TUint8Array;)(jssection.buffer);
+        var section = @uk.co.thinkofdeath.thinkcraft.shared.world.ChunkSection::new(Luk/co/thinkofdeath/thinkcraft/shared/platform/buffers/UByteBuffer;)(jssection.buffer);
+
         section.@uk.co.thinkofdeath.thinkcraft.shared.world.ChunkSection::count = jssection.count;
         return section;
     }-*/;

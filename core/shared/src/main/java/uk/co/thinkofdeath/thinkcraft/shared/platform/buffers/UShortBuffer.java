@@ -29,7 +29,7 @@ public interface UShortBuffer extends Buffer {
      * @param value
      *         The value
      */
-    public void set(int index, int value);
+    void set(int index, int value);
 
     /**
      * Gets the value at the index
@@ -38,5 +38,5 @@ public interface UShortBuffer extends Buffer {
      *         The index
      * @return The value
      */
-    public int get(int index);
+    int get(int index);
 }

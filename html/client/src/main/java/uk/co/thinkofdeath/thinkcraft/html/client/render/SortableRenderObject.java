@@ -18,7 +18,8 @@ package uk.co.thinkofdeath.thinkcraft.html.client.render;
 
 import elemental.html.WebGLBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.model.PositionedModel;
-import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
 
 import java.util.ArrayList;
 
@@ -28,7 +29,7 @@ public class SortableRenderObject {
     private final int y;
     private final int z;
     private final ArrayList<PositionedModel> models = new ArrayList<>();
-    private TUint8Array data;
+    private UByteBuffer data;
 
     public SortableRenderObject(int x, int y, int z) {
         this.x = x;
@@ -67,21 +68,21 @@ public class SortableRenderObject {
         return models;
     }
 
-    public void setData(TUint8Array data) {
+    public void setData(UByteBuffer data) {
         this.data = data;
         if (data != null) {
-            tempArray = TUint8Array.create(data.length());
+            tempArray = Platform.alloc().ubyteBuffer(data.size());
         } else {
             tempArray = null;
         }
     }
 
-    public TUint8Array getData() {
+    public UByteBuffer getData() {
         return data;
     }
 
     WebGLBuffer buffer;
-    TUint8Array tempArray;
+    UByteBuffer tempArray;
     int count = 0;
     boolean needResort = true;
 }

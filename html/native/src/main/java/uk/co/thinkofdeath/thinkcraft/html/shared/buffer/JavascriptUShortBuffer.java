@@ -25,13 +25,17 @@ public class JavascriptUShortBuffer extends JavascriptBuffer implements UShortBu
     }
 
     public native static JavascriptUShortBuffer create(int size)/*-{
-        return new Uint8Array(size);
+        return new Uint16Array(size);
     }-*/;
 
     public native static JavascriptUShortBuffer create(JavascriptUShortBuffer other)/*-{
-        var buf = new Uint8Array(other.length);
+        var buf = new Uint16Array(other.length);
         buf.set(other, 0);
         return buf;
+    }-*/;
+
+    public native static JavascriptUShortBuffer create(JavascriptBuffer buffer, int offset, int length)/*-{
+        return new Uint16Array(buffer.buffer, offset, length);
     }-*/;
 
     @Override

@@ -19,8 +19,8 @@ package uk.co.thinkofdeath.thinkcraft.shared.worker;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayInteger;
 import uk.co.thinkofdeath.thinkcraft.shared.model.PositionedModel;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.serializing.Serializer;
-import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
 
 public class ChunkBuildReply extends WorkerMessage {
     private int x;
@@ -28,8 +28,8 @@ public class ChunkBuildReply extends WorkerMessage {
     private int sectionNumber;
     private int buildNumber;
     private JsArrayInteger accessData;
-    private TUint8Array data;
-    private TUint8Array transData;
+    private UByteBuffer data;
+    private UByteBuffer transData;
     private JsArray<PositionedModel> modelJsArray;
 
     ChunkBuildReply() {
@@ -57,7 +57,7 @@ public class ChunkBuildReply extends WorkerMessage {
      * @return The message
      */
     public ChunkBuildReply(int x, int z, int sectionNumber, int buildNumber, JsArrayInteger accessData,
-                           TUint8Array data, TUint8Array transData, JsArray<PositionedModel> modelJsArray) {
+                           UByteBuffer data, UByteBuffer transData, JsArray<PositionedModel> modelJsArray) {
         this.x = x;
         this.z = z;
         this.sectionNumber = sectionNumber;
@@ -109,11 +109,11 @@ public class ChunkBuildReply extends WorkerMessage {
      *
      * @return The data
      */
-    public TUint8Array getData() {
+    public UByteBuffer getData() {
         return data;
     }
 
-    public TUint8Array getTransData() {
+    public UByteBuffer getTransData() {
         return transData;
     }
 
@@ -145,8 +145,8 @@ public class ChunkBuildReply extends WorkerMessage {
         sectionNumber = serializer.getInt("sectionNumber");
         buildNumber = serializer.getInt("buildNumber");
         accessData = (JsArrayInteger) serializer.getTemp("accessData");
-        data = (TUint8Array) serializer.getTemp("data");
-        transData = (TUint8Array) serializer.getTemp("transData");
+        data = (UByteBuffer) serializer.getTemp("data");
+        transData = (UByteBuffer) serializer.getTemp("transData");
         modelJsArray = (JsArray<PositionedModel>) serializer.getTemp("trans");
     }
 

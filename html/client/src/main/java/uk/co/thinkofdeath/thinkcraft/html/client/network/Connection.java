@@ -27,7 +27,8 @@ import uk.co.thinkofdeath.thinkcraft.protocol.Packet;
 import uk.co.thinkofdeath.thinkcraft.protocol.Packets;
 import uk.co.thinkofdeath.thinkcraft.protocol.ServerPacketHandler;
 import uk.co.thinkofdeath.thinkcraft.protocol.packets.InitConnection;
-import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.Buffer;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
 
 /**
  * Manages a connection between the client and the Bukkit plugin. Fires events based on messages received.
@@ -76,18 +77,16 @@ public class Connection implements EventListener {
 
     // Work around for the fact that GWT doesn't support sending
     // ArrayBuffers
-    private native void send(ArrayBuffer buffer)/*-{
-        this.@uk.co.thinkofdeath.thinkcraft.html.client.network.Connection::webSocket.send(buffer);
+    private native void send(Buffer buffer)/*-{
+        this.@uk.co.thinkofdeath.thinkcraft.html.client.network.Connection::webSocket.send(buffer.buffer);
     }-*/;
 
     public void send(Packet<ClientPacketHandler> packet) {
         DataPacketStream packetStream = new DataPacketStream();
         packetStream.writeInt(Packets.getClientPacketId(packet));
         packet.write(packetStream);
-        TUint8Array data = packetStream.getBuffer().getArray();
-        TUint8Array out = TUint8Array.create(data.length());
-        out.set(data);
-        send(out.getBuffer());
+        UByteBuffer data = packetStream.getBuffer().getArray();
+        send(data);
     }
 
     /**

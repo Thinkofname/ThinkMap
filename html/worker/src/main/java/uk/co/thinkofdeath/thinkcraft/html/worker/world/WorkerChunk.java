@@ -19,6 +19,7 @@ package uk.co.thinkofdeath.thinkcraft.html.worker.world;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayInteger;
 import elemental.html.ArrayBuffer;
+import uk.co.thinkofdeath.thinkcraft.html.shared.buffer.JavascriptUByteBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.Face;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockRegistry;
@@ -26,8 +27,10 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.Blocks;
 import uk.co.thinkofdeath.thinkcraft.shared.building.ModelBuilder;
 import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 import uk.co.thinkofdeath.thinkcraft.shared.model.PositionedModel;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.Buffer;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.support.DataStream;
-import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
 import uk.co.thinkofdeath.thinkcraft.shared.util.IntMap;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkBuildReply;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage;
@@ -56,7 +59,7 @@ public class WorkerChunk extends Chunk {
         this.world = world;
         BlockRegistry blockRegistry = world.getMapViewer().getBlockRegistry();
 
-        TUint8Array byteData = TUint8Array.create(data, 0, data.getByteLength());
+        UByteBuffer byteData = JavascriptUByteBuffer.create(data, 0, data.getByteLength());
         DataStream dataStream = DataStream.create(data);
 
         // Bit mask of what sections actually exist in the chunk
@@ -148,12 +151,12 @@ public class WorkerChunk extends Chunk {
     // Sends the chunk back to the requester
     private void sendChunk() {
         ChunkLoadedMessage message = new ChunkLoadedMessage(getX(), getZ(), biomes);
-        ArrayList<Object> buffers = new ArrayList<>();
+        ArrayList<Buffer> buffers = new ArrayList<>();
         // Copy sections
         for (int i = 0; i < 16; i++) {
             if (sections[i] != null) {
-                TUint8Array data = TUint8Array.create(sections[i].getBuffer());
-                buffers.add(data.getBuffer());
+                UByteBuffer data = Platform.alloc().ubyteBuffer(sections[i].getBuffer());
+                buffers.add(data);
                 message.setSection(i, sections[i].getCount(), data);
             }
         }
@@ -166,7 +169,7 @@ public class WorkerChunk extends Chunk {
             message.addIdBlockMapping(key, idBlockMap.get(key));
         }
 
-        world.worker.sendMessage(message, false, buffers.toArray(new Object[buffers.size()]));
+        world.worker.sendMessage(message, false, buffers.toArray(new Buffer[buffers.size()]));
     }
 
     /**
@@ -208,8 +211,8 @@ public class WorkerChunk extends Chunk {
         // Compute face access
         updateSideAccess(sectionNumber);
 
-        TUint8Array data = builder.toTypedArray();
-        TUint8Array transData = transBuilder.toTypedArray();
+        UByteBuffer data = builder.toTypedArray();
+        UByteBuffer transData = transBuilder.toTypedArray();
         JsArrayInteger accessData = (JsArrayInteger) JsArrayInteger.createArray();
         int[] ad = sections[sectionNumber].getSideAccess();
         for (int i = 0; i < ad.length; i++) {
@@ -220,7 +223,7 @@ public class WorkerChunk extends Chunk {
                         getX(), getZ(), sectionNumber, buildNumber,
                         accessData, data,
                         transData, modelJsArray
-                ), false, data.getBuffer(), transData.getBuffer());
+                ), false, data, transData);
     }
 
     private void updateSideAccess(int sectionNumber) {

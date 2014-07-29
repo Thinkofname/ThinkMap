@@ -19,9 +19,9 @@ package uk.co.thinkofdeath.thinkcraft.shared.worker;
 import com.google.gwt.core.client.JavaScriptObject;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.serializing.IntArraySerializer;
 import uk.co.thinkofdeath.thinkcraft.shared.serializing.Serializer;
-import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
 
 public class ChunkLoadedMessage extends WorkerMessage {
 
@@ -83,7 +83,7 @@ public class ChunkLoadedMessage extends WorkerMessage {
      * @param buffer
      *         Data buffer
      */
-    public final native void setSection(int i, int count, TUint8Array buffer)/*-{
+    public final native void setSection(int i, int count, UByteBuffer buffer)/*-{
         var that = this.@uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage::nativeVoodoo;
         that.sections[i] = {
             count: count,

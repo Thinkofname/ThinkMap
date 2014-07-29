@@ -16,10 +16,7 @@
 
 package uk.co.thinkofdeath.thinkcraft.html.shared.buffer;
 
-import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.BufferAllocator;
-import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.FloatBuffer;
-import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
-import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UShortBuffer;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.*;
 
 public class JsBufferAllocator implements BufferAllocator {
     @Override
@@ -33,6 +30,11 @@ public class JsBufferAllocator implements BufferAllocator {
     }
 
     @Override
+    public FloatBuffer floatBuffer(Buffer view, int offset, int length) {
+        return JavascriptFloatBuffer.create((JavascriptBuffer) view, offset, length);
+    }
+
+    @Override
     public UByteBuffer ubyteBuffer(int size) {
         return JavascriptUByteBuffer.create(size);
     }
@@ -43,6 +45,11 @@ public class JsBufferAllocator implements BufferAllocator {
     }
 
     @Override
+    public UByteBuffer ubyteBuffer(Buffer view, int offset, int length) {
+        return JavascriptUByteBuffer.create((JavascriptBuffer) view, offset, length);
+    }
+
+    @Override
     public UShortBuffer ushortBuffer(int size) {
         return JavascriptUShortBuffer.create(size);
     }
@@ -50,5 +57,10 @@ public class JsBufferAllocator implements BufferAllocator {
     @Override
     public UShortBuffer ushortBuffer(UShortBuffer other) {
         return JavascriptUShortBuffer.create((JavascriptUShortBuffer) other);
+    }
+
+    @Override
+    public UShortBuffer ushortBuffer(Buffer view, int offset, int length) {
+        return JavascriptUShortBuffer.create((JavascriptBuffer) view, offset, length);
     }
 }

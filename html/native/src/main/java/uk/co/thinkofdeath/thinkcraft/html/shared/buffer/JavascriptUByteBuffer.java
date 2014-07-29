@@ -17,6 +17,7 @@
 package uk.co.thinkofdeath.thinkcraft.html.shared.buffer;
 
 
+import elemental.html.ArrayBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
 
 public class JavascriptUByteBuffer extends JavascriptBuffer implements UByteBuffer {
@@ -32,6 +33,14 @@ public class JavascriptUByteBuffer extends JavascriptBuffer implements UByteBuff
         var buf = new Uint8Array(other.length);
         buf.set(other, 0);
         return buf;
+    }-*/;
+
+    public native static JavascriptUByteBuffer create(JavascriptBuffer buffer, int offset, int length)/*-{
+        return new Uint8Array(buffer.buffer, offset, length);
+    }-*/;
+
+    public native static JavascriptUByteBuffer create(ArrayBuffer buffer, int offset, int length)/*-{
+        return new Uint8Array(buffer, offset, length);
     }-*/;
 
     @Override

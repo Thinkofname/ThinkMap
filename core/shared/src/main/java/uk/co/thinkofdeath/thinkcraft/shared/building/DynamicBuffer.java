@@ -17,8 +17,10 @@
 package uk.co.thinkofdeath.thinkcraft.shared.building;
 
 import elemental.html.ArrayBuffer;
+import elemental.html.ArrayBufferView;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.support.DataStream;
-import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
 
 public class DynamicBuffer {
 
@@ -26,12 +28,14 @@ public class DynamicBuffer {
             (DataStream.create(createEndianTestBuffer()).getInt8(0) == 1);
     private final boolean littleEndian;
 
-    private TUint8Array buffer;
+    private UByteBuffer buffer;
     private DataStream dataStream;
     private int offset = 0;
 
     /**
-     * Creates a DynamicBuffer which resizes as it needs more space. The endianness of the buffer is that of the current system. The starting start has a minimum value of 16.
+     * Creates a DynamicBuffer which resizes as it needs more space.
+     * The endianness of the buffer is that of the current system.
+     * The starting start has a minimum value of 16.
      *
      * @param size
      *         The starting size of the buffer
@@ -43,8 +47,8 @@ public class DynamicBuffer {
     public DynamicBuffer(int size, boolean littleEndian) {
         this.littleEndian = littleEndian;
         if (size < 16) size = 16;
-        buffer = TUint8Array.create(size);
-        dataStream = DataStream.create(buffer.getBuffer());
+        buffer = Platform.alloc().ubyteBuffer(size);
+        dataStream = DataStream.create(((ArrayBufferView) buffer).getBuffer()); // Fixme
     }
 
     /**
@@ -54,7 +58,7 @@ public class DynamicBuffer {
      *         The byte to the buffer
      */
     public void add(int val) {
-        if (offset >= buffer.length()) {
+        if (offset >= buffer.size()) {
             resize();
         }
         buffer.set(offset++, val);
@@ -67,7 +71,7 @@ public class DynamicBuffer {
      *         The short to add
      */
     public void addUnsignedShort(int val) {
-        if (offset + 1 >= buffer.length()) {
+        if (offset + 1 >= buffer.size()) {
             resize();
         }
         dataStream.setUint16(offset, val, littleEndian);
@@ -75,7 +79,7 @@ public class DynamicBuffer {
     }
 
     public void addInt(int val) {
-        if (offset + 3 >= buffer.length()) {
+        if (offset + 3 >= buffer.size()) {
             resize();
         }
         dataStream.setInt32(offset, val, littleEndian);
@@ -89,7 +93,7 @@ public class DynamicBuffer {
      *         The float to add
      */
     public void addFloat(float val) {
-        if (offset + 3 >= buffer.length()) {
+        if (offset + 3 >= buffer.size()) {
             resize();
         }
         dataStream.setFloat32(offset, val, littleEndian);
@@ -98,10 +102,10 @@ public class DynamicBuffer {
 
     // Doubles the size of the buffer
     private void resize() {
-        TUint8Array oldBuffer = buffer;
-        buffer = TUint8Array.create(buffer.length() * 2);
-        buffer.set(oldBuffer);
-        dataStream = DataStream.create(buffer.getBuffer());
+        UByteBuffer oldBuffer = buffer;
+        buffer = Platform.alloc().ubyteBuffer(buffer.size() * 2);
+        buffer.set(0, oldBuffer);
+        dataStream = DataStream.create(((ArrayBufferView) buffer).getBuffer()); // Fixme
     }
 
     /**
@@ -116,8 +120,8 @@ public class DynamicBuffer {
      *
      * @return The view into the array
      */
-    public TUint8Array getArray() {
-        return buffer.subarray(0, offset);
+    public UByteBuffer getArray() {
+        return buffer;
     }
 
     // Used by IS_LITTLE_ENDIAN

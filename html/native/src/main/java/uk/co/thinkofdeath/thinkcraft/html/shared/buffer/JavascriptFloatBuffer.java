@@ -33,6 +33,10 @@ public class JavascriptFloatBuffer extends JavascriptBuffer implements FloatBuff
         return buf;
     }-*/;
 
+    public native static JavascriptFloatBuffer create(JavascriptBuffer buffer, int offset, int length)/*-{
+        return new Float32Array(buffer.buffer, offset, length);
+    }-*/;
+
     @Override
     public final native void set(int index, float value)/*-{
         this[index] = value;

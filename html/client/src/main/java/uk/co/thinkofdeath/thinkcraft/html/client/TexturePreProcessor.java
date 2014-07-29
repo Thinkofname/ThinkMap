@@ -22,7 +22,7 @@ import elemental.html.CanvasRenderingContext2D;
 import elemental.html.ImageData;
 import uk.co.thinkofdeath.thinkcraft.html.client.texture.VirtualTexture;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
-import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
 
 public class TexturePreProcessor {
 
@@ -63,7 +63,7 @@ public class TexturePreProcessor {
                     g.getSize(),
                     g.getSize());
 
-            TUint8Array darr = (TUint8Array) data.getData();
+            UByteBuffer darr = (UByteBuffer) data.getData();
 
             for (int x = 0; x < g.getSize(); x++) {
                 for (int y = 0; y < g.getSize(); y++) {

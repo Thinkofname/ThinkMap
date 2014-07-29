@@ -16,7 +16,7 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.building;
 
-import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
 
 public class ModelBuilder {
 
@@ -138,7 +138,7 @@ public class ModelBuilder {
      *
      * @return The typed array
      */
-    public TUint8Array toTypedArray() {
+    public UByteBuffer toTypedArray() {
         return buffer.getArray();
     }
 

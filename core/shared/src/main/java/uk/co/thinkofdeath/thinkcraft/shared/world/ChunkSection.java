@@ -17,23 +17,24 @@
 package uk.co.thinkofdeath.thinkcraft.shared.world;
 
 import uk.co.thinkofdeath.thinkcraft.shared.Face;
-import uk.co.thinkofdeath.thinkcraft.shared.support.TUint16Array;
-import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UShortBuffer;
 
 public class ChunkSection {
 
-    private static final TUint8Array emptySkySection = TUint8Array.create(16 * 16 * 16);
+    private static final UByteBuffer emptySkySection = Platform.alloc().ubyteBuffer(16 * 16 * 16);
 
     static {
-        for (int i = 0; i < emptySkySection.length(); i++) {
+        for (int i = 0; i < emptySkySection.size(); i++) {
             emptySkySection.set(i, 15);
         }
     }
 
-    private TUint16Array blocks;
-    private TUint8Array light;
-    private TUint8Array sky;
-    private TUint8Array buffer;
+    private UShortBuffer blocks;
+    private UByteBuffer light;
+    private UByteBuffer sky;
+    private UByteBuffer buffer;
     private int[] sideAccess = new int[Face.values().length];
 
     // Number of non-zero things in this chunk
@@ -43,8 +44,8 @@ public class ChunkSection {
      * Create an empty section
      */
     public ChunkSection() {
-        this(TUint8Array.create(16 * 16 * 16 * 4));
-        sky.set(emptySkySection);
+        this(Platform.alloc().ubyteBuffer(16 * 16 * 16 * 4));
+        sky.set(0, emptySkySection);
     }
 
     /**
@@ -53,11 +54,11 @@ public class ChunkSection {
      * @param buffer
      *         The buffer to create from
      */
-    public ChunkSection(TUint8Array buffer) {
+    public ChunkSection(UByteBuffer buffer) {
         this.buffer = buffer;
-        blocks = TUint16Array.create(buffer.getBuffer(), 0, 16 * 16 * 16);
-        light = TUint8Array.create(buffer.getBuffer(), 16 * 16 * 16 * 2, 16 * 16 * 16);
-        sky = TUint8Array.create(buffer.getBuffer(), 16 * 16 * 16 * 3, 16 * 16 * 16);
+        blocks = Platform.alloc().ushortBuffer(buffer, 0, 16 * 16 * 16);
+        light = Platform.alloc().ubyteBuffer(buffer, 16 * 16 * 16 * 2, 16 * 16 * 16);
+        sky = Platform.alloc().ubyteBuffer(buffer, 16 * 16 * 16 * 3, 16 * 16 * 16);
     }
 
     /**
@@ -65,7 +66,7 @@ public class ChunkSection {
      *
      * @return The block array
      */
-    public TUint16Array getBlocks() {
+    public UShortBuffer getBlocks() {
         return blocks;
     }
 
@@ -74,7 +75,7 @@ public class ChunkSection {
      *
      * @return The light array
      */
-    public TUint8Array getBlockLight() {
+    public UByteBuffer getBlockLight() {
         return light;
     }
 
@@ -83,7 +84,7 @@ public class ChunkSection {
      *
      * @return The sky light array
      */
-    public TUint8Array getSkyLight() {
+    public UByteBuffer getSkyLight() {
         return sky;
     }
 
@@ -92,7 +93,7 @@ public class ChunkSection {
      *
      * @return The buffer
      */
-    public TUint8Array getBuffer() {
+    public UByteBuffer getBuffer() {
         return buffer;
     }
 

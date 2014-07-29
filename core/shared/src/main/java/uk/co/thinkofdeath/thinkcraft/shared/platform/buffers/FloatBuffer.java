@@ -26,7 +26,7 @@ public interface FloatBuffer extends Buffer {
      * @param value
      *         The value
      */
-    public void set(int index, float value);
+    void set(int index, float value);
 
     /**
      * Gets the value at the index
@@ -35,5 +35,7 @@ public interface FloatBuffer extends Buffer {
      *         The index
      * @return The value
      */
-    public float get(int index);
+    float get(int index);
+
+
 }

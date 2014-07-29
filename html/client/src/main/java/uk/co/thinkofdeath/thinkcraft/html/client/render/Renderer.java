@@ -27,7 +27,8 @@ import uk.co.thinkofdeath.thinkcraft.html.shared.utils.JsUtils;
 import uk.co.thinkofdeath.thinkcraft.shared.Face;
 import uk.co.thinkofdeath.thinkcraft.shared.Position;
 import uk.co.thinkofdeath.thinkcraft.shared.model.PositionedModel;
-import uk.co.thinkofdeath.thinkcraft.shared.support.TUint8Array;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.util.IntMap;
 import uk.co.thinkofdeath.thinkcraft.shared.util.PositionChunkSectionSet;
 import uk.co.thinkofdeath.thinkcraft.shared.vector.Frustum;
@@ -271,10 +272,10 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
                         camera));
 
                 int offset = 0;
-                TUint8Array temp = sortableRenderObject.tempArray;
-                TUint8Array data = sortableRenderObject.getData();
+                UByteBuffer temp = sortableRenderObject.tempArray;
+                UByteBuffer data = sortableRenderObject.getData();
                 for (PositionedModel model : models) {
-                    temp.set(offset, data.subarray(model.getStart(),
+                    temp.set(offset, Platform.alloc().ubyteBuffer(data, model.getStart(),
                             model.getStart() + model.getLength()));
                     offset += model.getLength();
                 }
@@ -282,7 +283,7 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
                 gl.bindBuffer(ARRAY_BUFFER, sortableRenderObject.buffer);
                 gl.bufferData(ARRAY_BUFFER, (ArrayBufferView) temp,
                         DYNAMIC_DRAW);
-                sortableRenderObject.count = temp.length() / 22;
+                sortableRenderObject.count = temp.size() / 22;
             }
 
             if (updates >= TRANSPARENT_UPDATES_LIMIT && !moved) {
@@ -396,11 +397,11 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         gl.deleteBuffer(sortableRenderObject.buffer);
     }
 
-    public void updateChunkObject(ChunkRenderObject renderObject, TUint8Array data, int sender) {
+    public void updateChunkObject(ChunkRenderObject renderObject, UByteBuffer data, int sender) {
         if (renderObject.buffer == null) {
             renderObject.buffer = gl.createBuffer();
         }
-        renderObject.triangleCount = data.length() / 22;
+        renderObject.triangleCount = data.size() / 22;
         gl.bindBuffer(ARRAY_BUFFER, renderObject.buffer);
         gl.bufferData(ARRAY_BUFFER, (ArrayBufferView) data, STATIC_DRAW);
     }

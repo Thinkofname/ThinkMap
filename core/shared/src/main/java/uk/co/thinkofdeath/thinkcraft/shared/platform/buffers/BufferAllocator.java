@@ -37,6 +37,19 @@ public interface BufferAllocator {
     FloatBuffer floatBuffer(FloatBuffer other);
 
     /**
+     * Creates a view on the target buffer
+     *
+     * @param view
+     *         The buffer to view
+     * @param offset
+     *         The offset of the view
+     * @param length
+     *         The length of the view
+     * @return The view
+     */
+    FloatBuffer floatBuffer(Buffer view, int offset, int length);
+
+    /**
      * Creates a UByteBuffer of the size passed
      *
      * @param size
@@ -55,6 +68,19 @@ public interface BufferAllocator {
     UByteBuffer ubyteBuffer(UByteBuffer other);
 
     /**
+     * Creates a view on the target buffer
+     *
+     * @param view
+     *         The buffer to view
+     * @param offset
+     *         The offset of the view
+     * @param length
+     *         The length of the view
+     * @return The view
+     */
+    UByteBuffer ubyteBuffer(Buffer view, int offset, int length);
+
+    /**
      * Creates a UShortBuffer of the size passed
      *
      * @param size
@@ -71,4 +97,17 @@ public interface BufferAllocator {
      * @return The created UShortBuffer
      */
     UShortBuffer ushortBuffer(UShortBuffer other);
+
+    /**
+     * Creates a view on the target buffer
+     *
+     * @param view
+     *         The buffer to view
+     * @param offset
+     *         The offset of the view
+     * @param length
+     *         The length of the view
+     * @return The view
+     */
+    UShortBuffer ushortBuffer(Buffer view, int offset, int length);
 }

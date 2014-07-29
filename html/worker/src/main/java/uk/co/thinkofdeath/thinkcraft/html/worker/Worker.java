@@ -24,6 +24,7 @@ import elemental.events.MessageEvent;
 import elemental.html.WorkerGlobalScope;
 import uk.co.thinkofdeath.thinkcraft.html.shared.JavascriptLib;
 import uk.co.thinkofdeath.thinkcraft.html.shared.TextureMap;
+import uk.co.thinkofdeath.thinkcraft.html.shared.buffer.JavascriptBuffer;
 import uk.co.thinkofdeath.thinkcraft.html.shared.serialize.JsObjectSerializer;
 import uk.co.thinkofdeath.thinkcraft.html.shared.settings.ClientSettings;
 import uk.co.thinkofdeath.thinkcraft.html.worker.world.WorkerChunk;
@@ -32,6 +33,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockRegistry;
 import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.Buffer;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.*;
 import uk.co.thinkofdeath.thinkcraft.shared.world.World;
 
@@ -108,11 +110,15 @@ public class Worker implements EntryPoint, EventListener, IMapViewer, MessageHan
         return $wnd;
     }-*/;
 
-    public void sendMessage(WorkerMessage message, boolean reply, Object... transferables) {
+    public void sendMessage(WorkerMessage message, boolean reply, Buffer... transferables) {
         JsObjectSerializer serializer = JsObjectSerializer.newInstance();
         message.setReturn(reply);
         Messages.write(message, serializer);
-        postMessage(serializer, transferables);
+        Object[] trans = new Object[transferables.length];
+        for (int i = 0; i < trans.length; i++) {
+            trans[i] = ((JavascriptBuffer) transferables[i]).getRaw().getBuffer();
+        }
+        postMessage(serializer, trans);
     }
 
     /**
