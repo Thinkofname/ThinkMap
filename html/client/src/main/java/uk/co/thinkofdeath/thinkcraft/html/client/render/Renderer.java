@@ -275,8 +275,9 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
                 UByteBuffer temp = sortableRenderObject.tempArray;
                 UByteBuffer data = sortableRenderObject.getData();
                 for (PositionedModel model : models) {
-                    temp.set(offset, Platform.alloc().ubyteBuffer(data, model.getStart(),
-                            model.getStart() + model.getLength()));
+                    temp.set(offset, Platform.alloc().ubyteBuffer(data,
+                            model.getStart(),
+                            model.getLength()));
                     offset += model.getLength();
                 }
 
