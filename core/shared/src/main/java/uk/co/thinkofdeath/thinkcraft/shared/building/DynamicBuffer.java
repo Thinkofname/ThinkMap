@@ -72,7 +72,13 @@ public class DynamicBuffer {
         if (offset + 1 >= buffer.size()) {
             resize();
         }
-        dataStream.setUInt16(offset, val);
+        if (littleEndian) {
+            buffer.set(offset, val & 0xFF);
+            buffer.set(offset + 1, (val >> 8) & 0xFF);
+        } else {
+            buffer.set(offset, (val >> 8) & 0xFF);
+            buffer.set(offset + 1, val & 0xFF);
+        }
         offset += 2;
     }
 
