@@ -50,14 +50,21 @@ public class ClientChunk extends Chunk {
         super(world, chunkLoadedMessage.getX(), chunkLoadedMessage.getZ());
         this.world = world;
 
+        ChunkLoadedMessage.Section[] sects = chunkLoadedMessage.getSections();
         for (int i = 0; i < 16; i++) {
-            sections[i] = extractSection(chunkLoadedMessage, i);
-            outdatedSections[i] = sections[i] != null;
+            if (sects[i] == null) continue;
+            ChunkSection section = sections[i] = new ChunkSection(sects[i].getBuffer());
+            section.setCount(sects[i].getCount());
+            outdatedSections[i] = true;
         }
 
-        extractChunk(chunkLoadedMessage);
-        nextId = chunkLoadedMessage.getNextId();
+        for (ChunkLoadedMessage.BlockMapping mapping : chunkLoadedMessage.getMappingList()) {
+            Block block = world.getMapViewer().getBlockRegistry().get(mapping.getFullName(), mapping.getRawState());
+            idBlockMap.put(mapping.getId(), block);
+            blockIdMap.put(block, mapping.getId());
+        }
 
+        nextId = chunkLoadedMessage.getNextId();
         biomes = chunkLoadedMessage.getBiomes();
     }
 
@@ -160,38 +167,4 @@ public class ClientChunk extends Chunk {
     public ChunkRenderObject[] getRenderObjects() {
         return renderObjects;
     }
-
-    private native void extractChunk(ChunkLoadedMessage chunkLoadedMessage)/*-{
-        var that = chunkLoadedMessage.@uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage::nativeVoodoo;
-        var idMap = this.@uk.co.thinkofdeath.thinkcraft.shared.world.Chunk::idBlockMap;
-        var blockMap = this.@uk.co.thinkofdeath.thinkcraft.shared.world.Chunk::blockIdMap;
-        for (var key in that.idmap) {
-            if (that.idmap.hasOwnProperty(key)) {
-                var k = parseInt(key);
-                var val = that.idmap[k];
-                var name = val[0];
-                var raw = val[1]
-                var block = this.@uk.co.thinkofdeath.thinkcraft.html.client.world.ClientChunk::_js_toBlock(Ljava/lang/String;I)(name, raw);
-                idMap.@uk.co.thinkofdeath.thinkcraft.shared.util.IntMap::put(ILjava/lang/Object;)(k, block);
-                blockMap.@java.util.Map::put(Ljava/lang/Object;Ljava/lang/Object;)(block, @java.lang.Integer::valueOf(I)(k));
-            }
-        }
-    }-*/;
-
-    // Short-cut method for JSNI code
-    private Block _js_toBlock(String name, int rawState) {
-        return world.getMapViewer().getBlockRegistry().get(name, rawState);
-    }
-
-    private native ChunkSection extractSection(ChunkLoadedMessage message, int i)/*-{
-        var that = message.@uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage::nativeVoodoo;
-        var jssection = that.sections[i];
-        if (jssection == null) {
-            return null;
-        }
-        var section = @uk.co.thinkofdeath.thinkcraft.shared.world.ChunkSection::new(Luk/co/thinkofdeath/thinkcraft/shared/platform/buffers/UByteBuffer;)(jssection.buffer);
-
-        section.@uk.co.thinkofdeath.thinkcraft.shared.world.ChunkSection::count = jssection.count;
-        return section;
-    }-*/;
 }

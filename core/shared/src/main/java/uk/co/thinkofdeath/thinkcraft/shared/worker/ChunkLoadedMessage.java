@@ -16,18 +16,22 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.worker;
 
-import com.google.gwt.core.client.JavaScriptObject;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.serializing.IntArraySerializer;
 import uk.co.thinkofdeath.thinkcraft.shared.serializing.Serializer;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.SerializerArraySerializer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChunkLoadedMessage extends WorkerMessage {
 
     private int x;
     private int z;
-    private JavaScriptObject nativeVoodoo = JavaScriptObject.createObject();
+    private Section[] sections = new Section[16];
+    private List<BlockMapping> mappingList = new ArrayList<>();
     private int nextId;
     private int[] biomes = new int[256];
 
@@ -46,14 +50,7 @@ public class ChunkLoadedMessage extends WorkerMessage {
         this.x = x;
         this.z = z;
         System.arraycopy(biomes, 0, this.biomes, 0, 256);
-        initVoodoo();
     }
-
-    private native void initVoodoo()/*-{
-        var that = this.@uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage::nativeVoodoo;
-        that.sections = [];
-        that.idmap = [];
-    }-*/;
 
     /**
      * Gets the x position of the loaded chunk
@@ -83,13 +80,9 @@ public class ChunkLoadedMessage extends WorkerMessage {
      * @param buffer
      *         Data buffer
      */
-    public final native void setSection(int i, int count, UByteBuffer buffer)/*-{
-        var that = this.@uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage::nativeVoodoo;
-        that.sections[i] = {
-            count: count,
-            buffer: buffer
-        };
-    }-*/;
+    public void setSection(int i, int count, UByteBuffer buffer) {
+        sections[i] = new Section(count, buffer);
+    }
 
     /**
      * Sets the next block id for this chunk
@@ -109,6 +102,10 @@ public class ChunkLoadedMessage extends WorkerMessage {
         return biomes;
     }
 
+    public Section[] getSections() {
+        return sections;
+    }
+
     /**
      * Adds an id -> block mapping to the message
      *
@@ -117,13 +114,13 @@ public class ChunkLoadedMessage extends WorkerMessage {
      * @param value
      *         The block
      */
-    public final native void addIdBlockMapping(int key, Block value)/*-{
-        var that = this.@uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage::nativeVoodoo;
-        that.idmap[key] = [
-            value.@uk.co.thinkofdeath.thinkcraft.shared.block.Block::fullName,
-            value.@uk.co.thinkofdeath.thinkcraft.shared.block.Block::state.@uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap::asInt()()
-        ];
-    }-*/;
+    public void addIdBlockMapping(int key, Block value) {
+        mappingList.add(new BlockMapping(key, value.getFullName(), value.getRawState()));
+    }
+
+    public List<BlockMapping> getMappingList() {
+        return mappingList;
+    }
 
     @Override
     public void serialize(Serializer serializer) {
@@ -131,7 +128,29 @@ public class ChunkLoadedMessage extends WorkerMessage {
         serializer.putInt("x", x);
         serializer.putInt("z", z);
         serializer.putInt("nextId", nextId);
-        serializer.putTemp("nativeVoodoo", nativeVoodoo);
+
+        SerializerArraySerializer ms = Platform.workerSerializers().createSerializerArray();
+        for (BlockMapping mapping : mappingList) {
+            Serializer ss = Platform.workerSerializers().create();
+            ss.putInt("id", mapping.getId());
+            ss.putString("name", mapping.getFullName());
+            ss.putInt("state", mapping.getRawState());
+            ms.add(ss);
+        }
+        serializer.putArray("idMap", ms);
+
+        SerializerArraySerializer arraySerializer = Platform.workerSerializers().createSerializerArray();
+        for (Section section : sections) {
+            if (section == null) {
+                arraySerializer.add(null);
+                continue;
+            }
+            Serializer ss = Platform.workerSerializers().create();
+            ss.putInt("count", section.getCount());
+            ss.putBuffer("buffer", section.getBuffer());
+            arraySerializer.add(ss);
+        }
+        serializer.putArray("sections", arraySerializer);
 
         IntArraySerializer b = Platform.workerSerializers().createIntArray();
         for (int i = 0; i < 256; i++) {
@@ -145,7 +164,23 @@ public class ChunkLoadedMessage extends WorkerMessage {
         x = serializer.getInt("x");
         z = serializer.getInt("z");
         nextId = serializer.getInt("nextId");
-        nativeVoodoo = (JavaScriptObject) serializer.getTemp("nativeVoodoo");
+
+        SerializerArraySerializer ms = (SerializerArraySerializer) serializer.getArray("idMap");
+        for (int i = 0; i < ms.size(); i++) {
+            Serializer ss = ms.get(i);
+            mappingList.add(new BlockMapping(
+                    ss.getInt("id"),
+                    ss.getString("name"),
+                    ss.getInt("state")
+            ));
+        }
+
+        SerializerArraySerializer arraySerializer = (SerializerArraySerializer) serializer.getArray("sections");
+        for (int i = 0; i < 16; i++) {
+            Serializer ss = arraySerializer.get(i);
+            if (ss == null) continue;
+            sections[i] = new Section(ss.getInt("count"), (UByteBuffer) ss.getBuffer("buffer"));
+        }
 
         IntArraySerializer b = (IntArraySerializer) serializer.getArray("biomes");
         for (int i = 0; i < 256; i++) {
@@ -161,5 +196,47 @@ public class ChunkLoadedMessage extends WorkerMessage {
     @Override
     public void handle(MessageHandler handler) {
         handler.handle(this);
+    }
+
+    public static class Section {
+        private final int count;
+        private final UByteBuffer buffer;
+
+        public Section(int count, UByteBuffer buffer) {
+            this.count = count;
+            this.buffer = buffer;
+        }
+
+        public int getCount() {
+            return count;
+        }
+
+        public UByteBuffer getBuffer() {
+            return buffer;
+        }
+    }
+
+    public static class BlockMapping {
+        private final int id;
+        private final String fullName;
+        private final int rawState;
+
+        private BlockMapping(int id, String fullName, int rawState) {
+            this.id = id;
+            this.fullName = fullName;
+            this.rawState = rawState;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getFullName() {
+            return fullName;
+        }
+
+        public int getRawState() {
+            return rawState;
+        }
     }
 }

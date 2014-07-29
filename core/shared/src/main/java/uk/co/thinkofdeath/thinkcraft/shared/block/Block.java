@@ -244,4 +244,8 @@ public class Block implements Model.RenderChecker {
     public boolean useSmoothLighting() {
         return smoothLighting;
     }
+
+    public int getRawState() {
+        return state.asInt();
+    }
 }

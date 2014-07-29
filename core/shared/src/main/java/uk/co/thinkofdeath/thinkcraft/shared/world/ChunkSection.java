@@ -130,4 +130,8 @@ public class ChunkSection {
     public int[] getSideAccess() {
         return sideAccess;
     }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
 }
