@@ -52,15 +52,8 @@ public abstract class WorkerMessage implements Message {
         serializer.putBoolean("return", ret);
     }
 
-    protected abstract void read(Serializer serializer);
-
-    protected abstract WorkerMessage create();
-
     @Override
-    public Message deserialize(Serializer serializer) {
-        WorkerMessage message = create();
-        message.ret = serializer.getBoolean("return");
-        message.read(serializer);
-        return message;
+    public void deserialize(Serializer serializer) {
+        ret = serializer.getBoolean("return");
     }
 }

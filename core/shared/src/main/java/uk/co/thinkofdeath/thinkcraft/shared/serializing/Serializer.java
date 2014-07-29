@@ -144,6 +144,13 @@ public interface Serializer {
      */
     Buffer getBuffer(String name);
 
+    /**
+     * Returns the keys of every value in this serializer
+     *
+     * @return The array of keys
+     */
+    String[] keys();
+
     // TODO: Burn this
     @Deprecated
     Object getTemp(String name);

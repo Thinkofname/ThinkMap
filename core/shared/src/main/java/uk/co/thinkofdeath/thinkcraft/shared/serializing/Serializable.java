@@ -16,9 +16,11 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.serializing;
 
-public interface Serializable<V> {
+public interface Serializable {
 
-    public void serialize(Serializer serializer);
+    void serialize(Serializer serializer);
 
-    public V deserialize(Serializer serializer);
+    void deserialize(Serializer serializer);
+
+    Serializable create();
 }

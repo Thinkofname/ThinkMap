@@ -102,4 +102,9 @@ public class JsObjectSerializer extends JavaScriptObject implements Serializer {
     public final native void putTemp(String name, Object value)/*-{
         this[name] = value;
     }-*/;
+
+    @Override
+    public final native String[] keys()/*-{
+        return Object.keys(this);
+    }-*/;
 }

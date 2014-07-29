@@ -93,7 +93,8 @@ public class ChunkBuildMessage extends WorkerMessage {
     }
 
     @Override
-    protected void read(Serializer serializer) {
+    public void deserialize(Serializer serializer) {
+        super.deserialize(serializer);
         x = serializer.getInt("x");
         z = serializer.getInt("z");
         sectionNumber = serializer.getInt("sectionNumber");
@@ -101,7 +102,7 @@ public class ChunkBuildMessage extends WorkerMessage {
     }
 
     @Override
-    protected WorkerMessage create() {
+    public ChunkBuildMessage create() {
         return new ChunkBuildMessage();
     }
 

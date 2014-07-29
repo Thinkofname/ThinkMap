@@ -40,12 +40,13 @@ public class ClientSettingsMessage extends WorkerMessage {
     }
 
     @Override
-    protected void read(Serializer serializer) {
+    public void deserialize(Serializer serializer) {
+        super.deserialize(serializer);
         oresHidden = serializer.getBoolean("oresHidden");
     }
 
     @Override
-    protected WorkerMessage create() {
+    public ClientSettingsMessage create() {
         return new ClientSettingsMessage();
     }
 

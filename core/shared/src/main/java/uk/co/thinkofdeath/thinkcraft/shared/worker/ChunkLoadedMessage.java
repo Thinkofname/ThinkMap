@@ -160,7 +160,8 @@ public class ChunkLoadedMessage extends WorkerMessage {
     }
 
     @Override
-    protected void read(Serializer serializer) {
+    public void deserialize(Serializer serializer) {
+        super.deserialize(serializer);
         x = serializer.getInt("x");
         z = serializer.getInt("z");
         nextId = serializer.getInt("nextId");
@@ -189,7 +190,7 @@ public class ChunkLoadedMessage extends WorkerMessage {
     }
 
     @Override
-    protected WorkerMessage create() {
+    public ChunkLoadedMessage create() {
         return new ChunkLoadedMessage();
     }
 

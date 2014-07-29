@@ -143,7 +143,8 @@ public class ChunkBuildReply extends WorkerMessage {
     }
 
     @Override
-    protected void read(Serializer serializer) {
+    public void deserialize(Serializer serializer) {
+        super.deserialize(serializer);
         x = serializer.getInt("x");
         z = serializer.getInt("z");
         sectionNumber = serializer.getInt("sectionNumber");
@@ -159,7 +160,7 @@ public class ChunkBuildReply extends WorkerMessage {
     }
 
     @Override
-    protected WorkerMessage create() {
+    public ChunkBuildReply create() {
         return new ChunkBuildReply();
     }
 

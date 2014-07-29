@@ -41,12 +41,13 @@ public class TextureMessage extends WorkerMessage {
     }
 
     @Override
-    protected void read(Serializer serializer) {
+    public void deserialize(Serializer serializer) {
+        super.deserialize(serializer);
         value = serializer.getTemp("value");
     }
 
     @Override
-    protected WorkerMessage create() {
+    public TextureMessage create() {
         return new TextureMessage();
     }
 

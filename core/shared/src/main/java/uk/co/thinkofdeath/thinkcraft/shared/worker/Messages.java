@@ -42,7 +42,9 @@ public class Messages {
 
     public static Message read(Serializer serializer) {
         Message message = messages.get(serializer.getString("$id"));
-        return message.deserialize(serializer);
+        Message newMessage = (Message) message.create();
+        newMessage.deserialize(serializer);
+        return newMessage;
     }
 
     public static void write(Message message, Serializer serializer) {
@@ -62,17 +64,7 @@ public class Messages {
         }
 
         @Override
-        protected void read(Serializer serializer) {
-
-        }
-
-        @Override
-        protected WorkerMessage create() {
-            return NULL;
-        }
-
-        @Override
-        public Message deserialize(Serializer serializer) {
+        public NullMessage create() {
             return NULL;
         }
     }

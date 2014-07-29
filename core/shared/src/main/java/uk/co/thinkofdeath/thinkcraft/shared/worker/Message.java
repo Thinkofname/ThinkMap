@@ -18,7 +18,7 @@ package uk.co.thinkofdeath.thinkcraft.shared.worker;
 
 import uk.co.thinkofdeath.thinkcraft.shared.serializing.Serializable;
 
-public interface Message extends Serializable<Message> {
+public interface Message extends Serializable {
 
     void handle(MessageHandler handler);
 }

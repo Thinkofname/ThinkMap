@@ -65,13 +65,14 @@ public class ChunkUnloadMessage extends WorkerMessage {
     }
 
     @Override
-    protected void read(Serializer serializer) {
+    public void deserialize(Serializer serializer) {
+        super.deserialize(serializer);
         x = serializer.getInt("x");
         z = serializer.getInt("z");
     }
 
     @Override
-    protected WorkerMessage create() {
+    public ChunkUnloadMessage create() {
         return new ChunkUnloadMessage();
     }
 
