@@ -63,4 +63,9 @@ public class JsBufferAllocator implements BufferAllocator {
     public UShortBuffer ushortBuffer(Buffer view, int offset, int length) {
         return JavascriptUShortBuffer.create((JavascriptBuffer) view, offset, length);
     }
+
+    @Override
+    public ViewBuffer viewBuffer(Buffer view, boolean littleEndian, int offset, int length) {
+        return JavascriptViewBuffer.create((JavascriptBuffer) view, littleEndian, offset, length);
+    }
 }

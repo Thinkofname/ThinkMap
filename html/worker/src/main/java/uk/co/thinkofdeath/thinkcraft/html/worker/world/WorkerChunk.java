@@ -30,7 +30,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.model.PositionedModel;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.Buffer;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
-import uk.co.thinkofdeath.thinkcraft.shared.support.DataStream;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.ViewBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.util.IntMap;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkBuildReply;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadedMessage;
@@ -60,10 +60,10 @@ public class WorkerChunk extends Chunk {
         BlockRegistry blockRegistry = world.getMapViewer().getBlockRegistry();
 
         UByteBuffer byteData = JavascriptUByteBuffer.create(data, 0, data.getByteLength());
-        DataStream dataStream = DataStream.create(data);
+        ViewBuffer dataStream = Platform.alloc().viewBuffer(byteData, false, 0, byteData.byteSize());
 
         // Bit mask of what sections actually exist in the chunk
-        int sectionMask = dataStream.getUint16(1);
+        int sectionMask = dataStream.getUInt16(1);
 
         // Current offset into the buffer
         int offset = 0;
@@ -82,7 +82,7 @@ public class WorkerChunk extends Chunk {
             for (int oy = 0; oy < 16; oy++) {
                 for (int oz = 0; oz < 16; oz++) {
                     for (int ox = 0; ox < 16; ox++) {
-                        int id = dataStream.getUint16((offset << 1) + 3);
+                        int id = dataStream.getUInt16((offset << 1) + 3);
                         int light = byteData.get(blockDataOffset + offset + 3);
                         int sky = byteData.get(skyDataOffset + offset + 3);
                         offset++;
@@ -119,7 +119,7 @@ public class WorkerChunk extends Chunk {
         }
         for (int bx = 0; bx < 16; bx++) {
             for (int bz = 0; bz < 16; bz++) {
-                setBiome(bx, bz, Biome.getById(dataStream.getUint8(skyDataOffset + offset + 3 + bx + bz * 16)));
+                setBiome(bx, bz, Biome.getById(byteData.get(skyDataOffset + offset + 3 + bx + bz * 16)));
             }
         }
         this.reply = reply;

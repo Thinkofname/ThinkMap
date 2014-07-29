@@ -20,4 +20,36 @@ package uk.co.thinkofdeath.thinkcraft.shared.platform.buffers;
  * Unaligned access to buffers
  */
 public interface ViewBuffer {
+
+    void setUInt8(int index, int value);
+
+    void setInt8(int index, int value);
+
+    void setUInt16(int index, int value);
+
+    void setInt16(int index, int value);
+
+    void setUInt32(int index, int value);
+
+    void setInt32(int index, int value);
+
+    void setFloat32(int index, float value);
+
+    void setFloat64(int index, double value);
+
+    int getUInt8(int index);
+
+    int getInt8(int index);
+
+    int getUInt16(int index);
+
+    int getInt16(int index);
+
+    int getUInt32(int index);
+
+    int getInt32(int index);
+
+    float getFloat32(int index);
+
+    double getFloat64(int index);
 }

@@ -110,4 +110,10 @@ public interface BufferAllocator {
      * @return The view
      */
     UShortBuffer ushortBuffer(Buffer view, int offset, int length);
+
+    /**
+     * Creates a ViewBuffer which is a view on the
+     * target buffer
+     */
+    ViewBuffer viewBuffer(Buffer view, boolean littleEndian, int offset, int length);
 }

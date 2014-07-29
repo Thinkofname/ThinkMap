@@ -17,21 +17,22 @@
 package uk.co.thinkofdeath.thinkcraft.html.client.network;
 
 import elemental.html.ArrayBuffer;
+import uk.co.thinkofdeath.thinkcraft.html.shared.buffer.JavascriptViewBuffer;
 import uk.co.thinkofdeath.thinkcraft.protocol.PacketStream;
 import uk.co.thinkofdeath.thinkcraft.shared.building.DynamicBuffer;
-import uk.co.thinkofdeath.thinkcraft.shared.support.DataStream;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.ViewBuffer;
 
 public class DataPacketStream implements PacketStream {
 
     private ArrayBuffer data;
-    private DataStream reader;
+    private ViewBuffer reader;
     private int readerOffset = 0;
 
     private DynamicBuffer buffer;
 
     public DataPacketStream(ArrayBuffer data) {
         this.data = data;
-        reader = DataStream.create(data);
+        reader = JavascriptViewBuffer.create(data, false, 0, data.getByteLength());
     }
 
     public DataPacketStream() {
@@ -67,7 +68,7 @@ public class DataPacketStream implements PacketStream {
 
     @Override
     public int readUByte() {
-        return reader.getUint8(readerOffset++);
+        return reader.getUInt8(readerOffset++);
     }
 
     @Override

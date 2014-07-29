@@ -16,11 +16,10 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.building;
 
-import elemental.html.ArrayBufferView;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UShortBuffer;
-import uk.co.thinkofdeath.thinkcraft.shared.support.DataStream;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.ViewBuffer;
 
 public class DynamicBuffer {
 
@@ -28,7 +27,7 @@ public class DynamicBuffer {
     private final boolean littleEndian;
 
     private UByteBuffer buffer;
-    private DataStream dataStream;
+    private ViewBuffer dataStream;
     private int offset = 0;
 
     /**
@@ -47,7 +46,7 @@ public class DynamicBuffer {
         this.littleEndian = littleEndian;
         if (size < 16) size = 16;
         buffer = Platform.alloc().ubyteBuffer(size);
-        dataStream = DataStream.create(((ArrayBufferView) buffer).getBuffer()); // Fixme
+        dataStream = Platform.alloc().viewBuffer(buffer, littleEndian, 0, buffer.byteSize());
     }
 
     /**
@@ -73,7 +72,7 @@ public class DynamicBuffer {
         if (offset + 1 >= buffer.size()) {
             resize();
         }
-        dataStream.setUint16(offset, val, littleEndian);
+        dataStream.setUInt16(offset, val);
         offset += 2;
     }
 
@@ -81,7 +80,7 @@ public class DynamicBuffer {
         if (offset + 3 >= buffer.size()) {
             resize();
         }
-        dataStream.setInt32(offset, val, littleEndian);
+        dataStream.setInt32(offset, val);
         offset += 4;
     }
 
@@ -95,7 +94,7 @@ public class DynamicBuffer {
         if (offset + 3 >= buffer.size()) {
             resize();
         }
-        dataStream.setFloat32(offset, val, littleEndian);
+        dataStream.setFloat32(offset, val);
         offset += 4;
     }
 
@@ -104,7 +103,7 @@ public class DynamicBuffer {
         UByteBuffer oldBuffer = buffer;
         buffer = Platform.alloc().ubyteBuffer(buffer.size() * 2);
         buffer.set(0, oldBuffer);
-        dataStream = DataStream.create(((ArrayBufferView) buffer).getBuffer()); // Fixme
+        dataStream = Platform.alloc().viewBuffer(buffer, littleEndian, 0, buffer.byteSize());
     }
 
     /**

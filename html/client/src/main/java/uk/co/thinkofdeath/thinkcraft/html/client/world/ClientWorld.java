@@ -22,7 +22,8 @@ import elemental.events.EventListener;
 import elemental.html.ArrayBuffer;
 import elemental.xml.XMLHttpRequest;
 import uk.co.thinkofdeath.thinkcraft.html.client.MapViewer;
-import uk.co.thinkofdeath.thinkcraft.shared.support.DataStream;
+import uk.co.thinkofdeath.thinkcraft.html.shared.buffer.JavascriptViewBuffer;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.ViewBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkBuildMessage;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadMessage;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkUnloadMessage;
@@ -182,7 +183,7 @@ public class ClientWorld extends World {
                     // Got the chunk successfully, move on
                     // to processing the chunk
                     ArrayBuffer data = (ArrayBuffer) xmlHttpRequest.getResponse();
-                    DataStream dataStream = DataStream.create(data);
+                    ViewBuffer dataStream = JavascriptViewBuffer.create(data, false, 0, data.getByteLength());
                     if (dataStream.getInt8(0) == 0) {
                         loadingChunks.remove(key);
                         return;
