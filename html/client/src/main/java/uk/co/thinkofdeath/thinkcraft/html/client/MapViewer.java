@@ -34,7 +34,7 @@ import uk.co.thinkofdeath.thinkcraft.html.client.texture.VirtualTexture;
 import uk.co.thinkofdeath.thinkcraft.html.client.worker.WorkerPool;
 import uk.co.thinkofdeath.thinkcraft.html.client.world.ClientWorld;
 import uk.co.thinkofdeath.thinkcraft.html.shared.JavascriptLib;
-import uk.co.thinkofdeath.thinkcraft.html.shared.TextureMap;
+import uk.co.thinkofdeath.thinkcraft.html.shared.serialize.JsObjectSerializer;
 import uk.co.thinkofdeath.thinkcraft.html.shared.settings.ClientSettings;
 import uk.co.thinkofdeath.thinkcraft.protocol.ServerPacketHandler;
 import uk.co.thinkofdeath.thinkcraft.protocol.packets.KeepAlive;
@@ -43,6 +43,7 @@ import uk.co.thinkofdeath.thinkcraft.protocol.packets.SpawnPosition;
 import uk.co.thinkofdeath.thinkcraft.protocol.packets.TimeUpdate;
 import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
+import uk.co.thinkofdeath.thinkcraft.shared.TextureMap;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockRegistry;
 import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
@@ -120,13 +121,9 @@ public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler
     public void handleEvent(Event event) {
         loaded++;
         if (loaded == 1) {
-            TextureMap tmap = Json.parse((String) xhr.getResponse());
-            tmap.forEach(new TextureMap.Looper() {
-                @Override
-                public void forEach(String k, Texture v) {
-                    textures.put(k, v);
-                }
-            });
+            TextureMap tmap = new TextureMap();
+            tmap.deserialize(JsObjectSerializer.from(Json.parse((String) xhr.getResponse())));
+            tmap.copyTextures(textures);
             tmap.copyGrassColormap(Model.grassBiomeColors);
             tmap.copyFoliageColormap(Model.foliageBiomeColors);
             // Sync to workers

@@ -16,34 +16,38 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.worker;
 
+import uk.co.thinkofdeath.thinkcraft.shared.TextureMap;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
 import uk.co.thinkofdeath.thinkcraft.shared.serializing.Serializer;
 
-@Deprecated
 public class TextureMessage extends WorkerMessage {
 
-    private Object value;
+    private TextureMap textureMap;
 
     TextureMessage() {
     }
 
-    public TextureMessage(Object value) {
-        this.value = value;
+    public TextureMessage(TextureMap textureMap) {
+        this.textureMap = textureMap;
     }
 
-    public Object getValue() {
-        return value;
+    public TextureMap getTextureMap() {
+        return textureMap;
     }
 
     @Override
     public void serialize(Serializer serializer) {
         super.serialize(serializer);
-        serializer.putTemp("value", value);
+        Serializer tm = Platform.workerSerializers().create();
+        textureMap.serialize(tm);
+        serializer.putSub("textureMap", tm);
     }
 
     @Override
     public void deserialize(Serializer serializer) {
         super.deserialize(serializer);
-        value = serializer.getTemp("value");
+        textureMap = new TextureMap();
+        textureMap.deserialize(serializer.getSub("textureMap"));
     }
 
     @Override

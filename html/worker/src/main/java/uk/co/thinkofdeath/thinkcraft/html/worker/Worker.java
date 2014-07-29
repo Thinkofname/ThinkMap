@@ -23,7 +23,6 @@ import elemental.events.EventListener;
 import elemental.events.MessageEvent;
 import elemental.html.WorkerGlobalScope;
 import uk.co.thinkofdeath.thinkcraft.html.shared.JavascriptLib;
-import uk.co.thinkofdeath.thinkcraft.html.shared.TextureMap;
 import uk.co.thinkofdeath.thinkcraft.html.shared.buffer.JavascriptBuffer;
 import uk.co.thinkofdeath.thinkcraft.html.shared.serialize.JsObjectSerializer;
 import uk.co.thinkofdeath.thinkcraft.html.shared.settings.ClientSettings;
@@ -31,6 +30,7 @@ import uk.co.thinkofdeath.thinkcraft.html.worker.world.WorkerChunk;
 import uk.co.thinkofdeath.thinkcraft.html.worker.world.WorkerWorld;
 import uk.co.thinkofdeath.thinkcraft.shared.IMapViewer;
 import uk.co.thinkofdeath.thinkcraft.shared.Texture;
+import uk.co.thinkofdeath.thinkcraft.shared.TextureMap;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockRegistry;
 import uk.co.thinkofdeath.thinkcraft.shared.model.Model;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.Buffer;
@@ -188,13 +188,8 @@ public class Worker implements EntryPoint, EventListener, IMapViewer, MessageHan
 
     @Override
     public void handle(TextureMessage textureMessage) {
-        TextureMap tmap = (TextureMap) textureMessage.getValue();
-        tmap.forEach(new TextureMap.Looper() {
-            @Override
-            public void forEach(String k, Texture v) {
-                textures.put(k, v);
-            }
-        });
+        TextureMap tmap = textureMessage.getTextureMap();
+        tmap.copyTextures(textures);
         tmap.copyGrassColormap(Model.grassBiomeColors);
         tmap.copyFoliageColormap(Model.foliageBiomeColors);
         sendMessage(Messages.NULL, false);
