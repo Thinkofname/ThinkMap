@@ -22,7 +22,9 @@ import elemental.events.EventListener;
 import elemental.html.ArrayBuffer;
 import elemental.xml.XMLHttpRequest;
 import uk.co.thinkofdeath.thinkcraft.html.client.MapViewer;
+import uk.co.thinkofdeath.thinkcraft.html.shared.buffer.JavascriptUByteBuffer;
 import uk.co.thinkofdeath.thinkcraft.html.shared.buffer.JavascriptViewBuffer;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.ViewBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkBuildMessage;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.ChunkLoadMessage;
@@ -188,7 +190,8 @@ public class ClientWorld extends World {
                         loadingChunks.remove(key);
                         return;
                     }
-                    mapViewer.getWorkerPool().sendMessage(new ChunkLoadMessage(x, z, data), true);
+                    UByteBuffer sendableData = JavascriptUByteBuffer.create(data, 0, data.getByteLength());
+                    mapViewer.getWorkerPool().sendMessage(new ChunkLoadMessage(x, z, sendableData), true);
                 } else {
                     // Request failed (e.g. non-existing chunk)
                     // remove from the loadingChunks set so

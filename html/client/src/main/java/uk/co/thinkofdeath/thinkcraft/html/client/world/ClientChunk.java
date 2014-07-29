@@ -17,7 +17,6 @@
 package uk.co.thinkofdeath.thinkcraft.html.client.world;
 
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.JsArrayInteger;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.ChunkRenderObject;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.SortableRenderObject;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
@@ -106,10 +105,10 @@ public class ClientChunk extends Chunk {
         }
     }
 
-    public void updateAccess(int sectionNumber, JsArrayInteger accessData) {
+    public void updateAccess(int sectionNumber, int[] accessData) {
         ChunkSection section = sections[sectionNumber];
-        for (int j = 0; j < accessData.length(); j++) {
-            section.getSideAccess()[j] = accessData.get(j);
+        for (int j = 0; j < accessData.length; j++) {
+            section.getSideAccess()[j] = accessData[j];
         }
     }
 

@@ -94,7 +94,7 @@ public class JsObjectSerializer extends JavaScriptObject implements Serializer {
     }-*/;
 
     @Override
-    public final native void putBuffer(String name, Buffer buffer)/*-{
+    public final native void putBuffer(String name, Buffer value)/*-{
         this[name] = value;
     }-*/;
 

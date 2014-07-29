@@ -17,9 +17,10 @@
 package uk.co.thinkofdeath.thinkcraft.shared.worker;
 
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.JsArrayInteger;
 import uk.co.thinkofdeath.thinkcraft.shared.model.PositionedModel;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.IntArraySerializer;
 import uk.co.thinkofdeath.thinkcraft.shared.serializing.Serializer;
 
 public class ChunkBuildReply extends WorkerMessage {
@@ -27,7 +28,7 @@ public class ChunkBuildReply extends WorkerMessage {
     private int z;
     private int sectionNumber;
     private int buildNumber;
-    private JsArrayInteger accessData;
+    private int[] accessData;
     private UByteBuffer data;
     private UByteBuffer transData;
     private JsArray<PositionedModel> modelJsArray;
@@ -54,9 +55,8 @@ public class ChunkBuildReply extends WorkerMessage {
      *         The transparent block data
      * @param modelJsArray
      *         The transparent block models
-     * @return The message
      */
-    public ChunkBuildReply(int x, int z, int sectionNumber, int buildNumber, JsArrayInteger accessData,
+    public ChunkBuildReply(int x, int z, int sectionNumber, int buildNumber, int[] accessData,
                            UByteBuffer data, UByteBuffer transData, JsArray<PositionedModel> modelJsArray) {
         this.x = x;
         this.z = z;
@@ -121,7 +121,7 @@ public class ChunkBuildReply extends WorkerMessage {
         return modelJsArray;
     }
 
-    public JsArrayInteger getAccessData() {
+    public int[] getAccessData() {
         return accessData;
     }
 
@@ -132,9 +132,13 @@ public class ChunkBuildReply extends WorkerMessage {
         serializer.putInt("z", z);
         serializer.putInt("sectionNumber", sectionNumber);
         serializer.putInt("buildNumber", buildNumber);
-        serializer.putTemp("accessData", accessData);
-        serializer.putTemp("data", data);
-        serializer.putTemp("transData", transData);
+        IntArraySerializer ad = Platform.workerSerializers().createIntArray();
+        for (int i : accessData) {
+            ad.add(i);
+        }
+        serializer.putArray("accessData", ad);
+        serializer.putBuffer("data", data);
+        serializer.putBuffer("transData", transData);
         serializer.putTemp("trans", modelJsArray);
     }
 
@@ -144,9 +148,13 @@ public class ChunkBuildReply extends WorkerMessage {
         z = serializer.getInt("z");
         sectionNumber = serializer.getInt("sectionNumber");
         buildNumber = serializer.getInt("buildNumber");
-        accessData = (JsArrayInteger) serializer.getTemp("accessData");
-        data = (UByteBuffer) serializer.getTemp("data");
-        transData = (UByteBuffer) serializer.getTemp("transData");
+        IntArraySerializer ad = (IntArraySerializer) serializer.getArray("accessData");
+        accessData = new int[ad.size()];
+        for (int i = 0; i < accessData.length; i++) {
+            accessData[i] = ad.getInt(i);
+        }
+        data = (UByteBuffer) serializer.getBuffer("data");
+        transData = (UByteBuffer) serializer.getBuffer("transData");
         modelJsArray = (JsArray<PositionedModel>) serializer.getTemp("trans");
     }
 

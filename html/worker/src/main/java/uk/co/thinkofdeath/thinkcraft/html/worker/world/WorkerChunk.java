@@ -17,9 +17,6 @@
 package uk.co.thinkofdeath.thinkcraft.html.worker.world;
 
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.JsArrayInteger;
-import elemental.html.ArrayBuffer;
-import uk.co.thinkofdeath.thinkcraft.html.shared.buffer.JavascriptUByteBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.Face;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockRegistry;
@@ -54,12 +51,11 @@ public class WorkerChunk extends Chunk {
      * @param z
      *         The z position
      */
-    public WorkerChunk(WorkerWorld world, int x, int z, ArrayBuffer data, boolean reply) {
+    public WorkerChunk(WorkerWorld world, int x, int z, UByteBuffer byteData, boolean reply) {
         super(world, x, z);
         this.world = world;
         BlockRegistry blockRegistry = world.getMapViewer().getBlockRegistry();
 
-        UByteBuffer byteData = JavascriptUByteBuffer.create(data, 0, data.getByteLength());
         ViewBuffer dataStream = Platform.alloc().viewBuffer(byteData, false, 0, byteData.byteSize());
 
         // Bit mask of what sections actually exist in the chunk
@@ -213,11 +209,7 @@ public class WorkerChunk extends Chunk {
 
         UByteBuffer data = builder.toTypedArray();
         UByteBuffer transData = transBuilder.toTypedArray();
-        JsArrayInteger accessData = (JsArrayInteger) JsArrayInteger.createArray();
-        int[] ad = sections[sectionNumber].getSideAccess();
-        for (int i = 0; i < ad.length; i++) {
-            accessData.set(i, ad[i]);
-        }
+        int[] accessData = sections[sectionNumber].getSideAccess();
         world.worker.sendMessage(
                 new ChunkBuildReply(
                         getX(), getZ(), sectionNumber, buildNumber,

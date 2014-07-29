@@ -16,14 +16,14 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.worker;
 
-import elemental.html.ArrayBuffer;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.serializing.Serializer;
 
 public class ChunkLoadMessage extends WorkerMessage {
 
     private int x;
     private int z;
-    private ArrayBuffer data;
+    private UByteBuffer data;
 
     ChunkLoadMessage() {
     }
@@ -38,8 +38,7 @@ public class ChunkLoadMessage extends WorkerMessage {
      * @param data
      *         The data of the chunk
      */
-    public ChunkLoadMessage(int x, int z, ArrayBuffer data) {
-
+    public ChunkLoadMessage(int x, int z, UByteBuffer data) {
         this.x = x;
         this.z = z;
         this.data = data;
@@ -68,7 +67,7 @@ public class ChunkLoadMessage extends WorkerMessage {
      *
      * @return The data
      */
-    public ArrayBuffer getData() {
+    public UByteBuffer getData() {
         return data;
     }
 
@@ -77,14 +76,14 @@ public class ChunkLoadMessage extends WorkerMessage {
         super.serialize(serializer);
         serializer.putInt("x", x);
         serializer.putInt("z", z);
-        serializer.putTemp("data", data);
+        serializer.putBuffer("data", data);
     }
 
     @Override
     protected void read(Serializer serializer) {
         x = serializer.getInt("x");
         z = serializer.getInt("z");
-        data = (ArrayBuffer) serializer.getTemp("data");
+        data = (UByteBuffer) serializer.getBuffer("data");
     }
 
     @Override
