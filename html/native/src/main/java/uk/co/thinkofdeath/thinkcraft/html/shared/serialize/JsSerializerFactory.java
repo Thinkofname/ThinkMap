@@ -49,4 +49,9 @@ public class JsSerializerFactory implements SerializerFactory {
     public final ArraySerializerArraySerializer createArrayArray() {
         return JsArraySerializerArray.create();
     }
+
+    @Override
+    public final BufferArraySerializer createBufferArray() {
+        return JsBufferArray.create();
+    }
 }

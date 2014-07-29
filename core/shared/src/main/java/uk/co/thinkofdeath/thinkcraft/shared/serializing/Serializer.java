@@ -16,6 +16,8 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.serializing;
 
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.Buffer;
+
 public interface Serializer {
 
     /**
@@ -74,6 +76,17 @@ public interface Serializer {
     void putArray(String name, ArraySerializer<?> value);
 
     /**
+     * Stores the buffer at the key with the given name,
+     * overwriting if needed
+     *
+     * @param name
+     *         The key to use
+     * @param buffer
+     *         The value to store
+     */
+    void putBuffer(String name, Buffer buffer);
+
+    /**
      * Returns the string at the key with the given name
      * or null if its not found
      *
@@ -120,6 +133,16 @@ public interface Serializer {
      * @return The value stored or null
      */
     ArraySerializer<?> getArray(String name);
+
+    /**
+     * Returns the buffer at the key with the given name
+     * or null if its not found
+     *
+     * @param name
+     *         The key to use
+     * @return The value stored or null
+     */
+    Buffer getBuffer(String name);
 
     // TODO: Burn this
     @Deprecated

@@ -59,4 +59,11 @@ public interface SerializerFactory {
      * @return The array
      */
     ArraySerializerArraySerializer createArrayArray();
+
+    /**
+     * Creates an array of arrays
+     *
+     * @return The array
+     */
+    BufferArraySerializer createBufferArray();
 }
