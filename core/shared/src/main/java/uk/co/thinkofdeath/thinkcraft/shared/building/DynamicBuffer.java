@@ -16,16 +16,15 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.building;
 
-import elemental.html.ArrayBuffer;
 import elemental.html.ArrayBufferView;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
+import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UShortBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.support.DataStream;
 
 public class DynamicBuffer {
 
-    private static final boolean IS_LITTLE_ENDIAN =
-            (DataStream.create(createEndianTestBuffer()).getInt8(0) == 1);
+    private static final boolean IS_LITTLE_ENDIAN = detectByteOrder();
     private final boolean littleEndian;
 
     private UByteBuffer buffer;
@@ -124,12 +123,13 @@ public class DynamicBuffer {
         return buffer;
     }
 
-    // Used by IS_LITTLE_ENDIAN
-    private static native ArrayBuffer createEndianTestBuffer()/*-{
-        return new Uint16Array([1]).buffer;
-    }-*/;
-
     public int getOffset() {
         return offset;
+    }
+
+    private static boolean detectByteOrder() {
+        UShortBuffer buffer = Platform.alloc().ushortBuffer(1);
+        buffer.set(0, 1);
+        return Platform.alloc().ubyteBuffer(buffer, 0, 2).get(0) == 1;
     }
 }
