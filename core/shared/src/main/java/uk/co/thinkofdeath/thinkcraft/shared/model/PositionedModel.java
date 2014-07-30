@@ -16,33 +16,67 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared.model;
 
-import com.google.gwt.core.client.JavaScriptObject;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.Serializable;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.Serializer;
 
-public class PositionedModel extends JavaScriptObject {
-    protected PositionedModel() {
+public class PositionedModel implements Serializable {
+    private int x;
+    private int y;
+    private int z;
+    private int start;
+    private int length;
+
+    public PositionedModel() {
     }
 
-    public static native PositionedModel create(int x, int y, int z, int start, int length)/*-{
-        return {x: x, y: y, z: z, start: start, length: length};
-    }-*/;
+    public PositionedModel(int x, int y, int z, int start, int length) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.start = start;
+        this.length = length;
+    }
 
-    public final native int getX()/*-{
-        return this.x;
-    }-*/;
+    public int getX() {
+        return x;
+    }
 
-    public final native int getY()/*-{
-        return this.y;
-    }-*/;
+    public int getY() {
+        return y;
+    }
 
-    public final native int getZ()/*-{
-        return this.z;
-    }-*/;
+    public int getZ() {
+        return z;
+    }
 
-    public final native int getStart()/*-{
-        return this.start;
-    }-*/;
+    public int getStart() {
+        return start;
+    }
 
-    public final native int getLength()/*-{
-        return this.length;
-    }-*/;
+    public int getLength() {
+        return length;
+    }
+
+    @Override
+    public void serialize(Serializer serializer) {
+        serializer.putInt("x", x);
+        serializer.putInt("y", y);
+        serializer.putInt("z", z);
+        serializer.putInt("start", start);
+        serializer.putInt("length", length);
+    }
+
+    @Override
+    public void deserialize(Serializer serializer) {
+        x = serializer.getInt("x");
+        y = serializer.getInt("y");
+        z = serializer.getInt("z");
+        start = serializer.getInt("start");
+        length = serializer.getInt("length");
+    }
+
+    @Override
+    public Serializable create() {
+        return new PositionedModel();
+    }
 }

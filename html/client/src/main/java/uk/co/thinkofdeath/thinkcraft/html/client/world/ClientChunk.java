@@ -16,7 +16,6 @@
 
 package uk.co.thinkofdeath.thinkcraft.html.client.world;
 
-import com.google.gwt.core.client.JsArray;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.ChunkRenderObject;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.SortableRenderObject;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
@@ -27,6 +26,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.world.Chunk;
 import uk.co.thinkofdeath.thinkcraft.shared.world.ChunkSection;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ClientChunk extends Chunk {
 
@@ -89,25 +89,23 @@ public class ClientChunk extends Chunk {
         return true;
     }
 
-    public void setTransparentModels(int i, JsArray<PositionedModel> trans, UByteBuffer transData, int sender) {
+    public void setTransparentModels(int i, List<PositionedModel> trans, UByteBuffer transData, int sender) {
         if (sortableRenderObjects[i] != null) {
             sortableRenderObjects[i].setData(null);
         }
-        if (sortableRenderObjects[i] != null && trans.length() == 0) {
+        if (sortableRenderObjects[i] != null && trans.size() == 0) {
             world.mapViewer.getRenderer().removeSortable(sortableRenderObjects[i]);
             sortableRenderObjects[i] = null;
             return;
         }
-        if (trans.length() > 0) {
+        if (trans.size() > 0) {
             if (sortableRenderObjects[i] == null) {
                 sortableRenderObjects[i] = new SortableRenderObject(getX(), i, getZ());
                 world.mapViewer.getRenderer().postSortable(sortableRenderObjects[i]);
             }
             ArrayList<PositionedModel> models = sortableRenderObjects[i].getModels();
             models.clear();
-            for (int j = 0; j < trans.length(); j++) {
-                models.add(trans.get(j));
-            }
+            models.addAll(trans);
             sortableRenderObjects[i].setData(transData);
         }
     }

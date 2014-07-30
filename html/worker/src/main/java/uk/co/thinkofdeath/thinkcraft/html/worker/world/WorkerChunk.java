@@ -16,7 +16,6 @@
 
 package uk.co.thinkofdeath.thinkcraft.html.worker.world;
 
-import com.google.gwt.core.client.JsArray;
 import uk.co.thinkofdeath.thinkcraft.shared.Face;
 import uk.co.thinkofdeath.thinkcraft.shared.block.Block;
 import uk.co.thinkofdeath.thinkcraft.shared.block.BlockRegistry;
@@ -179,7 +178,7 @@ public class WorkerChunk extends Chunk {
     public void build(int sectionNumber, int buildNumber) {
         ModelBuilder builder = new ModelBuilder();
         ModelBuilder transBuilder = new ModelBuilder();
-        JsArray<PositionedModel> modelJsArray = (JsArray<PositionedModel>) JsArray.createArray();
+        ArrayList<PositionedModel> modelJsArray = new ArrayList<>();
         for (int y = 0; y < 16; y++) {
             for (int z = 0; z < 16; z++) {
                 for (int x = 0; x < 16; x++) {
@@ -193,7 +192,7 @@ public class WorkerChunk extends Chunk {
                             model.render(transBuilder, x, (sectionNumber << 4) + y, z, this, block);
                             int length = transBuilder.getOffset() - start;
                             if (length > 0) {
-                                modelJsArray.push(PositionedModel.create(
+                                modelJsArray.add(new PositionedModel(
                                                 x, (sectionNumber << 4) + y, z, start,
                                                 length)
                                 );
