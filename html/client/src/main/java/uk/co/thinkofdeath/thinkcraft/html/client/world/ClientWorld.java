@@ -207,14 +207,6 @@ public class ClientWorld extends World {
     public void addChunk(Chunk chunk) {
         super.addChunk(chunk);
         loadingChunks.remove(chunkKey(chunk.getX(), chunk.getZ()));
-        for (int x = -1; x <= 1; x++) {
-            for (int z = -1; z <= 1; z++) {
-                Chunk c = getChunk(chunk.getX() + x, chunk.getZ() + z);
-                if (c != null) {
-                    ((ClientChunk) c).rebuild();
-                }
-            }
-        }
         // Update surrounding chunks
         Chunk other;
         Chunk other2;
@@ -234,6 +226,15 @@ public class ClientWorld extends World {
                             if (other4 != null) other4.updateBlock(z, (i << 4) + y, 0);
                         }
                     }
+                }
+            }
+        }
+
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                Chunk c = getChunk(chunk.getX() + x, chunk.getZ() + z);
+                if (c != null) {
+                    ((ClientChunk) c).rebuild();
                 }
             }
         }
