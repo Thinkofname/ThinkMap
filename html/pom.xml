@@ -30,7 +30,7 @@
 
     <modules>
         <module>worker-linker</module>
-        <module>native</module>
+        <module>shared</module>
         <module>worker</module>
         <module>client</module>
     </modules>

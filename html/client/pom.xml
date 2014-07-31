@@ -37,7 +37,7 @@
         </dependency>
         <dependency>
             <groupId>uk.co.thinkofdeath.thinkcraft</groupId>
-            <artifactId>html-native</artifactId>
+            <artifactId>html-shared</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
