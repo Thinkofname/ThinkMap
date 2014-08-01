@@ -25,4 +25,6 @@ public interface ResourceProvider {
     public TextureMetadata getMetadata(String name);
 
     public byte[] getResource(String name);
+
+    public String[] getResources();
 }

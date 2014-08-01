@@ -18,10 +18,7 @@ package uk.co.thinkofdeath.thinkcraft.resources.mojang;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import uk.co.thinkofdeath.thinkcraft.resources.ResourceProvider;
-import uk.co.thinkofdeath.thinkcraft.resources.Texture;
-import uk.co.thinkofdeath.thinkcraft.resources.TextureFactory;
-import uk.co.thinkofdeath.thinkcraft.resources.TextureMetadata;
+import uk.co.thinkofdeath.thinkcraft.resources.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -35,8 +32,8 @@ import java.util.zip.ZipInputStream;
 public class ZipResourceProvider implements ResourceProvider {
 
     private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(MojangMetadata.class, new MojangMetadataDeserializer())
-            .registerTypeAdapter(MojangMetadataAnimation.class, new MojangMetadataAnimationDeserializer())
+            .registerTypeAdapter(TextureMetadata.class, new TextureMetadataDeserializer())
+            .registerTypeAdapter(TextureMetadataAnimation.class, new TextureMetadataAnimationDeserializer())
             .create();
 
     private static final HashMap<String, String> whitelistedTextures = new HashMap<String, String>() {{
@@ -64,7 +61,25 @@ public class ZipResourceProvider implements ResourceProvider {
             try (ZipInputStream in = new ZipInputStream(inputStream)) {
                 ZipEntry entry;
                 while ((entry = in.getNextEntry()) != null) {
-                    if (!entry.getName().startsWith("assets/minecraft/textures/blocks/")) {
+                    if (entry.getName().startsWith("assets/minecraft/textures/blocks/")) {
+                        if (entry.getName().endsWith(".png")) {
+                            String name = entry.getName().substring(
+                                    "assets/minecraft/textures/blocks/".length(),
+                                    entry.getName().length() - 4
+                            );
+                            textureNames.add(name);
+                            textures.put(name, factory.fromInputStream(new NoCloseStream(in)));
+                        } else if (entry.getName().endsWith(".png.mcmeta")) {
+                            TextureMetadata metadata = gson.fromJson(
+                                    new InputStreamReader(new NoCloseStream(in), "UTF-8"),
+                                    TextureMetadata.class);
+                            String name = entry.getName().substring(
+                                    "assets/minecraft/textures/blocks/".length(),
+                                    entry.getName().length() - 4 - 7
+                            );
+                            this.metadata.put(name, metadata);
+                        }
+                    } else {
                         if (whitelistedTextures.containsKey(entry.getName())) {
                             String name = whitelistedTextures.get(entry.getName());
                             textureNames.add(name);
@@ -91,24 +106,6 @@ public class ZipResourceProvider implements ResourceProvider {
                             }
                             resources.put(name, data);
                         }
-                        continue;
-                    }
-                    if (entry.getName().endsWith(".png")) {
-                        String name = entry.getName().substring(
-                                "assets/minecraft/textures/blocks/".length(),
-                                entry.getName().length() - 4
-                        );
-                        textureNames.add(name);
-                        textures.put(name, factory.fromInputStream(new NoCloseStream(in)));
-                    } else if (entry.getName().endsWith(".png.mcmeta")) {
-                        MojangMetadata metadata = gson.fromJson(
-                                new InputStreamReader(new NoCloseStream(in), "UTF-8"),
-                                MojangMetadata.class);
-                        String name = entry.getName().substring(
-                                "assets/minecraft/textures/blocks/".length(),
-                                entry.getName().length() - 4 - 7
-                        );
-                        this.metadata.put(name, metadata);
                     }
                 }
             }
@@ -143,6 +140,11 @@ public class ZipResourceProvider implements ResourceProvider {
     @Override
     public byte[] getResource(String name) {
         return resources.get(name);
+    }
+
+    @Override
+    public String[] getResources() {
+        return resources.keySet().toArray(new String[resources.keySet().size()]);
     }
 
     private static class NoCloseStream extends InputStream {

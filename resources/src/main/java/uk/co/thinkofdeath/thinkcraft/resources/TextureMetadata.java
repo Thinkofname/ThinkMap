@@ -16,9 +16,14 @@
 
 package uk.co.thinkofdeath.thinkcraft.resources;
 
-public interface TextureMetadata {
+public class TextureMetadata {
+    TextureMetadataAnimation animation;
 
-    public int getFrameTime();
+    public int getFrameTime() {
+        return animation.frametime == 0 ? 1 : animation.frametime;
+    }
 
-    public int[] getFrames();
+    public int[] getFrames() {
+        return animation.frames;
+    }
 }

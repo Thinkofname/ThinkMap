@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.resources.mojang;
+package uk.co.thinkofdeath.thinkcraft.resources;
 
 import com.google.gson.*;
 
 import java.lang.reflect.Type;
 
-class MojangMetadataAnimationDeserializer implements JsonDeserializer<MojangMetadataAnimation> {
+public class TextureMetadataAnimationDeserializer implements JsonDeserializer<TextureMetadataAnimation> {
     @Override
-    public MojangMetadataAnimation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        MojangMetadataAnimation animation = new MojangMetadataAnimation();
+    public TextureMetadataAnimation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        TextureMetadataAnimation animation = new TextureMetadataAnimation();
         JsonObject object = json.getAsJsonObject();
         if (object.has("frames")) {
             JsonArray frames = object.getAsJsonArray("frames");
