@@ -42,6 +42,7 @@ import static elemental.html.WebGLRenderingContext.*;
 public class Renderer implements RendererUtils.ResizeHandler, Runnable {
 
     private static final int TRANSPARENT_UPDATES_LIMIT = 5;
+    private static final int VERTEX_SIZE = 22;
 
     private final MapViewer mapViewer;
 
@@ -284,7 +285,7 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
                 gl.bindBuffer(ARRAY_BUFFER, sortableRenderObject.buffer);
                 gl.bufferData(ARRAY_BUFFER, (ArrayBufferView) temp,
                         DYNAMIC_DRAW);
-                sortableRenderObject.count = temp.size() / 22;
+                sortableRenderObject.count = temp.size() / VERTEX_SIZE;
             }
 
             if (updates >= TRANSPARENT_UPDATES_LIMIT && !moved) {
@@ -402,7 +403,7 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         if (renderObject.buffer == null) {
             renderObject.buffer = gl.createBuffer();
         }
-        renderObject.triangleCount = data.size() / 22;
+        renderObject.triangleCount = data.size() / VERTEX_SIZE;
         gl.bindBuffer(ARRAY_BUFFER, renderObject.buffer);
         gl.bufferData(ARRAY_BUFFER, (ArrayBufferView) data, STATIC_DRAW);
     }
