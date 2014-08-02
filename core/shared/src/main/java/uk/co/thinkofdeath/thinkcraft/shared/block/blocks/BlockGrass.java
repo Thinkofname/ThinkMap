@@ -69,7 +69,8 @@ public class BlockGrass extends BlockFactory {
         @Override
         public Model getModel() {
             if (model == null) {
-                model = super.getModel();
+                Model m2 = super.getModel();
+                model = new Model();
 
                 // Add on the overlay
                 if (!getState(SNOW)) {
@@ -84,6 +85,7 @@ public class BlockGrass extends BlockFactory {
                     model.addFace(new ModelFace(Face.BACK, grassSideOverlay, 0, 0, 16, 16, 0, true)
                             .colour((colour >> 16) & 0xFF, (colour >> 8) & 0xFF, colour & 0xFF));
                 }
+                model.join(m2);
 
                 for (ModelFace face : model.getFaces()) {
                     if (face.getRed() != 0xFF && face.getGreen() != 0xFF && face.getBlue() != 0xFF) {

@@ -45,6 +45,5 @@ class TextureLoadHandler implements EventListener {
         for (VirtualTexture texture : mapViewer.getVirtualTextures()) {
             texture.loadTextures(id);
         }
-        TexturePreProcessor.process(mapViewer, id, this);
     }
 }
