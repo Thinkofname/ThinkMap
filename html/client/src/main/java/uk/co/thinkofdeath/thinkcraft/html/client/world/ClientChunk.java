@@ -134,7 +134,7 @@ public class ClientChunk extends Chunk {
             if (renderObjects[sectionNumber] == null) {
                 renderObjects[sectionNumber] = new ChunkRenderObject(this, getX(), sectionNumber, getZ());
             }
-            world.mapViewer.getRenderer().updateChunkObject(renderObjects[sectionNumber], data, sender);
+            world.mapViewer.getRenderer().updateChunkObject(renderObjects[sectionNumber], data);
         }
     }
 

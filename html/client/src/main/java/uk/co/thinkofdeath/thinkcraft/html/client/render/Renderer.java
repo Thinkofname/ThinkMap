@@ -399,7 +399,7 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         gl.deleteBuffer(sortableRenderObject.buffer);
     }
 
-    public void updateChunkObject(ChunkRenderObject renderObject, UByteBuffer data, int sender) {
+    public void updateChunkObject(ChunkRenderObject renderObject, UByteBuffer data) {
         if (renderObject.buffer == null) {
             renderObject.buffer = gl.createBuffer();
         }
