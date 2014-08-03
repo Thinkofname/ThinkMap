@@ -30,6 +30,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -86,6 +87,14 @@ public class ResourcesServer extends EndPoint {
 
         response.headers().set(DATE, format.format(new Date()));
         response.headers().set(LAST_MODIFIED, format.format(plugin.getStartUpDate()));
+
+        if (uri.getPath().startsWith("/resources/assets")) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            calendar.add(Calendar.MONTH, 1);
+            response.headers().set(EXPIRES, format.format(calendar.getTime()));
+            response.headers().set(CACHE_CONTROL, "public, max-age=2592000");
+        }
 
         String path = uri.getPath();
         String ext = path.substring(path.lastIndexOf('.') + 1);
