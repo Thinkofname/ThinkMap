@@ -40,7 +40,7 @@ public class BlockChest extends BlockFactory {
     public BlockChest(IMapViewer iMapViewer, String type) {
         super(iMapViewer);
 
-        chest = iMapViewer.getTexture("chest_" + type);
+        chest = mapViewer.getBlockTexture("thinkmap:missing_texture"); // FIXME: iMapViewer.getBlockTexture("chest_" + type);
     }
 
     @Override

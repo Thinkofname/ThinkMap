@@ -38,6 +38,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.worker.*;
 import uk.co.thinkofdeath.thinkcraft.shared.world.World;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Worker implements EntryPoint, EventListener, IMapViewer, MessageHandler {
 
@@ -46,6 +47,7 @@ public class Worker implements EntryPoint, EventListener, IMapViewer, MessageHan
 
     private ClientSettings clientSettings;
     private HashMap<String, Texture> textures = new HashMap<>();
+    public HashSet<String> usedTextures = new HashSet<>();
 
     @Override
     public void onModuleLoad() {
@@ -63,15 +65,15 @@ public class Worker implements EntryPoint, EventListener, IMapViewer, MessageHan
 
     private void handleSettings() {
         if (clientSettings.areOresHidden()) {
-            Texture replacement = textures.get("stone");
-            textures.put("gold_ore", replacement);
-            textures.put("iron_ore", replacement);
-            textures.put("coal_ore", replacement);
-            textures.put("lapis_ore", replacement);
-            textures.put("diamond_ore", replacement);
-            textures.put("redstone_ore", replacement);
-            textures.put("emerald_ore", replacement);
-            textures.put("quartz_ore", textures.get("netherrack"));
+            Texture replacement = textures.get("minecraft:stone");
+            textures.put("minecraft:gold_ore", replacement);
+            textures.put("minecraft:iron_ore", replacement);
+            textures.put("minecraft:coal_ore", replacement);
+            textures.put("minecraft:lapis_ore", replacement);
+            textures.put("minecraft:diamond_ore", replacement);
+            textures.put("minecraft:redstone_ore", replacement);
+            textures.put("minecraft:emerald_ore", replacement);
+            textures.put("minecraft:quartz_ore", textures.get("minecraft:netherrack"));
         }
     }
 
@@ -81,13 +83,13 @@ public class Worker implements EntryPoint, EventListener, IMapViewer, MessageHan
     }
 
     @Override
-    public Texture getTexture(String name) {
-        Texture texture = textures.get(name);
-        if (texture == null) {
-            System.err.println("Missing texture: " + name);
-            return textures.get("missing_texture");
-        }
-        return texture;
+    public Texture getBlockTexture(String name) {
+        return textures.get(name);
+    }
+
+    @Override
+    public void markTextureAsUsed(String name) {
+        usedTextures.add(name);
     }
 
     @Override
@@ -189,9 +191,9 @@ public class Worker implements EntryPoint, EventListener, IMapViewer, MessageHan
     @Override
     public void handle(TextureMessage textureMessage) {
         TextureMap tmap = textureMessage.getTextureMap();
-        tmap.copyTextures(textures);
         tmap.copyGrassColormap(Model.grassBiomeColors);
         tmap.copyFoliageColormap(Model.foliageBiomeColors);
+        tmap.copyTextures(textures);
         sendMessage(Messages.NULL, false);
     }
 }

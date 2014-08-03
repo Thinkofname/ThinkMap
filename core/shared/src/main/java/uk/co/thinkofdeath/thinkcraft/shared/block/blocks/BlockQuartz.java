@@ -41,13 +41,13 @@ public class BlockQuartz extends BlockFactory {
     public BlockQuartz(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        quartzTop = iMapViewer.getTexture("quartz_block_top");
-        quartzSide = iMapViewer.getTexture("quartz_block_side");
-        quartzBottom = iMapViewer.getTexture("quartz_block_bottom");
-        quartzChiseledTop = iMapViewer.getTexture("quartz_block_chiseled_top");
-        quartzChiseledSide = iMapViewer.getTexture("quartz_block_chiseled");
-        quartzPillarTop = iMapViewer.getTexture("quartz_block_lines_top");
-        quartzPillarSide = iMapViewer.getTexture("quartz_block_lines");
+        quartzTop = iMapViewer.getBlockTexture("minecraft:quartz_block_top");
+        quartzSide = iMapViewer.getBlockTexture("minecraft:quartz_block_side");
+        quartzBottom = iMapViewer.getBlockTexture("minecraft:quartz_block_bottom");
+        quartzChiseledTop = iMapViewer.getBlockTexture("minecraft:quartz_block_chiseled_top");
+        quartzChiseledSide = iMapViewer.getBlockTexture("minecraft:quartz_block_chiseled");
+        quartzPillarTop = iMapViewer.getBlockTexture("minecraft:quartz_block_lines_top");
+        quartzPillarSide = iMapViewer.getBlockTexture("minecraft:quartz_block_lines");
     }
 
     @Override

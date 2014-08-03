@@ -38,9 +38,9 @@ public class BlockFarmland extends BlockFactory {
     public BlockFarmland(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        dry = mapViewer.getTexture("farmland_dry");
-        wet = mapViewer.getTexture("farmland_wet");
-        dirt = mapViewer.getTexture("dirt");
+        dry = mapViewer.getBlockTexture("minecraft:farmland_dry");
+        wet = mapViewer.getBlockTexture("minecraft:farmland_wet");
+        dirt = mapViewer.getBlockTexture("minecraft:dirt");
     }
 
     @Override

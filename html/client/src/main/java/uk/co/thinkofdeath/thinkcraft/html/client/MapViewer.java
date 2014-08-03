@@ -22,7 +22,6 @@ import elemental.client.Browser;
 import elemental.events.Event;
 import elemental.events.EventListener;
 import elemental.html.CanvasElement;
-import elemental.html.ImageElement;
 import elemental.js.util.Json;
 import elemental.xml.XMLHttpRequest;
 import uk.co.thinkofdeath.thinkcraft.html.client.feature.FeatureHandler;
@@ -30,7 +29,7 @@ import uk.co.thinkofdeath.thinkcraft.html.client.input.InputManager;
 import uk.co.thinkofdeath.thinkcraft.html.client.network.Connection;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.Camera;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.Renderer;
-import uk.co.thinkofdeath.thinkcraft.html.client.texture.VirtualTexture;
+import uk.co.thinkofdeath.thinkcraft.html.client.texture.TextureLoader;
 import uk.co.thinkofdeath.thinkcraft.html.client.worker.WorkerPool;
 import uk.co.thinkofdeath.thinkcraft.html.client.world.ClientWorld;
 import uk.co.thinkofdeath.thinkcraft.html.shared.JavascriptLib;
@@ -52,9 +51,8 @@ import uk.co.thinkofdeath.thinkcraft.shared.worker.MessageHandler;
 import uk.co.thinkofdeath.thinkcraft.shared.worker.TextureMessage;
 import uk.co.thinkofdeath.thinkcraft.shared.world.World;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 
 public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler, IMapViewer {
 
@@ -69,12 +67,13 @@ public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler
     private final InputManager inputManager = new InputManager(this);
     private final FeatureHandler featureHandler = new FeatureHandler();
     private final MessageHandler messageHandler = new WorkerMessageHandler(this);
+    private final TextureLoader textureLoader = new TextureLoader(this);
 
     private ClientSettings clientSettings;
 
     private HashMap<String, Texture> textures = new HashMap<>();
-    private VirtualTexture[] virtualTextures;
-    private ImageElement[] imageElements;
+    private int nextTextureId;
+
     private XMLHttpRequest xhr;
     private int loaded = 0;
     private Connection connection;
@@ -82,9 +81,6 @@ public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler
     private ClientWorld world;
     private boolean shouldUpdateWorld = false;
     private double lastKeepAlive = Duration.currentTimeMillis();
-
-    private int noTextures;
-    ArrayList<TextureLoadHandler> earlyTextures = new ArrayList<>();
 
     /**
      * Entry point to the program
@@ -121,36 +117,26 @@ public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler
     public void handleEvent(Event event) {
         loaded++;
         if (loaded == 1) {
+            // Pre-load models
+            Browser.getWindow().getConsole().time("Pre-load");
+            getBlockRegistry().init();
+            Browser.getWindow().getConsole().timeEnd("Pre-load", null);
+
             TextureMap tmap = new TextureMap();
             tmap.deserialize(JsObjectSerializer.from(Json.parse((String) xhr.getResponse())));
-            tmap.copyTextures(textures);
             tmap.copyGrassColormap(Model.grassBiomeColors);
             tmap.copyFoliageColormap(Model.foliageBiomeColors);
+            tmap.addTextures(textures.values());
             // Sync to workers
             getWorkerPool().sendMessage(new TextureMessage(tmap), true);
-            noTextures = tmap.getNumberVirtuals();
-            virtualTextures = new VirtualTexture[noTextures];
-            for (int i = 0; i < noTextures; i++) {
-                virtualTextures[i] = new VirtualTexture(this, i);
-            }
-            imageElements = new ImageElement[tmap.getNumberOfImages()];
-            for (int i = 0; i < tmap.getNumberOfImages(); i++) {
-                ImageElement texture = imageElements[i] = (ImageElement) Browser.getDocument().createElement("img");
-                texture.setOnload(new TextureLoadHandler(this, i, texture));
-                texture.setCrossOrigin("anonymous");
-                texture.setSrc("http://" + getConfigAdddress() + "/resources/blocks_" + i + ".png");
-            }
+
             inputManager.hook();
 
             connection = new Connection(getConfigAdddress(), this, null);
         }
     }
 
-    public int getNumberOfTextures() {
-        return noTextures;
-    }
-
-    private native String getConfigAdddress()/*-{
+    public native String getConfigAdddress()/*-{
         if ($wnd.MapViewerConfig.serverAddress.indexOf("%SERVERPORT%") != -1) {
             // Running on a custom server but haven't changed the config
             $wnd.MapViewerConfig.serverAddress =
@@ -187,12 +173,10 @@ public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler
         getWorkerPool().sendMessage(new ClientSettingsMessage(clientSettings.areOresHidden()), true);
         handleSettings();
 
-        getBlockRegistry().init();
         world = new ClientWorld(MapViewer.this);
         renderer = new Renderer(MapViewer.this, (CanvasElement) Browser.getDocument().getElementById("main"));
-        for (TextureLoadHandler handler : earlyTextures) {
-            handler.load();
-        }
+
+        textureLoader.loadBlockTexture(getBlockTexture("thinkmap:missing_texture"));
     }
 
     @Override
@@ -212,15 +196,15 @@ public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler
 
     private void handleSettings() {
         if (clientSettings.areOresHidden()) {
-            Texture replacement = textures.get("stone");
-            textures.put("gold_ore", replacement);
-            textures.put("iron_ore", replacement);
-            textures.put("coal_ore", replacement);
-            textures.put("lapis_ore", replacement);
-            textures.put("diamond_ore", replacement);
-            textures.put("redstone_ore", replacement);
-            textures.put("emerald_ore", replacement);
-            textures.put("quartz_ore", textures.get("netherrack"));
+            Texture replacement = textures.get("minecraft:stone");
+            textures.put("minecraft:gold_ore", replacement);
+            textures.put("minecraft:iron_ore", replacement);
+            textures.put("minecraft:coal_ore", replacement);
+            textures.put("minecraft:lapis_ore", replacement);
+            textures.put("minecraft:diamond_ore", replacement);
+            textures.put("minecraft:redstone_ore", replacement);
+            textures.put("minecraft:emerald_ore", replacement);
+            textures.put("minecraft:quartz_ore", textures.get("minecraft:netherrack"));
         }
     }
 
@@ -230,12 +214,17 @@ public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler
     }
 
     @Override
-    public Texture getTexture(String name) {
+    public Texture getBlockTexture(String name) {
         if (!textures.containsKey(name)) {
-            System.err.println("Texture not found: " + name);
-            return textures.get("missing_texture");
+            Texture texture = new Texture(name, nextTextureId++);
+            textures.put(name, texture);
         }
         return textures.get(name);
+    }
+
+    @Override
+    public void markTextureAsUsed(String name) {
+
     }
 
     /**
@@ -278,15 +267,11 @@ public class MapViewer implements EntryPoint, EventListener, ServerPacketHandler
         return clientSettings;
     }
 
-    public VirtualTexture[] getVirtualTextures() {
-        return virtualTextures;
+    public Collection<Texture> getBlocktextures() {
+        return textures.values();
     }
 
-    public ImageElement[] getImageElements() {
-        return imageElements;
-    }
-
-    public Map<String, Texture> getTextures() {
-        return textures;
+    public TextureLoader getTextureLoader() {
+        return textureLoader;
     }
 }

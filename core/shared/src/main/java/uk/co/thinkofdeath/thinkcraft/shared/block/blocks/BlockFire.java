@@ -47,8 +47,8 @@ public class BlockFire extends BlockFactory {
     public BlockFire(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        layer0 = mapViewer.getTexture("fire_layer_0");
-        layer1 = mapViewer.getTexture("fire_layer_1");
+        layer0 = mapViewer.getBlockTexture("minecraft:fire_layer_0");
+        layer1 = mapViewer.getBlockTexture("minecraft:fire_layer_1");
     }
 
     @Override

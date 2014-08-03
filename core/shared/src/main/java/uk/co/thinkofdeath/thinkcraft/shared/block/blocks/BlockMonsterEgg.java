@@ -37,7 +37,7 @@ public class BlockMonsterEgg extends BlockFactory {
 
         MonsterEggVariant[] values = MonsterEggVariant.values();
         for (int i = 0; i < values.length; i++) {
-            textures[i] = mapViewer.getTexture(values[i].toString());
+            textures[i] = mapViewer.getBlockTexture("minecraft:" + values[i].toString());
         }
     }
 

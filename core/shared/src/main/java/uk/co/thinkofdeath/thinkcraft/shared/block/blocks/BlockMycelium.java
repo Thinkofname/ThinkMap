@@ -32,9 +32,9 @@ public class BlockMycelium extends BlockFactory {
     public BlockMycelium(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        top = iMapViewer.getTexture("mycelium_top");
-        side = iMapViewer.getTexture("mycelium_side");
-        dirt = iMapViewer.getTexture("dirt");
+        top = iMapViewer.getBlockTexture("minecraft:mycelium_top");
+        side = iMapViewer.getBlockTexture("minecraft:mycelium_side");
+        dirt = iMapViewer.getBlockTexture("minecraft:dirt");
     }
 
     @Override

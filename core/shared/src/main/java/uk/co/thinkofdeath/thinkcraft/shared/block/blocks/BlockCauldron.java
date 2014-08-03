@@ -41,11 +41,11 @@ public class BlockCauldron extends BlockFactory {
     public BlockCauldron(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        bottom = mapViewer.getTexture("cauldron_bottom");
-        inner = mapViewer.getTexture("cauldron_inner");
-        top = mapViewer.getTexture("cauldron_top");
-        side = mapViewer.getTexture("cauldron_side");
-        water = mapViewer.getTexture("water_still");
+        bottom = mapViewer.getBlockTexture("minecraft:cauldron_bottom");
+        inner = mapViewer.getBlockTexture("minecraft:cauldron_inner");
+        top = mapViewer.getBlockTexture("minecraft:cauldron_top");
+        side = mapViewer.getBlockTexture("minecraft:cauldron_side");
+        water = mapViewer.getBlockTexture("minecraft:water_still");
     }
 
     @Override

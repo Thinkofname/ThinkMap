@@ -42,9 +42,9 @@ public class BlockHopper extends BlockFactory {
     public BlockHopper(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        hopperTop = iMapViewer.getTexture("hopper_top");
-        hopperInside = iMapViewer.getTexture("hopper_inside");
-        hopperOutside = iMapViewer.getTexture("hopper_outside");
+        hopperTop = iMapViewer.getBlockTexture("minecraft:hopper_top");
+        hopperInside = iMapViewer.getBlockTexture("minecraft:hopper_inside");
+        hopperOutside = iMapViewer.getBlockTexture("minecraft:hopper_outside");
     }
 
     @Override

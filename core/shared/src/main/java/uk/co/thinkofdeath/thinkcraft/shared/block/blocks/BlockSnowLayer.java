@@ -36,7 +36,7 @@ public class BlockSnowLayer extends BlockFactory {
     public BlockSnowLayer(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        texture = mapViewer.getTexture("snow");
+        texture = mapViewer.getBlockTexture("minecraft:snow");
     }
 
     @Override

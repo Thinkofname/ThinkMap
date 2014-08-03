@@ -33,8 +33,8 @@ public class BlockStainedGlassPane extends BlockGlassPane {
 
         int i = 0;
         for (Colour colour : Colour.values()) {
-            textures[i] = mapViewer.getTexture("glass_" + colour.texture);
-            textures[i + 1] = mapViewer.getTexture("glass_pane_top_" + colour.texture);
+            textures[i] = mapViewer.getBlockTexture("minecraft:glass_" + colour.texture);
+            textures[i + 1] = mapViewer.getBlockTexture("minecraft:glass_pane_top_" + colour.texture);
             i += 2;
         }
     }

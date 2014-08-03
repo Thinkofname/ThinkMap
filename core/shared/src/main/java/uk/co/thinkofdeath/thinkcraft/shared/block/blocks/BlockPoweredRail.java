@@ -45,8 +45,8 @@ public class BlockPoweredRail extends BlockFactory {
     public BlockPoweredRail(IMapViewer iMapViewer, String textureName) {
         super(iMapViewer);
 
-        texture = iMapViewer.getTexture(textureName);
-        texturePowered = iMapViewer.getTexture(textureName + "_powered");
+        texture = iMapViewer.getBlockTexture("minecraft:" + textureName);
+        texturePowered = iMapViewer.getBlockTexture("minecraft:" + textureName + "_powered");
     }
 
     @Override

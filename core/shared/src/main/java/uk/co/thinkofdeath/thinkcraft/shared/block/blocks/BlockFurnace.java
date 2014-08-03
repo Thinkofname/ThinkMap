@@ -38,9 +38,9 @@ public class BlockFurnace extends BlockFactory {
     public BlockFurnace(IMapViewer iMapViewer, boolean on) {
         super(iMapViewer);
 
-        furnaceTop = iMapViewer.getTexture("furnace_top");
-        furnaceSide = iMapViewer.getTexture("furnace_side");
-        furnaceFront = iMapViewer.getTexture("furnace_front_" + (on ? "on" : "off"));
+        furnaceTop = iMapViewer.getBlockTexture("minecraft:furnace_top");
+        furnaceSide = iMapViewer.getBlockTexture("minecraft:furnace_side");
+        furnaceFront = iMapViewer.getBlockTexture("minecraft:furnace_front_" + (on ? "on" : "off"));
     }
 
     @Override

@@ -37,9 +37,9 @@ public class BlockPumpkin extends BlockFactory {
     public BlockPumpkin(IMapViewer iMapViewer, boolean on) {
         super(iMapViewer);
 
-        top = iMapViewer.getTexture("pumpkin_top");
-        side = iMapViewer.getTexture("pumpkin_side");
-        front = iMapViewer.getTexture("pumpkin_face_" + (on ? "on" : "off"));
+        top = iMapViewer.getBlockTexture("minecraft:pumpkin_top");
+        side = iMapViewer.getBlockTexture("minecraft:pumpkin_side");
+        front = iMapViewer.getBlockTexture("minecraft:pumpkin_face_" + (on ? "on" : "off"));
     }
 
     @Override

@@ -43,10 +43,10 @@ public class BlockEndPortalFrame extends BlockFactory {
     public BlockEndPortalFrame(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        bottom = mapViewer.getTexture("end_stone");
-        side = mapViewer.getTexture("endframe_side");
-        top = mapViewer.getTexture("endframe_top");
-        eye = mapViewer.getTexture("endframe_eye");
+        bottom = mapViewer.getBlockTexture("minecraft:end_stone");
+        side = mapViewer.getBlockTexture("minecraft:endframe_side");
+        top = mapViewer.getBlockTexture("minecraft:endframe_top");
+        eye = mapViewer.getBlockTexture("minecraft:endframe_eye");
     }
 
     @Override

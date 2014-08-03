@@ -26,6 +26,7 @@ import uk.co.thinkofdeath.thinkcraft.shared.block.helpers.BlockModels;
 import uk.co.thinkofdeath.thinkcraft.shared.block.states.StateMap;
 import uk.co.thinkofdeath.thinkcraft.shared.util.IntMap;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -110,6 +111,15 @@ public class BlockRegistry {
         return legacyMap.get((legacyId << 4) | dataValue);
     }
 
+    /**
+     * Returns a collection containing every block
+     *
+     * @return The block collection
+     */
+    public Collection<Block> getBlocks() {
+        return blockMap.values();
+    }
+
 
     /**
      * Adds the block to this registry
@@ -179,14 +189,14 @@ public class BlockRegistry {
                 .solid(false)
                 .create(), 0);
         register("minecraft", "stone", new BlockBuilder(mapViewer)
-                .texture("stone")
+                .texture("minecraft:stone")
                 .create(), 1);
         register("minecraft", "grass", new BlockBuilder(new BlockGrass(mapViewer))
                 .create(), 2);
         register("minecraft", "dirt", new BlockBuilder(new BlockDirt(mapViewer))
                 .create(), 3);
         register("minecraft", "cobblestone", new BlockBuilder(mapViewer)
-                .texture("cobblestone")
+                .texture("minecraft:cobblestone")
                 .create(), 4);
         register("minecraft", "planks", new BlockBuilder(new BlockPlanks(mapViewer))
                 .create(), 5);
@@ -195,39 +205,39 @@ public class BlockRegistry {
                 .collidable(false)
                 .create(), 6);
         register("minecraft", "bedrock", new BlockBuilder(mapViewer)
-                .texture("bedrock")
+                .texture("minecraft:bedrock")
                 .create(), 7);
         register("minecraft", "flowing_water", new BlockBuilder(new BlockLiquid(mapViewer))
-                .texture("water_flow")
+                .texture("minecraft:water_flow")
                 .solid(false)
                 .transparent(true)
                 .create(), 8);
         register("minecraft", "water", new BlockBuilder(new BlockLiquid(mapViewer))
-                .texture("water_still")
+                .texture("minecraft:water_still")
                 .solid(false)
                 .transparent(true)
                 .create(), 9);
         register("minecraft", "flowing_lava", new BlockBuilder(new BlockLiquid(mapViewer))
-                .texture("lava_flow")
+                .texture("minecraft:lava_flow")
                 .solid(false)
                 .create(), 10);
         register("minecraft", "lava", new BlockBuilder(new BlockLiquid(mapViewer))
-                .texture("lava_still")
+                .texture("minecraft:lava_still")
                 .solid(false)
                 .create(), 11);
         register("minecraft", "sand", new BlockBuilder(new BlockSand(mapViewer))
                 .create(), 12);
         register("minecraft", "gravel", new BlockBuilder(mapViewer)
-                .texture("gravel")
+                .texture("minecraft:gravel")
                 .create(), 13);
         register("minecraft", "gold_ore", new BlockBuilder(mapViewer)
-                .texture("gold_ore")
+                .texture("minecraft:gold_ore")
                 .create(), 14);
         register("minecraft", "iron_ore", new BlockBuilder(mapViewer)
-                .texture("iron_ore")
+                .texture("minecraft:iron_ore")
                 .create(), 15);
         register("minecraft", "coal_ore", new BlockBuilder(mapViewer)
-                .texture("coal_ore")
+                .texture("minecraft:coal_ore")
                 .create(), 16);
         register("minecraft", "log", new BlockBuilder(new BlockLog(mapViewer, TreeVariant.class))
                 .create(), 17);
@@ -236,17 +246,17 @@ public class BlockRegistry {
                 .allowSelf(true)
                 .create(), 18);
         register("minecraft", "sponge", new BlockBuilder(mapViewer)
-                .texture("sponge")
+                .texture("minecraft:sponge")
                 .create(), 19);
         register("minecraft", "glass", new BlockBuilder(mapViewer)
-                .texture("glass")
+                .texture("minecraft:glass")
                 .solid(false)
                 .create(), 20);
         register("minecraft", "lapis_ore", new BlockBuilder(mapViewer)
-                .texture("lapis_ore")
+                .texture("minecraft:lapis_ore")
                 .create(), 21);
         register("minecraft", "lapis_block", new BlockBuilder(mapViewer)
-                .texture("lapis_block")
+                .texture("minecraft:lapis_block")
                 .create(), 22);
         register("minecraft", "dispenser", new BlockBuilder(new BlockDispenser(mapViewer,
                 "dispenser"))
@@ -254,7 +264,7 @@ public class BlockRegistry {
         register("minecraft", "sandstone", new BlockBuilder(new BlockSandstone(mapViewer))
                 .create(), 24);
         register("minecraft", "noteblock", new BlockBuilder(mapViewer)
-                .texture("noteblock")
+                .texture("minecraft:noteblock")
                 .create(), 25);
         register("minecraft", "bed", new BlockBuilder(new BlockBed(mapViewer))
                 .solid(false)
@@ -273,7 +283,7 @@ public class BlockRegistry {
                 .solid(false)
                 .create(), 29);
         register("minecraft", "web", new BlockBuilder(mapViewer)
-                .model(BlockModels.createCross(mapViewer.getTexture("web")))
+                .model(BlockModels.createCross(mapViewer.getBlockTexture("minecraft:web")))
                 .solid(false)
                 .collidable(false)
                 .create(), 30);
@@ -283,7 +293,7 @@ public class BlockRegistry {
                 .smoothLighting(false)
                 .create(), 31);
         register("minecraft", "deadbush", new BlockBuilder(mapViewer)
-                .model(BlockModels.createCross(mapViewer.getTexture("deadbush")))
+                .model(BlockModels.createCross(mapViewer.getBlockTexture("minecraft:deadbush")))
                 .solid(false)
                 .collidable(false)
                 .smoothLighting(false)
@@ -302,7 +312,7 @@ public class BlockRegistry {
                 .collidable(false)
                 .create(), 36);
         register("minecraft", "yellow_flower", new BlockBuilder(mapViewer)
-                .model(BlockModels.createCross(mapViewer.getTexture("flower_dandelion")))
+                .model(BlockModels.createCross(mapViewer.getBlockTexture("minecraft:flower_dandelion")))
                 .solid(false)
                 .collidable(false)
                 .smoothLighting(false)
@@ -313,22 +323,22 @@ public class BlockRegistry {
                 .smoothLighting(false)
                 .create(), 38);
         register("minecraft", "brown_mushroom", new BlockBuilder(mapViewer)
-                .model(BlockModels.createCross(mapViewer.getTexture("mushroom_brown")))
+                .model(BlockModels.createCross(mapViewer.getBlockTexture("minecraft:mushroom_brown")))
                 .solid(false)
                 .collidable(false)
                 .smoothLighting(false)
                 .create(), 39);
         register("minecraft", "red_mushroom", new BlockBuilder(mapViewer)
-                .model(BlockModels.createCross(mapViewer.getTexture("mushroom_red")))
+                .model(BlockModels.createCross(mapViewer.getBlockTexture("minecraft:mushroom_red")))
                 .solid(false)
                 .collidable(false)
                 .smoothLighting(false)
                 .create(), 40);
         register("minecraft", "gold_block", new BlockBuilder(mapViewer)
-                .texture("gold_block")
+                .texture("minecraft:gold_block")
                 .create(), 41);
         register("minecraft", "iron_block", new BlockBuilder(mapViewer)
-                .texture("iron_block")
+                .texture("minecraft:iron_block")
                 .create(), 42);
         register("minecraft", "double_stone_slab", new BlockBuilder(new BlockDoubleSlab<>(mapViewer, StoneSlabType.class))
                 .create(), 43);
@@ -336,7 +346,7 @@ public class BlockRegistry {
                 .solid(false)
                 .create(), 44);
         register("minecraft", "brick_block", new BlockBuilder(mapViewer)
-                .texture("brick")
+                .texture("minecraft:brick")
                 .create(), 45);
         register("minecraft", "tnt", new BlockBuilder(new BlockMultiSide(mapViewer, "tnt_top",
                 "tnt_bottom", "tnt_side", "tnt_side", "tnt_side", "tnt_side"))
@@ -345,10 +355,10 @@ public class BlockRegistry {
                 "planks_oak", "planks_oak", "bookshelf", "bookshelf", "bookshelf", "bookshelf"))
                 .create(), 47);
         register("minecraft", "mossy_cobblestone", new BlockBuilder(mapViewer)
-                .texture("cobblestone_mossy")
+                .texture("minecraft:cobblestone_mossy")
                 .create(), 48);
         register("minecraft", "obsidian", new BlockBuilder(mapViewer)
-                .texture("obsidian")
+                .texture("minecraft:obsidian")
                 .create(), 49);
         register("minecraft", "torch", new BlockBuilder(new BlockTorch(mapViewer, "torch_on", false))
                 .solid(false)
@@ -359,12 +369,12 @@ public class BlockRegistry {
                 .collidable(false)
                 .create(), 51);
         register("minecraft", "mob_spawner", new BlockBuilder(mapViewer)
-                .texture("mob_spawner")
+                .texture("minecraft:mob_spawner")
                 .solid(false)
                 .allowSelf(true)
                 .create(), 52);
         register("minecraft", "oak_stairs", new BlockBuilder(new BlockStairs(mapViewer))
-                .texture("planks_oak")
+                .texture("minecraft:planks_oak")
                 .solid(false)
                 .create(), 53);
         register("minecraft", "chest", new BlockBuilder(new BlockChest(mapViewer, "normal"))
@@ -375,10 +385,10 @@ public class BlockRegistry {
                 .collidable(false)
                 .create(), 55);
         register("minecraft", "diamond_ore", new BlockBuilder(mapViewer)
-                .texture("diamond_ore")
+                .texture("minecraft:diamond_ore")
                 .create(), 56);
         register("minecraft", "diamond_block", new BlockBuilder(mapViewer)
-                .texture("diamond_block")
+                .texture("minecraft:diamond_block")
                 .create(), 57);
         register("minecraft", "crafting_table", new BlockBuilder(new BlockMultiSide(
                 mapViewer,
@@ -410,12 +420,12 @@ public class BlockRegistry {
                 .solid(false)
                 .create(), 65);
         register("minecraft", "rail", new BlockBuilder(new BlockRail(mapViewer))
-                .texture("rail_normal")
+                .texture("minecraft:rail_normal")
                 .solid(false)
                 .collidable(false)
                 .create(), 66);
         register("minecraft", "stone_stairs", new BlockBuilder(new BlockStairs(mapViewer))
-                .texture("cobblestone")
+                .texture("minecraft:cobblestone")
                 .solid(false)
                 .create(), 67);
         register("minecraft", "wall_sign", new BlockBuilder(new BlockSign(mapViewer))
@@ -440,10 +450,10 @@ public class BlockRegistry {
                 .collidable(false)
                 .create(), 72);
         register("minecraft", "redstone_ore", new BlockBuilder(mapViewer)
-                .texture("redstone_ore")
+                .texture("minecraft:redstone_ore")
                 .create(), 73);
         register("minecraft", "lit_redstone_ore", new BlockBuilder(mapViewer)
-                .texture("redstone_ore")
+                .texture("minecraft:redstone_ore")
                 .create(), 74);
         register("minecraft", "unlit_redstone_torch", new BlockBuilder(new BlockTorch(mapViewer, "redstone_torch_off", true))
                 .solid(false)
@@ -461,18 +471,18 @@ public class BlockRegistry {
                 .solid(false)
                 .create(), 78);
         register("minecraft", "ice", new BlockBuilder(mapViewer)
-                .texture("ice")
+                .texture("minecraft:ice")
                 .solid(false)
                 .transparent(true)
                 .create(), 79);
         register("minecraft", "snow", new BlockBuilder(mapViewer)
-                .texture("snow")
+                .texture("minecraft:snow")
                 .create(), 80);
         register("minecraft", "cactus", new BlockBuilder(new BlockCactus(mapViewer))
                 .solid(false)
                 .create(), 81);
         register("minecraft", "clay", new BlockBuilder(mapViewer)
-                .texture("clay")
+                .texture("minecraft:clay")
                 .create(), 82);
         register("minecraft", "reeds", new BlockBuilder(new BlockReeds(mapViewer))
                 .solid(false)
@@ -487,18 +497,18 @@ public class BlockRegistry {
                 .create(), 84);
         register("minecraft", "fence", new BlockBuilder(new BlockFence(mapViewer))
                 .solid(false)
-                .texture("planks_oak")
+                .texture("minecraft:planks_oak")
                 .create(), 85);
         register("minecraft", "pumpkin", new BlockBuilder(new BlockPumpkin(mapViewer, false))
                 .create(), 86);
         register("minecraft", "netherrack", new BlockBuilder(mapViewer)
-                .texture("netherrack")
+                .texture("minecraft:netherrack")
                 .create(), 87);
         register("minecraft", "soul_sand", new BlockBuilder(mapViewer)
-                .texture("soul_sand")
+                .texture("minecraft:soul_sand")
                 .create(), 88);
         register("minecraft", "glowstone", new BlockBuilder(mapViewer)
-                .texture("glowstone")
+                .texture("minecraft:glowstone")
                 .create(), 89);
         register("minecraft", "portal", new BlockBuilder(new BlockPortal(mapViewer))
                 .solid(false)
@@ -559,28 +569,28 @@ public class BlockRegistry {
                 .solid(false)
                 .create(), 107);
         register("minecraft", "brick_stairs", new BlockBuilder(new BlockStairs(mapViewer))
-                .texture("brick")
+                .texture("minecraft:brick")
                 .solid(false)
                 .create(), 108);
         register("minecraft", "stone_brick_stairs", new BlockBuilder(new BlockStairs(mapViewer))
-                .texture("stonebrick")
+                .texture("minecraft:stonebrick")
                 .solid(false)
                 .create(), 109);
         register("minecraft", "mycelium", new BlockBuilder(new BlockMycelium(mapViewer))
                 .create(), 110);
         register("minecraft", "waterlily", new BlockBuilder(mapViewer)
                 .solid(false)
-                .model(BlockModels.createFlat(mapViewer.getTexture("waterlily"), 0x52941C))
+                .model(BlockModels.createFlat(mapViewer.getBlockTexture("minecraft:waterlily"), 0x52941C))
                 .create(), 111);
         register("minecraft", "nether_brick", new BlockBuilder(mapViewer)
-                .texture("nether_brick")
+                .texture("minecraft:nether_brick")
                 .create(), 112);
         register("minecraft", "nether_brick_fence", new BlockBuilder(new BlockFence(mapViewer))
                 .solid(false)
-                .texture("nether_brick")
+                .texture("minecraft:nether_brick")
                 .create(), 113);
         register("minecraft", "nether_brick_stairs", new BlockBuilder(new BlockStairs(mapViewer))
-                .texture("nether_brick")
+                .texture("minecraft:nether_brick")
                 .solid(false)
                 .create(), 114);
         register("minecraft", "nether_wart", new BlockBuilder(new BlockNetherWart(mapViewer))
@@ -603,17 +613,17 @@ public class BlockRegistry {
                 .solid(false)
                 .create(), 120);
         register("minecraft", "end_stone", new BlockBuilder(mapViewer)
-                .texture("end_stone")
+                .texture("minecraft:end_stone")
                 .create(), 121);
         register("minecraft", "dragon_egg", new BlockBuilder(mapViewer)
-                .model(BlockModels.createEgg(mapViewer.getTexture("dragon_egg")))
+                .model(BlockModels.createEgg(mapViewer.getBlockTexture("minecraft:dragon_egg")))
                 .solid(false)
                 .create(), 122);
         register("minecraft", "redstone_lamp", new BlockBuilder(mapViewer)
-                .texture("redstone_lamp_off")
+                .texture("minecraft:redstone_lamp_off")
                 .create(), 123);
         register("minecraft", "lit_redstone_lamp", new BlockBuilder(mapViewer)
-                .texture("redstone_lamp_on")
+                .texture("minecraft:redstone_lamp_on")
                 .create(), 124);
         register("minecraft", "double_wooden_slab", new BlockBuilder(new BlockDoubleSlab<>(mapViewer, WoodenSlabType.class))
                 .create(), 125);
@@ -624,11 +634,11 @@ public class BlockRegistry {
         // TODO: cocoa
 
         register("minecraft", "sandstone_stairs", new BlockBuilder(new BlockStairs(mapViewer))
-                .texture("sandstone_normal")
+                .texture("minecraft:sandstone_normal")
                 .solid(false)
                 .create(), 128);
         register("minecraft", "emerald_ore", new BlockBuilder(mapViewer)
-                .texture("emerald_ore")
+                .texture("minecraft:emerald_ore")
                 .create(), 129);
         register("minecraft", "ender_chest", new BlockBuilder(new BlockChest(mapViewer, "ender"))
                 .solid(false)
@@ -638,22 +648,22 @@ public class BlockRegistry {
         // TODO: tripwire
 
         register("minecraft", "emerald_block", new BlockBuilder(mapViewer)
-                .texture("emerald_block")
+                .texture("minecraft:emerald_block")
                 .create(), 133);
         register("minecraft", "spruce_stairs", new BlockBuilder(new BlockStairs(mapViewer))
-                .texture("planks_spruce")
+                .texture("minecraft:planks_spruce")
                 .solid(false)
                 .create(), 134);
         register("minecraft", "birch_stairs", new BlockBuilder(new BlockStairs(mapViewer))
-                .texture("planks_birch")
+                .texture("minecraft:planks_birch")
                 .solid(false)
                 .create(), 135);
         register("minecraft", "jungle_stairs", new BlockBuilder(new BlockStairs(mapViewer))
-                .texture("planks_jungle")
+                .texture("minecraft:planks_jungle")
                 .solid(false)
                 .create(), 136);
         register("minecraft", "command_block", new BlockBuilder(mapViewer)
-                .texture("command_block")
+                .texture("minecraft:command_block")
                 .create(), 137);
 
         // TODO: beacon
@@ -702,10 +712,10 @@ public class BlockRegistry {
         // TODO: daylight_detector
 
         register("minecraft", "redstone_block", new BlockBuilder(new BlockRedstoneBlock(mapViewer))
-                .texture("redstone_block")
+                .texture("minecraft:redstone_block")
                 .create(), 152);
         register("minecraft", "quartz_ore", new BlockBuilder(mapViewer)
-                .texture("quartz_ore")
+                .texture("minecraft:quartz_ore")
                 .create(), 153);
         register("minecraft", "hopper", new BlockBuilder(new BlockHopper(mapViewer))
                 .solid(false)
@@ -713,7 +723,7 @@ public class BlockRegistry {
         register("minecraft", "quartz_block", new BlockBuilder(new BlockQuartz(mapViewer))
                 .create(), 155);
         register("minecraft", "quartz_stairs", new BlockBuilder(new BlockStairs(mapViewer))
-                .texture("quartz_block_top")
+                .texture("minecraft:quartz_block_top")
                 .solid(false)
                 .create(), 156);
         register("minecraft", "activator_rail", new BlockBuilder(new BlockPoweredRail(mapViewer,
@@ -736,11 +746,11 @@ public class BlockRegistry {
         register("minecraft", "log2", new BlockBuilder(new BlockLog(mapViewer, TreeVariant2.class))
                 .create(), 162);
         register("minecraft", "acacia_stairs", new BlockBuilder(new BlockStairs(mapViewer))
-                .texture("planks_acacia")
+                .texture("minecraft:planks_acacia")
                 .solid(false)
                 .create(), 163);
         register("minecraft", "dark_oak_stairs", new BlockBuilder(new BlockStairs(mapViewer))
-                .texture("planks_big_oak")
+                .texture("minecraft:planks_big_oak")
                 .solid(false)
                 .create(), 164);
 
@@ -750,13 +760,13 @@ public class BlockRegistry {
                 .solid(false)
                 .create(), 171);
         register("minecraft", "hardened_clay", new BlockBuilder(mapViewer)
-                .texture("hardened_clay")
+                .texture("minecraft:hardened_clay")
                 .create(), 172);
         register("minecraft", "coal_block", new BlockBuilder(mapViewer)
-                .texture("coal_block")
+                .texture("minecraft:coal_block")
                 .create(), 173);
         register("minecraft", "packed_ice", new BlockBuilder(mapViewer)
-                .texture("ice_packed")
+                .texture("minecraft:ice_packed")
                 .create(), 174);
         register("minecraft", "double_plant", new BlockBuilder(new BlockDoubleFlowers(mapViewer))
                 .smoothLighting(false)
@@ -766,7 +776,7 @@ public class BlockRegistry {
 
         // ThinkMap blocks
         register("thinkmap", "missing_block", new BlockBuilder(mapViewer)
-                .texture("missing_texture")
+                .texture("thinkmap:missing_texture")
                 .create());
         register("thinkmap", "null", new BlockBuilder(mapViewer)
                 .renderable(false)

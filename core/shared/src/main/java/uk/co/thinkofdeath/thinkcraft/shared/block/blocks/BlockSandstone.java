@@ -39,10 +39,10 @@ public class BlockSandstone extends BlockFactory {
 
         textures = new Texture[SandstoneVariant.values().length];
         for (SandstoneVariant variant : SandstoneVariant.values()) {
-            textures[variant.ordinal()] = iMapViewer.getTexture("sandstone_" + variant.getTexture());
+            textures[variant.ordinal()] = iMapViewer.getBlockTexture("minecraft:sandstone_" + variant.getTexture());
         }
-        sandstoneTop = iMapViewer.getTexture("sandstone_top");
-        sandstoneBottom = iMapViewer.getTexture("sandstone_bottom");
+        sandstoneTop = iMapViewer.getBlockTexture("minecraft:sandstone_top");
+        sandstoneBottom = iMapViewer.getBlockTexture("minecraft:sandstone_bottom");
     }
 
     @Override

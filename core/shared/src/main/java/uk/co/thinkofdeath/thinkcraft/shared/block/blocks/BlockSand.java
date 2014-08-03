@@ -36,8 +36,8 @@ public class BlockSand extends BlockFactory {
     public BlockSand(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        sand = iMapViewer.getTexture("sand");
-        redSand = iMapViewer.getTexture("red_sand");
+        sand = iMapViewer.getBlockTexture("minecraft:sand");
+        redSand = iMapViewer.getBlockTexture("minecraft:red_sand");
     }
 
 

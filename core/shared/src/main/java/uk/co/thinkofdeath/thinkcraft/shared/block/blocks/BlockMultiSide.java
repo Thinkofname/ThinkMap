@@ -33,12 +33,12 @@ public class BlockMultiSide extends BlockFactory {
                           String front, String back) {
         super(iMapViewer);
 
-        textures[Face.TOP.ordinal()] = mapViewer.getTexture(top);
-        textures[Face.BOTTOM.ordinal()] = mapViewer.getTexture(bottom);
-        textures[Face.LEFT.ordinal()] = mapViewer.getTexture(left);
-        textures[Face.RIGHT.ordinal()] = mapViewer.getTexture(right);
-        textures[Face.FRONT.ordinal()] = mapViewer.getTexture(front);
-        textures[Face.BACK.ordinal()] = mapViewer.getTexture(back);
+        textures[Face.TOP.ordinal()] = mapViewer.getBlockTexture("minecraft:" + top);
+        textures[Face.BOTTOM.ordinal()] = mapViewer.getBlockTexture("minecraft:" + bottom);
+        textures[Face.LEFT.ordinal()] = mapViewer.getBlockTexture("minecraft:" + left);
+        textures[Face.RIGHT.ordinal()] = mapViewer.getBlockTexture("minecraft:" + right);
+        textures[Face.FRONT.ordinal()] = mapViewer.getBlockTexture("minecraft:" + front);
+        textures[Face.BACK.ordinal()] = mapViewer.getBlockTexture("minecraft:" + back);
     }
 
     @Override

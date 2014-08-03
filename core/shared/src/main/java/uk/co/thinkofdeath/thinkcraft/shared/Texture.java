@@ -16,31 +16,22 @@
 
 package uk.co.thinkofdeath.thinkcraft.shared;
 
-public class Texture {
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.Serializable;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.Serializer;
 
-    private final String name;
-    private final int posX;
-    private final int posY;
-    private final int size;
-    private final int width;
-    private final int frameCount;
-    private final int[] frames;
-    private final int frameTime;
-    private final int virtualX;
-    private final int virtualY;
+public class Texture implements Serializable {
 
-    public Texture(String name, int posX, int posY, int size, int width, int frameCount,
-                   int[] frames, int frameTime, int virtualX, int virtualY) {
+    private String name;
+    private int id;
+    private boolean isLoaded;
+
+    Texture() {
+
+    }
+
+    public Texture(String name, int id) {
         this.name = name;
-        this.posX = posX;
-        this.posY = posY;
-        this.size = size;
-        this.width = width;
-        this.frameCount = frameCount;
-        this.frames = frames;
-        this.frameTime = frameTime;
-        this.virtualX = virtualX;
-        this.virtualY = virtualY;
+        this.id = id;
     }
 
     /**
@@ -52,39 +43,32 @@ public class Texture {
         return name;
     }
 
-    public int getPosX() {
-        return posX;
+    public int getId() {
+        return id;
     }
 
-    public int getPosY() {
-        return posY;
+    public boolean isLoaded() {
+        return isLoaded;
     }
 
-    public int getSize() {
-        return size;
+    public void setLoaded(boolean isLoaded) {
+        this.isLoaded = isLoaded;
     }
 
-    public int getWidth() {
-        return width;
+    @Override
+    public void serialize(Serializer serializer) {
+        serializer.putString("name", name);
+        serializer.putInt("id", id);
     }
 
-    public int getFrameCount() {
-        return frameCount;
+    @Override
+    public void deserialize(Serializer serializer) {
+        name = serializer.getString("name");
+        id = serializer.getInt("id");
     }
 
-    public int[] getFrames() {
-        return frames;
-    }
-
-    public int getFrameTime() {
-        return frameTime;
-    }
-
-    public int getVirtualX() {
-        return virtualX;
-    }
-
-    public int getVirtualY() {
-        return virtualY;
+    @Override
+    public Serializable create() {
+        return new Texture();
     }
 }

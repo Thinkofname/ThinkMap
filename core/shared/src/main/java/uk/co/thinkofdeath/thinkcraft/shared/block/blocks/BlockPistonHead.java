@@ -44,9 +44,9 @@ public class BlockPistonHead extends BlockFactory {
     public BlockPistonHead(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        pistonTopNormal = iMapViewer.getTexture("piston_top_normal");
-        pistonTopSticky = iMapViewer.getTexture("piston_top_sticky");
-        pistonSide = iMapViewer.getTexture("piston_side");
+        pistonTopNormal = iMapViewer.getBlockTexture("minecraft:piston_top_normal");
+        pistonTopSticky = iMapViewer.getBlockTexture("minecraft:piston_top_sticky");
+        pistonSide = iMapViewer.getBlockTexture("minecraft:piston_side");
     }
 
     @Override

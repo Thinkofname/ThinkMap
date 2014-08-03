@@ -35,7 +35,9 @@ public interface IMapViewer {
      *         The name of the texture
      * @return The requested texture or null
      */
-    public Texture getTexture(String name);
+    public Texture getBlockTexture(String name);
+
+    public void markTextureAsUsed(String name);
 
     /**
      * Returns the current world for this map viewer

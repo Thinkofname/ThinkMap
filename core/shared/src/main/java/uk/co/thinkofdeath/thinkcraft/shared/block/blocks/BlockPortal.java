@@ -36,7 +36,7 @@ public class BlockPortal extends BlockFactory {
     public BlockPortal(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        texture = mapViewer.getTexture("portal");
+        texture = mapViewer.getBlockTexture("minecraft:portal");
     }
 
     @Override

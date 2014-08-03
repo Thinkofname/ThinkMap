@@ -44,8 +44,8 @@ public class BlockGlassPane extends BlockFactory {
     public BlockGlassPane(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        this.texture = mapViewer.getTexture("glass");
-        top = mapViewer.getTexture("glass_pane_top");
+        this.texture = mapViewer.getBlockTexture("minecraft:glass");
+        top = mapViewer.getBlockTexture("minecraft:glass_pane_top");
     }
 
     @Override

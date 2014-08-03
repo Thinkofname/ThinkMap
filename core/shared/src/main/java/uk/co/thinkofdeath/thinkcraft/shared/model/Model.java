@@ -125,6 +125,7 @@ public class Model {
                 face.b = colour & 0xFF;
             }
             Texture texture = face.texture;
+            chunk.getWorld().getMapViewer().markTextureAsUsed(texture.getName());
             // First triangle
             for (int i = 0; i < 3; i++) {
                 ModelVertex vertex = face.vertices[2 - i];
@@ -138,8 +139,8 @@ public class Model {
                         .position(x + vertex.getX(), y + vertex.getY(), z + vertex.getZ())
                         .colour(face.r, face.g, face.b)
                         .texturePosition(vertex.getTextureX(), vertex.getTextureY())
-                        .textureDetails(texture.getVirtualX(), texture.getVirtualY(), texture.getSize())
-                        .lighting(light.getEmittedLight(), light.getSkyLight());
+                        .lighting(light.getEmittedLight(), light.getSkyLight())
+                        .textureID(texture.getId());
             }
             // Second triangle
             for (int i = 0; i < 3; i++) {
@@ -154,8 +155,8 @@ public class Model {
                         .position(x + vertex.getX(), y + vertex.getY(), z + vertex.getZ())
                         .colour(face.r, face.g, face.b)
                         .texturePosition(vertex.getTextureX(), vertex.getTextureY())
-                        .textureDetails(texture.getVirtualX(), texture.getVirtualY(), texture.getSize())
-                        .lighting(light.getEmittedLight(), light.getSkyLight());
+                        .lighting(light.getEmittedLight(), light.getSkyLight())
+                        .textureID(texture.getId());
             }
         }
     }

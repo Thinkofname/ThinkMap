@@ -39,10 +39,10 @@ public class BlockCake extends BlockFactory {
     public BlockCake(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        top = mapViewer.getTexture("cake_top");
-        side = mapViewer.getTexture("cake_side");
-        sideInner = mapViewer.getTexture("cake_inner");
-        bottom = mapViewer.getTexture("cake_bottom");
+        top = mapViewer.getBlockTexture("minecraft:cake_top");
+        side = mapViewer.getBlockTexture("minecraft:cake_side");
+        sideInner = mapViewer.getBlockTexture("minecraft:cake_inner");
+        bottom = mapViewer.getBlockTexture("minecraft:cake_bottom");
     }
 
     @Override

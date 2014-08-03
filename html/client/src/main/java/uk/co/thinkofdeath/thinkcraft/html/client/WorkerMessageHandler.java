@@ -58,6 +58,9 @@ public class WorkerMessageHandler implements MessageHandler {
                         chunkBuildReply.getSender());
 
             }
+            for (String usedTexture : chunkBuildReply.getUsedTextures()) {
+                mapViewer.getTextureLoader().loadBlockTexture(mapViewer.getBlockTexture(usedTexture));
+            }
         }
     }
 

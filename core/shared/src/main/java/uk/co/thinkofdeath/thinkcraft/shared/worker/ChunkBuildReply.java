@@ -22,8 +22,10 @@ import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
 import uk.co.thinkofdeath.thinkcraft.shared.serializing.IntArraySerializer;
 import uk.co.thinkofdeath.thinkcraft.shared.serializing.Serializer;
 import uk.co.thinkofdeath.thinkcraft.shared.serializing.SerializerArraySerializer;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.StringArraySerializer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class ChunkBuildReply extends WorkerMessage {
@@ -35,6 +37,7 @@ public class ChunkBuildReply extends WorkerMessage {
     private UByteBuffer data;
     private UByteBuffer transData;
     private List<PositionedModel> models;
+    private List<String> usedTextures = new ArrayList<>();
 
     ChunkBuildReply() {
     }
@@ -57,10 +60,10 @@ public class ChunkBuildReply extends WorkerMessage {
      * @param transData
      *         The transparent block data
      * @param models
-     *         The transparent block models
+     * @param usedTextures
      */
     public ChunkBuildReply(int x, int z, int sectionNumber, int buildNumber, int[] accessData,
-                           UByteBuffer data, UByteBuffer transData, List<PositionedModel> models) {
+                           UByteBuffer data, UByteBuffer transData, List<PositionedModel> models, HashSet<String> usedTextures) {
         this.x = x;
         this.z = z;
         this.sectionNumber = sectionNumber;
@@ -69,6 +72,7 @@ public class ChunkBuildReply extends WorkerMessage {
         this.data = data;
         this.transData = transData;
         this.models = models;
+        this.usedTextures.addAll(usedTextures);
     }
 
     /**
@@ -128,6 +132,10 @@ public class ChunkBuildReply extends WorkerMessage {
         return accessData;
     }
 
+    public List<String> getUsedTextures() {
+        return usedTextures;
+    }
+
     @Override
     public void serialize(Serializer serializer) {
         super.serialize(serializer);
@@ -150,6 +158,12 @@ public class ChunkBuildReply extends WorkerMessage {
             t.add(m);
         }
         serializer.putArray("models", t);
+
+        StringArraySerializer ut = Platform.workerSerializers().createStringArray();
+        for (String usedTexture : usedTextures) {
+            ut.add(usedTexture);
+        }
+        serializer.putArray("usedTextures", ut);
     }
 
     @Override
@@ -173,6 +187,11 @@ public class ChunkBuildReply extends WorkerMessage {
             PositionedModel model = new PositionedModel();
             model.deserialize(t.get(i));
             models.add(model);
+        }
+
+        StringArraySerializer ut = (StringArraySerializer) serializer.getArray("usedTextures");
+        for (int i = 0; i < ut.size(); i++) {
+            usedTextures.add(ut.get(i));
         }
     }
 

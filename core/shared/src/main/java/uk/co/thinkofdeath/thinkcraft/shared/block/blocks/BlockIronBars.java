@@ -43,7 +43,7 @@ public class BlockIronBars extends BlockFactory {
     public BlockIronBars(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        texture = mapViewer.getTexture("iron_bars");
+        texture = mapViewer.getBlockTexture("minecraft:iron_bars");
     }
 
     @Override

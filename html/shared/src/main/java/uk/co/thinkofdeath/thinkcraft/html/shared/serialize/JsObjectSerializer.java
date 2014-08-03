@@ -64,8 +64,8 @@ public class JsObjectSerializer extends JavaScriptObject implements Serializer {
     }-*/;
 
     @Override
-    public final native Object getTemp(String name)/*-{
-        return this[name];
+    public final native boolean has(String name)/*-{
+        return this.hasOwnProperty(name);
     }-*/;
 
     @Override
@@ -95,11 +95,6 @@ public class JsObjectSerializer extends JavaScriptObject implements Serializer {
 
     @Override
     public final native void putBuffer(String name, Buffer value)/*-{
-        this[name] = value;
-    }-*/;
-
-    @Override
-    public final native void putTemp(String name, Object value)/*-{
         this[name] = value;
     }-*/;
 

@@ -39,9 +39,9 @@ public class BlockCactus extends BlockFactory {
     public BlockCactus(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        top = mapViewer.getTexture("cactus_top");
-        bottom = mapViewer.getTexture("cactus_bottom");
-        side = mapViewer.getTexture("cactus_side");
+        top = mapViewer.getBlockTexture("minecraft:cactus_top");
+        bottom = mapViewer.getBlockTexture("minecraft:cactus_bottom");
+        side = mapViewer.getBlockTexture("minecraft:cactus_side");
     }
 
     @Override

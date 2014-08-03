@@ -45,11 +45,11 @@ public class BlockPiston extends BlockFactory {
     public BlockPiston(IMapViewer iMapViewer, String type) {
         super(iMapViewer);
 
-        pistonBottom = iMapViewer.getTexture("piston_bottom");
-        pistonInner = iMapViewer.getTexture("piston_inner");
-        pistonSide = iMapViewer.getTexture("piston_side");
-        pistonTopNormal = iMapViewer.getTexture("piston_top_normal");
-        pistonTop = iMapViewer.getTexture("piston_top_" + type);
+        pistonBottom = iMapViewer.getBlockTexture("minecraft:piston_bottom");
+        pistonInner = iMapViewer.getBlockTexture("minecraft:piston_inner");
+        pistonSide = iMapViewer.getBlockTexture("minecraft:piston_side");
+        pistonTopNormal = iMapViewer.getBlockTexture("minecraft:piston_top_normal");
+        pistonTop = iMapViewer.getBlockTexture("minecraft:piston_top_" + type);
     }
 
     public static Model createHeadPart(Texture pistonTop, Texture pistonTopNormal, Texture pistonSide) {

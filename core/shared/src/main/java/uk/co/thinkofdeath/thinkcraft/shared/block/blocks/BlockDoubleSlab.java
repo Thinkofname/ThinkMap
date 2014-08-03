@@ -42,7 +42,7 @@ public class BlockDoubleSlab<T extends Enum<T> & SlabType> extends BlockFactory 
         for (Enum e : clazz.getEnumConstants()) {
             SlabType type = (SlabType) e;
             for (Face face : Face.values()) {
-                textures[i++] = iMapViewer.getTexture(type.texture(face));
+                textures[i++] = iMapViewer.getBlockTexture("minecraft:" + type.texture(face));
             }
         }
     }

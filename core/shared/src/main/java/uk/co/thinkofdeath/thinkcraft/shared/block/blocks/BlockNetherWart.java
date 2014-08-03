@@ -42,7 +42,7 @@ public class BlockNetherWart extends BlockFactory {
             String ext = Integer.toString(
                     i >= 2 ? i - 1 : i
             );
-            textures[i] = mapViewer.getTexture("nether_wart_stage_" + ext);
+            textures[i] = mapViewer.getBlockTexture("minecraft:nether_wart_stage_" + ext);
         }
     }
 

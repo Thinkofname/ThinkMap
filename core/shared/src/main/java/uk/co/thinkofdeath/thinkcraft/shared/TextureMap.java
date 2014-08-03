@@ -17,30 +17,19 @@
 package uk.co.thinkofdeath.thinkcraft.shared;
 
 import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
-import uk.co.thinkofdeath.thinkcraft.shared.serializing.IntArraySerializer;
 import uk.co.thinkofdeath.thinkcraft.shared.serializing.Serializable;
 import uk.co.thinkofdeath.thinkcraft.shared.serializing.Serializer;
+import uk.co.thinkofdeath.thinkcraft.shared.serializing.SerializerArraySerializer;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class TextureMap implements Serializable {
 
-    private int textureImages;
-    private int virtualCount;
     private Map<Integer, Integer> grassColors = new HashMap<>();
     private Map<Integer, Integer> foliageColors = new HashMap<>();
-    private Map<String, Texture> textures = new HashMap<>();
+    private List<Texture> textures = new ArrayList<>();
 
     public TextureMap() {
-    }
-
-    public int getNumberOfImages() {
-        return textureImages;
-    }
-
-    public int getNumberVirtuals() {
-        return virtualCount;
     }
 
     public void copyGrassColormap(Map<Integer, Integer> target) {
@@ -51,14 +40,18 @@ public class TextureMap implements Serializable {
         target.putAll(foliageColors);
     }
 
-    public void copyTextures(HashMap<String, Texture> textures) {
-        textures.putAll(this.textures);
+    public void copyTextures(Map<String, Texture> target) {
+        for (Texture texture : textures) {
+            target.put(texture.getName(), texture);
+        }
+    }
+
+    public void addTextures(Collection<Texture> values) {
+        textures.addAll(values);
     }
 
     @Override
     public void serialize(Serializer serializer) {
-        serializer.putInt("textureImages", textureImages);
-        serializer.putInt("virtualCount", virtualCount);
         Serializer gc = Platform.workerSerializers().create();
         for (Map.Entry<Integer, Integer> e : grassColors.entrySet()) {
             gc.putInt(e.getKey().toString(), e.getValue());
@@ -70,32 +63,17 @@ public class TextureMap implements Serializable {
         }
         serializer.putSub("foliageColormap", fc);
 
-        Serializer tex = Platform.workerSerializers().create();
-        for (Map.Entry<String, Texture> e : textures.entrySet()) {
-            Texture t = e.getValue();
-            Serializer texture = Platform.workerSerializers().create();
-            IntArraySerializer fr = Platform.workerSerializers().createIntArray();
-            for (int i : t.getFrames()) {
-                fr.add(i);
-            }
-            texture.putArray("frames", fr);
-            texture.putInt("posX", t.getPosX());
-            texture.putInt("posY", t.getPosY());
-            texture.putInt("size", t.getSize());
-            texture.putInt("width", t.getWidth());
-            texture.putInt("frameCount", t.getFrameCount());
-            texture.putInt("frameTime", t.getFrameTime());
-            texture.putInt("virtualX", t.getVirtualX());
-            texture.putInt("virtualY", t.getVirtualY());
-            tex.putSub(e.getKey(), texture);
+        SerializerArraySerializer texs = Platform.workerSerializers().createSerializerArray();
+        for (Texture texture : textures) {
+            Serializer tex = Platform.workerSerializers().create();
+            texture.serialize(tex);
+            texs.add(tex);
         }
-        serializer.putSub("textures", tex);
+        serializer.putArray("textures", texs);
     }
 
     @Override
     public void deserialize(Serializer serializer) {
-        textureImages = serializer.getInt("textureImages");
-        virtualCount = serializer.getInt("virtualCount");
         Serializer gc = serializer.getSub("grassColormap");
         for (String position : gc.keys()) {
             grassColors.put(
@@ -111,27 +89,13 @@ public class TextureMap implements Serializable {
             );
         }
 
-        Serializer tex = serializer.getSub("textures");
-        for (String name : tex.keys()) {
-            Serializer texture = tex.getSub(name);
-            IntArraySerializer fr = (IntArraySerializer) texture.getArray("frames");
-            int[] frames = new int[fr.size()];
-            for (int i = 0; i < frames.length; i++) {
-                frames[i] = fr.getInt(i);
+        SerializerArraySerializer texs = (SerializerArraySerializer) serializer.getArray("textures");
+        if (texs != null) {
+            for (int i = 0; i < texs.size(); i++) {
+                Texture texture = new Texture();
+                texture.deserialize(texs.get(i));
+                textures.add(texture);
             }
-            textures.put(name,
-                    new Texture(
-                            name,
-                            texture.getInt("posX"),
-                            texture.getInt("posY"),
-                            texture.getInt("size"),
-                            texture.getInt("width"),
-                            texture.getInt("frameCount"),
-                            frames,
-                            texture.getInt("frameTime"),
-                            texture.getInt("virtualX"),
-                            texture.getInt("virtualY")
-                    ));
         }
     }
 

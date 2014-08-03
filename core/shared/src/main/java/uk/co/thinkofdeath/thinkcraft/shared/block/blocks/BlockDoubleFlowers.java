@@ -45,12 +45,12 @@ public class BlockDoubleFlowers extends BlockFactory {
 
         textures = new Texture[DoubleFlowerType.values().length * 2];
         for (DoubleFlowerType type : DoubleFlowerType.values()) {
-            textures[type.ordinal() * 2] = iMapViewer.getTexture("double_plant_" + type + "_bottom");
-            textures[type.ordinal() * 2 + 1] = iMapViewer.getTexture("double_plant_" + type + "_top");
+            textures[type.ordinal() * 2] = iMapViewer.getBlockTexture("minecraft:double_plant_" + type + "_bottom");
+            textures[type.ordinal() * 2 + 1] = iMapViewer.getBlockTexture("minecraft:double_plant_" + type + "_top");
         }
 
-        sunflowerBack = mapViewer.getTexture("double_plant_sunflower_back");
-        sunflowerFront = mapViewer.getTexture("double_plant_sunflower_front");
+        sunflowerBack = mapViewer.getBlockTexture("minecraft:double_plant_sunflower_back");
+        sunflowerFront = mapViewer.getBlockTexture("minecraft:double_plant_sunflower_front");
     }
 
 

@@ -37,7 +37,7 @@ public class BlockPressurePlate extends BlockFactory {
     public BlockPressurePlate(IMapViewer iMapViewer, String texture) {
         super(iMapViewer);
 
-        this.texture = mapViewer.getTexture(texture);
+        this.texture = mapViewer.getBlockTexture("minecraft:" + texture);
     }
 
     @Override

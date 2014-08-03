@@ -38,7 +38,7 @@ public class BlockRail extends BlockFactory {
     public BlockRail(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        railTurned = iMapViewer.getTexture("rail_normal_turned");
+        railTurned = iMapViewer.getBlockTexture("minecraft:rail_normal_turned");
     }
 
     @Override

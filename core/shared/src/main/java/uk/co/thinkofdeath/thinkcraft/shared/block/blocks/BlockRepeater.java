@@ -44,8 +44,8 @@ public class BlockRepeater extends BlockFactory {
     public BlockRepeater(IMapViewer iMapViewer, boolean powered) {
         super(iMapViewer);
 
-        repeater = mapViewer.getTexture("repeater_" + (powered ? "on" : "off"));
-        torch = mapViewer.getTexture("redstone_torch_" + (powered ? "on" : "off"));
+        repeater = mapViewer.getBlockTexture("minecraft:repeater_" + (powered ? "on" : "off"));
+        torch = mapViewer.getBlockTexture("minecraft:redstone_torch_" + (powered ? "on" : "off"));
     }
 
     @Override

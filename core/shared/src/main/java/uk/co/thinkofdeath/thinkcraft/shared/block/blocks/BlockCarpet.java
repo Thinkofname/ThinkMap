@@ -39,7 +39,7 @@ public class BlockCarpet extends BlockFactory {
 
         textures = new Texture[Colour.values().length];
         for (Colour colour : Colour.values()) {
-            textures[colour.ordinal()] = mapViewer.getTexture("wool_colored_" + colour.texture);
+            textures[colour.ordinal()] = mapViewer.getBlockTexture("minecraft:wool_colored_" + colour.texture);
         }
     }
 
