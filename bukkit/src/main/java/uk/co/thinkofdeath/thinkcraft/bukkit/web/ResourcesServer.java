@@ -35,8 +35,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.*;
-import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
-import static io.netty.handler.codec.http.HttpResponseStatus.OK;
+import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 public class ResourcesServer extends EndPoint {
@@ -63,6 +62,16 @@ public class ResourcesServer extends EndPoint {
         if (!file.exists()) {
             sendHttpResponse(context, request, new DefaultFullHttpResponse(HTTP_1_1, NOT_FOUND));
             return;
+        }
+
+        String modified = request.headers().get(IF_MODIFIED_SINCE);
+        if (modified != null && !modified.isEmpty()) {
+            Date modifiedDate = format.parse(modified);
+
+            if (modifiedDate.equals(plugin.getStartUpDate())) {
+                sendHttpResponse(context, request, new DefaultFullHttpResponse(HTTP_1_1, NOT_MODIFIED));
+                return;
+            }
         }
 
         ByteBuf buffer;
