@@ -91,14 +91,14 @@ public class ZipResourceProvider implements ResourceProvider {
                                 data = new byte[(int) entry.getSize()];
                                 int position = 0;
                                 int lastRead;
-                                while ((lastRead = in.read(data, position, data.length - position)) != -1 && lastRead != 0) {
+                                while ((lastRead = in.read(data, position, data.length - position)) != -1 && position < data.length) {
                                     position += lastRead;
                                 }
                             } else {
                                 try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
                                     byte[] buffer = new byte[4092];
                                     int lastRead;
-                                    while ((lastRead = in.read(buffer)) != -1 && lastRead != 0) {
+                                    while ((lastRead = in.read(buffer)) != -1) {
                                         outputStream.write(buffer, 0, lastRead);
                                     }
                                     data = outputStream.toByteArray();
