@@ -46,7 +46,7 @@ public class BlockTorch extends BlockFactory {
         super(iMapViewer);
         this.allowRedstone = allowRedstone;
 
-        this.texture = mapViewer.getBlockTexture("minecraft:" + texture);
+        this.texture = mapViewer.getTexture(texture);
     }
 
     @Override

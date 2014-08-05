@@ -21,16 +21,6 @@ import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.Buffer;
 public interface Serializer {
 
     /**
-     * Returns whether there is a value stored at
-     * the key with the given name
-     *
-     * @param name
-     *         The key to use
-     * @return Whether this serializer has a value at the key
-     */
-    boolean has(String name);
-
-    /**
      * Stores the string at the key with the given name,
      * overwriting if needed
      *
@@ -160,4 +150,12 @@ public interface Serializer {
      * @return The array of keys
      */
     String[] keys();
+
+    // TODO: Burn this
+    @Deprecated
+    Object getTemp(String name);
+
+    // TODO: Burn this
+    @Deprecated
+    void putTemp(String name, Object value);
 }

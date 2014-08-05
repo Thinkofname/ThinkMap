@@ -40,7 +40,7 @@ public class BlockFenceGate extends BlockFactory {
     public BlockFenceGate(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        texture = mapViewer.getBlockTexture("minecraft:planks_oak");
+        texture = mapViewer.getTexture("planks_oak");
     }
 
     @Override

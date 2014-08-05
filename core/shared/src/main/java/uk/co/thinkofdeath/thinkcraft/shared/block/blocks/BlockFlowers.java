@@ -39,7 +39,7 @@ public class BlockFlowers extends BlockFactory {
 
         textures = new Texture[FlowerType.values().length];
         for (FlowerType type : FlowerType.values()) {
-            textures[type.ordinal()] = iMapViewer.getBlockTexture("minecraft:flower_" + type);
+            textures[type.ordinal()] = iMapViewer.getTexture("flower_" + type);
         }
     }
 

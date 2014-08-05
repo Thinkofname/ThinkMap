@@ -47,8 +47,8 @@ public class BlockRedstone extends BlockFactory {
     public BlockRedstone(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        line = mapViewer.getBlockTexture("minecraft:redstone_dust_line");
-        cross = mapViewer.getBlockTexture("minecraft:redstone_dust_cross");
+        line = mapViewer.getTexture("redstone_dust_line");
+        cross = mapViewer.getTexture("redstone_dust_cross");
     }
 
     @Override

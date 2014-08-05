@@ -41,7 +41,7 @@ public class BlockButton extends BlockFactory {
     public BlockButton(IMapViewer iMapViewer, String texture) {
         super(iMapViewer);
 
-        this.texture = mapViewer.getBlockTexture("minecraft:" + texture);
+        this.texture = mapViewer.getTexture(texture);
     }
 
     @Override

@@ -213,10 +213,8 @@ public class WorkerChunk extends Chunk {
                 new ChunkBuildReply(
                         getX(), getZ(), sectionNumber, buildNumber,
                         accessData, data,
-                        transData, modelJsArray,
-                        world.worker.usedTextures
+                        transData, modelJsArray
                 ), false, data, transData);
-        world.worker.usedTextures.clear();
     }
 
     private void updateSideAccess(int sectionNumber) {

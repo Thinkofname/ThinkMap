@@ -47,8 +47,8 @@ public class BlockDoor extends BlockFactory {
 
     public BlockDoor(IMapViewer iMapViewer, String texture) {
         super(iMapViewer);
-        upper = mapViewer.getBlockTexture("minecraft:" + texture + "_upper");
-        lower = mapViewer.getBlockTexture("minecraft:" + texture + "_lower");
+        upper = mapViewer.getTexture(texture + "_upper");
+        lower = mapViewer.getTexture(texture + "_lower");
     }
 
     @Override

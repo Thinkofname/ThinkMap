@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package uk.co.thinkofdeath.thinkcraft.shared;
+package uk.co.thinkofdeath.thinkcraft.resources;
 
-public class Texture {
+/**
+ * Stores information about the name/location of a texture
+ */
+public class TextureDetails {
 
     private final String name;
     private final int posX;
@@ -26,11 +29,10 @@ public class Texture {
     private final int frameCount;
     private final int[] frames;
     private final int frameTime;
-    private final int virtualX;
-    private final int virtualY;
+    private final TextureStitcher.Position virtualPosition;
 
-    public Texture(String name, int posX, int posY, int size, int width, int frameCount,
-                   int[] frames, int frameTime, int virtualX, int virtualY) {
+    public TextureDetails(String name, int posX, int posY, int size, int width,
+                          int frameCount, int[] frames, int frameTime, TextureStitcher.Position virtualPosition) {
         this.name = name;
         this.posX = posX;
         this.posY = posY;
@@ -39,15 +41,9 @@ public class Texture {
         this.frameCount = frameCount;
         this.frames = frames;
         this.frameTime = frameTime;
-        this.virtualX = virtualX;
-        this.virtualY = virtualY;
+        this.virtualPosition = virtualPosition;
     }
 
-    /**
-     * Returns the name of the texture
-     *
-     * @return The texture's name
-     */
     public String getName() {
         return name;
     }
@@ -80,11 +76,7 @@ public class Texture {
         return frameTime;
     }
 
-    public int getVirtualX() {
-        return virtualX;
-    }
-
-    public int getVirtualY() {
-        return virtualY;
+    public TextureStitcher.Position getVirtualPosition() {
+        return virtualPosition;
     }
 }

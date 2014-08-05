@@ -55,6 +55,17 @@ public class JoinedResourceProvider implements ResourceProvider {
     }
 
     @Override
+    public TextureMetadata getMetadata(String name) {
+        for (ResourceProvider provider : providers) {
+            TextureMetadata metadata = provider.getMetadata(name);
+            if (metadata != null) {
+                return metadata;
+            }
+        }
+        return null;
+    }
+
+    @Override
     public byte[] getResource(String name) {
         for (ResourceProvider provider : providers) {
             byte[] resource = provider.getResource(name);

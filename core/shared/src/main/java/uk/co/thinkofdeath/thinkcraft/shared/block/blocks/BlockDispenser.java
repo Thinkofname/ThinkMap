@@ -40,10 +40,10 @@ public class BlockDispenser extends BlockFactory {
     public BlockDispenser(IMapViewer iMapViewer, String textureName) {
         super(iMapViewer);
 
-        furnaceTop = iMapViewer.getBlockTexture("minecraft:furnace_top");
-        furnaceSide = iMapViewer.getBlockTexture("minecraft:furnace_side");
-        frontVertical = iMapViewer.getBlockTexture("minecraft:" + textureName + "_front_vertical");
-        frontHorizontal = iMapViewer.getBlockTexture("minecraft:" + textureName + "_front_horizontal");
+        furnaceTop = iMapViewer.getTexture("furnace_top");
+        furnaceSide = iMapViewer.getTexture("furnace_side");
+        frontVertical = iMapViewer.getTexture(textureName + "_front_vertical");
+        frontHorizontal = iMapViewer.getTexture(textureName + "_front_horizontal");
     }
 
     @Override

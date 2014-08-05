@@ -37,9 +37,9 @@ public class BlockDirt extends BlockFactory {
     public BlockDirt(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        dirt = iMapViewer.getBlockTexture("minecraft:dirt");
-        dirtPodzolTop = iMapViewer.getBlockTexture("minecraft:dirt_podzol_top");
-        dirtPodzolSide = iMapViewer.getBlockTexture("minecraft:dirt_podzol_side");
+        dirt = iMapViewer.getTexture("dirt");
+        dirtPodzolTop = iMapViewer.getTexture("dirt_podzol_top");
+        dirtPodzolSide = iMapViewer.getTexture("dirt_podzol_side");
     }
 
     @Override

@@ -51,13 +51,13 @@ public class BlockBed extends BlockFactory {
     public BlockBed(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        bedHeadTop = iMapViewer.getBlockTexture("minecraft:bed_head_top");
-        bedHeadEnd = iMapViewer.getBlockTexture("minecraft:bed_head_end");
-        bedHeadSide = iMapViewer.getBlockTexture("minecraft:bed_head_side");
+        bedHeadTop = iMapViewer.getTexture("bed_head_top");
+        bedHeadEnd = iMapViewer.getTexture("bed_head_end");
+        bedHeadSide = iMapViewer.getTexture("bed_head_side");
 
-        bedFeetTop = iMapViewer.getBlockTexture("minecraft:bed_feet_top");
-        bedFeetEnd = iMapViewer.getBlockTexture("minecraft:bed_feet_end");
-        bedFeetSide = iMapViewer.getBlockTexture("minecraft:bed_feet_side");
+        bedFeetTop = iMapViewer.getTexture("bed_feet_top");
+        bedFeetEnd = iMapViewer.getTexture("bed_feet_end");
+        bedFeetSide = iMapViewer.getTexture("bed_feet_side");
     }
 
     @Override

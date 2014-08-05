@@ -16,15 +16,24 @@
 
 package uk.co.thinkofdeath.thinkcraft.resources;
 
-public interface ResourceProvider {
+import java.util.HashMap;
+import java.util.Map;
 
-    public String[] getTextures();
+public class StitchResult {
 
-    public Texture getTexture(String name);
+    Texture[] output;
+    Map<String, TextureDetails> details = new HashMap<>();
+    int virtualCount;
 
-    public TextureMetadata getMetadata(String name);
+    public Texture[] getOutput() {
+        return output;
+    }
 
-    public byte[] getResource(String name);
+    public Map<String, TextureDetails> getDetails() {
+        return details;
+    }
 
-    public String[] getResources();
+    public int getVirtualCount() {
+        return virtualCount;
+    }
 }

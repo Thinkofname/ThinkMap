@@ -37,7 +37,7 @@ public class BlockColoured extends BlockFactory {
 
         textures = new Texture[Colour.values().length];
         for (Colour colour : Colour.values()) {
-            textures[colour.ordinal()] = mapViewer.getBlockTexture("minecraft:" + prefix + colour.texture);
+            textures[colour.ordinal()] = mapViewer.getTexture(prefix + colour.texture);
         }
     }
 

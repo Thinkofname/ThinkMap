@@ -44,7 +44,7 @@ public class BlockCrop extends BlockFactory {
                             i :
                             i == 7 ? 3 : (i >= 4 ? 2 : (i >= 2 ? 1 : 0))
             );
-            textures[i] = mapViewer.getBlockTexture("minecraft:" + type + "_stage_" + ext);
+            textures[i] = mapViewer.getTexture(type + "_stage_" + ext);
         }
     }
 

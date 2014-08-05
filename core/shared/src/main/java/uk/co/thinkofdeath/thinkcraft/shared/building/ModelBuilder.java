@@ -89,8 +89,10 @@ public class ModelBuilder {
      *
      * @return This builder
      */
-    public ModelBuilder textureID(int id) {
-        buffer.addUnsignedShort(id);
+    public ModelBuilder textureDetails(int posX, int posY, int size) {
+        buffer.addUnsignedShort(posX);
+        buffer.addUnsignedShort(posY);
+        buffer.addUnsignedShort(size);
         return this;
     }
 

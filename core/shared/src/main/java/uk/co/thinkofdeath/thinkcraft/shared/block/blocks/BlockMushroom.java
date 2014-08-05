@@ -42,7 +42,7 @@ public class BlockMushroom extends BlockFactory {
         MushroomVariant[] values = MushroomVariant.values();
         for (int i = 0; i < values.length; i++) {
             for (Face face : Face.values()) {
-                textures[i * 6 + face.ordinal()] = mapViewer.getBlockTexture("minecraft:" + values[i].getTextures()[face.ordinal()].replaceAll("\\$type", type));
+                textures[i * 6 + face.ordinal()] = mapViewer.getTexture(values[i].getTextures()[face.ordinal()].replaceAll("\\$type", type));
             }
         }
     }

@@ -21,13 +21,11 @@ import elemental.html.*;
 import uk.co.thinkofdeath.thinkcraft.html.client.MapViewer;
 import uk.co.thinkofdeath.thinkcraft.html.client.debug.Debug;
 import uk.co.thinkofdeath.thinkcraft.html.client.render.shaders.ChunkShader;
-import uk.co.thinkofdeath.thinkcraft.html.client.texture.TextureMetadata;
 import uk.co.thinkofdeath.thinkcraft.html.client.texture.VirtualTexture;
 import uk.co.thinkofdeath.thinkcraft.html.client.world.ClientChunk;
 import uk.co.thinkofdeath.thinkcraft.html.shared.utils.JsUtils;
 import uk.co.thinkofdeath.thinkcraft.shared.Face;
 import uk.co.thinkofdeath.thinkcraft.shared.Position;
-import uk.co.thinkofdeath.thinkcraft.shared.Texture;
 import uk.co.thinkofdeath.thinkcraft.shared.model.PositionedModel;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.Platform;
 import uk.co.thinkofdeath.thinkcraft.shared.platform.buffers.UByteBuffer;
@@ -38,14 +36,13 @@ import uk.co.thinkofdeath.thinkcraft.shared.vector.Matrix4;
 import uk.co.thinkofdeath.thinkcraft.shared.world.ChunkSection;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static elemental.html.WebGLRenderingContext.*;
 
 public class Renderer implements RendererUtils.ResizeHandler, Runnable {
 
     private static final int TRANSPARENT_UPDATES_LIMIT = 5;
-    private static final int VERTEX_SIZE = 18;
+    private static final int VERTEX_SIZE = 22;
 
     private final MapViewer mapViewer;
 
@@ -65,13 +62,8 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
     private final Frustum frustum = new Frustum();
 
     // Textures
-    private final Int32Array textureLocations = RendererUtils.createInt32(new int[]{1, 2, 3, 4, 5});
-    private final UByteBuffer textureDetails = Platform.alloc().ubyteBuffer(128 * 128 * 4);
-    private final WebGLTexture glTextureDetails;
-    private boolean textureDetailsDirty = true;
-    private final VirtualTexture[] virtualTextures = new VirtualTexture[5];
-    private final WebGLTexture[] textures = new WebGLTexture[5];
-    private boolean[] textureDirty = new boolean[5];
+    private final WebGLTexture[] blockTextures;
+    private final Int32Array textureLocations = RendererUtils.createInt32(new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
     // Objects
     private final ChunkShader chunkShader;
     private final ChunkShader chunkShaderAlpha;
@@ -88,7 +80,6 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
     private final PositionChunkSectionSet visited = new PositionChunkSectionSet();
     private final IntMap<Position> toVisit = new IntMap<>();
     private int toVisitPosition = 0;
-    private List<AnimatedTexture> animatedTextures = new ArrayList<>();
 
     /**
      * Creates a Renderer that handles almost anything that is displayed to the user
@@ -112,6 +103,8 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
 
         onResize(); // Setup canvas
 
+        blockTextures = new WebGLTexture[mapViewer.getNumberOfTextures()];
+
         gl.enable(DEPTH_TEST);
         gl.enable(CULL_FACE);
         gl.cullFace(BACK);
@@ -122,23 +115,11 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         chunkShader.setup(gl);
         chunkShaderAlpha.setup(gl);
 
-        // Texture details
-        glTextureDetails = gl.createTexture();
-        gl.activeTexture(TEXTURE0);
-        gl.bindTexture(TEXTURE_2D, glTextureDetails);
-        gl.pixelStorei(UNPACK_FLIP_Y_WEBGL, 0);
-        gl.texImage2D(TEXTURE_2D, 0, RGBA, 128, 128, 0, RGBA, UNSIGNED_BYTE, (ArrayBufferView) textureDetails);
-        // Nearest filtering gives a Minecrafty look
-        gl.texParameteri(TEXTURE_2D, TEXTURE_MAG_FILTER, NEAREST);
-        gl.texParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, NEAREST);
-        gl.texParameteri(TEXTURE_2D, TEXTURE_WRAP_S, CLAMP_TO_EDGE);
-        gl.texParameteri(TEXTURE_2D, TEXTURE_WRAP_T, CLAMP_TO_EDGE);
-        gl.bindTexture(TEXTURE_2D, null);
-
-        virtualTextures[0] = new VirtualTexture(0);
-        textures[0] = loadTexture(virtualTextures[0]);
-        gl.activeTexture(TEXTURE1);
-        gl.bindTexture(TEXTURE_2D, textures[0]);
+        for (int i = 0; i < blockTextures.length; i++) {
+            gl.activeTexture(TEXTURE0 + i);
+            blockTextures[i] = loadTexture(mapViewer.getVirtualTextures()[i]);
+            gl.bindTexture(TEXTURE_2D, blockTextures[i]);
+        }
 
         Debug.init(gl);
         RendererUtils.requestAnimationFrame(this);
@@ -155,6 +136,10 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         if (currentFrame > 0xFFFFFFF) {
             currentFrame -= 0xFFFFFFF;
         }
+        // Update textures
+        for (VirtualTexture texture : mapViewer.getVirtualTextures()) {
+            texture.update((int) currentFrame);
+        }
 
         float timeScale = (mapViewer.getWorld().getTimeOfDay() - 6000f) / 12000f;
         if (timeScale > 1) {
@@ -163,27 +148,6 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
             timeScale = -timeScale;
         }
         timeScale = 1 - timeScale;
-
-        for (AnimatedTexture animatedTexture : animatedTextures) {
-            animatedTexture.update((1d / 3d) * delta);
-        }
-
-        if (textureDetailsDirty) {
-            textureDetailsDirty = false;
-            gl.activeTexture(TEXTURE0);
-            gl.bindTexture(TEXTURE_2D, glTextureDetails);
-            gl.pixelStorei(UNPACK_FLIP_Y_WEBGL, 0);
-            gl.texImage2D(TEXTURE_2D, 0, RGBA, 128, 128, 0, RGBA, UNSIGNED_BYTE, (ArrayBufferView) textureDetails);
-        }
-
-        for (int i = 0; i < textureDirty.length; i++) {
-            if (textureDirty[i]) {
-                textureDirty[i] = false;
-                gl.activeTexture(TEXTURE1 + i);
-                updateTexture(virtualTextures[i], textures[i]);
-            }
-        }
-
 
         gl.viewport(0, 0, canvas.getWidth(), canvas.getHeight());
         gl.clearColor((122f / 255f) * timeScale,
@@ -208,7 +172,6 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         chunkShader.setPerspectiveMatrix(perspectiveMatrix);
         chunkShader.setViewMatrix(viewMatrix);
         chunkShader.setBlockTexture(textureLocations);
-        chunkShader.setTextureDetails(0);
         chunkShader.setScale(timeScale);
 
         renderChunks();
@@ -221,7 +184,6 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         chunkShaderAlpha.setPerspectiveMatrix(perspectiveMatrix);
         chunkShaderAlpha.setViewMatrix(viewMatrix);
         chunkShaderAlpha.setBlockTexture(textureLocations);
-        chunkShaderAlpha.setTextureDetails(0);
         chunkShaderAlpha.setScale(timeScale);
 
         JsUtils.sort(sortableRenderObjects, sortableSorter);
@@ -252,11 +214,11 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
 
             gl.bindBuffer(ARRAY_BUFFER, sortableRenderObject.buffer);
             chunkShaderAlpha.setOffset(sortableRenderObject.getX(), sortableRenderObject.getZ());
-            gl.vertexAttribPointer(chunkShaderAlpha.getPosition(), 3, UNSIGNED_SHORT, false, VERTEX_SIZE, 0);
-            gl.vertexAttribPointer(chunkShaderAlpha.getColour(), 4, UNSIGNED_BYTE, true, VERTEX_SIZE, 6);
-            gl.vertexAttribPointer(chunkShaderAlpha.getTexturePosition(), 2, UNSIGNED_SHORT, false, VERTEX_SIZE, 10);
-            gl.vertexAttribPointer(chunkShaderAlpha.getLighting(), 2, UNSIGNED_BYTE, false, VERTEX_SIZE, 14);
-            gl.vertexAttribPointer(chunkShaderAlpha.getTextureID(), 1, UNSIGNED_SHORT, false, VERTEX_SIZE, 16);
+            gl.vertexAttribPointer(chunkShaderAlpha.getPosition(), 3, UNSIGNED_SHORT, false, 22, 0);
+            gl.vertexAttribPointer(chunkShaderAlpha.getColour(), 4, UNSIGNED_BYTE, true, 22, 6);
+            gl.vertexAttribPointer(chunkShaderAlpha.getTexturePosition(), 2, UNSIGNED_SHORT, false, 22, 10);
+            gl.vertexAttribPointer(chunkShaderAlpha.getTextureDetails(), 4, UNSIGNED_SHORT, false, 22, 14);
+            gl.vertexAttribPointer(chunkShaderAlpha.getLighting(), 2, UNSIGNED_BYTE, false, 22, 20);
             gl.drawArrays(TRIANGLES, 0, sortableRenderObject.count);
         }
     }
@@ -367,11 +329,11 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
             if (renderObject != null) {
                 chunkShader.setOffset(renderObject.x, renderObject.z);
                 gl.bindBuffer(ARRAY_BUFFER, renderObject.buffer);
-                gl.vertexAttribPointer(chunkShader.getPosition(), 3, UNSIGNED_SHORT, false, VERTEX_SIZE, 0);
-                gl.vertexAttribPointer(chunkShader.getColour(), 4, UNSIGNED_BYTE, true, VERTEX_SIZE, 6);
-                gl.vertexAttribPointer(chunkShader.getTexturePosition(), 2, UNSIGNED_SHORT, false, VERTEX_SIZE, 10);
-                gl.vertexAttribPointer(chunkShader.getLighting(), 2, UNSIGNED_BYTE, false, VERTEX_SIZE, 14);
-                gl.vertexAttribPointer(chunkShader.getTextureID(), 1, UNSIGNED_SHORT, false, VERTEX_SIZE, 16);
+                gl.vertexAttribPointer(chunkShader.getPosition(), 3, UNSIGNED_SHORT, false, 22, 0);
+                gl.vertexAttribPointer(chunkShader.getColour(), 4, UNSIGNED_BYTE, true, 22, 6);
+                gl.vertexAttribPointer(chunkShader.getTexturePosition(), 2, UNSIGNED_SHORT, false, 22, 10);
+                gl.vertexAttribPointer(chunkShader.getTextureDetails(), 3, UNSIGNED_SHORT, false, 22, 14);
+                gl.vertexAttribPointer(chunkShader.getLighting(), 2, UNSIGNED_BYTE, false, 22, 20);
                 gl.drawArrays(TRIANGLES, 0, renderObject.triangleCount);
             }
 
@@ -479,84 +441,10 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
         return texture;
     }
 
-    public void updateTexture(VirtualTexture texture, WebGLTexture glTexture) {
-        gl.bindTexture(TEXTURE_2D, glTexture);
+    public void updateTexture(int id) {
+        gl.bindTexture(TEXTURE_2D, blockTextures[id]);
         gl.pixelStorei(UNPACK_FLIP_Y_WEBGL, 0);
-        gl.texImage2D(TEXTURE_2D, 0, RGBA, RGBA, UNSIGNED_BYTE, texture.getTexture());
-    }
-
-    public void placeTexture(Texture texture, ImageElement imageElement) {
-        VirtualTexture.TexturePosition position = null;
-        for (int i = 0; i < virtualTextures.length; i++) {
-            VirtualTexture vt = virtualTextures[i];
-            if (vt == null) {
-                vt = new VirtualTexture(i);
-                textures[i] = loadTexture(vt);
-                gl.activeTexture(TEXTURE1 + i);
-                gl.bindTexture(TEXTURE_2D, textures[i]);
-                virtualTextures[i] = vt;
-            }
-            position = vt.placeTexture(imageElement, 0, 0, imageElement.getWidth());
-            if (position == null) continue;
-            break;
-        }
-        if (position == null) return;
-
-        int offset = texture.getId() * 4;
-        textureDetails.set(offset, position.getX() / 2);
-        textureDetails.set(offset + 1, position.getY() / 2);
-        textureDetails.set(offset + 2, imageElement.getWidth());
-        textureDetails.set(offset + 3, position.getId());
-        textureDetailsDirty = true;
-
-        if (texture.getName().equals("thinkmap:missing_texture")) {
-            for (Texture t : mapViewer.getBlocktextures()) {
-                if (t.isLoaded()) continue;
-                offset = t.getId() * 4;
-                textureDetails.set(offset, position.getX() / 2);
-                textureDetails.set(offset + 1, position.getY() / 2);
-                textureDetails.set(offset + 2, imageElement.getWidth());
-                textureDetails.set(offset + 3, position.getId());
-            }
-        }
-
-        textureDirty[position.getId()] = true;
-    }
-
-    public VirtualTexture.TexturePosition[] placeTextures(Texture texture, ImageElement imageElement) {
-        VirtualTexture.TexturePosition[] positions = new VirtualTexture.TexturePosition[imageElement.getHeight() / imageElement.getWidth()];
-        for (int pos = 0; pos < positions.length; pos++) {
-            VirtualTexture.TexturePosition position = null;
-            for (int i = 0; i < virtualTextures.length; i++) {
-                VirtualTexture vt = virtualTextures[i];
-                if (vt == null) {
-                    vt = new VirtualTexture(i);
-                    textures[i] = loadTexture(vt);
-                    gl.activeTexture(TEXTURE1 + i);
-                    gl.bindTexture(TEXTURE_2D, textures[i]);
-                    virtualTextures[i] = vt;
-                }
-                position = vt.placeTexture(imageElement, 0, pos * imageElement.getWidth(), imageElement.getWidth());
-                if (position == null) continue;
-                break;
-            }
-            positions[pos] = position;
-        }
-
-        VirtualTexture.TexturePosition position = positions[0];
-        if (position == null) throw new RuntimeException("Texture error");
-        int offset = texture.getId() * 4;
-        textureDetails.set(offset, position.getX() / 2);
-        textureDetails.set(offset + 1, position.getY() / 2);
-        textureDetails.set(offset + 2, imageElement.getWidth());
-        textureDetails.set(offset + 3, position.getId());
-        textureDetailsDirty = true;
-
-        return positions;
-    }
-
-    public void addAnimatedTexture(Texture texture, TextureMetadata metadata, VirtualTexture.TexturePosition[] positions) {
-        animatedTextures.add(new AnimatedTexture(texture, metadata, positions));
+        gl.texImage2D(TEXTURE_2D, 0, RGBA, RGBA, UNSIGNED_BYTE, mapViewer.getVirtualTextures()[id].getTexture());
     }
 
     @Override
@@ -578,75 +466,5 @@ public class Renderer implements RendererUtils.ResizeHandler, Runnable {
      */
     public Camera getCamera() {
         return camera;
-    }
-
-    private class AnimatedTexture {
-        private final Texture texture;
-        private final TextureMetadata metadata;
-        private final VirtualTexture.TexturePosition[] positions;
-
-        private final Frame[] frames;
-
-        private Frame currentFrame;
-        private int cfId = 0;
-        private double remainingTime;
-        private boolean changed = true;
-
-        public AnimatedTexture(Texture texture, TextureMetadata metadata, VirtualTexture.TexturePosition[] positions) {
-            this.texture = texture;
-            this.metadata = metadata;
-            this.positions = positions;
-            if (metadata.getFrames() == null) {
-                frames = new Frame[positions.length];
-                for (int i = 0; i < frames.length; i++) {
-                    frames[i] = new Frame(metadata.getFrameTime(), positions[i]);
-                }
-            } else {
-                frames = new Frame[metadata.getFrames().length];
-                for (int i = 0; i < frames.length; i++) {
-                    frames[i] = new Frame(
-                            metadata.getFrameTime(),
-                            positions[metadata.getFrames()[i]]
-                    );
-                }
-            }
-
-            currentFrame = frames[0];
-            remainingTime = currentFrame.frameTime;
-        }
-
-        public void update(double delta) {
-
-            if (changed) {
-                int offset = texture.getId() * 4;
-
-                VirtualTexture.TexturePosition position = currentFrame.position;
-                textureDetails.set(offset, position.getX() / 2);
-                textureDetails.set(offset + 1, position.getY() / 2);
-                textureDetails.set(offset + 3, position.getId());
-
-                textureDetailsDirty = true;
-                changed = false;
-            }
-
-            remainingTime -= delta;
-            if (remainingTime <= 0) {
-                cfId++;
-                cfId %= frames.length;
-                currentFrame = frames[cfId];
-                remainingTime = currentFrame.frameTime;
-                changed = true;
-            }
-        }
-
-        private class Frame {
-            private int frameTime;
-            private VirtualTexture.TexturePosition position;
-
-            private Frame(int frameTime, VirtualTexture.TexturePosition position) {
-                this.frameTime = frameTime;
-                this.position = position;
-            }
-        }
     }
 }

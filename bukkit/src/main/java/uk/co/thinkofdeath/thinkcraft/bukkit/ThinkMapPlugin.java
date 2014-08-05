@@ -16,7 +16,6 @@
 
 package uk.co.thinkofdeath.thinkcraft.bukkit;
 
-import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.netty.channel.Channel;
@@ -30,6 +29,7 @@ import uk.co.thinkofdeath.thinkcraft.bukkit.config.InvalidConfigFieldException;
 import uk.co.thinkofdeath.thinkcraft.bukkit.config.PluginConfiguration;
 import uk.co.thinkofdeath.thinkcraft.bukkit.textures.BufferedTexture;
 import uk.co.thinkofdeath.thinkcraft.bukkit.textures.BufferedTextureFactory;
+import uk.co.thinkofdeath.thinkcraft.bukkit.textures.TextureDetailsSerializer;
 import uk.co.thinkofdeath.thinkcraft.bukkit.web.WebHandler;
 import uk.co.thinkofdeath.thinkcraft.bukkit.world.ChunkManager;
 import uk.co.thinkofdeath.thinkcraft.protocol.Packet;
@@ -53,7 +53,7 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
 
     // Only needs to be changed when assets we use update
     public static final String MINECRAFT_VERSION = "1.7.9";
-    public static final int RESOURCE_VERSION = 5;
+    public static final int RESOURCE_VERSION = 6;
     public static final int WORLD_VERSION = 3;
 
     private final Map<String, ChunkManager> chunkManagers = new HashMap<>();
@@ -182,7 +182,7 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
                     // Add in our missing texture to the resources (not part of vanilla)
                     try (InputStream in =
                                  getClassLoader().getResourceAsStream("textures/missing_texture.png")) {
-                        ((MojangResourceProvider) resourceProvider).addTexture("assets/thinkmap/textures/blocks/missing_texture",
+                        ((MojangResourceProvider) resourceProvider).addTexture("missing_texture",
                                 textureFactory.fromInputStream(in));
                     }
 
@@ -198,38 +198,40 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
                         );
                     }
 
-                    for (String texture : resourceProvider.getTextures()) {
-                        Texture t = resourceProvider.getTexture(texture);
-                        File target = new File(resourceDir, texture + ".png");
-                        if (!target.getParentFile().exists() && !target.getParentFile().mkdirs()) {
-                            throw new RuntimeException("Failed to create directory: " + target);
-                        }
-                        ImageIO.write(((BufferedTexture) t).getImage(), "PNG",
-                                target);
-                    }
-
-                    for (String resource : resourceProvider.getResources()) {
-                        byte[] r = resourceProvider.getResource(resource);
-                        File target = new File(resourceDir, resource);
-                        if (!target.getParentFile().exists() && !target.getParentFile().mkdirs()) {
-                            throw new RuntimeException("Failed to create directory: " + target);
-                        }
-                        Files.write(r, target);
+                    // Begin stitching the textures
+                    // TODO: Remove the timer?
+                    TextureStitcher stitcher = new TextureStitcher(resourceProvider, textureFactory);
+                    getLogger().info("Stitching textures. The mapviewer will start after this " +
+                            "completes");
+                    long start = System.currentTimeMillis();
+                    StitchResult result = stitcher.stitch();
+                    // Save the result into the resources folder
+                    Texture[] output = result.getOutput();
+                    for (int i = 0; i < output.length; i++) {
+                        Texture texture = output[i];
+                        ImageIO.write(((BufferedTexture) texture).getImage(), "PNG",
+                                new File(resourceDir, "blocks_" + (i++) + ".png"));
                     }
 
                     // We only use this here so no point in turning this
                     // into a field
-                    Gson gson = new GsonBuilder().create();
+                    Gson gson = new GsonBuilder()
+                            .registerTypeAdapter(TextureDetails.class,
+                                    new TextureDetailsSerializer())
+                            .create();
                     // Append some extra information
                     HashMap<String, Object> info = new HashMap<>();
-                    info.put("grassColormap", ColorMapParser.parse(resourceProvider, "grass"));
-                    info.put("foliageColormap", ColorMapParser.parse(resourceProvider, "foliage"));
+                    info.put("textures", result.getDetails());
+                    info.put("textureImages", result.getOutput().length);
+                    info.put("virtualCount", result.getVirtualCount());
+                    info.put("grassColormap", ColorMapParser.parse(resourceProvider, textureFactory, "grass_colormap"));
+                    info.put("foliageColormap", ColorMapParser.parse(resourceProvider, textureFactory, "foliage_colormap"));
                     FileUtils.writeStringToFile(
                             blockInfo,
                             gson.toJson(info)
                     );
 
-                    getLogger().info("Done. Starting the Map Viewer");
+                    getLogger().info("Stitching complete in " + (System.currentTimeMillis() - start) + "ms");
 
                     // Start the web-server as it wasn't started earlier
                     webHandler.start();

@@ -40,8 +40,8 @@ public class BlockLever extends BlockFactory {
 
     public BlockLever(IMapViewer iMapViewer) {
         super(iMapViewer);
-        cobblestone = mapViewer.getBlockTexture("minecraft:cobblestone");
-        lever = mapViewer.getBlockTexture("minecraft:lever");
+        cobblestone = mapViewer.getTexture("cobblestone");
+        lever = mapViewer.getTexture("lever");
     }
 
     @Override

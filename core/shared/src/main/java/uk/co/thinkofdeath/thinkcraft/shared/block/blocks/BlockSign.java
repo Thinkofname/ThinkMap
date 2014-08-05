@@ -38,7 +38,7 @@ public class BlockSign extends BlockFactory {
     public BlockSign(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        texture = mapViewer.getBlockTexture("minecraft:planks_oak");
+        texture = mapViewer.getTexture("planks_oak");
     }
 
     public static Model createModel(Texture texture) {

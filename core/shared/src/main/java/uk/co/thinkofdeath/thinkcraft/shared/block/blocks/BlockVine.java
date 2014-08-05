@@ -41,7 +41,7 @@ public class BlockVine extends BlockFactory {
     public BlockVine(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        texture = iMapViewer.getBlockTexture("minecraft:vine");
+        texture = iMapViewer.getTexture("vine");
     }
 
     @Override

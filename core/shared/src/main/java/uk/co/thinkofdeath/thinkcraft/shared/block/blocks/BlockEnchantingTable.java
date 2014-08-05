@@ -34,9 +34,9 @@ public class BlockEnchantingTable extends BlockFactory {
     public BlockEnchantingTable(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        top = mapViewer.getBlockTexture("minecraft:enchanting_table_top");
-        side = mapViewer.getBlockTexture("minecraft:enchanting_table_side");
-        bottom = mapViewer.getBlockTexture("minecraft:enchanting_table_bottom");
+        top = mapViewer.getTexture("enchanting_table_top");
+        side = mapViewer.getTexture("enchanting_table_side");
+        bottom = mapViewer.getTexture("enchanting_table_bottom");
     }
 
     @Override

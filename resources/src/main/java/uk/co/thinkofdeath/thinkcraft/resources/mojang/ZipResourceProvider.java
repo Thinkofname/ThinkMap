@@ -16,13 +16,14 @@
 
 package uk.co.thinkofdeath.thinkcraft.resources.mojang;
 
-import uk.co.thinkofdeath.thinkcraft.resources.ResourceProvider;
-import uk.co.thinkofdeath.thinkcraft.resources.Texture;
-import uk.co.thinkofdeath.thinkcraft.resources.TextureFactory;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import uk.co.thinkofdeath.thinkcraft.resources.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
@@ -30,8 +31,25 @@ import java.util.zip.ZipInputStream;
 
 public class ZipResourceProvider implements ResourceProvider {
 
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(TextureMetadata.class, new TextureMetadataDeserializer())
+            .registerTypeAdapter(TextureMetadataAnimation.class, new TextureMetadataAnimationDeserializer())
+            .create();
+
+    private static final HashMap<String, String> whitelistedTextures = new HashMap<String, String>() {{
+        put("assets/minecraft/textures/entity/chest/normal.png", "chest_normal");
+        put("assets/minecraft/textures/entity/chest/ender.png", "chest_ender");
+        put("assets/minecraft/textures/entity/chest/trapped.png", "chest_trapped");
+    }};
+
+    private static final HashMap<String, String> whitelistedResources = new HashMap<String, String>() {{
+        put("assets/minecraft/textures/colormap/grass.png", "grass_colormap");
+        put("assets/minecraft/textures/colormap/foliage.png", "foliage_colormap");
+    }};
+
     private final ArrayList<String> textureNames = new ArrayList<>();
     private final HashMap<String, Texture> textures = new HashMap<>();
+    private final HashMap<String, TextureMetadata> metadata = new HashMap<>();
     private final HashMap<String, byte[]> resources = new HashMap<>();
 
     public ZipResourceProvider(InputStream inputStream, TextureFactory factory) {
@@ -43,31 +61,51 @@ public class ZipResourceProvider implements ResourceProvider {
             try (ZipInputStream in = new ZipInputStream(inputStream)) {
                 ZipEntry entry;
                 while ((entry = in.getNextEntry()) != null) {
-                    if (entry.getName().endsWith(".png")) {
-                        String name = entry.getName().substring(0, entry.getName().length() - 4);
-                        textureNames.add(name);
-                        textures.put(name, factory.fromInputStream(new NoCloseStream(in)));
-                    } else if (!entry.getName().endsWith(".class")) {
-                        String name = entry.getName();
-                        byte[] data;
-                        if (entry.getSize() != -1) {
-                            data = new byte[(int) entry.getSize()];
-                            int position = 0;
-                            int lastRead;
-                            while ((lastRead = in.read(data, position, data.length - position)) != -1) {
-                                position += lastRead;
-                            }
-                        } else {
-                            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-                                byte[] buffer = new byte[4092];
-                                int lastRead;
-                                while ((lastRead = in.read(buffer)) != -1) {
-                                    outputStream.write(buffer, 0, lastRead);
-                                }
-                                data = outputStream.toByteArray();
-                            }
+                    if (entry.getName().startsWith("assets/minecraft/textures/blocks/")) {
+                        if (entry.getName().endsWith(".png")) {
+                            String name = entry.getName().substring(
+                                    "assets/minecraft/textures/blocks/".length(),
+                                    entry.getName().length() - 4
+                            );
+                            textureNames.add(name);
+                            textures.put(name, factory.fromInputStream(new NoCloseStream(in)));
+                        } else if (entry.getName().endsWith(".png.mcmeta")) {
+                            TextureMetadata metadata = gson.fromJson(
+                                    new InputStreamReader(new NoCloseStream(in), "UTF-8"),
+                                    TextureMetadata.class);
+                            String name = entry.getName().substring(
+                                    "assets/minecraft/textures/blocks/".length(),
+                                    entry.getName().length() - 4 - 7
+                            );
+                            this.metadata.put(name, metadata);
                         }
-                        resources.put(name, data);
+                    } else {
+                        if (whitelistedTextures.containsKey(entry.getName())) {
+                            String name = whitelistedTextures.get(entry.getName());
+                            textureNames.add(name);
+                            textures.put(name, factory.fromInputStream(new NoCloseStream(in)));
+                        } else if (whitelistedResources.containsKey(entry.getName())) {
+                            String name = whitelistedResources.get(entry.getName());
+                            byte[] data;
+                            if (entry.getSize() != -1) {
+                                data = new byte[(int) entry.getSize()];
+                                int position = 0;
+                                int lastRead;
+                                while ((lastRead = in.read(data, position, data.length - position)) != -1) {
+                                    position += lastRead;
+                                }
+                            } else {
+                                try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+                                    byte[] buffer = new byte[4092];
+                                    int lastRead;
+                                    while ((lastRead = in.read(buffer)) != -1) {
+                                        outputStream.write(buffer, 0, lastRead);
+                                    }
+                                    data = outputStream.toByteArray();
+                                }
+                            }
+                            resources.put(name, data);
+                        }
                     }
                 }
             }
@@ -92,6 +130,11 @@ public class ZipResourceProvider implements ResourceProvider {
     @Override
     public Texture getTexture(String name) {
         return textures.get(name);
+    }
+
+    @Override
+    public TextureMetadata getMetadata(String name) {
+        return metadata.get(name);
     }
 
     @Override

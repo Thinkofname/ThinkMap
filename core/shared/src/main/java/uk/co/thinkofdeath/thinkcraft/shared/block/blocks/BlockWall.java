@@ -46,7 +46,7 @@ public class BlockWall extends BlockFactory {
     public BlockWall(IMapViewer iMapViewer) {
         super(iMapViewer);
         for (WallType wallType : WallType.values()) {
-            textures[wallType.ordinal()] = mapViewer.getBlockTexture("minecraft:" + wallType.name().toLowerCase());
+            textures[wallType.ordinal()] = mapViewer.getTexture(wallType.name().toLowerCase());
         }
     }
 

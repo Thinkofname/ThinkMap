@@ -38,9 +38,9 @@ public class BlockAnvil extends BlockFactory {
     public BlockAnvil(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        base = mapViewer.getBlockTexture("minecraft:anvil_base");
+        base = mapViewer.getTexture("anvil_base");
         for (int i = 0; i < top.length; i++) {
-            top[i] = mapViewer.getBlockTexture("minecraft:anvil_top_damaged_" + i);
+            top[i] = mapViewer.getTexture("anvil_top_damaged_" + i);
         }
     }
 

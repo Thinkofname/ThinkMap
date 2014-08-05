@@ -40,7 +40,7 @@ public class BlockTallGrass extends BlockFactory {
 
         textures = new Texture[TallGrassType.values().length];
         for (TallGrassType type : TallGrassType.values()) {
-            textures[type.ordinal()] = iMapViewer.getBlockTexture("minecraft:" + type.toString());
+            textures[type.ordinal()] = iMapViewer.getTexture(type.toString());
         }
     }
 

@@ -37,7 +37,7 @@ public class BlockPlanks extends BlockFactory {
 
         textures = new Texture[PlanksType.values().length];
         for (PlanksType type : PlanksType.values()) {
-            textures[type.ordinal()] = iMapViewer.getBlockTexture("minecraft:planks_" + type);
+            textures[type.ordinal()] = iMapViewer.getTexture("planks_" + type);
         }
     }
 

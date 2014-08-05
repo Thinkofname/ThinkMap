@@ -46,8 +46,8 @@ public class BlockStem<T extends Block> extends BlockFactory {
         super(iMapViewer);
         this.target = target;
 
-        connected = mapViewer.getBlockTexture("minecraft:" + type + "_stem_connected");
-        disconnected = mapViewer.getBlockTexture("minecraft:" + type + "_stem_disconnected");
+        connected = mapViewer.getTexture(type + "_stem_connected");
+        disconnected = mapViewer.getTexture(type + "_stem_disconnected");
     }
 
     @Override

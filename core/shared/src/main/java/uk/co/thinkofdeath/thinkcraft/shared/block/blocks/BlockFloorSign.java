@@ -37,8 +37,8 @@ public class BlockFloorSign extends BlockFactory {
     public BlockFloorSign(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        sign = mapViewer.getBlockTexture("minecraft:planks_oak");
-        post = mapViewer.getBlockTexture("minecraft:log_oak");
+        sign = mapViewer.getTexture("planks_oak");
+        post = mapViewer.getTexture("log_oak");
     }
 
     @Override

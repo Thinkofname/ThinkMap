@@ -38,7 +38,7 @@ public class BlockLadder extends BlockFactory {
     public BlockLadder(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        texture = mapViewer.getBlockTexture("minecraft:ladder");
+        texture = mapViewer.getTexture("ladder");
     }
 
     @Override

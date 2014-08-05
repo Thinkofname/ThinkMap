@@ -41,11 +41,11 @@ public class BlockGrass extends BlockFactory {
     public BlockGrass(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        grassTop = iMapViewer.getBlockTexture("minecraft:grass_top");
-        grassSide = iMapViewer.getBlockTexture("minecraft:grass_side");
-        grassSideSnow = iMapViewer.getBlockTexture("minecraft:grass_side_snowed");
-        grassSideOverlay = iMapViewer.getBlockTexture("minecraft:grass_side_overlay");
-        dirt = iMapViewer.getBlockTexture("minecraft:dirt");
+        grassTop = iMapViewer.getTexture("grass_top");
+        grassSide = iMapViewer.getTexture("grass_side");
+        grassSideSnow = iMapViewer.getTexture("grass_side_snowed");
+        grassSideOverlay = iMapViewer.getTexture("grass_side_overlay");
+        dirt = iMapViewer.getTexture("dirt");
     }
 
     @Override

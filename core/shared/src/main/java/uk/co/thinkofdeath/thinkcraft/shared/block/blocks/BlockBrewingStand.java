@@ -42,8 +42,8 @@ public class BlockBrewingStand extends BlockFactory {
     public BlockBrewingStand(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        base = mapViewer.getBlockTexture("minecraft:brewing_stand_base");
-        stand = mapViewer.getBlockTexture("minecraft:brewing_stand");
+        base = mapViewer.getTexture("brewing_stand_base");
+        stand = mapViewer.getTexture("brewing_stand");
     }
 
     @Override

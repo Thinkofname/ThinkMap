@@ -16,15 +16,8 @@
 
 package uk.co.thinkofdeath.thinkcraft.resources;
 
-public interface ResourceProvider {
+public class TextureMetadataAnimation {
 
-    public String[] getTextures();
-
-    public Texture getTexture(String name);
-
-    public TextureMetadata getMetadata(String name);
-
-    public byte[] getResource(String name);
-
-    public String[] getResources();
+    int[] frames;
+    int frametime;
 }

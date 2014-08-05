@@ -41,7 +41,7 @@ public class BlockSapling extends BlockFactory {
 
         textures = new Texture[SaplingType.values().length];
         for (SaplingType type : SaplingType.values()) {
-            textures[type.ordinal()] = iMapViewer.getBlockTexture("minecraft:sapling_" + type);
+            textures[type.ordinal()] = iMapViewer.getTexture("sapling_" + type);
         }
     }
 

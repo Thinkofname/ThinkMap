@@ -35,7 +35,7 @@ public class BlockReeds extends BlockFactory {
     public BlockReeds(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        texture = mapViewer.getBlockTexture("minecraft:reeds");
+        texture = mapViewer.getTexture("reeds");
     }
 
     @Override

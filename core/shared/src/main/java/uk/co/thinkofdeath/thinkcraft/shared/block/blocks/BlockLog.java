@@ -42,8 +42,8 @@ public class BlockLog extends BlockFactory {
         textures = new Texture[v.getEnumConstants().length][];
         for (Enum variant : v.getEnumConstants()) {
             textures[variant.ordinal()] = new Texture[]{
-                    iMapViewer.getBlockTexture("minecraft:log_" + variant),
-                    iMapViewer.getBlockTexture("minecraft:log_" + variant + "_top")
+                    iMapViewer.getTexture("log_" + variant),
+                    iMapViewer.getTexture("log_" + variant + "_top")
             };
         }
     }

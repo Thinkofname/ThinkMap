@@ -41,7 +41,7 @@ public class BlockTrapdoor extends BlockFactory {
     public BlockTrapdoor(IMapViewer iMapViewer) {
         super(iMapViewer);
 
-        texture = mapViewer.getBlockTexture("minecraft:trapdoor");
+        texture = mapViewer.getTexture("trapdoor");
     }
 
     @Override

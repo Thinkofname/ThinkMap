@@ -43,7 +43,7 @@ public class BlockLeaves extends BlockFactory {
 
         textures = new Texture[TreeVariant.values().length];
         for (TreeVariant variant : TreeVariant.values()) {
-            textures[variant.ordinal()] = iMapViewer.getBlockTexture("minecraft:leaves_" + variant);
+            textures[variant.ordinal()] = iMapViewer.getTexture("leaves_" + variant);
         }
     }
 

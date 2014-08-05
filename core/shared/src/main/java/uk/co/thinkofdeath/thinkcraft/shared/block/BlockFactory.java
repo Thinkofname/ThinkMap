@@ -91,6 +91,6 @@ public class BlockFactory {
     }
 
     public Texture getTexture() {
-        return texture == null ? null : mapViewer.getBlockTexture(texture);
+        return texture == null ? null : mapViewer.getTexture(texture);
     }
 }

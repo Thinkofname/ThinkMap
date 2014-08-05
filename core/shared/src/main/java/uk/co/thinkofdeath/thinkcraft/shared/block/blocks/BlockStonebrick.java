@@ -37,7 +37,7 @@ public class BlockStonebrick extends BlockFactory {
 
         StonebrickVariant[] values = StonebrickVariant.values();
         for (int i = 0; i < values.length; i++) {
-            textures[i] = mapViewer.getBlockTexture("minecraft:" + values[i].toString());
+            textures[i] = mapViewer.getTexture(values[i].toString());
         }
     }
 
