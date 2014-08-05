@@ -190,6 +190,7 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
                     // (vanilla + the pack) so that if the pack is missing textures
                     // it will use vanilla's textures as a fallback
                     if (finalResourcePack.length() > 0) {
+                        getLogger().info("Adding resource pack");
                         resourceProvider = new JoinedResourceProvider(
                                 new ZipResourceProvider(
                                         new FileInputStream(resourceFile), textureFactory
@@ -210,7 +211,7 @@ public class ThinkMapPlugin extends JavaPlugin implements Runnable {
                     for (int i = 0; i < output.length; i++) {
                         Texture texture = output[i];
                         ImageIO.write(((BufferedTexture) texture).getImage(), "PNG",
-                                new File(resourceDir, "blocks_" + (i++) + ".png"));
+                                new File(resourceDir, "blocks_" + i + ".png"));
                     }
 
                     // We only use this here so no point in turning this
