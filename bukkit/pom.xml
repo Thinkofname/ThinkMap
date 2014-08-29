@@ -34,7 +34,7 @@
         </repository>
         <repository>
             <id>think-repo</id>
-            <url>http://repo.thinkofdeath.co.uk/</url>
+            <url>http://repo.thinkofdeath.co.uk/content/groups/public/</url>
         </repository>
     </repositories>
 
