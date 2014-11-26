@@ -1,12 +1,6 @@
 .idea
+.gradle
+
 
 *.iml
 
-dependency-reduced-pom.xml
-
-target
-/html/client/out
-/html/client/build/mapviewer
-/html/client/build/mapviewerworker
-/html/client/build/WEB-INF
-gwt-unitCache
