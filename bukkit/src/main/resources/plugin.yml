@@ -6,6 +6,15 @@ author: Thinkofdeath
 main: uk.co.thinkofdeath.thinkcraft.bukkit.ThinkMapPlugin
 load: STARTUP
 
+externalRepos:
+ - "http://repo.md-5.net/content/repositories/snapshots/"
+ - "http://repo.thinkofdeath.co.uk/content/groups/public/"
+externalDepend:
+ - "io.netty:netty-all:5.0.0.Alpha1"
+ - "commons-io:commons-io:2.4"
+ - "net.sf.trove4j:trove4j:3.0.3"
+ - "com.google.code.gson:gson:2.2.4"
+
 commands:
    thinkmap:
      description: TODO
