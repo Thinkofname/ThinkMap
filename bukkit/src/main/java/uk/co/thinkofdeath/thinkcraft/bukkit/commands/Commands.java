@@ -22,8 +22,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
 import uk.co.thinkofdeath.command.Command;
 import uk.co.thinkofdeath.command.CommandHandler;
-import uk.co.thinkofdeath.command.bukkit.HasPermission;
-import uk.co.thinkofdeath.command.validators.Range;
+import uk.co.thinkofdeath.parsing.bukkit.validators.HasPermission;
+import uk.co.thinkofdeath.parsing.validators.Range;
 import uk.co.thinkofdeath.thinkcraft.bukkit.ThinkMapPlugin;
 
 import java.io.File;
