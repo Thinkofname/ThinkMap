@@ -151,7 +151,7 @@
                                     </shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>com.google.code.gson</pattern>
+                                    <pattern>com.google.gson</pattern>
                                     <shadedPattern>
                                         uk.co.thinkofdeath.thinkcraft.lib.gson
                                     </shadedPattern>
